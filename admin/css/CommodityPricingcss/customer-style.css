@@ -1,0 +1,2284 @@
+
+
+    .feedback-form {
+        background: #282b2f;
+        /* Left & Right */
+    }
+
+    .feedback-form .modal.left .modal-dialog,
+    .feedback-form .modal.right .modal-dialog,
+    .feedback-form .modal.top .modal-dialog,
+    .feedback-form .modal.bottom .modal-dialog {
+        -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+        -o-transform: translate3d(0%, 0, 0);
+        transform: translate3d(0%, 0, 0);
+    }
+
+    .feedback-form #supportFor {
+        background: #282b2f;
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .feedback-form .modal-header {
+        border-bottom: 1px solid #444;
+    }
+
+    .feedback-form .modal.right .modal-dialog {
+        position: fixed;
+        margin: auto;
+        width: 500px;
+        max-width: 100%;
+        height: 100%;
+    }
+
+    .feedback-form .modal.right .modal-content {
+        height: 100%;
+        overflow-y: auto;
+        background: #262626;
+    }
+
+    .feedback-form .modal.right .modal-body {
+        padding: 15px 15px 80px;
+    }
+
+    .feedback-form .modal.right.fade .modal-dialog {
+        right: -500px;
+        -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+        -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+        -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+        transition: opacity 0.3s linear, right 0.3s ease-out;
+    }
+
+    .feedback-form .modal.right.fade.show .modal-dialog {
+        right: 0;
+    }
+
+    .feedback-form .modal.right .modal-content {
+        border-radius: 0;
+        border: none;
+    }
+
+    .feedback-form .modal.right .modal-dialog.modal-sm {
+        width: 300px;
+        height: 680px;
+    }
+
+    .feedback-form #right_modal_sm {
+        z-index: 9999;
+    }
+
+    .feedback-form .feedback {
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        position: fixed;
+        top: 35%;
+        right: -24px;
+        z-index: 11;
+        border: none;
+        padding: 5px;
+        outline: none;
+    }
+
+    .feedback-form #message {
+        resize: none;
+    }
+
+    .feedback-form .close {
+        color: #95C23D;
+        outline: none;
+    }
+
+    .feedback-form h5 {
+        color: #95C23D;
+        font-size: 1.3em;
+    }
+
+    .feedback-form label {
+        color: #95C23D;
+        font-size: 14px;
+    }
+
+
+.bootstrap-select button {
+    background: #111111;
+    /* width: 152px !important; */
+    border: 1px solid #343a40;
+    height: 30px;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.chartBtn01 {
+    padding: 0px;
+    margin-top: 14px;
+}
+
+.chartBtn {
+    padding: 0px;
+}
+
+@media screen and (min-width: 240px) and (max-width: 767px) {
+    .setup-content {
+        padding: 0px 15px !important;
+    }
+
+   
+    
+    
+
+    .chartBtn01 {
+        padding: 0px 10px 0px 0px;
+        margin-top: 0;
+    }
+}
+
+@media screen and (min-width: 240px) and (max-width: 767px) {
+}
+
+.filterSection #ViewChart {
+    margin: 37px 0;
+}
+
+.filterSection .chemicalFilterParameter {
+    width: 100%;
+    background: #282b2f;
+    margin: 10px auto;
+}
+
+.filterSection select {
+    height: 27px;
+    font-size: 12.5px;
+    padding-top: 3px;
+    background: #262626;
+    color: #fff;
+    width: 150px;
+}
+
+    .filterSection select option {
+        color: #fff;
+        background: #282b2f;
+    }
+
+    .filterSection select:hover,
+    .filterSection select:focus {
+        background-color: transparent;
+        color: #fff;
+    }
+
+.filterSection #example-getting-started {
+    height: 27px;
+}
+
+.filterSection input[type=text] {
+    height: 27px;
+    font-size: 13px;
+    color: #fff !important;
+    background: transparent;
+}
+
+.filterSection label {
+    color: #a5a8ad;
+    font-size: 12px;
+    margin-bottom:2px;
+}
+
+.filterSection .monthmdate i {
+    color: #fff;
+    position: absolute;
+    right: 24px;
+    top: 35px;
+    font-size: 13px;
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1440px) {
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 31px;
+        top: 32px;
+        font-size: 13px;
+    }
+
+    
+}
+
+@media screen and (min-width: 1441px) and (max-width: 1920px) {
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 42px;
+        top: 32px;
+        font-size: 13px;
+    }
+
+   
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .filterSection .generatedGraphFilter .downloadOption {
+        position: absolute;
+        left: 15px !important;
+        color: #a5a8ad;
+    }
+
+    .filterSection label {
+        color: #a5a8ad;
+        font-size: 11.5px;
+        white-space: nowrap;
+    }
+
+    .filterSection input[type=text] {
+        height: 27px;
+        font-size: 10px;
+        min-width: 83px !important;
+    }
+
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 3px;
+        top: 36px;
+        font-size: 12px;
+    }
+}
+
+.filterSection .generatedGraphFilter #btn-chart-types-pie {
+    height: 27px;
+    width: 58px;
+    padding: 4px;
+}
+
+.mt14 {
+    margin-top: 14px;
+}
+
+.filterSection .Date-Range i {
+    position: absolute;
+    color: #95C23D;
+    font-size: 16px;
+    top: 30px;
+}
+
+.filterSection .stepwizard-step {
+    color: #a5a8ad;
+}
+
+    .filterSection .stepwizard-step p {
+        color: #a5a8ad;
+        margin-top: 5px;
+        margin-bottom: 0px;
+        font-size: 12px;
+    }
+
+.filterSection .stepwizard-row {
+    display: table-row;
+}
+
+.filterSection .stepwizard {
+    display: table;
+    width: 100%;
+    position: relative;
+}
+
+.filterSection .filterSteps {
+    right: 0;
+    position: relative;
+}
+
+    .filterSection .filterSteps .col-half-offset {
+        margin-left: 2.9%;
+    }
+
+.filterSection .filterSteps {
+    right: 0px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+}
+
+@media screen and (min-width: 240px) and (max-width: 479px) {
+    
+
+    .filterSection select {
+        width: 100%;
+    }
+
+    .filterSection .stepwizard {
+        display: none;
+    }
+
+    .filterSection .filterSteps {
+        right: 0;
+        position: relative;
+        margin-top: 10px;
+    }
+
+        .filterSection .filterSteps .col-half-offset {
+            margin-left: 0.166667%;
+        }
+
+    .filterSection .table-bordered {
+        border: none !important;
+    }
+}
+
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 287px;
+        top: 33px;
+    }
+
+    .filterSection select {
+        width: 100%;
+    }
+
+    .filterSection .stepwizard {
+        display: none;
+    }
+
+    .filterSection .filterSteps {
+        right: 0;
+        position: relative;
+        margin-top: 10px;
+    }
+
+        .filterSection .filterSteps .col-half-offset {
+            margin-left: 0.166667%;
+        }
+
+    .filterSection .table-bordered {
+        border: none !important;
+    }
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1440px) {
+    .filterSection .sidebar-toggle {
+        display: none;
+    }
+
+    .filterSection .filterSteps {
+        right: 0px;
+        position: relative;
+    }
+
+        .filterSection .filterSteps .col-half-offset {
+            margin-left: 3.2%;
+        }
+}
+
+@media screen and (min-width: 1441px) and (max-width: 1920px) {
+    .filterSection .filterSteps {
+        right: 0;
+        position: relative;
+    }
+
+        .filterSection .filterSteps .col-half-offset {
+            margin-left: 3.2%;
+        }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .filterSection .viewChartButton {
+        padding: 0;
+    }
+
+    .filterSection .table-bordered {
+        border: none !important;
+    }
+
+    
+
+    .filterSection .filterSteps {
+        right: 0;
+        position: relative;
+    }
+
+        .filterSection .filterSteps .col-half-offset {
+            margin-left: 1.8%;
+        }
+}
+
+.filterSection .stepwizard-step button[disabled] {
+    opacity: 1 !important;
+    filter: alpha(opacity=100) !important;
+}
+
+.filterSection .stepwizard-row:before {
+    top: 14px;
+    bottom: 0;
+    position: absolute;
+    content: " ";
+    width: 100%;
+    height: 1px;
+    background-color: #ccc;
+    z-index: 0;
+}
+
+.filterSection .stepwizard-step {
+    display: table-cell;
+    text-align: center;
+    position: relative;
+}
+
+.filterSection .btn-circle {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    padding: 4px 0;
+    font-size: 14px;
+    line-height: 1.42857143;
+    border-radius: 15px;
+    font-weight: bold;
+    color: #333 !important;
+}
+
+.filterSection .stepWizardFilterRow {
+    background: #282b2f;
+    margin: 5px auto 0px auto;
+}
+
+.filterSection .viewChart {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.filterSection .filterAndClear {
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    padding: 5px 6px;
+    background: #0098c9;
+    margin-bottom: 6px;
+}
+
+    .filterSection .filterAndClear .viewChartButton {
+        color: #fff;
+        width: 100%;
+    }
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .filterSection .filterAndClear .viewChartButton {
+        padding: 0;
+    }
+}
+
+.filterSection .filterAndClear .clearButton {
+    color: #fff;
+    width: 100%;
+}
+
+.filterSection .filterAndClear:hover {
+    background: #1060B7;
+}
+
+.align-set {
+    display: flex;
+    justify-content: space-around;
+}
+
+@media screen and (min-width: 240px) and (max-width: 479px) {
+    .filterSection .filterAndClear {
+        padding: 3px;
+    }
+}
+
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    .filterSection .filterAndClear {
+        padding: 5px;
+    }
+}
+
+.filterSection .generatedGraphFilter {
+    margin: 5px auto 0px auto;
+}
+
+    .filterSection .generatedGraphFilter input [type="date"] {
+        display: block;
+        position: relative;
+        padding: 1rem 3.5rem 1rem 0.75rem;
+        font-size: 1rem;
+        font-family: monospace;
+        border: 1px solid red;
+        border-radius: 0.25rem;
+    }
+
+    .filterSection .generatedGraphFilter .custom-control-inline {
+        margin-right: 0;
+    }
+
+    .filterSection .generatedGraphFilter .downloadOption {
+        color: #a5a8ad;
+    }
+
+    .filterSection .generatedGraphFilter #btn-chart-types-line {
+        height: 27px;
+        width: 58px;
+        padding: 4px;
+    }
+
+    .filterSection .generatedGraphFilter #btn-chart-types-bar {
+        height: 27px;
+        width: 58px;
+        padding: 4px;
+    }
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .filterSection .generatedGraphFilter #btn-chart-types-line {
+        height: 25px;
+        width: 25px;
+        padding: 4px;
+    }
+
+    .filterSection .generatedGraphFilter #btn-chart-types-bar {
+        height: 25px;
+        width: 25px;
+        padding: 4px;
+    }
+
+    .filterSection .generatedGraphFilter .bootstrap-select button {
+        width: 100px !important;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .filterSection select {
+        width: 83px;
+        padding: 0px;
+        font-size: 10px;
+        height: 27px;
+    }
+
+    .filterSection label {
+        color: #a5a8ad;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    .filterSection input[type="text"] {
+        height: 27px;
+        font-size: 10px;
+        width: 88px;
+        padding: 0px 3px;
+    }
+
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 14px;
+        top: 33px;
+        font-size: 10px;
+    }
+
+    .filterSection .generatedGraphFilter .downloadPDFAndEXCEL ul li {
+        float: left;
+        list-style: none;
+        padding-right: 10px;
+        display:inline-block !important;
+        font-size: 0;
+    }
+
+    .filterSection .generatedGraphFilter #btn-chart-types-line {
+        height: 25px;
+        width: 25px;
+        padding: 4px;
+    }
+
+    .filterSection .generatedGraphFilter #btn-chart-types-bar {
+        height: 25px;
+        width: 25px;
+        padding: 4px;
+    }
+
+    .filterSection .generatedGraphFilter .bootstrap-select button {
+        width: 78px !important;
+        font-size: 10px;
+        padding: 6px;
+    }
+}
+
+@media screen and (min-width: 240px) and (max-width: 479px) {
+    .filterSection .generatedGraphFilter .downloadOption {
+        left: 5%;
+    }
+    .filterSection .generatedGraphFilter .pull-top {
+    }
+}
+
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    .filterSection .generatedGraphFilter .downloadOption {
+        left: 5%;
+    }
+
+    .filterSection .generatedGraphFilter .pull-top {
+    }
+}
+
+.badge {
+    padding: 5px !important;
+    background-color: #3BAD71!important;
+    font-weight:500;
+    letter-spacing:0.5px!important
+}
+
+.filterSection .generatedGraphFilter .pull-top {
+    position: absolute;
+    top: 30px;
+}
+
+.filterSection .generatedGraphFilter .downloadPDFAndEXCEL ul li {
+    float: left;
+    list-style: none;
+    padding-right: 10px;
+}
+
+.filterSection .generatedGraphFilter .downloadPDFAndEXCEL .fa-file-pdf-o {
+    color: #C50606;
+    font-size: 22px;
+    padding-right: 2px;
+}
+
+.filterSection .generatedGraphFilter .downloadPDFAndEXCEL .fa-file-excel-o {
+    color: #0C6C36;
+    font-size: 22px;
+    padding-right: 2px;
+}
+
+@media screen and (min-width: 240px) and (max-width: 479px) {
+    filterSection .generatedGraphFilter .downloadPDFAndEXCEL {
+        position: absolute;
+        right: 0;
+        top: -70px;
+    }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .filterSection .generatedGraphFilter .downloadPDFAndEXCEL {
+        position: relative;
+        right: 0;
+    }
+
+        .filterSection .generatedGraphFilter .downloadPDFAndEXCEL ul {
+            padding: 0;
+            left: 0px;
+            position: relative;
+        }
+
+            .filterSection .generatedGraphFilter .downloadPDFAndEXCEL ul li {
+                float: left;
+                list-style: none;
+                padding-right: 10px;
+            }
+
+        .filterSection .generatedGraphFilter .downloadPDFAndEXCEL .fa-file-pdf-o {
+            color: #C50606;
+            font-size: 22px;
+            padding-right: 2px;
+        }
+
+        .filterSection .generatedGraphFilter .downloadPDFAndEXCEL .fa-file-excel-o {
+            color: #0C6C36;
+            font-size: 22px;
+            padding-right: 2px;
+        }
+}
+
+.profileUpdate #profile {
+    width: 100%;
+}
+/*Customer News*/
+.customer_news .newsSearch_customer {
+    width: 97%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 2px;
+    font-size: 18px;
+    color: #95C23D;
+}
+
+.customer_news .searchIconButton {
+    position: absolute;
+    right: 2%;
+    background-color: transparent;
+    height: 45px;
+    border: none;
+}
+
+    .customer_news .searchIconButton i {
+        font-size: 30px;
+        background-color: transparent;
+        color: #96c33d;
+    }
+
+.customer_news .all_customer_news .card-title {
+    padding: 0.25rem 1.25rem 0.25rem 1.25rem;
+    margin: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+    .customer_news .all_customer_news .card-title .newsHeading {
+        color: #95C23D;
+    }
+
+    .customer_news .all_customer_news .card-title:hover {
+        text-decoration: underline;
+    }
+
+.customer_news .all_customer_news .newsminuteRead_journalist {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 13px;
+}
+
+
+
+
+
+.customer_news .all_customer_news .card-body {
+    padding: 0 1.25rem 0 1.25rem;
+}
+
+    .customer_news .all_customer_news .card-body p {
+        color: #fff;
+    }
+
+.customer_news .pagination {
+    width: 100%;
+}
+
+    .customer_news .pagination li {
+        padding: 1px;
+        margin: 1px;
+    }
+
+        .customer_news .pagination li a {
+            display: block;
+            text-align: center;
+            border-radius: 0px;
+            margin-left: 0px;
+            border-width: 1px 0 0 1px;
+            background: #282b2f;
+            width: 25px;
+            height: 25px;
+        }
+/*Customer Deals*/
+.customer_deals .dealsSearch_customer {
+    width: 97%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 2px;
+    font-size: 18px;
+    color: #95C23D;
+}
+
+.customer_deals .searchIconButton {
+    position: absolute;
+    right: 2%;
+    background-color: transparent;
+    height: 45px;
+    border: none;
+}
+
+    .customer_deals .searchIconButton i {
+        font-size: 30px;
+        background-color: transparent;
+        color: #96c33d;
+    }
+
+.customer_deals .all_customer_deals .card-title {
+    padding: 0.25rem 1.25rem 0.25rem 1.25rem;
+    margin: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+    .customer_deals .all_customer_deals .card-title .dealsHeading {
+        color: #95C23D;
+    }
+
+    .customer_deals .all_customer_deals .card-title:hover {
+        text-decoration: underline;
+    }
+
+.customer_deals .all_customer_deals .card-body {
+    padding: 0 1.25rem 0 1.25rem;
+}
+
+    .customer_deals .all_customer_deals .card-body p {
+        color: #fff;
+    }
+
+.customer_deals .all_customer_deals .publishedDate {
+    padding-left: 5px;
+}
+
+.customer_deals .pagination {
+    width: 100%;
+}
+
+    .customer_deals .pagination li {
+        padding: 1px;
+        margin: 1px;
+    }
+
+        .customer_deals .pagination li a {
+            display: block;
+            text-align: center;
+            border-radius: 0px;
+            margin-left: 0px;
+            border-width: 1px 0 0 1px;
+            background: #282b2f;
+            width: 25px;
+            height: 25px;
+        }
+/*News Details*/
+.newsDescription .newsHeadingBanner img {
+    min-height: 150px;
+    height: 350px;
+}
+
+.newsDescription .newsDescriptionHeading {
+    border-bottom: 1px solid #444;
+}
+
+    .newsDescription .newsDescriptionHeading h1 {
+        color: #95C23D;
+    }
+
+    .newsDescription .newsDescriptionHeading ul {
+        padding: 0;
+    }
+
+        .newsDescription .newsDescriptionHeading ul li {
+            list-style: none;
+            color: #a5a8ad;
+            float: left;
+            padding: 5px;
+        }
+
+.newsDescription .newsDescriptionPage p {
+    text-align: justify;
+    color: #fff;
+}
+/*Deals Details*/
+.dealsDescription .dealsDescriptionHeading {
+    border-bottom: 1px solid #444;
+}
+
+    .dealsDescription .dealsDescriptionHeading h1 {
+        color: #95C23D;
+    }
+
+    .dealsDescription .dealsDescriptionHeading ul {
+        padding: 0;
+    }
+
+        .dealsDescription .dealsDescriptionHeading ul li {
+            list-style: none;
+            color: #a5a8ad;
+            float: left;
+            padding: 5px;
+        }
+
+.dealsDescription .dealsDescriptionPage p {
+    text-align: justify;
+    color: #fff;
+}
+
+.custCommentaryHome .product-heading {
+    color: #a5a8ad;
+    border-bottom: 1px solid #444;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+}
+
+    .custCommentaryHome .product-heading h2 {
+        padding: 5px 0px 5px 0px;
+    }
+
+.custCommentaryHome #custCommentary {
+    background: #282b2f;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+    .custCommentaryHome #custCommentary h4 {
+        color: #95C23D;
+        padding: 0;
+    }
+
+    .custCommentaryHome #custCommentary i {
+        color: #a5a8ad;
+    }
+
+    .custCommentaryHome #custCommentary span {
+        color: #a5a8ad;
+        padding-left: 5px;
+    }
+
+    .custCommentaryHome #custCommentary article {
+        color: #fff;
+        text-align: justify;
+    }
+
+.custCommentaryHome .pagination {
+    width: 100%;
+}
+
+    .custCommentaryHome .pagination li {
+        padding: 1px;
+        margin: 1px;
+    }
+
+        .custCommentaryHome .pagination li a {
+            display: block;
+            text-align: center;
+            border-radius: 0px;
+            margin-left: 0px;
+            border-width: 1px 0 0 1px;
+            background: #282b2f;
+            width: 25px;
+            height: 25px;
+        }
+/*dailyRetail*/
+.chemical_dailyRetail {
+    max-height: 500px;
+    overflow-y: auto;
+    height: 100%;
+    background: #282b2f;
+}
+
+    .chemical_dailyRetail thead th {
+        position: sticky;
+        top: -2px;
+        color: #95C23D !important;
+    }
+/*chemical_monthly*/
+.chemical_monthly {
+    max-height: 500px;
+    overflow-y: auto;
+    height: 100%;
+    background: #282b2f;
+}
+
+    .chemical_monthly thead th {
+        position: sticky;
+        top: -2px;
+        color: #95C23D !important;
+    }
+/*chemical_weekly*/
+.chemical_weekly {
+    max-height: 500px;
+    overflow-y: auto;
+    height: 100%;
+    background: #282b2f;
+}
+
+    .chemical_weekly thead th {
+        position: sticky;
+        top: -2px;
+        color: #95C23D !important;
+    }
+/*chemical_Other*/
+/*.chemical_other {
+    max-height: 500px;
+    overflow-y: auto;
+    height: 100%;
+    background: #282b2f;
+    background: none;
+}*/
+
+    .chemical_other thead th {
+        color: #95C23D !important;
+    }
+/*chemical_dailyBulk*/
+.chemical_dailyBulk {
+    max-height: 500px;
+    overflow-y: auto;
+    height: 100%;
+    background: #282b2f;
+}
+
+    .chemical_dailyBulk thead th {
+        position: sticky;
+        top: -2px;
+        color: #95C23D !important;
+    }
+
+.market_analysis {
+    height: 550px;
+    overflow-y: auto;
+    background: #282b2f;
+}
+
+    .market_analysis thead th {
+        position: sticky;
+        top: -2px;
+        color: #95C23D !important;
+        border-bottom: 1px solid #444;
+    }
+
+    .market_analysis .by_location,
+    .market_analysis by_technology,
+    .market_analysis .by_process,
+    .market_analysis .demand_supply_gap,
+    .market_analysis .operating_efficiency,
+    .market_analysis .demand_by_trade_export {
+        max-height: 500px;
+        overflow-y: auto;
+        height: 100%;
+        background: #282b2f;
+    }
+
+        .market_analysis .by_location thead th,
+        .market_analysis by_technology thead th,
+        .market_analysis .by_process thead th,
+        .market_analysis .demand_supply_gap thead th,
+        .market_analysis .operating_efficiency thead th,
+        .market_analysis .demand_by_trade_export thead th {
+            position: sticky;
+            top: -2px;
+            color: #95C23D !important;
+        }
+
+        .market_analysis .by_location .demand_by_trade_export_volume,
+        .market_analysis by_technology .demand_by_trade_export_volume,
+        .market_analysis .by_process .demand_by_trade_export_volume,
+        .market_analysis .demand_supply_gap .demand_by_trade_export_volume,
+        .market_analysis .operating_efficiency .demand_by_trade_export_volume,
+        .market_analysis .demand_by_trade_export .demand_by_trade_export_volume {
+            max-height: 500px;
+            overflow-y: auto;
+            height: 100%;
+            background: #282b2f;
+        }
+
+            .market_analysis .by_location .demand_by_trade_export_volume thead th,
+            .market_analysis by_technology .demand_by_trade_export_volume thead th,
+            .market_analysis .by_process .demand_by_trade_export_volume thead th,
+            .market_analysis .demand_supply_gap .demand_by_trade_export_volume thead th,
+            .market_analysis .operating_efficiency .demand_by_trade_export_volume thead th,
+            .market_analysis .demand_by_trade_export .demand_by_trade_export_volume thead th {
+                position: sticky;
+                top: -2px;
+                color: #95C23D !important;
+            }
+
+            .market_analysis .by_location .demand_by_trade_export_volume thead th,
+            .market_analysis by_technology .demand_by_trade_export_volume thead th,
+            .market_analysis .by_process .demand_by_trade_export_volume thead th,
+            .market_analysis .demand_supply_gap .demand_by_trade_export_volume thead th,
+            .market_analysis .operating_efficiency .demand_by_trade_export_volume thead th,
+            .market_analysis .demand_by_trade_export .demand_by_trade_export_volume thead th {
+                position: sticky;
+                top: -2px;
+                color: #95C23D !important;
+            }
+
+.navbar-custom-menu {
+    position: absolute;
+    right: 5px;
+}
+
+.chemical_comparison .multiselect-selected-text {
+    color: #fff;
+}
+
+.chemical_comparison .dropdown-toggle {
+    color: #fff;
+}
+
+.login-Container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    margin: 0 auto;
+}
+
+    .login-Container .chemAnalystlogo img {
+        margin: 0 17%;
+    }
+
+    .login-Container .copyright-section {
+        margin: 0 auto;
+    }
+
+#login .langSelection .logininputWidth {
+    width: 266px;
+}
+
+#login .userinputWidth {
+    width: 266px;
+}
+
+#login .passinputWidth {
+    width: 266px;
+}
+
+#login .pl-10 {
+    padding-left: 10px;
+}
+
+#login .homeForgot_Pass a {
+    color: #a5a8ad;
+    font-size: 13px;
+}
+
+.forgotPassword_container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    margin: 0 auto;
+}
+
+    .forgotPassword_container .chemAnalystlogo img {
+        margin: 0 32%;
+    }
+
+    .forgotPassword_container .redirectToHome {
+        margin: 0 19%;
+        position: absolute;
+        right: -5%;
+        top: 54%;
+    }
+
+        .forgotPassword_container .redirectToHome a {
+            color: #a5a8ad;
+            font-size: 13px;
+        }
+
+    .forgotPassword_container .copyright-section {
+        margin: 0 auto;
+    }
+
+    .forgotPassword_container .forgotpassword_column {
+        background: #282b2f;
+        padding: 30px;
+        margin: 0 auto;
+        color: #a5a8ad;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    }
+
+        .forgotPassword_container .forgotpassword_column .userEmail {
+            width: 266px;
+        }
+
+        .forgotPassword_container .forgotpassword_column .emailIco {
+            padding-left: 10px;
+        }
+
+        .forgotPassword_container .forgotpassword_column .fa-envelope {
+            background-color: #fff;
+            color: #777777;
+            display: block;
+            float: right;
+            height: 38.1px;
+            font-size: 18px;
+            line-height: 42px;
+            text-align: center;
+            width: 43.1px;
+            border-radius: 2px;
+        }
+
+        .forgotPassword_container .forgotpassword_column .forgot_passSubmit .send_email {
+            height: 38.1px;
+            float: left;
+            margin-left: 5px;
+            /*margin-top: 10px;*/
+            background-color: #95C23D;
+            color: #fff;
+            padding: 7px 20px;
+            font-size: 14px;
+            outline: none !important;
+            border: none !important;
+        }
+
+            .forgotPassword_container .forgotpassword_column .forgot_passSubmit .send_email:hover,
+            .forgotPassword_container .forgotpassword_column .forgot_passSubmit .send_email:focus {
+                background-color: #223D8C;
+                color: #fff;
+                border: none !important;
+                outline: none !important;
+            }
+
+
+            /*============Pricing page css code start date 12/12/23 ==============*/
+
+.related_news_heading h4 {
+    color: #a5a8ad;
+    font-size: 1.3rem;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 15px;
+    margin-top: 30px;
+}
+
+div#news-container .news-cont .news-test p.MsoNormal {
+    color: #fff;
+    font-size: 0.92em;
+}
+
+div#news-container .news-cont .news-test h6.text-dark {
+    margin-bottom: 0px;
+}
+
+
+#news-container p,
+#news-container span,
+#news-container b,
+#news-container strong {
+    margin: 0px;
+    color: white !important;
+}
+
+a.product_finder {
+    display: inline-block;
+    font-size: 11px;
+    color: #96c33d;
+    position: absolute;
+    font-family: sans-serif;
+    text-align: right;
+    /*left: 0px;*/
+    right: 0;
+    text-decoration: underline;
+}
+
+#invoice {
+    padding-top:7px;
+}
+/*============Pricing page css code End date 12/12/23 ==============*/
+@media (max-width:768px) {
+    a.product_finder {
+        display: inline-block;
+        font-size: 11px;
+        color: #96c33d;
+        position: relative;
+        font-family: sans-serif;
+        text-align: right;
+        /*left: 0px;*/
+        right: 0;
+        text-decoration: underline;
+    }
+}
+
+
+
+
+
+/* iPads (portrait and landscape) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+    .filterSection .filterAndClear {
+        width: 100%;
+        text-align: center;
+        padding: 4px 6px;
+        background: #0098c9;
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+
+    .filterSection .stepwizard-step p {
+        color: #a5a8ad;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    .sidebar-menu > li > a {
+        padding: 16px 5px 12px 15px !important;
+        display: block;
+        color: #a5a8ad;
+        font-size: 12px;
+    }
+
+    .content-wrapper, .right-side, .main-footer {
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -webkit-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        margin-left: 180px !important;
+        z-index: 820;
+    }
+
+    .main-sidebar, .left-side {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-top: 50px;
+        height: 100%;
+        width: 180px !important;
+        z-index: 810;
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        background: #262626;
+    }
+}
+
+/* iPads (landscape) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+    .filterSection .filterAndClear {
+        width: 100%;
+        text-align: center;
+        padding: 4px 6px;
+        background: #0098c9;
+        margin-bottom: 6px;
+        font-size: 12px;
+    }
+
+    .filterSection .stepwizard-step p {
+        color: #a5a8ad;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    .sidebar-menu > li > a {
+        padding: 16px 5px 12px 15px !important;
+        display: block;
+        color: #a5a8ad;
+        font-size: 12px;
+    }
+
+    .content-wrapper, .right-side, .main-footer {
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -webkit-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        margin-left: 180px !important;
+        z-index: 820;
+    }
+
+    .main-sidebar, .left-side {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-top: 50px;
+        height: 100%;
+        width: 180px !important;
+        z-index: 810;
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        background: #262626;
+    }
+}
+
+/* iPads (portrait) ----------- */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) {
+    .filterSection .filterAndClear {
+        width: 100%;
+        text-align: center;
+        padding: 4px 6px;
+        background: #0098c9;
+        margin-bottom: 6px;
+        font-size: 11px;
+    }
+
+    .filterSection .stepwizard-step p {
+        color: #a5a8ad;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    .sidebar-menu > li > a {
+        padding: 16px 5px 12px 15px !important;
+        display: block;
+        color: #a5a8ad;
+        font-size: 12px;
+    }
+
+    .content-wrapper, .right-side, .main-footer {
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -webkit-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        margin-left: 180px !important;
+        z-index: 820;
+    }
+
+    .main-sidebar, .left-side {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-top: 50px;
+        height: 100%;
+        width: 180px !important;
+        z-index: 810;
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        background: #262626;
+    }
+}
+/**********
+iPad 3
+**********/
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) and (-webkit-min-device-pixel-ratio : 2) {
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 15px;
+        top: 32px;
+        font-size: 12px;
+    }
+    /*#spnForecast {
+        font-size: 10px;
+        height: 20px;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        right: 7px !important;
+        cursor: pointer;
+        bottom: -29px;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+    }*/
+
+    .filterSection .filterAndClear {
+        width: 100%;
+        text-align: center;
+        padding: 4px 6px;
+        background: #0098c9;
+        margin-bottom: 6px;
+        font-size: 11px;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        height: 36px;
+    }
+
+    .filterSection .stepwizard-step p {
+        color: #a5a8ad;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    .sidebar-menu > li > a {
+        padding: 16px 5px 12px 15px !important;
+        display: block;
+        color: #a5a8ad;
+        font-size: 12px;
+    }
+
+    .content-wrapper, .right-side, .main-footer {
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -webkit-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        margin-left: 180px !important;
+        z-index: 820;
+    }
+
+    .main-sidebar, .left-side {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-top: 50px;
+        height: 100%;
+        width: 180px !important;
+        z-index: 810;
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        background: #262626;
+    }
+    
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) and (-webkit-min-device-pixel-ratio : 2) {
+
+    .filterSection .filterAndClear {
+        width: 100%;
+        text-align: center;
+        padding: 4px 6px;
+        background: #0098c9;
+        margin-bottom: 6px;
+        font-size: 11px;
+        height: 27.5px !important;
+    }
+
+    .filterSection .stepwizard-step p {
+        color: #a5a8ad;
+        margin-top: 5px;
+        margin-bottom: 0px;
+        font-size: 10px;
+    }
+
+    .sidebar-menu > li > a {
+        padding: 16px 5px 12px 15px !important;
+        display: block;
+        color: #a5a8ad;
+        font-size: 12px;
+    }
+
+    .content-wrapper, .right-side, .main-footer {
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -webkit-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: margin-left 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        margin-left: 180px !important;
+        z-index: 820;
+    }
+
+    .main-sidebar, .left-side {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding-top: 50px;
+        height: 100%;
+        width: 180px !important;
+        z-index: 810;
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -moz-transition: -moz-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        -o-transition: -o-transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        transition: transform 0.3s cubic-bezier(0.32, 1.25, 0.375, 1.15);
+        background: #262626;
+    }
+}
+
+.exportBtn ul {
+    padding-left: 0px;
+}
+
+
+/*#spnForecast {
+    font-size: 10px;
+    height: 20px;
+    outline: none;
+    padding: 1px 10px;
+    border: 0.5px solid rgb(220, 220, 220);
+    color: rgb(255, 255, 255);
+    position: absolute;
+    right: 14px;
+   
+    cursor: pointer;
+    bottom: -29px;
+    z-index: 1;
+    background-color: rgb(89, 118, 32);
+}*/
+
+.setup-content {
+    padding: 0px;
+}
+/*@media only screen and (min-width: 834px) and (orientation: landscape) {
+    .bootstrap-select button {
+        background: #262626;
+        width: 130px !important;
+        border: 1px solid #d2d6de;
+        height: 27px;
+        border-radius: 0;
+        overflow: hidden;
+    }
+
+}
+
+@media only screen and (min-width: 1365px) and (orientation: landscape) {
+    .bootstrap-select button {
+        background: #262626;
+        width: 152px !important;
+        border: 1px solid #d2d6de;
+        height: 27px;
+        border-radius: 0;
+        overflow: hidden;
+    }
+}
+@media only screen and (min-width: 1920px) and (orientation: landscape) {
+    .bootstrap-select button {
+        background: #262626;
+        width: 227px !important;
+        border: 1px solid #d2d6de;
+        height: 27px;
+        border-radius: 0;
+        overflow: hidden;
+    }
+}*/
+
+
+
+/**Mobile Responsive**/
+
+
+/* iPhone 4 ----------- */
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) and (orientation : landscape) and (-webkit-min-device-pixel-ratio : 2) {
+    .bootstrap-select button {
+        width: 153px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) and (orientation : portrait) and (-webkit-min-device-pixel-ratio : 2) {
+    .bootstrap-select button {
+        width:153px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 128px!important;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 25px !important;
+        top: 29px !important;
+    }
+}
+@media only screen and (min-device-width : 393px) and (max-device-width :786px) and (orientation : portrait) and (-webkit-min-device-pixel-ratio : 2) {
+    .bootstrap-select button {
+        width: 156px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 128px!important;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+/* iPhone 5 ----------- */
+@media only screen and (min-device-width: 320px) and (max-device-height: 568px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-height: 568px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 132px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+
+}
+
+/* iPhone 6, 7, 8 ----------- */
+@media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 375px) and (max-device-height: 667px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 161px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+/* iPhone 6+, 7+, 8+ ----------- */
+@media only screen and (min-device-width: 414px) and (max-device-height: 736px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 414px) and (max-device-height: 736px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+@media only screen and (min-device-width: 414px) and (max-device-height: 896px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 179px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px!important;
+    }
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+@media only screen and (min-device-width: 412px) and (max-device-height: 732px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 178px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+/* iPhone X ----------- */
+@media only screen and (min-device-width: 375px) and (max-device-height: 812px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 375px) and (max-device-height: 812px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+        
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+/* iPhone XS Max, XR ----------- */
+@media only screen and (min-device-width: 414px) and (max-device-height: 896px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 414px) and (max-device-height: 896px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+/* Samsung Galaxy S3 ----------- */
+@media only screen and (min-device-width: 320px) and (max-device-height: 640px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 2) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+/* Samsung Galaxy S4 ----------- */
+@media only screen and (min-device-width: 320px) and (max-device-height: 640px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+      
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 167px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 178px;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+       
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+/* Samsung Galaxy S5 ----------- */
+@media only screen and (min-device-width: 360px) and (max-device-height: 640px) and (orientation : landscape) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 153px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 146px!important;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px !important;
+        top: 29px !important;
+    }
+}
+
+@media only screen and (min-device-width: 360px) and (max-device-height: 640px) and (orientation : portrait) and (-webkit-device-pixel-ratio: 3) {
+    .bootstrap-select button {
+        width: 153px !important;
+    }
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started {
+        min-width: 146px!important;
+    }
+
+    /*#spnForecast {
+        font-size: 8px !important;
+        height: 16px !important;
+        outline: none;
+        padding: 1px 10px;
+        border: 0.5px solid rgb(220, 220, 220);
+        color: rgb(255, 255, 255);
+        position: absolute;
+        left: 6px !important;
+        cursor: pointer;
+        bottom: -17px !important;
+        z-index: 1;
+        background-color: rgb(89, 118, 32);
+        width: 91px !important;
+    }*/
+    .filterSection .monthmdate i {
+        color: #fff;
+        position: absolute;
+        right: 26px!important;
+        top: 29px!important;
+    }
+}
+@media screen and (min-width:912px) and (max-width:1368px){
+    #category, #ddlProduct, #ddlRange, #example-getting-started, #ddlyear, #ddlToYear, #ddlChart, #fromdate, #todate, #ddlyear, #ddlFyear, #ddlToYear, #example-getting-started{
+        width:100%!important;
+    }
+    .filterSection .generatedGraphFilter .bootstrap-select button {
+        width: 100px ;
+        font-size: 10px;
+        padding: 6px;
+    }
+}

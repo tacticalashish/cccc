@@ -1,0 +1,677 @@
+﻿
+@{
+    ViewBag.Title = "ManageExpireSubscriptionNotification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    
+
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- this file was missing -->
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <style>
+        .popup-open {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            background: rgba(0,0,0,0.75);
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 999;
+        }
+
+        .child {
+            z-index: 999;
+            background: #000;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20vw;
+            text-align: center;
+            padding: 20px 10px;
+            color: #fff;
+            border-radius: 2px;
+            box-shadow: 2px 3px 5px #000;
+        }
+
+        .bttn {
+            padding: 5px 20px;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            margin: 5px 7px;
+            border-radius: 5px
+        }
+
+        .bttn-success {
+            background-color: #95c23d;
+            border: 1px solid #85ab3a;
+        }
+
+        .bttn-danger {
+            background-color: #dc3545;
+            border: 1px solid #b14643;
+        }
+
+        .card-title {
+            margin-top: 5px;
+        }
+    </style>
+
+    <script type="text/javascript">
+        $.formattedDate = function (dateToFormat) {
+            var dateObject = new Date(dateToFormat);
+            var day = dateObject.getDate();
+            var month = dateObject.getMonth() + 1;
+            var year = dateObject.getFullYear(); 
+            var hours = dateObject.getHours();
+            var minutes = dateObject.getMinutes();
+            var seconds = dateObject.getSeconds();
+
+
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            var formattedDate = day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+            return formattedDate;
+        };
+
+        $(document).ready(function () {
+        
+            GetClintEmail();
+        });
+
+        function GetsearchValues() {
+            Search = $('#search').val();
+            $('#search').html(GetPaginationHTML(Search));
+            GetSubscriptionBasedOnSearchFilter();
+        }
+
+        function GetSubscriptionBasedOnSearchFilter() {
+          
+            var TotalCount = 0;
+            var pageNumber = $('#PageNumber').val();
+            var Search = $('#search').val();
+            var UserId = $('#ClientPrimaryEmail').val();
+
+            var URL = "/SubsManagement/GetListForExpireSubscriptionNotification?searchKeyword='" + Search + "'";
+            URL += '&PageNumber=' + pageNumber ;
+            URL += '&UserId=' + UserId;
+            $.ajax({
+                url: URL,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+
+                    var tbodyHTML = '';
+                    if (json != null) {
+                        $(json.DateList).each(function (idx, elm) { 
+                            var date = elm.CreatedDate
+                            var CreatedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+
+                            var formattedDateFrom = null;
+                            var DateFrom = elm.DateFrom;
+                            formattedDateFrom = ($.formattedDate(new Date(parseInt(DateFrom.substr(6)))));
+
+                            var formattedDateTo = null;
+                            var DateTo = elm.DateTo;
+                            formattedDateTo = ($.formattedDate(new Date(parseInt(DateTo.substr(6)))));
+
+                            tbodyHTML += "<tr>";
+                            tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                            tbodyHTML += "<td>" + elm.Name + "</td>";
+                            tbodyHTML += "<td>" + elm.Phone + "</td>";
+                            tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                            tbodyHTML += "<td>" + elm.Status + "</td>";
+                            tbodyHTML += "<td>" + CreatedDate + "</td>";
+                            tbodyHTML += "<td>" + formattedDateFrom + "</td>";
+                            tbodyHTML += "<td>" + formattedDateTo + "</td>";
+                          
+                            if (elm.ExpiryNotification=="1")
+                            {
+                                tbodyHTML += "<td style='text-align:left'>" + "<input type='checkbox' id='Chkbox"+elm.Id+"'  onclick=UpdatecheckStatus('" + elm.Id + "') checked>" + "</td>"
+                                //tbodyHTML += "<td style='text-align:left'>" + "<a class='label label- info' href='../SubsManagement/UpdateNotifystatus?SubsId=" + elm.Id + "&Status=" +chkboxval+"'> <input type='checkbox' id='Chkbox' name='Chkbox' checked></a>" + "</td>"
+                            }
+                            else {
+                               // tbodyHTML += "<td style='text-align:left'>" + "<a class='label label- info' href='../SubsManagement/UpdateNotifystatus?SubsId=" + elm.Id + "&Status=" +chkboxval+"'> <input type='checkbox' id='Chkbox' name='Chkbox'></a>" + "</td>"
+                                tbodyHTML += "<td style='text-align:left'>" + "<input type='checkbox' id='Chkbox"+elm.Id+"'  onchange=UpdatecheckStatus('" + elm.Id + "')>" + "</td>"
+                            }
+                          
+                            tbodyHTML += "</tr>"
+                        });
+
+                        $('#divPagging').html(GetPaginationHTML(json));
+                        $('#pageSize').val(json.PageSize);
+
+                    }
+                    else {
+                        tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                    }
+
+
+                    $('.tbodydata').html(tbodyHTML);
+
+                    $('#DeSelectAll').show();
+                    $('#Rownumber').val('');
+                   
+                }
+            });
+        }
+
+        function UpdatecheckStatus(Id)
+        {
+            
+            var chkboxval = '';
+            var chkid = "#Chkbox" + Id;
+            
+            if ($(chkid).is(":checked")) {
+                chkboxval = '1';
+            }
+            else {
+                chkboxval = '0';
+            }
+         
+            $.ajax({
+                type: "POST",
+                url: "/SubsManagement/UpdateNotifystatus",
+                data: { SubsId: Id, Status: chkboxval },
+                success: function (response) {
+                   
+                },
+                failure: function (response) {
+                    console.log(response)
+
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+
+
+        function GetPaginationHTML(json) {
+
+            var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+            var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+            pagingInnerHTML += getPaginationButton;
+
+            return pagingInnerHTML;
+        }
+        function PaggingButton(elm) {
+
+            var pageNumber = elm.attr('url');
+
+            $('#PageNumber').val(pageNumber);
+
+            GetSubscriptionBasedOnSearchFilter();
+
+        }
+        function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+            var innerHTML = '';
+            var startLi = pagerSize / pagerSize;
+            var endLi = pagerSize;
+            var multiplier = activePage / pagerSize;
+            var modulo = activePage % pagerSize;
+            var virtualLi = pagerSize - pagerSize;
+            var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+            var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+            if (modulo == 0) {
+                next = next - pagerSize;
+                previous = previous - pagerSize;
+            }
+
+            if (activePage > pagerSize) {
+                for (var i = 1; i <= multiplier; i++) {
+                    virtualLi += pagerSize;
+                }
+
+                if (modulo > 0) {
+                    startLi = virtualLi + 1;
+                }
+                else {
+                    startLi = virtualLi - pagerSize + 1;
+                }
+                endLi = startLi + pagerSize - 1;
+            }
+
+            innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+            if (activePage > 1 && activePage < pagerSize + 1) {
+                innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);"
+
+                innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+
+                if (activePage == 1) {
+                    innerHTML += "<li class='paginate_button previous disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button previous'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage - 1);
+                    innerHTML += URL + (activePage - 1);
+                    innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+            }
+            else if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (previous);
+                innerHTML += URL + (previous);
+                innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+
+
+            for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+                if (i == activePage) {
+                    innerHTML += "<li>";
+                    innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button'>";
+                    innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + i;
+                    innerHTML += URL + i;
+                }
+
+                innerHTML += "' >";
+                innerHTML += i;
+                innerHTML += "</a>";
+                innerHTML += "</li>";
+            }
+
+            if (activePage + pagerSize > numberOfPages) {
+                if (activePage == numberOfPages) {
+                    innerHTML += "<li class='paginate_button next disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&raquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button next'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage + 1);
+                    innerHTML += URL + (activePage + 1);
+
+                    innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                    innerHTML += "</li>";
+                }
+
+                innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            else if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (next);
+                innerHTML += URL + (next);
+
+                innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            innerHTML += "</ul>";
+
+            return innerHTML;
+        }
+        
+        function GetClintEmail() {
+
+            var ClintEmailinnerHTML = "";
+
+         ClintEmailinnerHTML += "<option value=''>" + "Select Client Email" + "</option>";
+            $.ajax({
+                type: "POST",
+                url: "/SubsManagement/GetAllClintEmail",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+                    
+                    $(json.DataList).each(function (index, value) {
+                        ClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>" 
+                    });
+                    $('#ClientPrimaryEmail').html(ClintEmailinnerHTML);
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+
+        function Reset() {
+            $('#PageNumber').val('1');
+        }
+
+
+        function DeSelectAllCheck() {
+
+            var UserId = $('#ClientPrimaryEmail').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/SubsManagement/DeSelectAllCheck",
+                data: { UserId: UserId },
+                success: function (json) {
+
+                    var innerHTML = '';
+                    var data = json;
+                    if (data.length != 0) {
+                        $(data).each(function (idx, elm) {
+                            innerHTML += '<h3> ' + elm.ValidationMessage + ' Row Effected </h3>';
+                        });
+                    }
+
+                    $('.modal').hide();
+                    $('#Rownumber').html(innerHTML);
+                    GetSubscriptionBasedOnSearchFilter();
+
+                },
+                failure: function (response) {
+                    console.log(response)
+
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+
+            });
+
+        }
+
+
+ </script>
+
+</head>
+
+<style>
+
+    .popup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    #ChemicalPricelist {
+        margin-top: 10px;
+    }
+
+        #ChemicalPricelist table {
+            border: 0.5px solid #6d6c6c !important;
+            background-color: #303032;
+        }
+
+        #ChemicalPricelist tr th {
+            background-color: #051424;
+            color: #95c23d;
+        }
+
+        #ChemicalPricelist tr th, tr td {
+            font-weight: 500 !important;
+            font-size: 12px !important;
+            white-space: nowrap;
+            border: 0.5px solid #6d6c6c !important;
+        }
+
+    .scrolladmin01::-webkit-scrollbar {
+        width: 5px;
+        height: 8px;
+    }
+
+    .scrolladmin01::-webkit-scrollbar-button {
+        width: 5px;
+        height: 8px;
+    }
+
+    .scrolladmin01::-webkit-scrollbar-thumb {
+        background: #95c23d;
+        border: 1px none #000;
+        border-radius: 10px;
+    }
+
+        .scrolladmin01::-webkit-scrollbar-thumb:hover {
+            background: #95c23d;
+        }
+
+        .scrolladmin01::-webkit-scrollbar-thumb:active {
+            background: #95c23d;
+        }
+
+    .scrolladmin01::-webkit-scrollbar-track {
+        background: #eee;
+        border: 65px none #ffffff;
+        border-radius: 34px;
+    }
+
+        .scrolladmin01::-webkit-scrollbar-track:hover {
+            background: #eee;
+        }
+
+        .scrolladmin01::-webkit-scrollbar-track:active {
+            background: #eee;
+        }
+
+    .scrolladmin01::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    .btn-success {
+        background-color: #95c23d !important;
+        border: 1px solid #95c23d !important;
+    }
+
+    .popup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .child01 {
+        z-index: 999;
+        background: #000;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        padding: 6px 10px;
+        color: #fff;
+        border-radius: 2px;
+        box-shadow: 2px 3px 5px #000;
+        max-height: 80vh;
+        min-height: 30vh;
+        max-width: 80vw;
+        min-width: 30vw;
+        overflow: auto;
+    }
+    .client_sec{
+        display:flex;
+        align-items:flex-end;
+        gap:10px;
+    }
+
+    .modal {
+        position: absolute;
+        float: left;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .px-4 {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    .d-flex {
+        display:flex; align-items:center;
+    }
+    .ml-2 {
+        margin-left:4px;
+    }
+    .text-end {
+        float:right;
+    }
+
+</style>
+<div class="update-profile-wrapper">
+    <div class="container-fluid" style="padding-top:10px;margin-top:0px!important" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-12"><h3 style="color:white;margin-bottom:10px!important;line-height: inherit;">Manage Expire Subscription Notification</h3></div>
+           
+            <div class="col-md-12">
+                <label>Client Primary Email</label>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex">
+                            <select class="form-control form-control-sm selectpicker mb-1" id="ClientPrimaryEmail" name="ClientPrimaryEmail" title="ClientPrimaryEmail" data-live-search="true">
+                                <option value="">Clint Primary Email</option>
+                            </select>
+                            <input type="button" class="btn btn-success btn-sm px-4 ml-2" value="Find" onclick="Reset(),GetSubscriptionBasedOnSearchFilter()" />
+                        </div>
+
+                    </div>
+                    <div class="col-md-4 col-lg-offset-4">
+                        <input class="btn btn-success btn-sm px-4  text-end" type="button" value="DeSelect All" id="DeSelectAll" style="display:none" data-toggle="modal" data-target="#exampleModal" />
+                    </div>
+                </div>
+            </div>
+           
+
+            <div class="col-md-4" hidden="hidden">
+                <label><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="search" aria-controls="Userlist"></label>
+                <input type="button" class="btn btn-success" value="Search" onclick="GetsearchValues()" />
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+            <div class="col-md-3 col-md-offset-5"><p class=" " style="float:right;letter-spacing:1.5px;font-weight:!important"><span class="label label-danger" style="font-weight:500!important;font-size:14px!important" id="CountAssignProduct"></span></p></div>
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01">
+            <table id="ChemicalPricelist" class="table">
+                <thead>
+                    <tr>
+                        <th hidden="hidden">ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Account Status</th>
+                        <th>Activation CreatedDate</th>
+                        <th>Activation FromDate</th>
+                        <th>Expire ToDate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="divPagging"></div>
+</div>
+
+
+@*---------------------Popup box--------------------*@
+
+
+<div class="modal fade" id="exampleModal" tabindex="+1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-sm" role="document">
+        <div class="modal-content bg-success">
+            <div class="modal-body text-center">
+                <h3 style="margin:20px 0px">Do you really want to remove all the checks?</h3>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" onclick="DeSelectAllCheck()" data-dismiss="modal" data-toggle="modal" data-target="#secondbox">Yes</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="secondbox" tabindex="+1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-sm" role="document">
+        <div class="modal-content bg-success">
+            <div class="modal-body text-center">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 id="Rownumber" style="margin:20px 0px"></h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

@@ -1,0 +1,315 @@
+﻿
+@{
+    ViewBag.Title = "CreateLead";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" />
+<link rel="stylesheet" href="~/css/leadStyle.css"/>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+<style>
+    .bootstrap-select .dropdown-toggle:focus, .bootstrap-select > select.mobile-device:focus + .dropdown-toggle {
+        outline: thin dotted #333 !important;
+        outline: 0px auto -webkit-focus-ring-color !important;
+        outline-offset: -2px !important;
+    }
+    .box-height{
+        height:58px!important
+    }
+</style>
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'none';
+    });
+</script>
+<div class='container' id="loader">
+    <div class='loader'>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--text'></div>
+    </div>
+</div>
+<div class="position-relative popup-open04">
+    <div class="child">
+        <h4 class="card-title">Add Secondary Customer </h4>
+        <input type="text" id="Name" placeholder="Name" name="hdCommentaryRowID" class="form-control " style="margin-bottom:10px" />
+        <input type="text" id="Email" placeholder="Email" name="Email" class="form-control " style="margin-bottom:10px" />
+        
+        <input type="text" id="Phone" placeholder="Phone No" name="Email" class="form-control " style="margin-bottom:10px" />
+
+        <input type="text" id="Designation" placeholder="Designation" name="Designation" class="form-control " style="margin-bottom:10px" />
+
+       
+        <select class="form-control mb-1" id="ClientCompany" name="ClientCompany" title="ClientCompany"  >
+            <option value="">Select Client Company Name</option>
+        </select>
+        <label style="float:left;margin-bottom:10px"><input type="checkbox" id="chkprimary" /> Primary Email </label>
+        <p class="text-danger" id="Alert" style="margin-bottom:5px"></p>
+        <center>
+            <button class="btn btn-success " style="padding:3px 10px;" onclick="SaveCustomer()">Register</button>
+            <button class="btn btn-danger  " style="padding:3px 5px;" id="Cancel">Cancel</button>
+        </center>
+    </div>
+</div>
+
+<div class="position-relative popup-open">
+    <div class="child">
+        <p style="color:#b6ff00">Selected Product</p>
+        <span id="ProductDiscription" class="ProductDiscription"></span><br />
+        <button class="btn btn-danger" id="CancelProducts" style="margin-top:10px">Cancel</button>
+    </div>
+</div>
+
+<div class="position-relative popup-open05">
+    <div class="child  py-5">
+        <h5 class="card-title">Subscription cannot be created please First Won the lead</h5>
+        <center>
+            <button class="btn btn-danger mt-4" id="CancelPOP" style="padding:3px 12px;">OK</button>
+        </center>
+    </div>
+</div>
+
+<div class="col-md-12">
+    <div class="data-detail-wrapper table-responsive" id="dvTable" style="display:none">
+        <table id="Leadlist" class="table">
+            <thead>
+                <tr>
+                    <th hidden>Client Name</th>
+                    <th>Client Primary Email</th>
+                    <th hidden>Client Company Name</th>
+                    <th hidden>Client Country Name</th>
+                    <th hidden>State Name</th>
+                    <th hidden>Phone</th>
+                    <th hidden>User Type</th>
+                    <th hidden>Status</th>
+                    <th hidden>Billing Email Address</th>
+                    <th hidden>Subscription Type</th>
+                    <th hidden>Assign Analyst</th>
+                    <th hidden>Secondary Client Emails </th>
+                    <th>DateFrom</th>
+                    <th>DateTo</th>
+                    <th>Module</th>
+                    <th>Trader</th>
+                    <th>Credit</th>
+                    <th>Renew </th>
+                    <th>Country + Region</th>
+                    <th>Product</th>
+                    <th hidden>Chemical Pricing Range</th>
+                    <th hidden>Market Analysis Range</th>
+                    <th hidden>Remark</th>
+                    <th hidden>Region</th>
+                    <th>Files</th>
+                    <th>PaymentMode</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody class="tbodydata" id="tbodydata"></tbody>
+        </table>
+        <center><input class=" btn-success" style="margin: 10px 0px;border: 1px solid #5cb85c;font-size:12px;border-radius:2px;line-height: 14px;" id="SubmitAll" value="Submit All" onclick="SaveLeadRecord()" type="button" /></center>
+    </div>
+
+    <form id="frmChemicalPrice">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="" style="margin-top:10px">
+                    <div class="col-md-12">
+                        <div class="col-md-6 padding-0"> <h4 style="color:#fff" class="mb-1">Create Subscription Request </h4></div>
+                        <div class="col-md-6 padding-0"><a href="@Url.Action("CompanyMaster", "LeadManagementSubscription")" target="_blank" class="btn btn-success" style="float:right;padding: 1px 12px;">Add Company</a><input class="btn btn-success" style="float:right;margin-right:10px;padding: 1px 12px;" id="Register" value="Register Customer" onclick="" type="button" /></div>
+                        <div class="col-md-12 padding-0">
+                            <hr style="margin-top:5px!important" />
+                        </div>
+                    </div>
+                    <div class=" ">
+                        <div class="col-md-3 box-height">
+                            <label>Client Type</label>
+                            <select class="form-control mb-1" id="ClientType" name="ClientType" title="ClientType">
+                                <option value="">Select Client Type</option>
+                                <option value="New">New</option>
+                                <option value="Existing">Existing</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Client Primary Email</label>
+                            <select class="form-control mb-1" id="ClientPrimaryEmail" name="ClientPrimaryEmail" title="ClientPrimaryEmail">
+                                <option value="">Clint Primary Email</option>
+                            </select>
+                            @*<input type="text" class="form-control mb-1" placeholder="Client Primary Email" id="ClientPrimaryEmail" name="ClientPrimaryEmail" autocomplete="off" />*@
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Client Name</label>
+                            @*<select class="form-control mb-1" id="ClientName" name="ClientName" title="ClientName">
+                                <option value="">Clint Name</option>
+                            </select>*@
+                            <input type="text" class="form-control mb-1" placeholder="Client Name" id="ClientName" name="ClientName" autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Client Company Name</label>
+                            @*<select class="form-control mb-1 " id="ClientCompanyName"   name="ClientCompanyName" title="ClientCompanyName">
+                                <option value="">Select Client Company</option>
+                            </select>*@
+                            <input type="text" class="form-control mb-1" placeholder="Client Company Name" id="ClientCompanyName" name="ClientCompanyName" autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Client Phone Number</label>
+                            <input type="number" class="form-control mb-1" onKeyPress="if(this.value.length==12)return false;" placeholder="Client Phone Number" id="ClientPhoneNumber" name="ClientPhoneNumber" autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Client Country</label>
+                            <select class="form-control mb-1" id="ClientCountryName" name="ClientCountryName" title="ClientCountryName">
+                                <option value="">Select Client Country</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height" hidden id="DivState">
+                            <label>Client State</label>
+                            <select id="StateName" class="form-control mb-1" name="StateName" title="StateName">
+                                <option value="">Select Client State</option>
+                            </select>
+                        </div>
+                     
+                        <div class="col-md-3 box-height">
+                            <label>Billing Email Address</label>
+                            <input type="email" class="form-control mb-1" placeholder="Billing Email Address" id="BillingEmailAddress" name="BillingEmailAddress" autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Approval Basis</label>
+                            <select class="form-control mb-1" id="PaymentMode" name="PaymentMode" title="PaymentMode">
+                                <option value="">Select Approval Basis</option>
+                                <option value="PaymentReceived">Payment Received</option>
+                                <option value="PurchaseOrderReceived">Purchase Order Received</option>
+                                <option value="BothReceived">Both Received</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Payment Document</label>
+                            <input type="file" placeholder="FileUpload" id="FileUpload" name="FileUpload" size="23" class="form-control mb-1" />
+                            <input type="text" class="form-control" placeholder="Source" id="Source" name="Source" style="display:none;" />
+                        </div>
+                        @*<div class="col-md-3 ">
+                            <label>Subscription Type</label>
+                            <select class="form-control mb-1" id="SubscriptionType" name="SubscriptionType" title="SubscriptionType">
+                                <option value="">Select Subscription Type</option>
+                                <option value="1">Free Trial</option>
+                                <option value="2">Package</option>
+                            </select>
+                        </div>*@
+                        <div class="col-md-3 box-height">
+                            <label>User Type</label>
+                            <select class="form-control mb-1" id="UserType" name="UserType" title="UserType">
+                                <option value="">Select User Type</option>
+                                <option value="Manufacturer">Manufacturer</option>
+                                <option value="Trader">Trader</option>
+                                <option value="Executive">Executive</option>
+                                <option value="Industry Expert">Industry Expert</option>
+                                <option value="Customer">Customer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Assign Analyst</label>
+                            <select class="form-control mb-1" id="AssignAnalyst" name="AssignAnalyst" title="AssignAnalyst">
+                                <option value="">Select Assign Analyst</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Assign CRM</label>
+                            <select class="form-control mb-1" id="CRM" name="CRM" title="CRM">
+                                <option value="">Select CRM</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>Client Secondary Emails</label>
+                            @*<select class="form-control mb-1 " id=""  data-dropup-auto="false" data-size="5"  data-container="body"  data-live-search="true" data-none-selected-text="Client Secondary Email" multiple data-actions-box="true" data-selected-text-format="count > 3"></select>*@
+                            <select class="form-control mb-1 selectpicker" id="SecondaryClientEmails" data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5" data-none-selected-text="Client Secondary Email" multiple data-actions-box="true" data-selected-text-format="count > 3"></select>
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>From Date</label>
+                            <input type="text" class="form-control mb-1" placeholder="From Date" id="DateFrom" name="DateFrom" autocomplete="off" />
+                        </div>
+                        <div class="col-md-3 box-height">
+                            <label>To Date</label>
+                            <input type="text" class="form-control mb-1" placeholder="To Date" id="DateTo" name="DateTo" autocomplete="off" />
+                        </div>
+
+                        <div class="col-md-3 box-height">
+                            <label>Subscription Region/Country</label>
+                            <select class="form-control mb-1" id="SubscriptionRegionCountry" name="SubscriptionRegionCountry" title="SubscriptionRegionCountry">
+                                <option value="">Select Region/Country</option>
+                                <option value="region">Region Wise</option>
+                                <option value="country">Country Wise</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 box-height">
+                            <label>Module</label>
+                            <select class="form-control mb-1 selectpicker" id="Module" data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5" data-none-selected-text="Select Module" multiple data-actions-box="true" data-selected-text-format="count > 3"></select>
+                        </div>
+
+                        <div class="col-md-3 box-height" hidden id="RegionDiv">
+                            <label>Region</label>
+                            <select class="form-control mb-1" id="Region" name="Region" title="Region" style="padding:3.5px 6px!important">
+                                <option value="">Select Region</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height" id="CountryDiv" hidden>
+                            <label>Country</label>
+                            <select class="form-control mb-1" id="Country" data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5"  data-none-selected-text="Select Country"></select>
+                        </div>
+                        <div class="col-md-3 box-height" id="ProductDiv">
+                            <label>Product</label>
+                            <select class="form-control mb-1 selectpicker" id="Product" data-container="body" data-live-search="true"  data-dropup-auto="false" data-size="5"  data-none-selected-text="Select Product" multiple data-actions-box="true" data-selected-text-format="count > 3"></select>
+                        </div>
+                      
+                        <div class="col-md-3 box-height" id="dvChemicalPricingRange" hidden>
+                            <label>Chemical Range</label>
+                            <select class="form-control mb-1 selectpicker" id="ChemicalRange"  data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5" data-none-selected-text="Select Chemical Range" multiple data-actions-box="true" data-selected-text-format="count > 3">
+                                <option value="">Select Chemical Range</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 box-height" id="dvMarketAnalysisRange" hidden>
+                            <label>Market Analysis Range</label>
+                            <select class="form-control mb-1 selectpicker" id="MarketAnalysisRange"data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5"  data-none-selected-text="Select Market Analysis Range" multiple data-actions-box="true" data-selected-text-format="count > 3">
+                                <option value="">Select Market Analysis Range</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 box-height">
+                            <input type="checkbox" value="Trader" id="Trader" style="margin-top:30px;"  onchange="showdivCredit()">
+                            <label> Trader </label>
+                        </div>
+
+                        <div class="col-md-3 box-height" style="display:none" id="divCredit">
+                            <label> Credit Score </label>
+                            <input type="text" placeholder="Credit Score" id="Credit" />
+                        </div>
+
+                        <div class="col-md-3 box-height">
+                            <input type="checkbox" value="Renew" id="Renew" style="margin-top:30px;">
+                            <label>Renew </label>
+                        </div>
+
+                        <div class="col-md-12 col-lg-12 ">
+                            <label>Remarks</label>
+                            <textarea id="Remark" class="form-control mb-1 " rows="4" name="Remark" placeholder="Remarks"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <input class="btn btn-success" value="Add" onclick="BindDatainGrid()" type="button" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js" defer></script>
+<script src="~/js/leadJS.js"></script>

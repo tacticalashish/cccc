@@ -1,0 +1,238 @@
+﻿@model IEnumerable<ChemAnalyst.Models.SA_Company>
+@*@{
+        ViewBag.Title = "CompanyProfile";
+        Layout = "~/Views/Shared/_LayoutUser7.cshtml";
+    }*@
+@{
+    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToUpper() == "CUSTOMER")
+    {
+        Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutUser9.cshtml";
+    }
+
+}
+<script>
+
+    function showmodel() {
+        $("#myModal").show();
+    }
+    function closemodel() {
+        $("#myModal").hide();
+    }
+</script>
+<div class="modal" id="myModal">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content login-pic">
+            <div class="modal-body">
+              
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="login-pic">
+                            <div class="freeSub">
+                                <h2 style="color:black">Access Company Profiles in few-clicks.</h2>
+                                <a target="_blank" href="@Url.Action("FreeTrail", "ChemAnalyst")" class="btn btn-yellow">Start your Free Trail today.</a>
+                                <a href="@Url.Action("CompanyProfile", "Company")" class="btn btn-yellow">Go Back</a>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="inner-banner">
+    <img src="~/images/about-banner.jpg">
+    <h1>Company Profile</h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Company Profile</li>
+    </ol>
+</div>
+<div class="page-content">
+    <div class="static-page">
+        <div class="container">
+            <div class="company-profile">
+                <div class="com-top-3col">
+                    <div class="row">
+                        @if (Session["UserRole"] == null)
+                        {
+                            <div class="col-lg-12">
+                                <div class="searchbox" style="margin-top:10px;">
+                                    @using (Html.BeginForm("CompanyProfile", "Company", null, FormMethod.Post, new { @class = "row", enctype = "multipart/form-data" }))
+                                    {
+                                        <div class="col-md-2" style="margin-bottom: 15px;">
+                                            <input type="text" placeholder="Company Name" class="plbxt btn btn-primary  width100" id="companyname" name="companyname" />
+
+                                        </div>
+
+                                        <div class="col-md-3" style="display:none; margin-bottom: 15px;">
+                                            <select id="category" name="category" class="plbxt btn btn-primary  width100">
+                                                <option value="">Select Company Category</option>
+                                                @foreach (var item in ViewBag.Category)
+                                                {
+                                                    <option value="@item">@item</option>
+                                                }
+                                            </select>
+
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 15px;">
+                                            <select id="products" name="products" class="plbxt btn btn-primary  width100">
+                                                <option value="">Select Products</option>
+                                                @foreach (var item in ViewBag.Product)
+                                                {
+                                                    <option value="@item.id">@item.ProductName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2" style="display:none">
+                                            <select id="fyear" name="fyear" class="plbxt btn btn-primary  width100">
+
+                                                @foreach (var item in ViewBag.Fyear)
+                                                {
+                                                    <option value="@item">@item</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 15px;">
+                                            <select id="revsize" name="revsize" class="plbxt btn btn-primary  width100">
+                                                <option value="">Revenue Size</option>
+                                                <option value="10-100">10-100 Million</option>
+                                                <option value="100-500">100-500 Million</option>
+                                                <option value="500-1000">500-1000 Million</option>
+                                                <option value="1000-5000">1000-5000 Million</option>
+                                                <option value="5000">5000+ Million</option>
+
+                                            </select>
+                                        </div>
+
+
+
+                                        <div class="col-md-2" style="margin-bottom: 15px;">
+                                            <select id="empsize" name="empsize" class="plbxt btn btn-primary  width100">
+                                                <option value="">Employee Size</option>
+                                                <option value="10-100">10-100</option>
+                                                <option value="100-500">100-500</option>
+                                                <option value="500-1000">500-1000</option>
+                                                <option value="1000-5000">1000-5000</option>
+                                                <option value="5000">5000 +</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2" style="margin-bottom: 15px;">
+                                            <button type="submit" class="btn btn-green">
+                                                @*<i class="fa fa-filter"></i>*@
+                                                Filter
+                                            </button>
+                                            <a href="#" class="btn btn-green" onclick="ClearSearch()">
+                                                <i class="fa fa-filter"></i>Clear
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <div class="width100" style="height:30px"></div>
+                        <table class="table table-bordered table-striped" >
+                            <thead style="background-color: green;
+ color: #fff;">
+                                <tr>
+                                    <th width="100px">S No</th>
+                                    <th>Company</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-style: solid;">
+                                @{ int i = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@i.ToString()</td>
+                                            <td>
+
+                                                @if (ChemAnalyst.DAL.ProductDataStore.GetProductCompanyReletion(item.id, ViewBag.f))
+                                                {
+                                                    <a href="@Url.Action("CompanyProfileDetails", "Company", new { id = item.id })">@(item.Name.Length > 40 ? (item.Name.Substring(0, 40)) : item.Name)...</a>
+                                                }
+                                                else
+                                                {<a onclick="showmodel()">@(item.Name.Length > 40 ? (item.Name.Substring(0, 40)) : item.Name)...</a>
+                                            }
+
+                                            </td>
+                                        </tr>
+                                        { i = i + 1; }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+
+                       
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="../../js/jquery.js"></script>
+<script src="../../js/jquery-3.3.1.slim.min.js"></script>
+<script src="../../js/popper.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+@*<script src="http://cdnjs.cloudflare.com/ajax/libs/simplelightbox/1.17.1/simple-lightbox.js"></script>*@
+<script src="../../js/owl.carousel.js"></script>
+<script src="../../js/wow.min.js"></script>
+<script>
+
+    $(function () {
+
+        $("#category").val('@ViewBag.Cat');
+        $("#products").val('@ViewBag.Prod');
+        $("#revsize").val('@ViewBag.RevS');
+        $("#empsize").val('@ViewBag.EmpSiz');
+        $("#fyear").val('@ViewBag.Fy');
+        $("#companyname").val('@ViewBag.CName');
+
+
+        jQuery('.fromdate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+
+            }
+        });
+        jQuery('.todate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function (selected) {
+
+
+
+            }
+        });
+        var d = new Date();
+
+        $('.fromdate').val('@ViewBag.formdate');
+        $('.todate').val('@ViewBag.todate');
+    });
+
+    function ClearSearch() {
+        
+            //$("#companyname").val('');
+            //$("#products").val('');
+            //$("#revsize").val('');
+            //$("#empsize").val('');
+        //window.location.reload();
+          window.location.href= '@Url.Action("CompanyProfile", "Company")';
+
+        }
+</script>
+
+
+

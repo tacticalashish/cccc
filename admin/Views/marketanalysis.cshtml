@@ -1,0 +1,1628 @@
+﻿@using ChemAnalyst.ViewModel
+@model List<ChemAnalyst.ViewModel.MA_StackViewModel>
+@{
+
+
+    var XLabels = Newtonsoft.Json.JsonConvert.SerializeObject(Model.FirstOrDefault().LstData.Select(x => x.MDimensionOne).ToList());
+    var YValues = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.LstData.Select(w => w.Quantity)).ToList());
+    var YValues2 = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.LstData.Select(w => w.Quantity1)).ToList());
+    var label2 = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.MStackedDimensionOne).ToList());
+    var ChartTitle = "";
+    var Product = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.Product).FirstOrDefault());
+    var ChartType = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.MChartType).FirstOrDefault());
+    var range = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.MRange).FirstOrDefault());
+    var Category = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.category).FirstOrDefault());
+
+    var selectedLegends = Model.FirstOrDefault().selectedLegends;
+
+    if (selectedLegends == null)
+    {
+        selectedLegends = "";
+    }
+
+    var chart22 = Newtonsoft.Json.JsonConvert.SerializeObject(Convert.ToString(ViewBag.Chart2));
+    var rangeArray = new Dictionary<string, string>();
+    rangeArray.Add("Company", "Capacity By Company");
+    rangeArray.Add("Location", "Capacity By Location");
+    rangeArray.Add("Technology", "Capacity By Technology");
+    rangeArray.Add("Process", "Capacity By Process");
+    rangeArray.Add("Production", "Production By Company");
+    rangeArray.Add("Operating Efficiency", "Operating Efficiency");
+    rangeArray.Add("Demand By EndUse(T)", "Demand By End Use");
+    rangeArray.Add("Demand By Grade(T)", "Demand By Grade");
+    rangeArray.Add("Demand By Type(T)", "Demand By Type");
+    rangeArray.Add("Demand By SalesChannel(T)", "Demand By Sales Channel");
+    rangeArray.Add("Demand By Region(T)", "Demand By Region");
+    rangeArray.Add("Demand By TradeExport", "By Value");
+    rangeArray.Add("Demand By TradeImport", "By Value");
+    rangeArray.Add("Demand Supply Gap", "Demand - Supply Gap");
+    rangeArray.Add("Demand By CompanyShares(T)", "Company Share");
+    string rangeType = Model.Select(x => x.MRange).FirstOrDefault();
+    ChartTitle = rangeArray[rangeType] + " " + "Market Analysis ";
+}
+@{
+    var headerData = ChemAnalyst.DAL.ProductDataStore.GetHeaderData();
+}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
+    <title>Chem Analyst</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald|Roboto+Condensed:400,700|Work+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/animate.css" type="text/css" />
+    <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <!-- Owl Stylesheets -->
+    <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="~/css/bootstrap-multiselect.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="~/css/custom.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/scroll.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4"><div class="logo"><a href="/"><img src="~/images/logo.png" alt=""></a></div></div>
+                <div class="col-md-8 ml-auto">
+                    <div class="top-con-bar">
+                        <div class="row justify-content-end">
+                            <div class="col-sm-3">
+                                <div class="icon"><i class="fa fa-phone"></i></div>
+                                <div class="top-bt-txt">
+                                    <h4>Telephone</h4>
+                                    <p>@headerData.PhoneNumber</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="icon"><i class="fa fa-envelope"></i></div>
+                                <div class="top-bt-txt">
+                                    <h4>Email Address</h4>
+                                    <p>@headerData.EmailAddress </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="main-nav">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg p-0" id="mainNav">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"><span class="fa fa-bars 2x"></span> Menu</button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Market Analysis </a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ChecmPriceChart", "ChemicalPricing")">Chemical Pricing</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Reportsection", "Industry")">Industry Reports</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("CompanyProfile", "Company")">Company Profile</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("NewsHome", "NewsAndDeals")">News</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("DealsHome", "NewsAndDeals")">Deals</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Contact", "ChemAnalyst")">Contact Us</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("FreeTrail", "ChemAnalyst")"> Free Trial</a> </li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Login")"><i class="fa fa-user"></i> Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "ChemAnalyst")"><i class="fa fa-home"></i> Home</a></li>
+                        </ul>
+                    </div>
+
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="inner-banner">
+        <img src="~/images/about-banner.jpg">
+        <h1>Market Analysis</h1>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Market Analysis</li>
+        </ol>
+    </div>
+
+    <div class="page-content">
+        <div class="static-page">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="common-desc">
+                            <p style="text-justify:auto; line-height:25px; font-size:1rem">Access in-depth demand and supply for more than 175 chemicals and petrochemicals bifurcated by capacity, production, demand-supply gap, foreign trade, operating efficiency, company shares, revenues by application, sales channel and regions in the Indian market. Accurate and unbiased data provides you a 360° view of the market with historical and forecast sales data which will not only enable you to stay informed about the new developments in the market but will help you plan your future strategies. </p>
+                        </div>
+                        <div class="filter-chart-type">
+                            @using (Html.BeginForm("ShowChart", "MarketAnalysis", null, FormMethod.Post, new { @id = "ShowChart", enctype = "multipart/form-data" }))
+                            {
+                                <div class="row">
+                                    <div class="col-md-4 mt10">
+                                        <p><i class="fa fa-bars"></i> Category</p>
+                                        @Html.DropDownList("category", new SelectList(ViewBag.ProductList, "Value", "Text"), "Please select category", new { @id = "category", @class = "btn btn-primary width100", required = "required", oninvalid = "this.setCustomValidity('Please select Category')", onchange = "try{setCustomValidity('')}catch(e){}" })
+
+                                    </div>
+                                    <div class="col-md-4 mt10">
+                                        <p><i class="fa fa-list"></i> Product</p>
+                                        <select class="btn btn-primary width100" id="ddlProduct" name="ddlProduct" required="required" oninvalid="this.setCustomValidity('Please select product')" onchange="try{setCustomValidity('')}catch(e){}"></select>
+                                    </div>
+                                    <div class="col-md-4 mt10">
+                                        <p><i class="fa fa-random"></i> Analysis Parameters</p>
+                                        <select id="ddlRange" name="ddlRange" class="btn btn-primary width100" required="required" oninvalid="this.setCustomValidity('Please Select File Type')" onchange="try{setCustomValidity('')}catch(e){}">
+                                            <option value="">Select File Type</option>
+                                            <option value="Company" selected>Capacity By Company</option>
+                                            <option value="Location">Capacity By Location</option>
+                                            <option value="Technology">Capacity By Technology</option>
+                                            <option value="Process">Capacity By Process</option>
+                                            <option value="Production">Production By Company</option>
+                                            <option value="Operating Efficiency">Operating Efficiency</option>
+                                            @*<option value="Demand By EndUse(%)">Demand By EndUse(%)</option>*@
+                                            <option value="Demand By EndUse(T)">Demand By End Use</option>
+                                            @*<option value="Demand By Grade(%)">Demand By Grade(%)</option>*@
+                                            <option value="Demand By Grade(T)">Demand By Grade</option>
+                                            @*<option value="Demand By Type(%)">Demand By Type(%)</option>*@
+                                            <option value="Demand By Type(T)">Demand By Type</option>
+                                            <option value="Demand By SalesChannel(T)">Demand By Sales Channel</option>
+                                            @*<option value="Demand By SalesChannel(%)">Demand By SalesChannel(%)</option>*@
+                                            @*<option value="Demand By GradePricing">Demand By GradePricing</option>*@
+                                            <option value="Demand By Region(T)">Demand By Region</option>
+                                            @*<option value="Demand By Region(%)">Demand By Region(%)</option>*@
+                                            <option value="Demand By TradeExport">Country-wise Export</option>
+                                            <option value="Demand By TradeImport">Country-wise Import</option>
+                                            <option value="Demand Supply Gap">Demand-Supply Gap</option>
+                                            <option value="Demand By CompanyShares(T)">Company Share</option>
+                                            @*<option value="Demand By CompanyShares(%)">Demand By CompanyShares(%)</option>*@
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4  mt10">
+                                        <p><i class="fa fa-bar-chart"></i> Chart Types</p>
+                                        <select class="btn btn-primary width100" id="ddlChart" name="ddlChart">
+                                            <option value="line">Line Chart</option>
+                                            <option value="bar">Bar Chart</option>
+                                            @*<option value="pie">Pie Chart</option>*@
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4  mt10">
+                                        <p><i class="fa fa-bar-chart"></i> From Year</p>
+                                        @*<select class="btn btn-primary width100" id="ddlFyear" name="ddlFyear">
+                                                <option value="0">Select from</option>
+                                                <option value="2016">2016</option>
+                                                <option value="2017">2017</option>
+                                                <option value="2018">2018</option>
+                                                <option value="2019">2019</option>
+                                                <option value="2020">2020</option>
+                                            </select>*@
+                                        @Html.DropDownListFor(m => m.FirstOrDefault().FromYear, ChemAnalyst.DAL.ProductDataStore.GetUniqueYears(), "Select from", new { @class = "btn btn-primary width100", @id = "ddlFyear", @name = "ddlFyear", onchange = "changeFrom()" })
+                                    </div>
+                                    <div class="col-md-4  mt10">
+                                        <p><i class="fa fa-bar-chart"></i> To Year</p>
+                                        @*<select class="btn btn-primary width100" id="ddlToYear" name="ddlToYear">
+                                                <option value="0">Select to</option>
+                                                <option value="2016">2016</option>
+                                                <option value="2017">2017</option>
+                                                <option value="2018">2018</option>
+                                                <option value="2019">2019</option>
+                                                <option value="2020">2020</option>
+                                            </select>*@
+                                        @Html.DropDownListFor(m => m.FirstOrDefault().ToYear, ChemAnalyst.DAL.ProductDataStore.GetUniqueYears(), "Select to", new { @class = "btn btn-primary width100", @id = "ddlToYear", @name = "ddlToYear", onchange = "changeTo(this)" })
+                                    </div>
+                                    <div class="col-md-4 mt12" style="display:none">
+                                        <p>
+                                            <i class="fa fa-compress"></i> Comparision
+                                        </p>
+                                        <select name="example-getting-started" id="example-getting-started" class="btn btn-primary width100" multiple="multiple"> </select>
+                                        @*<option selected="selected" value="xyz">Xyz</option>
+                                            <option selected="selected" value="pqr">Pqr</option>
+                                            <option value="lmn">Lmn</option>*@
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="hidden" id="hiddenLegends" name="hiddenLegends" value="@selectedLegends" />
+                                        <button id="submit" type="submit" onclick="SubmitForm()" class="btn btn-green mt27">
+                                            <i class="fa fa-refresh"></i>
+                                            View Chart
+                                        </button>
+
+                                    </div>
+                                    <div class="col-md-4 mt10">
+                                        <a href="javascript:void(0)" id="exportpdf2" onclick="generatePDF()" class="text-primary" style="margin-top:35px">Export PDF</a>
+                                        <a href="javascript:void(0)" id="exportxls2" onclick="exportToExcel('tblRegisteredUsers', 'Market-Analysis.')" class="text-primary" style="margin-left: 25px;">Export Excel</a>
+
+                                        <a href="javascript:void(0)" id="exportxls3" onclick="exportToExcel3('tblRegisteredUsersVolume', 'Market-Analysis.')" class="text-primary" style="margin-left: 25px; display:none;">Export Excel Volume</a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="filter-checkbox-btn" style="display:none">
+
+                            <ul>
+                                @foreach (string item in (Model.FirstOrDefault().LstData.Select(x => x.MDimensionOne).ToList()))
+                                {
+                                    <li><a href="#">@item <i class="fa fa-close"></i></a></li>
+                                }
+                            </ul>
+                        </div>
+                        @if (ViewBag.AllLegends != null)
+                        {
+                            <div id="chatwindow">
+                                <div class="filter-checkbox-btn lgndchk" style="display:block; " id="messagewindow">
+
+                                    @foreach (var item in ViewBag.AllLegends)
+                                    {
+                                        <label class="checkbox-inline" style="font-size: 12px;font-weight: bold;">
+                                            <input type="checkbox" value="@item.Name" @(selectedLegends.Contains(item.Name) ? "checked='checked'" : "") class="chcktbl" onclick="myfunction(this)">  @item.Name
+                                        </label>
+
+                                    }
+
+                                </div>
+                            </div>
+                        }
+                        <div id="invoice">
+                            <div class="pdfheader" style="display:none">
+                                <div style="text-align:center; padding-top:20px;">
+                                    <img src="~/images/logo.png" alt="">
+
+                                </div>
+
+                            </div>
+                            @if (rangeType != "Demand By CompanyShares(T)")
+                            {
+                                if (rangeType == "Demand By TradeExport" || rangeType == "Demand By TradeImport")
+                                {
+                                    <span class="pull-right" style="font-size:12px;margin-right:10px; font-weight:bold;">[Unit = INR Millions]</span>
+                                }
+                                else
+                                {
+                                    <span class="pull-right" style="font-size:12px;margin-right:10px; font-weight:bold;">[Unit = Volume by '000 Tonnes]</span>
+                                }
+                            }
+                            <div style="height:30px"></div>
+                            @if (ViewBag.Chart2 != null)
+                            {
+                                @*<h3>Market Analysis by Value</h3>*@
+
+                            }
+                            <div class="graph-ui">
+                                <canvas id="canvas"></canvas>
+                            </div>
+
+                            <div style="height:30px"></div>
+                            @if (ViewBag.Chart2 != null)
+                            {
+                                @*<h3>Market Analysis by Volume</h3>*@
+
+                                <span class="pull-right" style="font-size:12px;margin-right:10px; font-weight:bold;">[Unit = Volume by '000 Tonnes]</span>
+                                <div style="height:30px"></div>
+                                <canvas id="canvas2"></canvas>
+                            }
+                            <div style="height:30px"></div>
+                            <div class="col-md-12">
+                                <div style="height:30px"></div>
+                                <div class="common-desc" style="display:none;">
+                                    <h4 style="border-bottom: 1px solid #ccc">
+                                        @Model.FirstOrDefault().CommentaryTitle
+                                        <a id="viewAll" target="_blank" href="@Url.Action("CommentaryHome", "ChemicalPricing", new { ProductId = Model.Select(x => x.Product).FirstOrDefault() , Type= "Market Analysis" })" style="cursor: pointer;font-size: 14px;float: right;"><span>View all</span></a>
+                                    </h4>
+                                    <p>
+                                        @Html.Raw(WebUtility.HtmlDecode(@Model.FirstOrDefault().CommentaryDescription))
+                                    </p>
+                                </div>
+                                <div style="height:30px"></div>
+                                @*<div style="height:30px"></div>*@
+
+                                @*<div style="height:30px"></div>*@
+
+
+                            </div>
+                            <div style="height:70px"></div>
+                            <div class="pdfooter" style="display:none">
+                                <p id="pfooter" style="text-align:center">Copyright 2019. ChemAnalyst. All Rights Reserved.</p>
+                            </div>
+                        </div>
+                        <div class="custom-table" style="font-weight:100; font-size:0.75rem; text-align:center">
+                            @if (ViewBag.R != null)
+                            {
+                                if (Model.FirstOrDefault().MRange == "Location")
+                                {
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyLoc>)ViewBag.R).Select(x => x.States).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in ((List<ChemAnalyst.Models.SA_MarketbyLoc>)ViewBag.R).Select(x => x.year).Distinct())
+                                                {
+                                                    <tr>
+                                                        <td>@count</td>
+                                                        @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyLoc>)ViewBag.R).Select(x => x.States).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                        {
+                                                            <td>@(((List<ChemAnalyst.Models.SA_MarketbyLoc>)ViewBag.R).Where(x => x.States == column && x.year == count).Sum(x => x.count))</td>
+
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else if (Model.FirstOrDefault().MRange == "Technology")
+                                {
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyTech>)ViewBag.R).Select(x => x.Technology).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in ((List<ChemAnalyst.Models.SA_MarketbyTech>)ViewBag.R).Select(x => x.year).Distinct())
+                                                {
+                                                    <tr>
+                                                        <td>@count</td>
+                                                        @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyTech>)ViewBag.R).Select(x => x.Technology).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                        {
+
+
+
+
+
+                                                            <td>@(((List<ChemAnalyst.Models.SA_MarketbyTech>)ViewBag.R).Where(x => x.Technology == column && x.year == count).Sum(x => x.count))</td>
+
+                                                            //  }
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else if (Model.FirstOrDefault().MRange == "Process")
+                                {
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyProcess>)ViewBag.R).Select(x => x.Process).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in ((List<ChemAnalyst.Models.SA_MarketbyProcess>)ViewBag.R).Select(x => x.year).Distinct())
+                                                {
+                                                    <tr>
+                                                        <td>@count</td>
+                                                        @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyProcess>)ViewBag.R).Select(x => x.Process).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                        {
+
+
+
+
+
+                                                            <td>@(((List<ChemAnalyst.Models.SA_MarketbyProcess>)ViewBag.R).Where(x => x.Process == column && x.year == count).Sum(x => x.count))</td>
+
+                                                            //  }
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else if (Model.FirstOrDefault().MRange == "Demand Supply Gap")
+                                {
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyDemandsupply>)ViewBag.R).Select(x => x.DemandSupply).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in ((List<ChemAnalyst.Models.SA_MarketbyDemandsupply>)ViewBag.R).Select(x => x.year).Distinct())
+                                                {
+                                                    <tr>
+                                                        <td>@count</td>
+                                                        @foreach (string column in ((List<ChemAnalyst.Models.SA_MarketbyDemandsupply>)ViewBag.R).Select(x => x.DemandSupply).Distinct())// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                        {
+                                                            if (column.Contains("Y-O-Y"))
+                                                            {
+                                                                <td>@(((List<ChemAnalyst.Models.SA_MarketbyDemandsupply>)ViewBag.R).Where(x => x.DemandSupply == column && x.year == count).Sum(x => x.count)) %</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@(((List<ChemAnalyst.Models.SA_MarketbyDemandsupply>)ViewBag.R).Where(x => x.DemandSupply == column && x.year == count).Sum(x => x.count))</td>
+                                                            }
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                if (Model.FirstOrDefault().MRange == "Operating Efficiency")
+                                {
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in (Model.FirstOrDefault().LstData.Select(x => x.MDimensionOne).ToList()))// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in Model.Select(x => x.MStackedDimensionOne).ToList())
+                                                {
+                                                    <tr>
+                                                        @foreach (var data in Model.Where(x => x.MStackedDimensionOne == count).ToList())
+
+                                                        {
+                                                            <th>@count</th>
+
+                                                            foreach (var value in data.LstData.Select(x => x.Quantity).ToList())
+                                                            {
+                                                                <th>@value %</th>
+                                                            }
+
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else if (Model.FirstOrDefault().MRange == "Demand By TradeExport" || Model.FirstOrDefault().MRange == "Demand By TradeImport")
+                                {
+                                    <h6 style="color: #807777; font-weight:bold">Market Analysis by Value</h6>
+
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in (Model.FirstOrDefault().LstData.Select(x => x.MDimensionOne).ToList()))// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in Model.Select(x => x.MStackedDimensionOne).ToList())
+                                                {
+                                                    <tr>
+                                                        @foreach (var data in Model.Where(x => x.MStackedDimensionOne == count).ToList())
+
+                                                        {
+                                                            <th>@count</th>
+
+                                                            foreach (var value in data.LstData.Select(x => x.Quantity).ToList())
+                                                            {
+                                                                <th>@value</th>
+                                                            }
+
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <br />
+                                    <h6 style="color: #807777; font-weight:bold">Market Analysis by Volume</h6>
+                                    <input type="hidden" id="hdntblVolume" value="tblRegisteredUsersVolume" />
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsersVolume">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in (Model.FirstOrDefault().LstData.Select(x => x.MDimensionOne).ToList()))// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in Model.Select(x => x.MStackedDimensionOne).ToList())
+                                                {
+                                                    <tr>
+                                                        @foreach (var data in Model.Where(x => x.MStackedDimensionOne == count).ToList())
+
+                                                        {
+                                                            <th>@count</th>
+
+                                                            foreach (var value in data.LstData.Select(x => x.Quantity1).ToList())
+                                                            {
+                                                                <th>@value</th>
+                                                            }
+
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else if (Model.FirstOrDefault().MRange == "Demand By CompanyShares(T)")
+                                {
+
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Company</th>
+                                                    <th>Market Share</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in Model.Select(x => x.MStackedDimensionOne).ToList())
+                                                {
+                                                    <tr>
+                                                        @foreach (var data in Model.Where(x => x.MStackedDimensionOne == count).ToList())
+
+                                                        {
+                                                            <th>@count</th>
+
+                                                            foreach (var value in data.LstData.Select(x => x.Quantity).ToList())
+                                                            {
+                                                                <th>@value %</th>
+                                                            }
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div style="overflow-x:scroll">
+                                        <table class="table table-hover table-bordered table-responsive-md" id="tblRegisteredUsers">
+                                            <thead class="thead-light">
+                                                <tr class="table-primary">
+                                                    <th>Year</th>
+                                                    @foreach (string column in (Model.FirstOrDefault().LstData.Select(x => x.MDimensionOne).ToList()))// Model.Select(x => x.StackedDimensionOne).ToList())
+                                                    {
+
+                                                        <th>@column</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (string count in Model.Select(x => x.MStackedDimensionOne).ToList())
+                                                {
+                                                    <tr>
+                                                        @foreach (var data in Model.Where(x => x.MStackedDimensionOne == count).ToList())
+
+                                                        {
+                                                            <th>@count</th>
+
+                                                            foreach (var value in data.LstData.Select(x => x.Quantity).ToList())
+                                                            {
+                                                                <th>@value</th>
+                                                            }
+
+                                                        }
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3">
+                        <aside>
+                            <h3><i class="fa fa-bell-o"></i> News <a href="@Url.Action("NewsHome","NewsAndDeals")" class="pull-right" style="font-size: 14px; margin-top: 4px; color:#fff">View all</a></h3>
+                            <div class="side-news-feed">
+                                @foreach (var news in Model.Select(x => x.NewsDetailsViewModel.NewsList).FirstOrDefault())
+                                {
+                                    <div class="news-feed-col">
+                                        <a style="font-size: 14px;font-weight: 600;" href="@Url.Action("NewsDetails", "NewsAndDeals", new { id = news.GenerateItemNameAsParam() })">
+                                            @{
+
+                                                <span>
+                                                    @Html.Raw(WebUtility.HtmlDecode(news.NewsName))
+                                                </span>
+
+
+                                            }
+
+
+                                            <div class="right-news-desc2" style="font-size:14px">
+                                                <br />
+                                                <p><i class="fa fa-calendar-o"></i>@news.CreatedTime.ToString("MMM/yyyy")</p>
+                                            </div>
+                                        </a>
+
+                                    </div>
+
+                                }
+                            </div>
+                            <div class="mt-4">
+                                <h3><i class="fa fa-thumbs-up"></i> Top Deals <a href="@Url.Action("DealsHome","NewsAndDeals")" class="pull-right" style="font-size: 14px; margin-top: 4px; color:#fff">View all</a></h3>
+                                <div class="side-news-feed" style="">
+                                    @foreach (var item in Model.Select(x => x.NewsDetailsViewModel.DealList).FirstOrDefault())
+                                    {
+                                        <div class="news-feed-col">
+                                            <a style="font-size: 14px;font-weight: 600;" href="@Url.Action("DealsDetails", "NewsAndDeals", new { id = item.GenerateItemNameAsParam() })">
+                                                @{
+
+                                                    <span>
+                                                        @Html.Raw(WebUtility.HtmlDecode(item.DealsName))
+                                                    </span>
+
+
+                                                }
+                                                <div class="right-news-desc2">
+                                                    <br />
+                                                    <p><i class="fa fa-calendar-o"></i>@item.CreatedTime.Value.ToString("MMM/yyyy")</p>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content login-pic">
+                <div class="modal-body" style="padding:0rem;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="login-pic">
+                                <div class="freeSub">
+                                    <h2 style="color:black">Get Market Analysis in few-clicks.</h2>
+                                    <a target="_blank" href="@Url.Action("FreeTrail", "ChemAnalyst")" class="btn btn-yellow">Start your Free Trail today.</a>
+                                    <a href="~/MarketAnalysis/MarketbycompanyChart?Range=Company&Customer=False" class="btn btn-yellow">Go Back</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container-fluid">
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <p>
+                            <table>
+                                <tr><a href="#"><i class="fa fa-twitter" style="font-size:27px;color:white"></i></a></tr>
+                                <tr><a href="#"><i class="fa fa-facebook" style="font-size:27px;color:white"></i></a></tr>
+                                <tr><a href="#"><i class="fa fa-linkedin" style="font-size:27px;color:white"></i></a></tr>
+                            </table>
+                        </p>
+
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+                            <p><a href="@Url.Action("AboutUs", "ChemAnalyst")">About Us</a></p>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+                            <p><a href="@Url.Action("Faq", "ChemAnalyst")">FAQs</a></p>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+                            <p><a href="@Url.Action("Privacypolicy", "ChemAnalyst")">Privacy Policy</a></p>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+
+                            <p><a href="@Url.Action("Terms", "ChemAnalyst")">Terms &amp; Conditions</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright text-center">
+                    <p>Copyright 2019. ChemAnalyst. All Rights Reserved. </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    @*<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>*@
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap-multiselect.js"></script>
+    <script src="../js/owl.carousel.js"></script>
+    <script src="../js/wow.min.js"></script>
+    <script src="../js/honey-custom.js"></script>
+    <script src="../js/Chart.min.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="jquery.js"></script>
+    <script src="~/js/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/js/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript" src="https://oss.sheetjs.com/js-xlsx/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="https://oss.sheetjs.com/js-xlsx/ods.min.js"></script>
+    <script type="text/javascript" src="https://sheetjs.com/demos/Export2Excel.js"></script>
+    <script src="https://igniteui.com/js/external/FileSaver.js"></script>
+    <script src="https://igniteui.com/js/external/Blob.js"></script>
+    <script src="https://www.github.developerdan.com/table-to-json/javascripts/jquery.tabletojson.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script>
+
+        function myfunction(id) {
+            var $checkedagreeChecker = $('.chcktbl:checked');
+            var joinedValues = $checkedagreeChecker.map(function () { return this.value }).get().join(",");
+
+            $('input[name="hiddenLegends"]').val($checkedagreeChecker.length > 0 ? joinedValues : "")
+
+            $("#submit").trigger("click");
+        }
+        function closemodel() {
+            $("#myModal").hide();
+        }
+
+        $(document).ready(function () {
+            $("#ddlProduct").change(function () {
+                debugger;
+                var ProductId = $(ddlProduct).find("option:selected").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "../MarketAnalysis/CheckAccess",
+                    data: "{ ProductId:" + ProductId + "}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    success: function (response) {
+                        debugger;
+                        if (response == "Access") {
+
+                        }
+                        else {
+                            $('#myModal').modal({ backdrop: 'static', keyboard: false });
+                            event.preventDefault();
+                        }
+                    },
+                    failure: function (response) {
+                        // alert(response.responseText);
+                    },
+                    error: function (response) {
+                        // alert(response.responseText);
+                    }
+                });
+            });
+
+            var range = $(ddlRange).find("option:selected").val();
+            var ddlCustomers = $("#ddlChart");
+
+            if (range == "Demand By TradeExport" || range == "Demand By TradeImport") {
+                ddlCustomers.empty().append('<option selected="selected" value="line" >Line Chart</option><option value="bar" >Bar Chart</option>');
+            }
+            else if (range == "Demand By CompanyShares(T)") {
+                ddlCustomers.empty().append('<option selected="selected" value="pie" >Pie Chart</option>');
+            }
+            else if (range == "Demand Supply Gap") {
+                ddlCustomers.empty().append('<option selected="selected" value="line" >Line Chart</option>');
+            }
+            else {
+                ddlCustomers.empty().append('<option selected="selected" value="line" >Line Chart</option><option value="bar" >Bar Chart</option>');
+            }
+
+        });
+
+    </script>
+    <script>
+        function SubmitForm() {
+             var Product = @Html.Raw(Product);
+            var ChartType = @Html.Raw(ChartType);
+            var range = @Html.Raw(range);
+            var Category = @Html.Raw(Category);
+            //  $('#ddlProduct').val();
+            if ( $('#ddlProduct').val()!=Product && $('#ddlProduct').val()!='')// Calling validation function
+            {
+                $('#myModal').modal({backdrop: 'static', keyboard: false});
+                event.preventDefault();
+            }
+
+        }
+
+
+    $(document).ready(function (event) {
+             @if(rangeType == "Demand By CompanyShares(T)")
+            {
+                <text>$("#ddlToYear").parent().hide();</text>
+            }
+            $('#countrylist').change(function(e){
+                // put code here
+            }).change();
+
+
+            $('#category').change(function(e){
+
+                // alert("hiiii");
+                debugger
+                var CatId=$(category).find("option:selected").val();
+
+                var ddlCustomers = $("#ddlProduct");
+                //  var ddlCompare = $("#example-getting-started");
+                // example-getting-started
+                ddlCustomers.empty().append('<option selected="selected" value="" disabled = "disabled">Loading.....</option>');
+                $.ajax({
+                    type: "POST",
+                    url: "../MarketAnalysis/GetProductName",
+                    data: "{ CatId:"+ CatId +"}" ,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    success: function (response) {
+                        ddlCustomers.empty().append('<option selected="selected" value=""> Select Product</option>');
+                        //ddlCompare.empty().append('<option selected="selected" value="0"> select Product</option>');
+
+                        $.each(response, function () {
+                            ddlCustomers.append($("<option></option>").val(this['Value']).html(this['Text']));
+                            // ddlCompare.append($("<option  ></option>").val(this['Value']).html(this['Text']));
+
+                        });
+                        var Product = @Html.Raw(Product);
+                        $('#ddlProduct').val(Product);
+                        UpdateYear();
+
+                        // alert("category call");
+                    },
+                    failure: function (response) {
+                        // alert(response.responseText);
+                    },
+                    error: function (response) {
+                        // alert(response.responseText);
+                    }
+                });
+            }).change();
+
+        });
+
+        $("body").on("change", "#ddlRange", function () {
+            debugger
+            var rangeId=@Html.Raw(range);
+
+            var ddlFyear = $("#ddlFyear");
+            var ddlToYear = $("#ddlToYear");
+            //  var ddlCompare = $("#example-getting-started");
+            // example-getting-started
+            ddlFyear.empty().append('<option selected="selected" value="" disabled = "disabled">Loading.....</option>');
+            ddlToYear.empty().append('<option selected="selected" value="" disabled = "disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "../MarketAnalysis/GetUniqueYears",
+                //data: "{ rangeId:"+ rangeId +"}" ,
+                data: JSON.stringify({'rangeId':rangeId}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    debugger
+                    ddlFyear.empty().append('<option selected="selected" value=""> Select from</option>');
+                    ddlToYear.empty().append('<option selected="selected" value=""> Select to</option>');
+                    $.each(response, function () {
+                        ddlFyear.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlToYear.append($("<option></option>").val(this['Value']).html(this['Text']));
+
+                    });
+                    //$("#example-getting-started").multiselect();
+                    // alert("category call");
+                },
+                failure: function (response) {
+                    // alert(response.responseText);
+                },
+                error: function (response) {
+                    // alert(response.responseText);
+                }
+            });
+
+            debugger
+            var range = $(ddlRange).find("option:selected").val();
+            var ddlCustomers = $("#ddlChart");
+
+            if (range == "Demand By TradeExport" || range == "Demand By TradeImport") {
+                ddlCustomers.empty().append('<option selected="selected" value="line" >Line Chart</option><option value="bar" >Bar Chart</option>');
+            }
+            else if(range=="Demand By CompanyShares(T)") {
+                ddlCustomers.empty().append('<option selected="selected" value="pie" >Pie Chart</option>');
+            }
+            else if(range=="Demand Supply Gap") {
+                ddlCustomers.empty().append('<option selected="selected" value="line" >Line Chart</option>');
+            }
+            else {
+                ddlCustomers.empty().append('<option selected="selected" value="line" >Line Chart</option><option value="bar" >Bar Chart</option>');
+            }
+        });
+
+        function UpdateYear()
+        {
+            //alert("UpdateYear");
+            debugger
+            var rangeId= @Html.Raw(range);
+
+            var ddlFyear = $("#ddlFyear");
+            var ddlToYear = $("#ddlToYear");
+            //  var ddlCompare = $("#example-getting-started");
+            // example-getting-started
+            ddlFyear.empty().append('<option selected="selected" value="" disabled = "disabled">Loading.....</option>');
+            ddlToYear.empty().append('<option selected="selected" value="" disabled = "disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "../MarketAnalysis/GetUniqueYears",
+                //data: "{ rangeId:"+ rangeId +"}" ,
+                data: JSON.stringify({'rangeId':rangeId}),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    debugger
+                    ddlFyear.empty().append('<option selected="selected" value=""> Select from</option>');
+                    ddlToYear.empty().append('<option selected="selected" value=""> Select to</option>');
+                    $.each(response, function () {
+                        ddlFyear.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        ddlToYear.append($("<option></option>").val(this['Value']).html(this['Text']));
+
+                    });
+                    $('#ddlFyear').val('@(ViewBag.Fy== null?"": ViewBag.Fy)');
+                    $('#ddlToYear').val('@(ViewBag.Ty==null?"": ViewBag.Ty)');
+                    //$("#example-getting-started").multiselect();
+                    // alert("category call");
+                },
+                failure: function (response) {
+                    // alert(response.responseText);
+                },
+                error: function (response) {
+                    // alert(response.responseText);
+                }
+            });
+        }
+
+        function Drowchart2(id, d) {
+            var XLabels = @Html.Raw(XLabels);
+            var YValues = @Html.Raw(YValues2);
+
+            var label = @Html.Raw(label2);
+
+            //Get minimum yValue for setting minimum in y axis
+            let flattenedArray = YValues.reduce((a, b) => {
+                return a.concat(b);
+            });
+            var minValue = 0;
+            minValue = Math.min.apply(null, flattenedArray);
+            //Get minimum yValue for setting minimum in y axis
+
+            var aux = 0;
+            var barChartData = {
+                labels: @Html.Raw(label2),
+                datasets: []
+            }
+            XLabels.forEach(function(a, i) {
+                var data = [];
+                YValues.forEach(function(a, i) {
+                    data.push(a[aux]);
+                });
+                barChartData.datasets.push({
+                    label: XLabels[aux],
+                    fill: false,
+                    backgroundColor: random_rgba(),
+                    borderColor: Bcolor,
+                    data: data
+                });
+                aux++;
+            });
+
+            var  options= {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'By Volume Market Analysis'
+
+
+                },
+                axisY: {
+                    minimum: minValue
+                },
+                tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                },
+
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: false,
+                            labelString: 'Month'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: false,
+                            labelString: 'Value'
+                        },
+                        //ticks: {//to being from minimum value
+                        //    min: 0,
+                        //    beginAtZero: true
+                        //}
+                    }]
+                }
+            }
+            var Bcolor;
+            function random_rgba() {
+
+                var letters = '0123456789ABCDEF';
+                var color = '#';
+                for (var i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                Bcolor = color;
+
+                return color;
+                //var o = Math.round,
+                //    r = Math.random,
+                //    s = 100;
+                //return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+            }
+
+            var ctx = document.getElementById(id).getContext('2d');
+            window.myLine =  new Chart(ctx, {      options: options,
+                data: barChartData,
+                type: d
+            });
+            // window.myLine = new Chart(ctx, config);
+        }
+
+
+        function colorize(opaque, hover, ctx) {
+            //var v = ctx.dataset.data[ctx.dataIndex];
+            //var c = v < -50 ? '#D60000'
+            //	: v < 0 ? '#F46300'
+            //	: v < 50 ? '#0358B6'
+            //	: '#44DE28';
+
+            //var opacity = hover ? 1 - Math.abs(v / 150) - 0.2 : 1 - Math.abs(v / 150);
+
+            //return opaque ? c : utils.transparentize(c, opacity);
+            return random_rgba();
+        }
+
+        function hoverColorize(ctx) {
+            return colorize(false, true, ctx);
+        }
+
+
+        function Drowchart(id, d)
+        {
+            debugger
+            var XX = @Html.Raw(chart22);
+            var XLabels = @Html.Raw(XLabels);
+            var YValues = @Html.Raw(YValues);
+
+            var label = @Html.Raw(label2);
+
+            //Get minimum yValue for setting minimum in y axis
+            let flattenedArray = YValues.reduce((a, b) => {
+                return a.concat(b);
+            });
+            var minValue = 0;
+            minValue = Math.min.apply(null, flattenedArray);
+            //Get minimum yValue for setting minimum in y axis
+
+            var aux = 0;
+            var barChartData = {
+                labels: @Html.Raw(label2),
+                datasets: []
+            }
+            XLabels.forEach(function(a, i) {
+                var data = [];
+                var datacolor =[];
+                YValues.forEach(function(a, i) {
+                    data.push(a[aux]);
+                    datacolor.push(random_rgba());
+                });
+
+                if(d=="pie"){
+
+                    barChartData.datasets.push({
+                        label: XLabels[aux],
+                        fill: false,
+
+                        data: data,
+                        backgroundColor: datacolor,
+                    });
+                }else{
+                    barChartData.datasets.push({
+                        label: XLabels[aux],
+                        fill: false,
+                        backgroundColor: random_rgba(),
+                        borderColor: Bcolor,
+                        data: data
+                    });
+                }
+                aux++;
+            });
+
+
+
+
+            if(XX)
+                title="Market Analysis by Value";
+
+
+            var  options= {
+                responsive: true,
+                title: {
+                    display: true,
+                    //text: 'Market Analysis Chart'
+                    text: '@Html.Raw(ChartTitle)'
+                },
+                axisY: {
+                    minimum: minValue
+                },
+                tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                },
+
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: false,
+                            labelString: 'Month'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: false,
+                            labelString: 'Value'
+                        },
+                        //ticks: {//to begin from minimum value
+                        //    min: 0,
+                        //    beginAtZero: true
+                        //}
+                    }]
+                }
+            }
+            if(d=="pie"){
+                var options = {
+                       title: {
+                    display: true,
+                   text: 'Analysis By Market Share (%)'
+
+                },
+
+
+                };
+                Chart.plugins.register({
+  afterDatasetsDraw: function(chartInstance, easing) {
+    // To only draw at the end of animation, check for easing === 1
+    var ctx = chartInstance.chart.ctx;
+    chartInstance.data.datasets.forEach(function(dataset, i) {
+      var meta = chartInstance.getDatasetMeta(i);
+      if (!meta.hidden) {
+        meta.data.forEach(function(element, index) {
+          // Draw the text in black, with the specified font
+          ctx.fillStyle = 'black';
+          var fontSize = 16;
+          var fontStyle = 'bold';
+          var fontFamily = 'Helvetica Neue';
+          ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+          // Just naively convert to string for now
+          var dataString = dataset.data[index].toString();
+          // Make sure alignment settings are correct
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          var padding = 5;
+          var position = element.tooltipPosition();
+          ctx.fillText(dataString + '%', position.x, position.y - (fontSize / 2) - padding);
+        });
+      }
+    });
+  }
+});
+            }
+            var Bcolor;
+
+            console.log(barChartData);
+            var ctx = document.getElementById(id).getContext('2d');
+            window.myLine =  new Chart(ctx, {      options: options,
+                data: barChartData,
+                type: d
+            });
+            // window.myLine = new Chart(ctx, config);
+        }
+        function random_rgba() {
+
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            Bcolor=color;
+            return color;
+            //var o = Math.round,
+            //    r = Math.random,
+            //    s = 100;
+            //return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
+        }
+
+         window.onload = function () {
+            var Product = @Html.Raw(Product);
+            var ChartType = @Html.Raw(ChartType);
+            var range = @Html.Raw(range);
+
+            $('#ddlFyear').val('@(ViewBag.Fy== null?"": ViewBag.Fy)');
+            $('#ddlToYear').val('@(ViewBag.Ty==null?"": ViewBag.Ty)');
+
+            var Category = @Html.Raw(Category);
+
+            $('#category').val(Category).trigger('change');;
+
+            $('#ddlProduct').val(Product);
+            $('#ddlChart').val(ChartType);
+            $('#ddlRange').val(range);
+
+            Drowchart('canvas', ChartType);
+            Drowchart2('canvas2',ChartType);
+        };
+
+
+        document.getElementById('drowchart').addEventListener('change', function () {
+            var d = document.getElementById('drowchart').value;
+            //alert(d);
+            Drowchart('canvas', d);
+            Drowchart2('canvas2',d);
+        });
+
+
+
+        document.getElementById('randomizeData').addEventListener('click', function () {
+            config.data.datasets.forEach(function (dataset) {
+                dataset.data = dataset.data.map(function () {
+                    return randomScalingFactor();
+                });
+
+            });
+
+            window.myLine.update();
+        });
+
+        var colorNames = Object.keys(window.chartColors);
+
+        document.getElementById('addDataset').addEventListener('click', function () {
+            var colorName = colorNames[config.data.datasets.length % colorNames.length];
+            var newColor = window.chartColors[colorName];
+            var newDataset = {
+                label: 'Dataset ' + config.data.datasets.length,
+                backgroundColor: newColor,
+                borderColor: newColor,
+                data: [],
+                fill: false
+            };
+
+            for (var index = 0; index < config.data.labels.length; ++index) {
+                newDataset.data.push(randomScalingFactor());
+            }
+
+            config.data.datasets.push(newDataset);
+            window.myLine.update();
+        });
+
+        document.getElementById('addData').addEventListener('click', function () {
+            if (config.data.datasets.length > 0) {
+                var month = MONTHS[config.data.labels.length % MONTHS.length];
+                config.data.labels.push(month);
+
+                config.data.datasets.forEach(function (dataset) {
+                    dataset.data.push(randomScalingFactor());
+                });
+
+                window.myLine.update();
+            }
+        });
+
+        document.getElementById('removeDataset').addEventListener('click', function () {
+            config.data.datasets.splice(0, 1);
+            window.myLine.update();
+        });
+
+        document.getElementById('removeData').addEventListener('click', function () {
+            config.data.labels.splice(-1, 1); // remove the label first
+
+            config.data.datasets.forEach(function (dataset) {
+                dataset.data.pop();
+            });
+
+            window.myLine.update();
+        });
+
+
+
+
+        $(document).ready(function () {
+            $("#ShowChart").validate({
+                debug: true,
+                rules: {
+                    ddlProduct: {
+                        required: function () {
+                            if ($("#ddlProduct option[value='0']")) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    },
+                    ddlChart: {
+                        required: function () {
+                            if ($("#ddlChart option[value='0']")) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }, ddlRange: {
+                        required: function () {
+                            if ($("#ddlRange option[value='0']")) {
+                                return true;
+                            } else {
+                                return false;
+                            }
+                        }
+                    }
+                },
+                messages: {
+                    ddlRange: "range Required",
+                },
+            });
+
+            $(document).ready(function(){
+                $('#messagewindow').animate({
+                    scrollTop: $('#messagewindow')[0].scrollHeight}, 2000);
+            });
+        })
+
+    </script>
+
+    <script>
+        //$(document).ready( function () {
+        //    $('.dailybasis').DataTable();
+        //} );
+
+        //function generatePDF() {
+        //  // Choose the element that our invoice is rendered in.
+        //  const element = document.getElementById("invoice");
+        //  // Choose the element and save the PDF for our user.
+        //  html2pdf().from(element).save();
+        //}
+
+
+        function exportToExcel(tableId, tableName) {
+            //showloader();
+            setTimeout(function () { export_table_to_excel(tableId, 'xlsx' || 'xlsx', tableName); }, 100);
+        }
+
+        function exportToExcel3(tableId, tableName) {
+            //showloader();
+            setTimeout(function () { export_table_to_excel3(tableId, 'xlsx' || 'xlsx', tableName); }, 100);
+        }
+
+        function export_table_to_excel(id, type, fn) {
+
+            var a = $('#ddlProduct').find('option:selected').text();
+            var b = $('#ddlRange').find('option:selected').text();
+
+            var table;
+            if (id == 'tbllince') {
+                $("#exportResult").show();
+                // tbllince
+                table = $('#tbllince').tableToJSON();
+                $("#exportResult").hide();
+            }
+            else {
+                table = $('#' + id).tableToJSON();
+            }
+
+            //Set copyright text in first property
+            if (table.length > 0) {
+                for (var prop in table[0]) {
+                    var obj = {};
+                    obj[prop] = "Copyright 2019-Chem Analyst. All Rights Reserved";
+                    table.push(obj);
+                    break;
+                }
+            }
+
+            //var data = JSON.stringify(table);
+            var data = JSON.parse(JSON.stringify(table));
+
+            //console.log(data)
+            // setTimeout(function () {  }, 5000);
+            var ws = XLSX.utils.json_to_sheet(data);
+
+            /* add to workbook */
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "tbl");
+
+            /* generate an XLSX file */
+            XLSX.writeFile(wb, a + "_" + b + "_" + fn + type);
+            //setTimeout(function () { hideloader(); }, 100);
+
+            var a = $("#hdntblVolume").val();
+            if (a) {
+                $("#exportxls3").trigger("click");
+            }
+
+        }
+
+        function export_table_to_excel3(id, type, fn) {
+
+            debugger
+            var table;
+            if (id == 'tbllince') {
+                $("#exportResult").show();
+                // tbllince
+                table = $('#tbllince').tableToJSON();
+                $("#exportResult").hide();
+            }
+            else {
+                table = $('#' + id).tableToJSON();
+            }
+            //var data = JSON.stringify(table);
+            var data = JSON.parse(JSON.stringify(table));
+
+            //console.log(data)
+            // setTimeout(function () {  }, 5000);
+            var ws = XLSX.utils.json_to_sheet(data);
+
+            /* add to workbook */
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "tbl");
+
+            /* generate an XLSX file */
+            XLSX.writeFile(wb, fn + type);
+            //setTimeout(function () { hideloader(); }, 100);
+
+
+        }
+
+        function generatePDF() {
+            debugger;
+            var a = $('#ddlProduct').find('option:selected').text();
+            var b = $('#ddlRange').find('option:selected').text();
+            $("#loaderCustom").show();
+            var element = document.getElementById('invoice');
+            // Choose pagebreak options based on mode.
+            var mode = "avoid-all";
+            var pagebreak = (mode === 'specify') ?
+                { mode: '', before: '.before', after: '.after', avoid: '.avoid' } :
+                { mode: mode };
+
+            $("#exportxls2").hide();
+            $("#hrefComentery").hide();
+            $("#slidecontainer1").hide();
+            $("#submitReset").hide();
+            $("#exportpdf2").hide();
+            $("#viewAll").hide();
+            $(".usercd").show();
+            $(".pdfheader").show();
+            $(".pdfooter").show();
+            $("#pfooter").html("Copyright 2019-Chem Analyst. All Rights Reserved | " + Date($.now()));
+            // Generate the PDF.
+            html2pdf().from(element).set({
+                filename: a + "_" + b + "_MarketAnalysis" + '.pdf',
+                pagebreak: pagebreak,
+                jsPDF: { orientation: 'portrait', unit: 'in', format: 'A3', compressPDF: true, background: '~/images/watermark.png' }
+            }).save().then(function (pdf) {
+                //This logs the right base64
+                $("#hrefComentery").show();
+                $("#exportxls2").show();
+                $("#slidecontainer1").show();
+                $("#submitReset").show();
+                $("#exportpdf2").show();
+                $("#viewAll").show();
+                $(".pdfheader").hide();
+                $(".pdfooter").hide();
+                $("#loaderCustom").hide();
+                $(".usercd").hide();
+                // window.location.reload();
+            });;
+
+
+
+        }
+        function changeFrom() {
+            $('#ddlToYear').val($('#ddlFyear').val());
+            return false;
+        }
+
+        function changeTo(val) {
+            debugger
+            var fromYear = $("#ddlFyear").val();
+            if (val.value < fromYear) {
+                swal("To Year should not be greater then from year !");
+            }
+
+        }
+    </script>
+
+    <style>
+        #chatwindow {
+            position: relative;
+            height: 130px;
+        }
+
+        #messagewindow, #inputcontainer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            /*border:1px solid #000;*/
+        }
+
+        #messagewindow {
+            overflow: auto;
+            top: 0;
+            bottom: 3em;
+        }
+
+        #inputcontainer {
+            display: block;
+            bottom: 0;
+            height: 1em;
+            padding: .5em;
+            margin-top: 1em;
+        }
+    </style>
+</html>

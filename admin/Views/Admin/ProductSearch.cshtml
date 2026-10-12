@@ -1,0 +1,362 @@
+﻿@using ChemAnalyst.DAL
+@model ChemAnalyst.Models.Productdescription
+
+
+@{
+    ViewBag.Title = "ProductSearch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .tbodydata tr td p{color:white!important;text-align:left}
+    #searchtable tbody tr td {
+        text-align: left!important;
+        border:1px solid #fff!important
+    }
+    a {
+        color: #fff !important
+    }
+    span {
+        color: #fff !important
+    }
+    .images {
+        min-width:200px;
+        max-width:300px;
+        min-height:175px;
+        max-height:275px;
+    }
+    .btn-success {
+        background-color: #95C23D!important;
+       
+    }
+    .tbodydata tr th{
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight:400!important;
+            color:limegreen
+    }
+    .input-box{border:1px solid #808080;
+               color:#fff!important;
+               background-color:#000!important;
+               height:30px;
+               padding:2px!important
+
+    }
+</style>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        debugger;
+       
+            @if (Model != null && Model.Id > 0)
+            { 
+               @:$('#RegionName').val('@TempData["RegionName"]').trigger('change');
+
+                @:setTimeout(function () {
+                @:$('#Country').val('@Model.Country');
+                @:$('#Country').trigger('change'); }, 300);
+
+                @:setTimeout(function () {
+                @:$('#Product').val('@Model.Product'); }, 600);
+             }
+         
+            SearchViewBag();
+
+    });
+
+   
+
+    $(document).on('change', '#RegionName', function () {
+        debugger;
+        var regionID = $(this).val();
+       
+
+        if (regionID == '') {
+            $('#Country').html("<option value=''>Select Country *</option>");
+            return true;
+        }
+
+        var innerHTML = "<option>loading...</option>"
+        $('#Country').html(innerHTML);
+
+        $.ajax({
+            url: "/ProductAndCategory/GetCountryBasedOnRegion",
+            data: { regionID: regionID }
+        }).complete(function (jqXHR, textStatus) {
+            if (textStatus == "success" && jqXHR.responseText != null) {
+                var json = JSON.parse(jqXHR.responseText);
+                innerHTML = "<option value=''>Select Country *</option>"
+
+                $(json).each(function (index, value) {
+                    innerHTML += "<option value=" + value.id + ">" + value.CountryName + "</option>"
+                });
+                $('#Country').html(innerHTML);
+            }
+        });
+    });
+
+
+    $(document).on('change', '#Country', function () {
+        var countryFID = $(this).val()
+
+        if (countryFID == '') {
+            $('#Product').html("<option value=''>Select Product *</option>");
+            return true;
+        }
+
+        var innerHTML = "<option>loading...</option>"
+        $('#Product').html(innerHTML);
+
+        $.ajax({
+            url: "/ProductAndCategory/GetProductBasedOnCountry",
+            data: { countryFID: countryFID }
+        }).complete(function (jqXHR, textStatus) {
+            if (textStatus == "success" && jqXHR.responseText != null) {
+                var json = JSON.parse(jqXHR.responseText);
+                innerHTML = "<option value=''>Select Product *</option>"
+
+                $(json).each(function (index, value) {
+                    innerHTML += "<option value=" + value.id + ">" + value.ProductName + "</option>"
+                });
+
+                $('#Product').html(innerHTML);
+            }
+        });
+    });
+
+
+
+
+    function Searchdata() {
+        debugger;
+            var feeddata = {};
+            feeddata.Product = $("#Product").val();
+            //feeddata.CountryName = $('#Country option:selected').text();
+
+            $.ajax({
+                type: "POST",
+                //contentType: "application/json; charset=utf-8",
+                //url: "/Admin/GetproductDetails",
+                url: "/ProductSearch/GetproductDetails",
+                async: false,
+                data: feeddata,
+                success: function (json) {
+                 
+                    $("#divimage").html("");
+                    var data = json.listofProductSearch;
+                    var fileName = "";
+                    var tbodyHTML = '';
+
+                    if (data.length != 0) {
+                        $(data).each(function (idx, elm) {
+                            fileName = elm.ProductionProcess;
+                            tbodyHTML += "<tr>";
+                            tbodyHTML += "<th>" + 'Product :'+ "</th>";
+                            tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Iupac :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Iupac + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Cas :' + "</th>";
+                            tbodyHTML += "<td>"  + elm.Cas + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Feedstock :' + "</th>";
+                            tbodyHTML += "<td>" + decodeURIComponent(elm.Feedstock) + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Grades :' + "</th>";
+                            tbodyHTML += "<td>" + decodeURIComponent(elm.Grades) + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Enduse :' + "</th>";
+                            tbodyHTML += "<td>" + decodeURIComponent(elm.Enduse) + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Referallinks :' + "</th>";
+                            tbodyHTML += "<td>" + decodeURIComponent(elm.Referallinks) + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'ProductionProcess:' + "</th>";
+                            tbodyHTML += "<td>" + elm.ProductionProcess +"</td>";
+
+                            tbodyHTML += "</tr>"
+
+                        });
+
+                        $("#divimage").append("<center><img class='images img-responsive' src='/ProductImages/" + fileName + "'/></center>");
+                        $(".tbodydata").html(tbodyHTML);
+                        $("#searchtable").show();
+                        $("#divimage").show();
+
+                    }
+                    else {
+                        $("#divimage").hide();
+                        $("#searchtable").hide();
+                    }
+
+                }
+            });
+
+    }
+
+
+
+    function SearchViewBag()
+    {
+        debugger;
+        var feeddata = {};
+        feeddata.Product = @ViewBag.ProductId;
+        @*feeddata.CountryName = '@ViewBag.CountryName';*@
+
+        if (feeddata.Product !== '')
+        {
+
+            $.ajax({
+                type: "POST",
+                //contentType: "application/json; charset=utf-8",
+                //url: "/Admin/GetproductDetails",
+                url: "/ProductSearch/GetproductDetails",
+                async: false,
+                data: feeddata,
+                success: function (json) {
+
+                    $("#divimage").html("");
+                    var data = json.listofProductSearch;
+                    var fileName = "";
+                    var tbodyHTML = '';
+
+                    if (data.length != 0) {
+                        $(data).each(function (idx, elm) {
+                            fileName = elm.ProductionProcess;
+                            tbodyHTML += "<tr>";
+                            tbodyHTML += "<th>" + 'Product :' + "</th>";
+                            tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Iupac :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Iupac + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Cas :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Cas + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Feedstock :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Feedstock + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Grades :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Grades + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Enduse :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Enduse + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'Referallinks :' + "</th>";
+                            tbodyHTML += "<td>" + elm.Referallinks + "</td>";
+                            tbodyHTML += "</tr>"
+
+                            tbodyHTML += "<tr>"
+                            tbodyHTML += "<th>" + 'ProductionProcess:' + "</th>";
+                            tbodyHTML += "<td>" + elm.ProductionProcess + "</td>";
+
+                            tbodyHTML += "</tr>"
+
+                        });
+
+                        $("#divimage").append("<center><img class='images img-responsive' src='/ProductImages/" + fileName + "'/></center>");
+                        $(".tbodydata").html(tbodyHTML);
+                        $("#searchtable").show();
+                        $("#divimage").show();
+
+                    }
+                    else {
+                        $("#divimage").hide();
+                        $("#searchtable").hide();
+                    }
+
+                }
+
+            });
+
+        }
+    }
+
+
+</script>
+
+
+
+<div class="">
+  
+    <div class="data-detail-wrapper">
+        @using (Html.BeginForm())
+        {
+          @Html.AntiForgeryToken()
+            <div class="col-md-12">
+                <div class="row" style="background-color:Black;">
+                    <div class="col-md-12"><h4 style="color: white;margin:10px 0px"> Search Product Description</h4></div>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="col-md-3 form-group">
+                        @Html.DropDownList("RegionName", new DALHelper().IEnumerableRegion(new SelectListItem { Text = "Select Region  *", Value = "" }), new { @class = "form-control input-box"})
+                      
+                    </div>
+
+                    <div class="col-md-3 form-group">
+                        <select id="@Html.IdFor(item => item.Country)" name="@Html.NameFor(item => item.Country)" class="form-control input-box">
+                            <option value="">Select Country *</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <select id="@Html.IdFor(item => item.Product)" name="@Html.NameFor(item => item.Product)" class="form-control input-box">
+                            <option value="">Select Product *</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" value="Submit" class="btn-success btn btn-block" style="height:30px" onclick="Searchdata()" />
+                    </div>
+                   </div>
+                </div>
+            <br />
+           }
+         </div>
+       </div>
+
+
+<div class="data-detail-wrapper">
+    <div class="col-lg-12">
+        <table id="searchtable" class="table" style="margin-top:10px;border:1px solid #fff">
+            <thead>
+            </thead>
+            <tbody class="tbodydata text-left"></tbody>
+        </table>
+    </div>
+    <div id="divimage" class="col-lg-6 col-lg-offset-3" style="background-color:black;margin-top:10px;">
+    </div>
+</div>
+
+
+
+       
+
+
+
+

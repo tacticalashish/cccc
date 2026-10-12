@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "OrganizationalChartLayout_PreSales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .google-visualization-orgchart-node {
+        text-transform: capitalize !important;
+        border: none !important;
+        border-radius: 5px !important;
+        padding: 2px 5px !important;
+        /*background-image: linear-gradient(to top, #accbee 0%, #e7f0fd 100%);*/
+        background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%);
+        box-shadow: 0 0 5px #808080;
+    }
+</style>
+<div class="update-profile-wrapper">
+
+    <div class="white-wrapper container-fluid" style="padding-top:10px;margin-top:0px!important">
+        <div class="row">
+            <div class="col-md-12" style="margin-bottom:10px;">
+                <h4 style="color:white;float:none!important;text-align:center">Pre Sales Employee Hierarchy </h4>
+            </div>
+        </div>
+
+        <div id="chartOrg">
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+
+            //$(document).ready(function () {
+            //
+            //    drawChart();
+            //});
+
+
+            google.load("visualization", "1", { packages: ["orgchart"] });
+            google.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+
+                $.ajax({
+                    type: "POST",
+                    url: "../LeadManagementSubscription/OrganizationalChartdata_PreSales",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (dt) {
+                        debugger;
+                        var dataArray = [];
+
+                        $.each(dt, function (i, item) {
+
+                            dataArray.push([item.Id, item.Name, item.Title, item.ReportTo, item.UniqID]);
+
+                        });
+
+                        var data = new google.visualization.DataTable();
+
+                        data.addColumn('string', 'Entity');
+                        data.addColumn('string', 'ReportEntity');
+                        data.addColumn('string', 'ToolTip');
+
+
+                        for (var i = 0; i < dataArray.length; i++) {
+
+                            var Employee_ID = dataArray[i][0].toString();
+                            var Employee_Name = dataArray[i][1];
+                            var Title = dataArray[i][2];
+                            var ReportTo = dataArray[i][3] != null ? dataArray[i][3].toString() : '';
+                            var UniqId = dataArray[i][4].toString();
+
+                            data.addRows([[{
+                                'v': Employee_ID,
+                                'f': Employee_Name + '<br/><b>' + Title + '</b>'
+                                //'f': Employee_Name + '<br/><b>' + Title + '</b>' + '<br/>' + "<a id='google' style='font-size:10px;' href='' onclick=GetDetails('" + Employee_ID + "','" + Employee_Name + "')>Details</a>"
+                                //'f': Employee_Name + '<br/><b>' + Title + '</b>' + '<br/>' + "<a id='google' style='font-size:10px; color:blue;' href='/AdminCommentaryPricing/UserAssignProductCommentary?UserId=" + Employee_ID + "&UserName=" + Employee_Name + "'>All Products</a>"
+
+                            }, ReportTo, Title]]);
+                        }
+
+                        var chart = new google.visualization.OrgChart($("#chartOrg")[0]);
+                        chart.draw(data, { allowHtml: true });
+
+                    },
+                    failure: function (dt) {
+
+                        alert(dt);
+                    },
+                    error: function (dt) {
+
+                        alert(dt);
+                    }
+                });
+            }
+
+        //function GetDetails(id, Range) {
+        //
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "../AdminChemicalPricing/GetUserProductOrganizationaldata",
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (Response) {
+        //            $.each(Response, function (i, item) {
+
+        //            });
+        //        },
+        //        failure: function (dt) {
+        //         },
+        //        error: function (dt) {
+
+        //        }
+        //    });
+        //}
+</script>
+

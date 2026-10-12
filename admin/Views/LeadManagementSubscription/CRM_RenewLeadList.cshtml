@@ -1,0 +1,757 @@
+﻿
+@{
+    ViewBag.Title = "CRM_RenewLeadList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .popup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .Dpopup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .tableStyle {
+        border: 1px solid #808080;
+        margin-top: 10px;
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+
+    .mt-2 {
+        margin-top: 8px;
+    }
+
+    .data-detail-wrapper table > thead > tr > th {
+        text-transform: none !important;
+        text-align: center;
+    }
+
+    input[type=file] {
+        color: black !important;
+        /*margin-bottom: 5px;*/
+    }
+</style>
+<div class="position-relative Dpopup-open">
+    <div class="child" style="width: 40%;padding: 20px 12px; border-radius: 6px;background: #353535; margin: 44px auto; box-shadow: 0px 2px 5px 1px #939393;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-2">
+                    <p class="text-white" id="Descriptiondata"></p>
+                </div>
+                <div class="col-md-12 mt-2 text-right">
+                    <button class="btn btn-danger btn-sm ms-2" id="CancelBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="position-relative popup-open">
+    <div class="child" style="width: 80%;padding: 20px 12px; border-radius: 6px;background: #353535; margin: 44px auto; box-shadow: 0px 2px 5px 1px #939393;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="">
+                    <div class="padding-0"> <h4 style="color:#fff;text-align:center; margin-bottom:8px" class="mb-1">CRM Renew Lead List</h4></div>
+                    <input type="hidden" class="form-control mb-1" placeholder="LeadId" id="LeadId" name="LeadId" />
+                    <div class="col-md-3 box-height">
+                        <label>Name</label>
+                        <input type="text" class="form-control mb-1" placeholder="Name" id="Name" name="Name" autocomplete="off" disabled />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Corp Email</label>
+                        <input type="text" class="form-control mb-1" placeholder="CorpEmail" id="CorpEmail" name="CorpEmail" autocomplete="off" disabled />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Contact Number</label>
+                        <input type="text" maxlength="15" class="form-control mb-1" placeholder="ContactNumber" id="ContactNumber" name="ContactNumber" autocomplete="off" disabled />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Company Name</label>
+                        <input type="text" class="form-control mb-1" placeholder="CompanyName" id="CompanyName" name="CompanyName" autocomplete="off" disabled />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Country</label>
+                        <input type="text" class="form-control mb-1" placeholder="Country" id="Country" name="Country" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 box-height" id="DivState">
+                        <label>State</label>
+                        <input type="text" class="form-control mb-1" placeholder="State" id="State" name="State" autocomplete="off" disabled />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Outbound Lead Source</label>
+                        <input type="text" class="form-control mb-1" placeholder="OutboundLeadSource" id="OutboundLeadSource" name="OutboundLeadSource" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 box-height">
+                        <label>Lead Type</label>
+                        <input type="text" class="form-control mb-1" placeholder="LeadType" id="LeadType" name="LeadType" autocomplete="off" disabled />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Set Follow Up</label>
+                        <input type="datetime" class="form-control mb-1" placeholder="Set Follow Up" id="SetFollowUp" name="SetFollowUp" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Amount</label>
+                        <input type="text" class="form-control mb-1" placeholder="Amount" id="Amount" name="Amount" autocomplete="off" />
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Expected Close Date</label>
+                        <input type="datetime" class="form-control mb-1" placeholder="Expected Close Date" id="ExpectedCloseDate" name="ExpectedCloseDate" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 box-height">
+                        <label>Currency</label>
+                        <select class="form-control mb-1" id="Currency" name="Currency" title="Currency">
+                            <option value="">Select Currency</option>
+                            <option value="INR">INR</option>
+                            <option value="USD">USD</option>
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-3 box-height">
+                        <label>Lead Status</label>
+                        <select class="form-control mb-1" id="LeadStatus" name="LeadStatus" title="LeadStatus">
+                            <option value="">Select Renew Status</option>
+                            <option value="Renew">Renew</option>
+                            <option value="RenewWon">Renew Won</option>
+                            <option value="RenewLost">Renew Lost</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 box-height" id="InvoiveNumberDiv" hidden="hidden">
+                        <label>Invoice Number</label>
+                        <input type="text" class="form-control mb-1" placeholder="InvoiveNumber" id="InvoiveNumber" name="InvoiveNumber" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 box-height" id="PaymentOptionDiv" hidden="hidden">
+                        <label>Payment Option</label>
+                        <select class="form-control mb-1" id="PaymentOption" name="PaymentOption" title="PaymentOption">
+                            <option value="">Select Payment Option</option>
+                            <option value="AdvancePayment">Advance Payment</option>
+                            <option value="RemainingPayment">Remaining Payment</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 box-height" id="RemainingPaymentDateDiv" hidden="hidden">
+                        <label>Remaining Payment Date</label>
+                        <input type="text" class="form-control mb-1" placeholder="Remaining Payment Date" id="RemainingPaymentDate" name="RemainingPaymentDate" autocomplete="off" />
+                    </div>
+                    <div class="col-md-12 box-height" id="LostReasonDiv" hidden="hidden">
+                        <label>Lost Reason</label>
+                        <textarea id="LostReason" class="form-control mb-1 " name="LostReason" placeholder="LostReason"></textarea>
+                    </div>
+                    <div class="col-md-12  box-height" id="PaymentTermsDiv" hidden="hidden">
+                        <label>Payment Terms and Condition</label>
+                        <textarea id="PaymentTerms" class="form-control mb-1 " rows="2" name="PaymentTerms" placeholder="PaymentTerms"></textarea>
+                    </div>
+                    <div class="col-md-12  box-height">
+                        <label>Message</label>
+                        <textarea id="Message" class="form-control mb-1 " rows="3" name="Message" placeholder="Message" disabled></textarea>
+                    </div>
+                    <div class="col-md-3 box-height">
+                        <label>Attachments Document</label>
+                        <input type="file" placeholder="FileUpload" id="FileUpload" name="FileUpload" size="23" class="form-control mb-1" />
+                        <input type="text" class="form-control mb-1" placeholder="Source" id="Source" name="Source" style="display:none;" />
+                    </div>
+                    <div class="col-md-12 mt-2 text-right">
+                        <input class="btn btn-success btn-sm" value="Update" onclick="UpdateOpenLeadData()" type="button" />
+                        <button class="btn btn-danger btn-sm ms-2" id="CancelDisRemark">Cancel</button>
+                    </div>
+                    <input type="hidden" id="InvoiceID" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="white-wrapper">
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-6"><h3 style="color:white;margin-bottom:10px!important;line-height: inherit;">Get Renewed LeadList</h3></div>
+            @*<div class="col-md-2 text-right">
+                    <a class="btn btn-primary" href="@Url.Action("CreateChemAnalystTaxInvoice", "Invoice")"><i class="fa fa-pencil-square-o"></i> Create Tax Invoice</a>
+                </div>*@
+            <div class="col-md-6 text-right">
+                <input style="float:right" type="button" class="btn btn-success" value="Search" onclick="GetsearchValues()" />
+                <label style="float:right;margin-right:10px"><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="search" aria-controls="Userlist"></label>
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01" style="overflow:auto">
+            <table id="Leadlist" class="table tableStyle">
+                <thead>
+                    <tr>
+                        <th hidden>ID</th>
+                        <th>Name</th>
+                        <th>CorpEmail</th>
+                        <th>Phone</th>
+                        <th>Company</th>
+                        <th>Country</th>
+                        <th>State</th>
+                        <th>Discription</th>
+                        <th>RequestedDate</th>
+                        <th>LeadStatus</th>
+                        <th>LeadSource</th>
+                        <th>Client Email Discussion</th>
+                        <th>Attechments</th>
+                        <th>Invoice No</th>
+                        @*<th>Action</th>*@
+
+
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+
+        <div class="box-footer clearfix" id="divPagging"></div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script>
+    var Search = "";
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1; // Full month name
+        var year = dateObject.getFullYear();
+
+        var formattedDate = day + "-" + month + "-" + year;
+        return formattedDate;
+    };
+    function UploadFile() {
+
+        var files = $("#FileUpload").get(0).files;
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("FileUpload", files[i]);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/UploadLeadFiles",
+            dataType: "json",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            success: function (result, status, xhr) { // alert(result);
+            },
+            error: function (xhr, status, error) { // alert(status);
+            }
+        });
+    }
+    $("#LeadStatus").change(function () {
+        ;
+        var LeadStatus = $("#LeadStatus").val();
+        if (LeadStatus == "RenewWon") {
+            $("#PaymentOptionDiv").show();
+            $("#RemainingPaymentDateDiv").hide();
+            $("#PaymentTermsDiv").show();
+            $("#InvoiveNumberDiv").show();
+
+            $("#LostReasonDiv").hide();
+        }
+        else if (LeadStatus == "RenewLost") {
+            $("#PaymentOptionDiv").hide();
+            $("#RemainingPaymentDateDiv").hide();
+            $("#PaymentTermsDiv").hide();
+            $("#LostReasonDiv").show();
+            $("#InvoiveNumberDiv").hide();
+
+        }
+        else {
+
+            $("#PaymentOptionDiv").hide();
+            $("#RemainingPaymentDateDiv").hide();
+            $("#PaymentTermsDiv").hide();
+
+
+            $("#InvoiveNumberDiv").hide();
+            $("#LostReasonDiv").hide();
+        }
+
+    });
+
+    $("#PaymentOption").change(function () {
+        var PaymentOption = $("#PaymentOption").val();
+        if (PaymentOption == "RemainingPayment") {
+            $("#RemainingPaymentDateDiv").show();
+        }
+        else {
+            $("#RemainingPaymentDateDiv").hide();
+        }
+    });
+
+
+    function UpdateOpenLeadData() {
+        
+        var SetFollowUp = $("#SetFollowUp").val();
+        var Amount = $("#Amount").val();
+        var ExpectedCloseDate = $("#ExpectedCloseDate").val();
+        var Currency = $("#Currency").val();
+        var LeadId = $("#LeadId").val();
+        var LeadStatus = $("#LeadStatus").val();
+        var filesval = $("#FileUpload").val();
+        var InvoiveNumber = $("#InvoiveNumber").val();
+        var LostReason = $("#LostReason").val();
+
+        var PaymentTerms = $("#PaymentTerms").val();
+        var PaymentOption = $("#PaymentOption").val();
+        var RemainingPaymentDate = $("#RemainingPaymentDate").val();
+
+        var files = "";
+        if (filesval == "") {
+        }
+        else {
+            files = $("#FileUpload").get(0).files[0].name;
+        }
+        var GetDetails = {
+            SetFollowUp: SetFollowUp,
+            Amount: Amount,
+            ExpectedCloseDate: ExpectedCloseDate,
+            Currency: Currency,
+            Id: LeadId,
+            files: files,
+            Status: LeadStatus,
+            InvoiceNumber: InvoiveNumber,
+            LostReason: LostReason,
+            PaymentTerms: PaymentTerms,
+            PaymentOption: PaymentOption,
+            RemainingPaymentDate: RemainingPaymentDate
+
+        }
+        if (SetFollowUp == "" && (LeadStatus != "Lost")) {
+            swal("Warning", "Please Insert SetFollowUp", "error");
+        }
+        else if (Amount == "" && (LeadStatus != "Lost")) {
+            swal("Warning", "Please Insert Amount", "error");
+        }
+        else if (ExpectedCloseDate == "" && (LeadStatus != "Lost")) {
+            swal("Warning", "Please Insert ExpectedCloseDate", "error");
+        }
+        else if (Currency == "" && (LeadStatus != "Lost")) {
+            swal("Warning", "Please Insert Currency", "error");
+        }
+        else if ((LeadStatus == "RenewWon") && (InvoiveNumber == "")) {
+            swal("Warning", "Please Insert Invoive Number", "error");
+        }
+        else if ((PaymentOption == "RemainingPayment") && (RemainingPaymentDate == "")) {
+            swal("Warning", "Please Insert Remaining Payment Date", "error");
+        }
+        else {
+
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/UpdateCRMOpenLeadDetails",
+                data: JSON.stringify(GetDetails),
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    
+                    $(response).each(function (index, value) {
+                        if (value.ValidationMessage == "SUCCESS") {
+                            UploadFile();
+                            swal(
+                                { title: "Thank you!", text: "Updated Sucessfully.", type: "success" }).then(function () {
+                                    window.location.reload();
+                                });
+                        }
+
+                    });
+
+
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+
+        }
+
+    }
+    $(document).ready(function () {
+        $("#ExpectedCloseDate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#SetFollowUp").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#RemainingPaymentDate").datepicker({ dateFormat: "dd/MM/yy" });
+
+        GetLeadOnSearchFilter();
+
+    });
+    function GetsearchValues() {
+        Search = $('#search').val();
+        $('#search').html(GetPaginationHTML(Search));
+        GetLeadOnSearchFilter();
+    }
+    function GetLeadOnSearchFilter() {
+     
+        var path = "/ChemPricingImportfile/LeadDocuments";
+        var pageNumber = $('#PageNumber').val();
+        var Search = $('#search').val();
+        var URL = "/LeadManagementSubscription/GetCRM_RenewMaskEmailList_CustomSearch?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        ;
+                        var date = elm.CreatedDate;
+                        var dateRequestedDate = elm.RequestedDate;
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        var RequestedformattedDate = ($.formattedDate(new Date(parseInt(dateRequestedDate.substr(6)))));
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.Phone + "</td>";
+
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyHTML += "<td>" + elm.StateName + "</td>";
+                        tbodyHTML += "<td>" + "<button class='btn btn-xs btn-primary' onclick='ShowDescription(`" + elm.DiscriptionMessage + "`)'>Read More..</button>" + '' + "</td>";
+                        tbodyHTML += "<td>" + RequestedformattedDate + "</td>";
+                        tbodyHTML += "<td>" + elm.Status + "</td>";
+                        tbodyHTML += "<td>" + elm.OutboundLeadSource + "</td>";
+                        tbodyHTML += `<td><input type="button" class="btn btn-xs btn-info" value="Get Email Chat" onclick="Getchat('${elm.CorpEmail}')"></td>`;
+
+                        if (elm.files == "" || elm.files == null) {
+                            tbodyHTML += "<td>" + '-' + "</td>";
+                        }
+                        else {
+                            tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/DownloadFile?filePath=" + path + "/" + elm.files + "&fileName=" + elm.files + "'>" + elm.files + "</a>" + "</td>";
+                        }
+                        tbodyHTML += "<td>" + elm.Invoice + "</td>";
+                      
+                        tbodyHTML += "</tr>"
+                    });
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.tbodydata').html(tbodyHTML);
+            }
+        });
+    }
+
+
+    function Getchat(Email) {
+        
+        window.open(`/OutLookChatHistory/EmailHistory?Email=${Email}`, '_blank');
+    }
+    $("#CancelDisRemark").click(function () {
+        $(".popup-open").css("display", "none");
+    });
+
+
+    function ShowDescription(Message) {
+        
+        $(".Dpopup-open").css("display", "block");
+        $('#Descriptiondata').text(Message);
+    }
+    $("#CancelBtn").click(function () {
+        $(".Dpopup-open").css("display", "none");
+    });
+
+    function EditPopupSource(LeadId) {
+        
+        $('#LeadId').val(LeadId);
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/BindOpenLeadDetailsByid",
+            data: { Id: LeadId },
+            success: function (response) {
+                
+                var innerHTML = "";
+                $(response).each(function (index, value) {
+                    
+
+                    var InvoiceNumber = value.Invoice;
+                    var LostReason = value.LostReason;
+
+                    //if (InvoiceNumber == null || InvoiceNumber == "") {
+                    //    $('#InvoiveNumber').prop('disabled', false);
+                    //    $('#InvoiveNumberDiv').hide();
+                    //}
+                    //else {
+                    //    $('#InvoiveNumberDiv').show();
+                    //    $('#InvoiveNumber').val(value.Invoice);
+                    //    $('#InvoiveNumber').prop('disabled', true);
+                    //}
+                    //if (LostReason == null || LostReason == "") {
+                    //    $('#LostReason').prop('disabled', false);
+                    //    $('#LostReasonDiv').hide();
+                    //}
+                    //else {
+                    //    $('#LostReasonDiv').show();
+                    //    $('#LostReason').val(value.LostReason);
+                    //    $('#LostReason').prop('disabled', true);
+                    //}
+
+                    var ExpectedCloseDate = value.ExpectedCloseDate;
+                    var SetFollowUpdate = value.ExpectedCloseDate;
+                    if (ExpectedCloseDate != "" && ExpectedCloseDate != null) {
+                        ExpectedCloseDate = ($.formattedDate(new Date(parseInt(ExpectedCloseDate.substr(6)))));
+                    }
+                    if (SetFollowUpdate != "" && SetFollowUpdate != null) {
+                        SetFollowUpdate = ($.formattedDate(new Date(parseInt(SetFollowUpdate.substr(6)))));
+                    }
+                    $('#Name').val(value.Name);
+                    //$('#LeadStatus').val(value.Status);
+                    //if (value.Status == "RenewWon") {
+                    //    $('#LeadStatus').prop('disabled', true);
+                    //}
+                    //else {
+                    //    $('#LeadStatus').prop('disabled', false);
+                    //    $('#InvoiveNumber').prop('disabled', false);
+                    //}
+                    $('#CorpEmail').val(value.CorpEmail);
+                    $('#ContactNumber').val(value.Phone);
+                    $('#CompanyName').val(value.CompanyName);
+                    $('#Country').val(value.CountryName);
+                    if (value.CountryName == "India") {
+                        $('#DivState').show();
+                    }
+                    else {
+                        $('#DivState').hide();
+                    }
+                    $('#State').val(value.StateName);
+                    $('#OutboundLeadSource').val(value.OutboundLeadSource);
+                    $('#LeadType').val(value.LeadType);
+                    $('#Message').val(value.DiscriptionMessage);
+                    $('#SetFollowUp').val(SetFollowUpdate);
+                    $('#ExpectedCloseDate').val(ExpectedCloseDate);
+                    $('#Amount').val(value.Amount);
+                    $('#Currency').val(value.Currency);
+
+                });
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+
+        $(".popup-open").css("display", "block");
+    }
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        GetLeadOnSearchFilter();
+
+    }
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+</script>
+

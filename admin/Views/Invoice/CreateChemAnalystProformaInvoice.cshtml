@@ -1,0 +1,870 @@
+﻿
+@{
+    ViewBag.Title = "CreateChemAnalystProformaInvoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Chhoti si styling — baaki sab Bootstrap grid/utilities se. */
+    .capi-page { padding: 18px 0 44px; }
+    .capi-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 22px rgba(0, 0, 0, .12);
+        max-width: 1220px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+    .capi-head {
+        background: #1e4a3c;
+        color: #fff;
+        padding: 15px 24px;
+        text-align: center;
+    }
+    .capi-head h4 { margin: 0; font-weight: 600; letter-spacing: .3px; }
+    .capi-body { padding: 20px 24px 4px; }
+    .capi-section { margin-bottom: 10px; }
+    .capi-section + .capi-section { border-top: 1px solid #eef0f2; padding-top: 14px; }
+    .capi-section-title {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .6px;
+        text-transform: uppercase;
+        color: #1e4a3c;
+        margin: 0 0 12px;
+    }
+    .capi-card label { font-weight: 600; font-size: 13px; color: #3a4149; margin-bottom: 4px; }
+    .capi-card .text-danger { color: #e03131; font-size: 13px; }
+    .capi-card .form-control { border-radius: 6px; }
+    .capi-actions { padding: 14px 24px; border-top: 1px solid #eef0f2; text-align: right; }
+    input[type=file].form-control { color: #000 !important; height: auto; }
+</style>
+<form id="frmChemicalPrice">
+    <div class="container-fluid capi-page">
+        <div class="capi-card">
+            <div class="capi-head">
+                <h4>ChemAnalyst Proforma Invoice</h4>
+            </div>
+
+            <div class="capi-body">
+                <input type="hidden" id="AccountNo" name="AccountNo" placeholder="AccountNo" />
+
+                <div class="capi-section">
+                    <div class="capi-section-title">Invoice details</div>
+                    <div class="row">
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Country <span class="text-danger">*</span></label>
+                        <select class="form-control" id="Country" name="Country" title="Country">
+                            <option value="">Select Country</option>
+                            <option value="India">India</option>
+                            <option value="TechSci Research LLC(USA)">TechSci Research LLC(USA)</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>InvoiceDate <span class="text-danger">*</span></label>
+                        <input type="datetime" class="form-control" placeholder="InvoiceDate" id="InvoiceDate" name="InvoiceDate" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>ReverseCharge <span class="text-danger">*</span></label>
+                        <select class="form-control" id="ReverseCharge" name="ReverseCharge" title="ReverseCharge" disabled>
+                            <option value="">Select ReverseCharge</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No" selected="selected">No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>PO</label>
+                        <select class="form-control" id="PO" name="PO" title="PO">
+                            <option value="">Select po option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="DivPODATE">
+                        <label>PODATE</label>
+                        <input type="text" class="form-control" placeholder="PODATE" id="PODATE" name="PODATE" autocomplete="off" />
+                    </div>
+                    </div>
+                </div>
+
+                <div class="capi-section">
+                    <div class="capi-section-title">Party &amp; contact</div>
+                    <div class="row">
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>KindAttn <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="KindAttn" id="KindAttn" name="KindAttn" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Company Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="Name" id="Name" name="Name" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Address <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="Address" id="Address" name="Address" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="DivGSTIN">
+                        <label>GSTIN <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="GSTIN" oninput="this.value = this.value.replace(/\s/g, '')" id="GSTIN" name="GSTIN" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="DivPAN">
+                        <label>PAN <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="PAN" id="PAN" name="PAN" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Telephone <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" placeholder="Telephone" id="Telephone" maxlength="15" name="Telephone" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Email <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="Email" id="Email" name="Email" autocomplete="off" />
+                    </div>
+                    </div>
+                </div>
+
+                <div class="capi-section">
+                    <div class="capi-section-title">Amounts &amp; tax</div>
+                    <div class="row">
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>SacCode</label>
+                        <input type="text" class="form-control" placeholder="SacCode" id="SacCode" name="SacCode" value="998371" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Currency <span class="text-danger">*</span></label>
+                        <select class="form-control" id="Currency" name="Currency" title="Currency">
+                            <option value="">Select Currency</option>
+                            <option value="INR">INR</option>
+                            <option value="USD">USD</option>
+                            <option value="WON">WON</option>
+                            <option value="YEN">YEN</option>
+                            <option value="EURO">EURO</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Amount <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="Amount" id="Amount" name="Amount" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Discount % </label>
+                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9. ]/g, '').replace(/(\..*?)\..*/g, '$1');" placeholder="Discount%" id="Discount" name="Discount" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Subtotal <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="Subtotal" id="Subtotal" name="Subtotal" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="stateDiv">
+                        <label>State <span class="text-danger">*</span></label>
+                        <select class="form-control" id="State" name="State" title="State">
+                            <option value="">Select State/Union Territory</option>
+                            <!-- States -->
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                            <!-- Union Territories -->
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Puducherry">Puducherry</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Ladakh">Ladakh</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="CGSTDiv">
+                        <label>CGST <span class="text-danger">*</span><span class="text-danger"> (9%)</span></label>
+                        <input type="text" class="form-control" placeholder="CGST" id="CGST" name="CGST" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="SGSTDiv">
+                        <label>SGST <span class="text-danger">*</span><span class="text-danger"> (9%)</span></label>
+                        <input type="text" class="form-control" placeholder="SGST" id="SGST" name="SGST" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="IGSTDiv">
+                        <label>IGST <span class="text-danger">*</span><span class="text-danger"> (18%)</span></label>
+                        <input type="text" class="form-control" placeholder="IGST" id="IGST" name="IGST" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group" id="divTotalTaxAmount">
+                        <label>TotalTaxAmount <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="TotalTaxAmount" id="TotalTaxAmount" name="TotalTaxAmount" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>TotalAmount <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="TotalAmount" id="TotalAmount" name="TotalAmount" autocomplete="off" disabled />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>AmountInWords <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="AmountInWords" id="AmountInWords" name="AmountInWords" autocomplete="off" disabled />
+                    </div>
+                    </div>
+                </div>
+
+                <div class="capi-section">
+                    <div class="capi-section-title">Other</div>
+                    <div class="row">
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>PaymentTerms <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" placeholder="PaymentTerms" id="PaymentTerms" name="PaymentTerms" autocomplete="off" />
+                    </div>
+
+                    <div class="col-md-3 col-sm-6 form-group">
+                        <label>Attachments Document</label>
+                        <input type="file" placeholder="FileUpload" id="FileUpload" name="FileUpload" size="23" class="form-control" />
+                        <input type="text" class="form-control" placeholder="Source" id="Source" name="Source" style="display:none;" />
+                    </div>
+
+                    <div class="col-12 col-md-12 form-group">
+                        <label>Subscription Details <span class="text-danger">*</span></label>
+                        <textarea id="Discription" class="form-control" rows="4" name="Discription" placeholder="Discription"></textarea>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="capi-actions">
+                <input class="btn btn-success" value="Submit" onclick="SaveChemanalystProformaInvoice()" type="button" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script>
+
+
+    //$('#InvoiceDate').prop('readonly', true);
+    //$('#PODATE').prop('readonly', true);
+
+
+    var AccountNo = "";
+    $(document).ready(function () {
+        $('#Discount').val('0')
+        $("#InvoiceDate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#PODATE").datepicker({ dateFormat: "dd/MM/yy" });
+
+    });
+
+    $("#PO").change(function () {
+        var PO = $("#PO").val();
+        if (PO == "Yes") {
+            $("#DivPODATE").show();
+        }
+        else {
+            $("#DivPODATE").hide();
+        }
+    });
+
+
+    $("#Country").change(function () {
+        var Country = $("#Country").val();
+        if (Country == 'India') {
+            $("#stateDiv").show();
+            AccountNo = "50200035285590";
+            $("#IGSTDiv").show();
+            $("#CGSTDiv").show();
+            $("#SGSTDiv").show();
+            $("#DivGSTIN").show();
+            $("#DivPAN").show();
+            $("#divTotalTaxAmount").show();
+
+        }
+        else if (Country == 'TechSci Research LLC(USA)') {
+            $("#IGSTDiv").hide();
+            $("#CGSTDiv").hide();
+            $("#SGSTDiv").hide();
+            $("#stateDiv").hide();
+            $("#DivGSTIN").hide();
+            $("#DivPAN").hide();
+            $("#divTotalTaxAmount").hide();
+            AccountNo = "4830 5889 9741";
+
+        } else {
+
+            $("#IGSTDiv").hide();
+            $("#CGSTDiv").hide();
+            $("#SGSTDiv").hide();
+            $("#stateDiv").hide();
+            $("#DivGSTIN").hide();
+            $("#DivPAN").hide();
+            $("#divTotalTaxAmount").hide();
+            AccountNo = "50200078519827";
+
+        }
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+        $('#Discount').val('0');
+        $("#Subtotal").val('')
+        $("#Amount").val('')
+    });
+    $("#State").change(function () {
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+
+        var State = $("#State").val();
+        var amount = parseFloat($('#Amount').val());
+        var Country = $("#Country").val();
+        var Discount = parseFloat($('#Discount').val());
+        let discountAmount = (amount * Discount) / 100;
+        let subtotal = amount - discountAmount;
+
+        if (Country != "") {
+            if (State == 'Uttar Pradesh') {
+                $("#Subtotal").val(subtotal);
+                let cgst = subtotal * 0.09;
+                let sgst = subtotal * 0.09;
+                let TotalTaxAmount = cgst + sgst;
+                let TotalAmount = subtotal + TotalTaxAmount;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+                $("#IGSTDiv").hide();
+                $("#CGST").val(cgst.toFixed(2));
+                $("#SGST").val(sgst.toFixed(2));
+                $("#CGSTDiv").show();
+                $("#SGSTDiv").show();
+                $("#TotalTaxAmount").val(TotalTaxAmount);
+
+
+            }
+            else {
+                $("#Subtotal").val(subtotal);
+                let igst = subtotal * 0.18;
+                $("#CGSTDiv").hide();
+                $("#SGSTDiv").hide();
+                $("#IGST").val(igst.toFixed(2));
+                $("#IGSTDiv").show();
+                $("#TotalTaxAmount").val(igst.toFixed(2));
+                let TotalAmount = subtotal + igst;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+
+            }
+        }
+        else {
+            $("#Amount").val('');
+            $("#IGST").val('');
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#TotalTaxAmount").val('');
+            $("#TotalAmount").val('');
+
+            swal("Warning", "Please Select Country", "error");
+
+        }
+        const number = $("#TotalAmount").val();
+        const text = numberToText(number);
+        $("#AmountInWords").val(text);
+    });
+
+    $('#GSTIN').on('keyup change', function () {
+        var GSTIN = $("#GSTIN").val();
+        const pan = getPanFromGstin(GSTIN);
+        $("#PAN").val(pan);
+
+    });
+
+    function getPanFromGstin(gstin) {
+        // Check if GSTIN is valid
+        const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/;
+        if (gstinPattern.test(gstin)) {
+            // Extract PAN (3rd to 12th characters)
+            return gstin.substring(2, 12);
+        } else {
+            return "Invalid GSTIN";
+        }
+    }
+    $('#Amount').on('keyup change', function () {
+        debugger;
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+
+        var State = $("#State").val();
+        var amount = parseFloat($('#Amount').val());
+        var Discount = parseFloat($('#Discount').val());
+        let discountAmount = (amount * Discount) / 100;
+        let subtotal = amount - discountAmount;
+
+        var Country = $("#Country").val();
+        if (Country == "") {
+            $("#Amount").val('');
+            $("#IGST").val('');
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#TotalTaxAmount").val('');
+            $("#TotalAmount").val('');
+            swal("Warning", "Please Select Country", "error");
+        }
+
+        if (State != '') {
+            if (State == 'Uttar Pradesh') {
+                $("#Subtotal").val(subtotal);
+
+                let cgst = subtotal * 0.09;
+                let sgst = subtotal * 0.09;
+                let TotalTaxAmount = cgst + sgst;
+                let TotalAmount = subtotal + TotalTaxAmount;
+                let rounded = Math.round(TotalAmount);
+
+                $("#TotalAmount").val(rounded);
+                $("#IGSTDiv").hide();
+                $("#CGST").val(cgst.toFixed(2));
+                $("#SGST").val(sgst.toFixed(2));
+                $("#CGSTDiv").show();
+                $("#SGSTDiv").show();
+                $("#TotalTaxAmount").val(TotalTaxAmount.toFixed(2));
+                $("#divTotalTaxAmount").show();
+
+            }
+            else {
+                $("#Subtotal").val(subtotal);
+                let igst = subtotal * 0.18;
+                $("#CGSTDiv").hide();
+                $("#SGSTDiv").hide();
+                $("#IGST").val(igst.toFixed(2));
+                $("#IGSTDiv").show();
+                $("#TotalTaxAmount").val(igst.toFixed(2));
+                let TotalAmount = subtotal + igst;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+
+            }
+        }
+        else {
+
+
+            let rounded = Math.round(subtotal);
+            $("#TotalAmount").val(rounded);
+            $("#Subtotal").val(rounded);
+            $("#divTotalTaxAmount").hide();
+
+
+        }
+
+
+
+        const number = $("#TotalAmount").val();
+        const text = numberToText(number);
+        $("#AmountInWords").val(text);
+
+    });
+
+
+    $('#Discount').on('keyup change', function () {
+        debugger;
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+
+        var State = $("#State").val();
+        var amount = parseFloat($('#Amount').val());
+        var Discount = parseFloat($('#Discount').val());
+        let discountAmount = (amount * Discount) / 100;
+        let subtotal = amount - discountAmount;
+
+        var Country = $("#Country").val();
+        if (Country == "") {
+            $("#Amount").val('');
+            $("#IGST").val('');
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#TotalTaxAmount").val('');
+            $("#TotalAmount").val('');
+            swal("Warning", "Please Select Country", "error");
+        }
+
+        if (State != '') {
+            if (State == 'Uttar Pradesh') {
+
+                let cgst = subtotal * 0.09;
+                let sgst = subtotal * 0.09;
+                let TotalTaxAmount = cgst + sgst;
+                let TotalAmount = subtotal + TotalTaxAmount;
+                let rounded = Math.round(TotalAmount);
+                $("#Subtotal").val(subtotal);
+                $("#TotalAmount").val(rounded);
+                $("#IGSTDiv").hide();
+                $("#CGST").val(cgst.toFixed(2));
+                $("#SGST").val(sgst.toFixed(2));
+                $("#CGSTDiv").show();
+                $("#SGSTDiv").show();
+                $("#TotalTaxAmount").val(TotalTaxAmount.toFixed(2));
+                $("#divTotalTaxAmount").show();
+
+            }
+            else {
+                $("#Subtotal").val(subtotal);
+                let igst = subtotal * 0.18;
+                $("#CGSTDiv").hide();
+                $("#SGSTDiv").hide();
+                $("#IGST").val(igst.toFixed(2));
+                $("#IGSTDiv").show();
+                $("#TotalTaxAmount").val(igst.toFixed(2));
+                let TotalAmount = subtotal + igst;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+
+            }
+        }
+        else {
+
+            let rounded = Math.round(subtotal);
+
+            $("#TotalAmount").val(rounded);
+            $("#Subtotal").val(rounded);
+            $("#divTotalTaxAmount").hide();
+
+
+        }
+
+
+
+        const number = $("#TotalAmount").val();
+        const text = numberToText(number);
+        $("#AmountInWords").val(text);
+
+    });
+
+    function SaveChemanalystProformaInvoice() {
+        debugger;
+        var Country = $("#Country").val();
+        if (Country != 'India') {
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#IGST").val('');
+            $("#GSTIN").val('');
+            $("#PAN").val('');
+            $("#divTotalTaxAmount").val('');
+        }
+
+        var InvoiceDate = $("#InvoiceDate").val();
+        var ReverseCharge = $("#ReverseCharge").val();
+        var PO = $("#PO").val();
+        var PODATE = $("#PODATE").val();
+        var KindAttn = $("#KindAttn").val();
+        var Name = $("#Name").val();
+        var Address = $("#Address").val();
+        var GSTIN = $("#GSTIN").val();
+        var PAN = $("#PAN").val();
+        var Telephone = $("#Telephone").val();
+        var Email = $("#Email").val();
+        var SacCode = $("#SacCode").val();
+        var Amount = $("#Amount").val();
+        var Discount = $("#Discount").val();
+        var Subtotal = $("#Subtotal").val();
+        var CGST = $("#CGST").val();
+        var SGST = $("#SGST").val();
+        var IGST = $("#IGST").val();
+        var TotalTaxAmount = $("#TotalTaxAmount").val();
+        var TotalAmount = $("#TotalAmount").val();
+        var AmountInWords = $("#AmountInWords").val();
+        var PaymentTerms = $("#PaymentTerms").val();
+        var Discription = $("#Discription").val();
+        var State = $("#State").val();
+        var supplyState = $("#supplyState").val();
+        var filesval = $("#FileUpload").val();
+        var Currency = $("#Currency").val();
+        var files = "";
+
+        if (PO == "No") {
+            PODATE = $("#PODATE").val('');
+        }
+
+        if (filesval == "") {
+        }
+        else {
+            files = $("#FileUpload").get(0).files[0].name;
+        }
+        if (Country == "India" && State == "Uttar Pradesh") {
+            $("#IGST").val('');
+        }
+        else if (Country == "India" && State != "Uttar Pradesh") {
+            $("#CGST").val('');
+            $("#SGST").val('');
+        }
+        else {
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#IGST").val('');
+        }
+
+        var GetDetails = {
+            Country: Country,
+            InvoiceDate: InvoiceDate,
+            ReverseCharge: ReverseCharge,
+            PO: PO,
+            PODATE: PODATE,
+            KindAttn: KindAttn,
+            Name: Name,
+            Address: Address,
+            GSTIN: GSTIN,
+            PAN: PAN,
+            State: State,
+            Telephone: Telephone,
+            Email: Email,
+            SacCode: SacCode,
+            Amount: Amount,
+            Discount: Discount,
+            Subtotal: Subtotal,
+            CGST: CGST,
+            SGST: SGST,
+            IGST: IGST,
+            TotalTaxAmount: TotalTaxAmount,
+            TotalAmount: TotalAmount,
+            AmountInWords: AmountInWords,
+            PaymentTerms: PaymentTerms,
+            AmountInWords: AmountInWords,
+            PaymentTerms: PaymentTerms,
+            Discription: Discription,
+            Supply_Name_Of_State: supplyState,
+            POfiles: files,
+            Currency: Currency
+
+        }
+        if (Country == "") {
+            swal("Warning", "Please Select Country", "error");
+        }
+        else if (InvoiceDate == "") {
+            swal("Warning", "Please Insert InvoiceDate", "error");
+        }
+        else if ((PO == "Yes") && (PODATE == "")) {
+            swal("Warning", "Please Insert PODATE", "error");
+        }
+        else if (KindAttn == "") {
+            swal("Warning", "Please Insert KindAttn", "error");
+        }
+        else if (Name == "") {
+            swal("Warning", "Please Insert Name", "error");
+        }
+        else if (Address == "") {
+            swal("Warning", "Please Insert Address", "error");
+        }
+        else if ((Country == "India") && (GSTIN == "")) {
+            swal("Warning", "Please Insert GSTIN", "error");
+        }
+        else if ((Country == "India") && (PAN == "")) {
+            swal("Warning", "Please Insert PAN", "error");
+        }
+        else if (Telephone == "") {
+            swal("Warning", "Please Insert Telephone OR Mobile", "error");
+        }
+        else if (Email == "") {
+            swal("Warning", "Please Insert Email", "error");
+        }
+        else if (Currency == "") {
+            swal("Warning", "Please Select Currency", "error");
+        }
+        else if (Amount == "") {
+            swal("Warning", "Please Insert Amount", "error");
+        }
+        else if (Subtotal == "") {
+            swal("Warning", "Please Insert Subtotal", "error");
+        }
+        else if (Country == "India" && State == "") {
+            swal("Warning", "Please Select State", "error");
+        }
+        else if ((Country == "India" && State == "Uttar Pradesh") && (CGST == "")) {
+            swal("Warning", "Please Insert CGST", "error");
+        }
+        else if ((Country == "India" && State == "Uttar Pradesh") && (SGST == "")) {
+            swal("Warning", "Please Insert SGST", "error");
+        }
+        else if ((Country == "India" && State != "Uttar Pradesh") && (IGST == "")) {
+            swal("Warning", "Please Insert IGST", "error");
+        }
+        else if ((Country == "India") && (TotalTaxAmount == "")) {
+            swal("Warning", "Please Insert TotalTaxAmount", "error");
+        }
+        else if (Subtotal == "") {
+            swal("Warning", "Please Insert Subtotal", "error");
+        }
+        else if (TotalAmount == "") {
+            swal("Warning", "Please Insert TotalAmount", "error");
+        }
+        else if (AmountInWords == "") {
+            swal("Warning", "Please Insert AmountInWords", "error");
+        }
+        else if (PaymentTerms == "") {
+            swal("Warning", "Please Insert PaymentTerms", "error");
+        }
+        else if (ReverseCharge == "") {
+            swal("Warning", "Please Insert ReverseCharge", "error");
+        }
+        else if (PO == "Yes" && files == "") {
+            swal("Warning", "Please Upload PO File", "error");
+        }
+        else if (Discription == "") {
+            swal("Warning", "Please Insert Subscription Details", "error");
+        }
+
+        else {
+
+            $.ajax({
+                type: "POST",
+                url: "/Invoice/SaveProformaInvoiceDetails",
+                data: JSON.stringify(GetDetails),
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+
+                    $(response).each(function (index, value) {
+                        if (value.ValidationMessage == "SUCCESS") {
+                            UploadFile();
+                            swal(
+                                { title: "Thank you!", text: "Created Sucessfully.", type: "success" }).then(function () {
+                                    window.location.reload();
+                                });
+                        }
+                        else if (value.ValidationMessage == "MANDATORY VALUES CAN NOT BE NULL") {
+                            swal("Warning", "MANDATORY VALUES CAN NOT BE NULL", "error");
+                        }
+                        else if (value.ValidationMessage == "DUPLICATE VALUES") {
+                            swal("Warning", "Duplicate Record Found", "error");
+                        }
+                        else {
+                            swal("Warning", "Something Went Wrong..", "error");
+                        }
+                    });
+
+
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+    }
+    function UploadFile() {
+
+        var files = $("#FileUpload").get(0).files;
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("FileUpload", files[i]);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Invoice/UploadLeadFiles",
+            dataType: "json",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            success: function (result, status, xhr) { // alert(result);
+            },
+            error: function (xhr, status, error) { // alert(status);
+            }
+        });
+    }
+    function numberToText(number) {
+        const ones = [
+            "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+            "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+            "Seventeen", "Sighteen", "Nineteen"
+        ];
+        const tens = [
+            "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+        ];
+
+        if (number === 0) return "Zero";
+        function convertHundreds(num) {
+            let result = "";
+            if (num >= 100) {
+                result += ones[Math.floor(num / 100)] + " Hundred ";
+                num %= 100;
+            }
+            if (num >= 20) {
+                result += tens[Math.floor(num / 10)] + " ";
+                num %= 10;
+            }
+            if (num > 0) {
+                result += ones[num] + " ";
+            }
+            return result.trim();
+        }
+
+        function convertNumber(num) {
+            if (num < 1000) return convertHundreds(num);
+
+            const parts = ["", "Thousand", "Million", "Billion"];
+            let partIndex = 0;
+            let result = "";
+
+            while (num > 0) {
+                if (num % 1000 !== 0) {
+                    result = convertHundreds(num % 1000) + " " + parts[partIndex] + " " + result;
+                }
+                num = Math.floor(num / 1000);
+                partIndex++;
+            }
+            return result.trim();
+        }
+
+        return convertNumber(number);
+    }
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js" defer></script>
+@*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>*@

@@ -1,0 +1,724 @@
+﻿
+@{
+    ViewBag.Title = "SubsDetailsByUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css" />
+
+<style>
+    .tableStyle {
+    border: 1px solid #808080;
+    margin-top: 10px;
+    }
+
+    .tableStyle tr td {
+    border: 1px solid #808080 !important;
+    border-bottom: 1px solid #808080 !important;
+    white-space: nowrap;
+    padding: 2px !important
+    }
+
+    .tableStyle tr th {
+    border: 1px solid #808080;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-style: normal;
+    color: #b6ff00;
+    font-weight: 400 !important;
+    padding: 2px !important;
+    white-space: nowrap;
+    }
+
+    .mt-2 {
+    margin-top: 8px;
+    }
+    .mt-4 {
+    margin-top: 16px;
+    }
+    .px-4 {
+        padding-left:12px;
+        padding-right:12px;
+    }
+    .form-control-sm {
+        line-height: 30px;
+        height: 30px;
+    }
+    .float-right {
+        float:right
+    }
+
+
+    #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loader {
+        height: 20px;
+        width: 250px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+    .loader--dot {
+        animation-name: loader;
+        animation-timing-function: ease-in-out;
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+        height: 20px;
+        width: 20px;
+        border-radius: 100%;
+        background-color: black;
+        position: absolute;
+        border: 2px solid white;
+    }
+
+        .loader--dot:first-child {
+            background-color: #8cc759;
+            animation-delay: 0.5s;
+        }
+
+        .loader--dot:nth-child(2) {
+            background-color: #8c6daf;
+            animation-delay: 0.4s;
+        }
+
+        .loader--dot:nth-child(3) {
+            background-color: #ef5d74;
+            animation-delay: 0.3s;
+        }
+
+        .loader--dot:nth-child(4) {
+            background-color: #f9a74b;
+            animation-delay: 0.2s;
+        }
+
+        .loader--dot:nth-child(5) {
+            background-color: #60beeb;
+            animation-delay: 0.1s;
+        }
+
+        .loader--dot:nth-child(6) {
+            background-color: #fbef5a;
+            animation-delay: 0s;
+        }
+
+    .loader--text {
+        position: absolute;
+        top: 200%;
+        left: 0;
+        right: 0;
+        width: 4rem;
+        margin: auto;
+        color: #fff;
+    }
+
+        .loader--text:after {
+            content: "Loading";
+            font-weight: bold;
+            animation-name: loading-text;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            color: #fff;
+        }
+
+    @@keyframes loader {
+        15% {
+            transform: translateX(0);
+        }
+
+        45% {
+            transform: translateX(230px);
+        }
+
+        65% {
+            transform: translateX(230px);
+        }
+
+        95% {
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes loading-text {
+        0% {
+            content: "Loading";
+        }
+
+        25% {
+            content: "Loading.";
+        }
+
+        50% {
+            content: "Loading..";
+        }
+
+        75% {
+            content: "Loading...";
+        }
+    }
+</style>
+
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'none';
+    });
+</script>
+<div class='container' id="loader">
+    <div class='loader'>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--text'></div>
+    </div>
+</div>
+<div class="white-wrapper">
+   
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-12 text-right">
+                <label class="small"> &nbsp;</label>
+                <div class="d-flex align-items-center justify-content-end">
+                    <button id="Product" class="btn btn-danger btn-sm px-4">Product</button>
+                    <button id="ChekApiClint" class="btn btn-danger btn-sm ms-2  px-4">Check Api Client</button>
+                    <button id="Module" class="btn btn-danger btn-sm ms-2  px-4">Module</button>
+                    <button id="PrimarySeconday" class="btn btn-danger btn-sm ms-2  px-4">Check Primary Secondary</button>
+                    @*<button id="download" class="btn btn-danger btn-sm ms-2">Primary User</button>
+                <button id="download" class="btn btn-danger btn-sm ms-2">Api</button>*@
+
+                </div>
+            </div>
+        </div>
+       <div class="row mt-4">
+           <div class="col-12 col-md-4" hidden="hidden">
+               <div class="form-group">
+                   <div class="d-flex">
+                       <select class="form-control selectpicker" data-live-search="true" id="ClientPrimaryEmail" name="ClientPrimaryEmail" title="ClientPrimaryEmail">
+                           <option value="">Client Primary Email</option>
+                       </select>
+                       <input type="submit" id="btnSubmit" class="btn btn-primary btn-sm px-4 ms-2" />
+                   </div>
+               </div>
+           </div>
+       </div>
+
+
+        <div class="row">
+           <div class="col-12 col-md-12 col-lg-12"  id="producttable" hidden="hidden">
+               <div class="row">
+                   <div class="col-12 col-md-6" hidden="hidden" id="ProductList">
+                       <div class="d-flex">
+                           <select class="form-control  selectpicker" data-live-search="true" id="ProductIDs" name="ProductIDs" title="select Product">
+                               <option value="">Select Product</option>
+                           </select>
+                           <input type="submit" id="btnSubmitProduct" class="btn btn-primary btn-sm  ms-2 px-4" />
+                       </div>
+
+                   </div>
+                   <div class="col-md-4 float-right">
+                       <div class="d-flex">
+                           <input type="text" id="ProductsearchInput" placeholder="Search..." class="form-control" />
+                           <button id="Productdatadownload" class="btn btn-danger btn-sm ms-2">Download Excel</button>
+                       </div>
+                   </div>
+               </div>
+               <div class="data-detail-wrapper table-responsive scrolladmin01">
+                  
+                   <table id="Productdata" class="table tableStyle">
+                       <thead>
+                           <tr>
+                               <th>CorpEmail</th>
+                               <th>CompanyName</th>
+                               <th>Module</th>
+                           </tr>
+                       </thead>
+                       <tbody class="Producttbodydata" id="Producttbodydata"></tbody>
+                   </table>
+               </div>
+           </div>
+            <!-------------------------------------------------------Product----------------------------------------------------------------->
+            
+            <!-------------------------------------------------------Api Access----------------------------------------------------------------->
+            <div class="col-12 col-md-12 col-lg-12"  id="Apitable" hidden="hidden">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4  float-right">
+                        <div class="d-flex">
+                            <input type="text" id="ApisearchInput" placeholder="Search..." class="form-control mb-3" />
+                            <button id="Apidatadownload" class="btn btn-danger btn-sm ms-2">Download Excel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-detail-wrapper table-responsive scrolladmin01">
+
+                    <table id="Apidata" class="table tableStyle">
+                        <thead>
+                            <tr>
+                                <th>CorpEmail</th>
+                                <th>CompanyName</th>
+                                <th>Api Access</th>
+                                <th>Subcription End date</th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="Apibodydata" id="Apibodydata"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-------------------------------------------------------Api Access----------------------------------------------------------------->
+           
+            
+            <!----------------------------------------------------------Moduletable---------------------------------------->
+             <div class="col-12 col-md-12 col-lg-12" id="Moduletable"  hidden="hidden">
+                 <div class="row">
+                     <div class="col-md-6">
+                        
+                             <div class="d-flex">
+                                 <select class="form-control" id="ModuleIDs" name="ModuleIDs" title="ModuleIDs">
+                                     <option value="">Select Module </option>
+                                     <option value=1>Chemical Pricing </option>
+                                     <option value=2>Market Analysis </option>
+                                     <option value=5>News </option>
+                                     <option value=8>Capacity Tracker </option>
+                                     
+                                 </select>
+                                 <input type="submit" id="ModuleSubmit" class="btn btn-primary btn-sm px-4 ms-2" />
+                             </div>
+                        
+                     </div>
+                     <div class="col-md-4 col-lg-4 float-right">
+                         <div class="d-flex">
+                             <input type="text" id="ModulesearchInput" placeholder="Search..." class="form-control mb-3" />
+                             <button id="Moduledatadownload" class="btn btn-danger btn-sm ms-2">Download Excel</button>
+                         </div>
+                     </div>
+                 </div>
+
+                 <div class="data-detail-wrapper table-responsive scrolladmin01" >
+                   
+                     <table id="Moduledata" class="table tableStyle">
+                         <thead>
+                             <tr>
+                                 <th>CorpEmail</th>
+                                 <th>CompanyName</th>
+                                 <th>ModuleName</th>
+                             </tr>
+                         </thead>
+                         <tbody class="Modulebodydata" id="Modulebodydata"></tbody>
+                     </table>
+                 </div>
+             </div>
+           
+            <!----------------------------------------------------------Moduletable end---------------------------------------->
+
+            <!-----------------------------------------------------PrimarySeconday------------------------------------------------------------->
+            <div class="col-12 col-md-12 col-lg-12" id="PrimarySecondaytable" hidden="hidden">
+                <div class="row">
+                    <div class="col-md-4 col-lg-4 float-right">
+                        <div class="d-flex">
+                            <input type="text" id="PrimarySecondaysearchInput" placeholder="Search..." class="form-control" />
+                            <button id="PrimarySecondaydatadownload" class="btn btn-danger btn-sm ms-2">Download Excel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-detail-wrapper table-responsive scrolladmin01">
+                  
+                    <table id="PrimarySecondaydata" class="table tableStyle">
+                        <thead>
+                            <tr>
+                                <th>CompanyName</th>
+                                <th>UserName</th>
+                                <th>CorpEmail</th>
+                                <th>PrimarySecondary</th>
+                                <th>Status</th>
+                                <th>Subscription End Date</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody class="PrimarySecondaybodydata" id="PrimarySecondaybodydata"></tbody>
+                    </table>
+                </div>
+            </div>
+          
+            <!----------------------------------------------------------Moduletable end---------------------------------------->
+        </div>
+    </div>
+
+
+      
+</div>
+
+<!-- Correct table2excel library (GitHub version) -->
+<script src="https://unpkg.com/table2excel@1.1.1/dist/table2excel.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+
+         GetClintEmail();
+
+    });
+
+    $("#Product").click(function () {
+        $("#loader").show();
+        $("#Apitable, #ModuleList ,#PrimarySecondaytable, #Moduletable").hide();
+        $("#ProductList, #producttable").show();
+        GetProduct();
+        GetProductSearchFilter();
+        $("#loader").hide();
+    });
+    $("#ChekApiClint").click(function (e) {
+        
+        e.preventDefault();
+        $("#Apitable").show();
+        $("#ProductList, #producttable ,#ModuleList ,#PrimarySecondaytable").hide();
+        GetApiSearchFilter();
+        
+    });
+    $("#Module").click(function () {
+        
+        $("#ModuleList ,#Moduletable").show();
+        $("#ProductList, #producttable ,#Apitable, #PrimarySecondaytable").hide();
+        GetModuleSearchFilter();
+    });
+    $("#btnSubmitProduct").click(function (e) {
+        $("#ProductsearchInput").val('');
+        e.preventDefault();  // prevent form submit if any
+        $("#ProductList").show();
+        GetProductSearchFilter();
+    });
+    $("#ModuleSubmit").click(function (e) {
+        
+        e.preventDefault(); 
+        $("#ProductList, #producttable ,#Apitable ,#PrimarySecondaytable").hide();
+        $("#Moduletable").show();
+        GetModuleSearchFilter();
+       
+    });
+    $("#PrimarySeconday").click(function (e) {
+        
+        e.preventDefault(); 
+        $("#ProductList, #producttable ,#Apitable, #Moduletable").hide();
+        $("#PrimarySecondaytable").show();
+        GetCustomerPrimary();
+        
+    });
+
+
+    //-------------------search code start-----------------------------------------------------------------
+    document.getElementById('ProductsearchInput').addEventListener('keyup', function () {
+        var input = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#Productdata tbody tr');
+
+        rows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    });
+    document.getElementById('ApisearchInput').addEventListener('keyup', function () {
+        
+        var input = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#Apidata tbody tr');
+
+        rows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    });
+    document.getElementById('PrimarySecondaysearchInput').addEventListener('keyup', function () {
+        
+        var input = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#PrimarySecondaydata tbody tr');
+
+        rows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    });
+    document.getElementById('ModulesearchInput').addEventListener('keyup', function () {
+        
+        var input = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#Moduledata tbody tr');
+
+        rows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    });
+     //-------------------search code end-----------------------------------------------------------------
+
+
+
+    document.getElementById('Productdatadownload').addEventListener('click', function () {
+        // Get table
+        
+        var table = document.getElementById('Productdata');
+
+        // Convert table to worksheet
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Export to Excel file
+        XLSX.writeFile(wb, 'Productdata.xlsx');
+    });
+    document.getElementById('Apidatadownload').addEventListener('click', function () {
+        // Get table
+        
+        var table = document.getElementById('Apidata');
+
+        // Convert table to worksheet
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Export to Excel file
+        XLSX.writeFile(wb, 'Apidata.xlsx');
+    });
+    document.getElementById('Moduledatadownload').addEventListener('click', function () {
+        // Get table
+        
+        var table = document.getElementById('Moduledata');
+
+        // Convert table to worksheet
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Export to Excel file
+        XLSX.writeFile(wb, 'Moduledata.xlsx');
+    }); 
+    document.getElementById('PrimarySecondaydatadownload').addEventListener('click', function () {
+        // Get table
+        
+        var table = document.getElementById('PrimarySecondaydata');
+
+        // Convert table to worksheet
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Export to Excel file
+        XLSX.writeFile(wb, 'PrimarySecondaydata.xlsx');
+    }); 
+
+
+    function GetClintEmail() {
+        type = "Client";
+        var ClintEmailinnerHTML = "";
+        var PrimaryClintEmailinnerHTML = "";
+        var ClintName = "";
+        ClintName += "<option value=''>" + "Select Client Name" + "</option>";
+        PrimaryClintEmailinnerHTML += "<option value=''>" + "Select Primary Client Email" + "</option>";
+        $.ajax({
+            type: "POST",
+            url: "/SubsManagement/GetClintEmail",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                
+                $(data.DataList).each(function (index, value) {
+                    
+                    ClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>"
+                    PrimaryClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>"
+                    ClintName += "<option value = '" + value.Name + "'> " + value.Name + "</option>"
+                });
+
+                $('#ClientPrimaryEmail').html(PrimaryClintEmailinnerHTML);
+                $('#ClientPrimaryEmail').selectpicker('refresh');
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function GetProduct() {
+        
+        type = "Company";
+        $.ajax({
+            type: "POST",
+            url: "/SubsManagement/GetProduct",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                
+                var innerHTML = "";
+                innerHTML += "<option  value = ''>" + "Select Product" + "</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.ProductName != null || value.ProductName != "" || value.ProductName != undefined) {
+                        innerHTML += "<option value = '" + value.ProductId + "'> " + value.ProductName + "</option>"
+                    }
+                });
+
+
+                $('#ProductIDs').html(innerHTML);
+                $('#ProductIDs').selectpicker('refresh');
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function GetProductSearchFilter() {
+        var pageNumber = $('#PageNumber').val();
+        var Product = $("#ProductIDs").val();
+        $.ajax({
+            url: "/SubsManagement/GetCustomerByProduct",
+            data: { Productid: Product },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,  // <-- Remove 'false', let it be async
+            beforeSend: function () {
+                $("#loader").show();
+            },
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DataList).each(function (idx, elm) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.ModuleName + "</td>";
+                        tbodyHTML += "</tr>";
+                    });
+                } else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.Producttbodydata').html(tbodyHTML);
+            },
+            complete: function () {
+                $("#loader").hide();
+            }
+        });
+    }
+
+
+    function GetApiSearchFilter() {
+        
+        $.ajax({
+            url: "/SubsManagement/GetCustomerISApiAccess",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,  // <-- Remove 'false', let it be async
+            beforeSend: function () {
+                $("#loader").show();
+            },
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DataList).each(function (idx, elm) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.ApiAccess + "</td>";
+                        tbodyHTML += "<td>" + elm.SubcriptionEndate + "</td>";
+                        
+                        tbodyHTML += "</tr>"
+                    });
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.Apibodydata').html(tbodyHTML);
+            },
+            complete: function () {
+                $("#loader").hide();
+            }
+        });
+    } 
+
+    function GetModuleSearchFilter() {
+        
+        var ModuleID = $("#ModuleIDs").val();
+        $.ajax({
+            url: "/SubsManagement/GetCustomerbyModule",
+            data: { ModuleId: ModuleID},
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,  // <-- Remove 'false', let it be async
+            beforeSend: function () {
+                $("#loader").show();
+            },
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DataList).each(function (idx, elm) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.ModuleName + "</td>";
+                        tbodyHTML += "</tr>"
+                    });
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.Modulebodydata').html(tbodyHTML);
+            },
+            complete: function () {
+                $("#loader").hide();
+            }
+        });
+    } 
+
+    function GetCustomerPrimary() {
+        
+        $.ajax({
+            url: "/SubsManagement/GetCustomerPrimary",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,  // <-- Remove 'false', let it be async
+            beforeSend: function () {
+                $("#loader").show();
+            },
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DataList).each(function (idx, elm) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.UserName + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.PrimarySecondary + "</td>";
+                        tbodyHTML += "<td>" + elm.ClientStatus + "</td>";
+                        tbodyHTML += "<td>" + elm.ToDate + "</td>";
+                        
+                        tbodyHTML += "</tr>"
+                    });
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.PrimarySecondaybodydata').html(tbodyHTML);
+            },
+            complete: function () {
+                $("#loader").hide();
+            }
+        });
+    } 
+
+    
+</script>

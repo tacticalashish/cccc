@@ -1,0 +1,571 @@
+@{
+    ViewBag.Title = "Subscription request detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .srd-wrap {
+        background: #f4f5f7;
+        padding: 18px 28px 40px;
+    }
+
+    .srd-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #56606e;
+        text-decoration: none;
+    }
+
+        .srd-back:hover {
+            color: #1f5a37;
+        }
+
+    .srd-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    .srd-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #22262b;
+        margin: 0 0 4px;
+    }
+
+    .srd-sub {
+        font-size: 12.5px;
+        color: #9aa0a6;
+        margin-bottom: 14px;
+    }
+
+    .srd-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .srd-search-box {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+        width: 320px;
+    }
+
+    .srd-search-btn {
+        background: #1f5a37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .srd-count {
+        font-size: 12px;
+        color: #7c828a;
+    }
+
+    #SrdTableWrap {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    table.tableStyle {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+        table.tableStyle th, table.tableStyle td {
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            text-align: left;
+            padding: 10px 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            color: #33383f;
+        }
+
+        table.tableStyle th {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7c828a;
+            text-transform: uppercase;
+        }
+
+    #SrdTableWrap::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    #SrdTableWrap::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+    }
+
+        #SrdTableWrap::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+    #SrdTableWrap::-webkit-scrollbar-track {
+        background: #f4f5f7;
+        border-radius: 10px;
+    }
+
+    #SrdPagging {
+        margin-top: 14px;
+    }
+
+        #SrdPagging:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        #SrdPagging .pagination {
+            margin: 0;
+        }
+
+    .srd-read-more {
+        color: #3f6fd4;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+        white-space: nowrap;
+        margin-left: 4px;
+    }
+
+        .srd-read-more:hover {
+            color: #2952ad;
+        }
+
+    .srd-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 20, 30, .45);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .srd-modal-backdrop.srd-modal-open {
+            display: flex;
+        }
+
+    .srd-modal-card {
+        background: #fff;
+        border-radius: 10px;
+        max-width: 520px;
+        width: 92vw;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, .2);
+    }
+
+    .srd-modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .srd-modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .srd-modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #9aa0a6;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .srd-modal-body {
+        padding: 16px 20px;
+        font-size: 13px;
+        color: #33383f;
+        line-height: 1.9;
+        overflow-y: auto;
+        white-space: normal;
+    }
+</style>
+
+<div class="srd-wrap">
+    <div class="srd-card">
+        <div>
+            <h3 class="srd-title" id="SrdCompanyName">Loading&hellip;</h3>
+            <div class="srd-sub">
+                <a href="@Url.Action("SalesIndex", "SalesManagement")" class="srd-back">&larr; Back to subscriptions</a>
+                &nbsp;&middot;&nbsp; Primary contact: <span id="SrdPrimaryContact">&mdash;</span>
+            </div>
+        </div>
+
+        <div class="srd-toolbar">
+            <div>
+                <input type="text" class="srd-search-box" placeholder="Search country, region, CRM, package, products..." id="SrdSearch" />
+                <input type="button" class="srd-search-btn" value="Search" onclick="SrdGetSearchValues()" />
+                <input type="hidden" id="SrdPageNumber" name="SrdPageNumber" value="1" />
+            </div>
+            <div class="srd-count" id="SrdCount">&nbsp;</div>
+        </div>
+
+        <div id="SrdTableWrap">
+            <table id="SrdTable" class="tableStyle">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>Region</th>
+                        <th>CRM</th>
+                        <th>Created Date</th>
+                        <th>Secondary Email</th>
+                        <th>Package</th>
+                        <th>Products</th>
+                        <th>Sub. From</th>
+                        <th>Sub. To</th>
+                        <th>Trader</th>
+                        <th>Renew</th>
+                        <th>Credit</th>
+                        <th>Billing Email</th>
+                        <th>User Type</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody id="SrdRows"></tbody>
+            </table>
+        </div>
+
+        <div id="SrdPagging"></div>
+    </div>
+</div>
+
+<div class="srd-modal-backdrop" id="SrdProductsBackdrop">
+    <div class="srd-modal-card">
+        <div class="srd-modal-head">
+            <div class="srd-modal-title">All products</div>
+            <button type="button" class="srd-modal-close" onclick="SrdCloseProductsPopup()">&times;</button>
+        </div>
+        <div class="srd-modal-body" id="SrdProductsBody"></div>
+    </div>
+</div>
+
+<script>
+    var SrdCompanyName = @Html.Raw(Json.Encode(ViewBag.CompanyName ?? ""));
+
+    function SrdEscape(text) {
+        if (text === null || text === undefined) return "";
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function SrdValueOrDash(text) {
+        return (text === null || text === undefined || text === "") ? "&mdash;" : SrdEscape(text);
+    }
+
+    function SrdParseDate(value) {
+        if (!value) return null;
+        var s = String(value);
+        // ASP.NET's default JsonResult can emit dates as "/Date(ticks)/".
+        var m = /\/Date\((-?\d+)\)\//.exec(s);
+        if (m) return new Date(parseInt(m[1], 10));
+        // SQL's default "YYYY-MM-DD HH:mm:ss.fff" (space, not "T") isn't
+        // reliably parsed by every browser's Date constructor -- normalize it.
+        var normalized = s.indexOf("T") === -1 ? s.replace(" ", "T") : s;
+        var d = new Date(normalized);
+        if (!isNaN(d.getTime())) return d;
+        d = new Date(s);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    function SrdFormatDate(dateString) {
+        var d = SrdParseDate(dateString);
+        if (!d) return "&mdash;";
+        var pad = function (n) { return n < 10 ? "0" + n : "" + n; };
+        return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+    }
+
+    function SrdGetSearchValues() {
+        $('#SrdPageNumber').val(1);
+        SrdLoad();
+    }
+
+    var SrdCurrentLines = [];
+
+    function SrdSplitList(text) {
+        if (!text) return [];
+        var s = String(text);
+        // Product names can themselves contain commas (e.g. "1,3-Propanediol"),
+        // so prefer a pipe separator when the server sends one; fall back to
+        // comma otherwise so nothing breaks before the proc is updated.
+        var delim = s.indexOf('|') !== -1 ? '|' : ',';
+        var parts = s.split(delim);
+        var result = [];
+        for (var i = 0; i < parts.length; i++) {
+            var trimmed = $.trim(parts[i]);
+            if (trimmed !== "") result.push(trimmed);
+        }
+        return result;
+    }
+
+    function SrdRenderProductsCell(text, rowIdx) {
+        var parts = SrdSplitList(text);
+        if (parts.length === 0) return "&mdash;";
+        if (parts.length <= 3) return SrdEscape(parts.join(", "));
+        var shown = SrdEscape(parts.slice(0, 3).join(", "));
+        return shown + " <a href='javascript:void(0);' class='srd-read-more' onclick='SrdShowProductsPopup(" + rowIdx + ")'>Read more (" + parts.length + ")</a>";
+    }
+
+    function SrdShowProductsPopup(rowIdx) {
+        var line = SrdCurrentLines[rowIdx];
+        var parts = SrdSplitList(line && line.Products);
+        var html = "";
+        if (parts.length === 0) {
+            html = "<div style='color:#9aa0a6;'>No products.</div>";
+        } else {
+            for (var i = 0; i < parts.length; i++) {
+                html += "<div>" + SrdEscape(parts[i]) + "</div>";
+            }
+        }
+        $("#SrdProductsBody").html(html);
+        $("#SrdProductsBackdrop").addClass("srd-modal-open");
+    }
+
+    function SrdCloseProductsPopup() {
+        $("#SrdProductsBackdrop").removeClass("srd-modal-open");
+    }
+
+    function SrdRenderRows(list) {
+        SrdCurrentLines = list || [];
+        if (!list || !list.length) {
+            $("#SrdRows").html("<tr><td colspan='15' style='text-align:center;color:#9aa0a6;'>No coverage rows found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var r = list[i];
+            html += "<tr>";
+            html += "<td>" + SrdValueOrDash(r.CountryName) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.RegionName) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.CRM) + "</td>";
+            html += "<td>" + SrdFormatDate(r.CreatedDate) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.SecondaryClintEmail) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.Package) + "</td>";
+            html += "<td>" + SrdRenderProductsCell(r.Products, i) + "</td>";
+            html += "<td>" + SrdFormatDate(r.SubscriptionDateFrom) + "</td>";
+            html += "<td>" + SrdFormatDate(r.SubscriptionDateTo) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.Trader) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.Renew) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.Credit) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.BillingEmail) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.UserType) + "</td>";
+            html += "<td>" + SrdValueOrDash(r.Phone) + "</td>";
+            html += "</tr>";
+        }
+        $("#SrdRows").html(html);
+    }
+
+    function SrdLoad() {
+        var pageNumber = $('#SrdPageNumber').val();
+        var search = $('#SrdSearch').val();
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetSubscriptionRequestDetail", "SalesManagement")",
+            data: { company: SrdCompanyName, search: search, pageNumber: pageNumber },
+            dataType: "json"
+        }).done(function (response) {
+            var lines = response.DataList || [];
+            $("#SrdCompanyName").text(lines.length > 0 ? (lines[0].Company || SrdCompanyName) : (SrdCompanyName || "(unnamed)"));
+            $("#SrdPrimaryContact").text(lines.length > 0 ? (lines[0].PrimaryContact || "\u2014") : "\u2014");
+            SrdRenderRows(lines);
+            $("#SrdPagging").html(SrdGetPaginationHTML(response));
+            var count = response.RecordsCount || 0;
+            $("#SrdCount").text(count + (count === 1 ? " coverage row" : " coverage rows"));
+        }).fail(function () {
+            $("#SrdCompanyName").text(SrdCompanyName || "Couldn't load");
+            $("#SrdRows").html("<tr><td colspan='15' style='text-align:center;color:#9aa0a6;'>Couldn't load - please refresh.</td></tr>");
+        });
+    }
+
+    // Pagination -- exact same GetPaginationHTML/GetPagination/PaggingButton
+    // structure used across the rest of the app, prefixed "Srd" and wired to
+    // SrdPageNumber/SrdLoad().
+    function SrdGetPaginationHTML(json) {
+        var pagingInnerHTML = "<span class='pull-left' style='color:#7c828a; font-size:12px;'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = SrdGetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+        return pagingInnerHTML;
+    }
+
+    function SrdPaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        $('#SrdPageNumber').val(pageNumber);
+        SrdLoad();
+    }
+
+    function SrdGetPagination(activePage, pagerSize, numberOfPages, URL) {
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='SrdPaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='SrdPaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='SrdPaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='SrdPaggingButton($(this));' href='javascript:void(0);'  url='";
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage + 1);
+                innerHTML += "' onclick='SrdPaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage + 1);
+            innerHTML += "' onclick='SrdPaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (next);
+            innerHTML += "' onclick='SrdPaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+
+    $(document).ready(function () {
+        SrdLoad();
+
+        $("#SrdProductsBackdrop").on("click", function (e) {
+            if (e.target === this) {
+                SrdCloseProductsPopup();
+            }
+        });
+    });
+</script>

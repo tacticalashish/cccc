@@ -1,0 +1,81 @@
+﻿@using ChemAnalyst.DAL
+@{
+    ViewBag.Title = "AddSubscriptionPackage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h2>AddSubscriptionPackage</h2>*@
+<div class="update-profile-wrapper">
+    <form id="frmChemicalPrice">
+        <div class="white-wrapper">
+            <div class="col-md-3 ">
+                <div class="import-form ">
+                    <div class="change-pass-box">
+                        <div class="col-sm-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Client Name" id="ClientName" name="ClientName" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-sm-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Client Primary Email" id="ClientPrimaryEmail" name="ClientPrimaryEmail" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-sm-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Client Company Name" id="ClientCompanyName" name="ClientCompanyName" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-sm-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Client Country Name" id="ClientCountryName" name="ClientCountryName" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="State Name" id="StateName" name="StateName" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Client Phone Number" id="ClientPhoneNumber" name="ClientPhoneNumber" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Billing Email Address" id="BillingEmailAddress" name="BillingEmailAddress" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Subscription Type" id="SubscriptionType" name="SubscriptionType" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Assign Analyst" id="AssignAnalyst " name="StateName" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Secondary Client Emails" id="SecondaryClientEmails" name="SecondaryClientEmails" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="datetime-local" class="form-control" placeholder="Date From" id="DateFrom" name="DateFrom" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Date To" id="DateTo" name="DateTo" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Module" id="Module" name="Module" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Subscription Region" id="Region" name="Region" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Subscription Country" id="Country" name="Country" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Subscription Product" id="Product" name="Product" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Chemical Range" id="ChemicalRange" name="ChemicalRange" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Market Analysis Range" id="MarketAnalysisRange" name="MarketAnalysisRange" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text" class="form-control" placeholder="Remark" id="Remark" name="Remark" autocomplete="off" onkeypress="return isNumberKey(event)" />
+                        </div>
+
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <input type="hidden" id="InsertUSD" name="InsertUSD" />
+        <input type="hidden" id="InsertCount" name="InsertCount" />
+        <input type="hidden" id="InsertMin" name="InsertMin" />
+        <input type="hidden" id="InsertMax" name="InsertMax" />
+    </form>
+</div>

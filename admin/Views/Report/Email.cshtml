@@ -1,0 +1,492 @@
+﻿
+@{
+    ViewBag.Title = "Email Trigger";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="~/css/bootstrap-select.css">
+
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css"/ >
+
+
+<style type="text/css">
+    .has-error {
+        border-bottom: 1px solid #eb0909 !important;
+    }
+
+    .bootstrap-select > .dropdown-toggle.bs-placeholder, .bootstrap-select > .dropdown-toggle.bs-placeholder:hover, .bootstrap-select > .dropdown-toggle.bs-placeholder:focus, .bootstrap-select > .dropdown-toggle.bs-placeholder:active {
+        color: none;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
+
+    <div class="update-profile-wrapper">
+        <div class="eq-form" style="margin-top: 1em;">
+            <form id="frmSearchFilter">
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+
+
+                <div class="row">
+                    <div class="col-lg-3 form-group">
+                        <select id="Source" name="Source" class="form-control">
+                            <option value="">Select Source</option>
+                            <option value="Chemical Pricing">Chemical Pricing</option>
+                            <option value="Contact Us">Contact Us</option>
+                            <option value="Free Trial">Free Trial</option>
+                            <option value="Industry Report">Industry Report</option>
+                            <option value="News Letter">News Letter</option>
+                        </select>
+                    </div>
+                   
+                    <div class="col-lg-3 form-group">
+                        <select id="IsEmail" name="IsEmail" class="form-control" onchange="ResetFilter('market-type');">
+                            <option value="">Select Email Trigger</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 form-group">
+                        <input id="Name" name="Name" class="form-control" placeholder="Contact Name" />
+                    </div>
+
+                    <div class="col-lg-3 form-group">
+                        <input id="Email" name="Email" class="form-control" placeholder="Contact Email" />
+                    </div>
+
+                    <div class="col-lg-3 form-group">
+                        <input id="ContactNumber" name="ContactNumber" class="form-control" placeholder="Contact Number" />
+                    </div>
+
+                    <div class="col-lg-3 form-group">
+                        <input id="CompanyName" name="CompanyName" class="form-control" placeholder="Company Name" />
+                    </div>
+
+                    <div class="col-lg-3 form-group">
+                        <input id="CountryName" name="CountryName" class="form-control" placeholder="Country Name" />
+                    </div>
+
+                    <div class="col-lg-3 form-group">
+                        <input id="StateName" name="StateName" class="form-control" placeholder="State Name" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 text-left">
+                        <div class="col-lg-6 form-group">
+                            <select name="ddlNews" id="ddlNews" class="selectpicker" data-live-search="true" data-selected-text-format="count > 2" data-none-selected-text="Select News" multiple></select>
+                        </div>
+                        @*<div class="col-lg-6 form-group">
+                            <select name="ddlDeal" id="ddlDeal" class="selectpicker" data-live-search="true" data-selected-text-format="count > 2" data-none-selected-text="Select Deals" multiple></select>
+                        </div>*@
+                    </div>
+                        <div class="col-lg-6 text-right">
+                            <a href="javascript:void(0)" class="btn btn-success search-filter"><i class="fa fa-search"></i> Search</a>
+                            <a href="javascript:void(0)" class="btn btn-warning" onclick="window.location.reload(true)"><i class="fa fa-retweet"></i> Reset</a>
+                            @*<button onclick="RefreshEmail();" id="btnRefresh" name="btnRefresh" type="button" class="btn btn-info"><i class="fa fa-refresh"></i> Refresh Email</button>*@
+                            <button onclick="TriggerEmail();" id="btnSendEmail" name="btnSendEmail" type="button" class="btn btn-info"><i class="fa fa-mail-forward"></i> Trigger Email</button>
+                        </div>
+                    </div>
+            </form>
+        </div>
+
+        <div class="eq-form" style="margin-top: 1em; display:none;" id="dvDynamicTableData">
+            <div class="box box-default">
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1">
+                <div class="box-body table-responsive">
+                    <div style="">
+                        <table id="tblDynamicTableData" class="table" style="color:#fff">
+                            <thead id="theadDynamicTableData">
+                                <tr class="table-thead-tr-primary">
+                                    <th style="min-width: 50px;" class="nowrap">&nbsp;</th>
+                                    <th style="min-width: 50px;" class="nowrap">S.No</th>
+                                    <th style="min-width: 150px;" class="nowrap">Source</th>
+                                    <th style="min-width: 150px;" class="nowrap">Name</th>
+                                    <th style="min-width: 200px;" class="nowrap">Email ID</th>
+                                    <th style="min-width: 150px;" class="nowrap">Contact Number</th>
+                                    <th style="min-width: 200px;" class="nowrap">Company</th>
+                                    <th style="min-width: 100px;" class="nowrap">Country</th>
+                                    <th style="min-width: 100px;" class="nowrap">State</th>
+                                    <th style="min-width: 150px;" class="nowrap">Requested On</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyDynamicTableData" style="font-size:13px;"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="box-footer clearfix" id="divPagging" style="border-top:0.5px solid #fff"></div>
+            </div>
+        </div>
+    </div>
+
+   
+
+
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="~/js/bootstrap-select.js"></script>
+
+
+<script type="text/javascript">
+
+    
+
+    $(document).ready(function () {
+        BindNewsAndDeals(true, false, 'ddlNews');
+        BindNewsAndDeals(false, true, 'ddlDeal');
+        SearchFilter();
+    });
+
+
+
+    $(document).on('click', '.search-filter', function () {
+        $('#PageNumber').val('1');
+        SearchFilter();
+    });
+
+
+    function BindNewsAndDeals(isNews, isDeals, elmID) {
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/GetNewsAndDeals",
+            data: "{'isNews':" + isNews + ",'isDeals':" + isDeals + "}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (response) {
+                innerHTML = "";
+                $(response).each(function (index, value) {
+                    innerHTML += "<option value='" + value.ID + "'>" + value.Title + " | " + value.CreatedTimeView2 + " | " + value.CountryNameView + "</option>"
+                });
+                $('#' + elmID).html(innerHTML);
+                $('#' + elmID).selectpicker('refresh');
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+    function SearchFilter() {
+        var result = true;
+        var pageNumber = $('#PageNumber').val();
+        
+        var urlWithParam = '/Report/GetEmailBasedOnSearchFilter?' + $('#frmSearchFilter').serialize();
+
+        $.ajax({
+            url: urlWithParam,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+
+                var tbodyInnerHTML = '';
+                if (json != null && json.DateList != null && json.DateList.length > 0) {
+                    $('.excel-export').show();
+                    $(json.DateList).each(function (idx, elm) {
+                        tbodyInnerHTML += "<tr>";
+                        var isChecked = '';
+                        if (elm.IsEmail == true) { isChecked = 'checked' }
+
+                        tbodyInnerHTML += "<td><input type='checkbox' " + isChecked + " class='emil-check' email-id='" + elm.CorpEmailView + "'  /></td>";
+                        tbodyInnerHTML += "<td>" + elm.RowNumber + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.Source + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.NameView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CorpEmailView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.ContactNumberView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CompanyNameView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CountryNameView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.StateNameView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.RequestedDateView + "</td>";
+                        tbodyInnerHTML += "</tr>"
+                    });
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+                }
+                else {
+                    $('.excel-export').hide();
+                    $('#divPagging').html('');
+                    tbodyInnerHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+
+                $('#tbodyDynamicTableData').html(tbodyInnerHTML);
+                $('#dvDynamicTableData').show();
+            }
+        });
+
+    }
+
+    $(document).on('change', '.emil-check', function () {
+        var emailID = $(this).attr('email-id');
+        var isChecked = $(this).is(':checked');
+
+        $.ajax({
+            url: "/Report/UpdateEmailTrigger?Email=" + emailID + "&IsChecked=" + isChecked,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                if (response != 'success') {
+                    $(this).prop('checked', isChecked);
+                    alert('something went wrong! Please try after some time');
+                    console.log(response)
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+
+    });
+
+    
+
+    function TriggerEmail() {
+
+        var oldText = $('#btnSendEmail').html();
+        $('#btnSendEmail').html('<i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;sending....');
+        $('#btnSendEmail').attr('disabled', 'disabled');
+
+        //for News
+        var ddlNews = $('#ddlNews').selectpicker('val');
+        var news = '';
+        $(ddlNews).each(function (idx, val) { news += val + ','; });
+        news = news.substring(0, news.length - 1);
+
+        //for deal
+        var ddlDeal = $('#ddlDeal').selectpicker('val');
+        var deal = '';
+        $(ddlDeal).each(function (idx, val) { deal += val + ','; });
+        deal = deal.substring(0, deal.length - 1);
+
+
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/TriggerEmailForNewsAndDeal?newsIDs=" + news + '&dealIDs=' + deal,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (response) {
+                if (response == 's') {
+                    $('#btnSendEmail').removeAttr('disabled', 'disabled');
+                    $('#btnSendEmail').html(oldText);
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function RefreshEmail() {
+        var oldText = $('#btnRefresh').html();
+        $('#btnRefresh').html('<i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;refreshing....');
+        $('#btnRefresh').attr('disabled', 'disabled');
+        $.ajax({
+            type: "POST",
+            url: "/Report/RefreshEmail",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (response) {
+                if (response == 'Success') {
+                    $('#btnRefresh').removeAttr('disabled', 'disabled');
+                    $('#btnRefresh').html(oldText);
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+
+    function PaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        $('#PageNumber').val(pageNumber);
+
+        SearchFilter();
+    }
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+
+    }
+
+</script>

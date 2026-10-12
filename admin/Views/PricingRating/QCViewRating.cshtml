@@ -1,0 +1,376 @@
+﻿
+@{
+    ViewBag.Title = "QCViewRating";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/ckeditor/ckeditor.js" type="text/javascript"></script>
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper pt-0 mt-0 container-fluid">
+        <div class="row">
+            <div class="col-sm-12 col-md-12"><h3 class="text-white pb-2">Check Associate Rating List</h3></div>
+            <div class="col-sm-12 col-md-4">
+                <label><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="Managersearch" aria-controls="Userlist"></label>
+                <input type="button" class="btn btn-success" value="Search" onclick="GetManagersearchValues()" />
+                <input type="hidden" id="ManagerPageNumber" name="ManagerPageNumber" value="1" />
+            </div>
+            <div class="col-sm-12  col-md-4">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <select id="selectmonth" class="form-control" onchange="GetManagerViewBasedOnSearchFilter()">
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <select id="selectYear" class="form-control" onchange="GetManagerViewBasedOnSearchFilter()">
+                            <option></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01  mt-2">
+            <table id="Associateratinglist" class="table table-sm table-bordered mb-0">
+                <thead class="bg-dark text-nowrap">
+                    <tr>
+                        <th hidden="hidden">Id</th>
+                        <th>Associate Name</th>
+                        <th>year</th>
+                        <th>Month</th>
+                        <th>Details</th>
+                        <th>QC Rating</th>
+                        <th>Submitted By</th>
+                        <th>Submitted Date</th>
+                        <th>Total Rating</th>
+                    </tr>
+                </thead>
+                <tbody class="Managertbodydata" id="Managertbodydata"></tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="ManagerdivPagging"></div>
+</div>
+    <div class="position-relative popup-open1" id="AddMoreRating" style="display:none">
+        <div class="child01" style="padding:5px!important">
+            <textarea rows="4" name="Description" placeholder="Description *"></textarea>
+            <script type="text/javascript">
+                CKEDITOR.replace("Description");
+            </script>
+            <div class="col-md-12 mt-2">
+                <button class="btn btn-danger btn-sm" style="float:right" id="Cancelparameters" type="button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+          $("#Cancelparameters").click(function () {
+              $("#AddMoreRating").css("display", "none");
+          });
+        $(document).ready(function () {
+
+            populateYearDropdown();
+
+            $('#selectmonth').val(new Date().toLocaleString('default', { month: 'long' }));
+          });
+
+        function populateYearDropdown() {
+            const currentYear = new Date().getFullYear();
+            const $yearDropdown = $('#selectYear');
+
+            $yearDropdown.empty(); // Clear existing options
+            $yearDropdown.append(`<option value="">--Select Year--</option>`);
+
+            // Add previous 5 years and current year
+            for (let i = 5; i >= 0; i--) {
+                const year = currentYear - i;
+                const isSelected = year === currentYear ? 'selected' : ''; // Mark current year as selected
+                $yearDropdown.append(`<option value="${year}" ${isSelected}>${year}</option>`);
+            }
+        }
+
+
+
+        function GetManagersearchValues() {
+            Search = $('#Managersearch').val();
+            $('#Managersearch').html(GetPaginationHTML(Search));
+            GetManagerViewBasedOnSearchFilter();
+        }
+
+        $.formattedDate = function (dateToFormat) {
+            var dateObject = new Date(dateToFormat);
+            var day = dateObject.getDate();
+            var month = dateObject.getMonth() + 1;
+            var year = dateObject.getFullYear();
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+            var formattedDate = day + "/" + month + "/" + year;
+            return formattedDate;
+        };
+
+        $(document).ready(function () {
+
+            GetManagerViewBasedOnSearchFilter();
+        });
+        function GetPaginationHTML(json) {
+
+            var pagingInnerHTML = "<span class='pull-left py-5' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+            var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+            pagingInnerHTML += getPaginationButton;
+
+            return pagingInnerHTML;
+        }
+        function PaggingButton(elm) {
+
+            var pageNumber = elm.attr('url');
+
+            $('#ManagerPageNumber').val(pageNumber);
+
+            GetManagerViewBasedOnSearchFilter();
+
+        }
+
+        function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+            var innerHTML = '';
+            var startLi = pagerSize / pagerSize;
+            var endLi = pagerSize;
+            var multiplier = activePage / pagerSize;
+            var modulo = activePage % pagerSize;
+            var virtualLi = pagerSize - pagerSize;
+            var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+            var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+            if (modulo == 0) {
+                next = next - pagerSize;
+                previous = previous - pagerSize;
+            }
+
+            if (activePage > pagerSize) {
+                for (var i = 1; i <= multiplier; i++) {
+                    virtualLi += pagerSize;
+                }
+
+                if (modulo > 0) {
+                    startLi = virtualLi + 1;
+                }
+                else {
+                    startLi = virtualLi - pagerSize + 1;
+                }
+                endLi = startLi + pagerSize - 1;
+            }
+
+            innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+            if (activePage > 1 && activePage < pagerSize + 1) {
+                innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);"
+
+                innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+
+                if (activePage == 1) {
+                    innerHTML += "<li class='paginate_button previous disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button previous'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage - 1);
+                    innerHTML += URL + (activePage - 1);
+                    innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+            }
+            else if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (previous);
+                innerHTML += URL + (previous);
+                innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+
+
+            for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+                if (i == activePage) {
+                    innerHTML += "<li>";
+                    innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button'>";
+                    innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + i;
+                    innerHTML += URL + i;
+                }
+
+                innerHTML += "' >";
+                innerHTML += i;
+                innerHTML += "</a>";
+                innerHTML += "</li>";
+            }
+
+            if (activePage + pagerSize > numberOfPages) {
+                if (activePage == numberOfPages) {
+                    innerHTML += "<li class='paginate_button next disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&raquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button next'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage + 1);
+                    innerHTML += URL + (activePage + 1);
+
+                    innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                    innerHTML += "</li>";
+                }
+
+                innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            else if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (next);
+                innerHTML += URL + (next);
+
+                innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            innerHTML += "</ul>";
+
+            return innerHTML;
+        }     
+
+        function GetManagerViewBasedOnSearchFilter() {
+            var TotalCount = 0;
+            var pageNumber = $('#ManagerPageNumber').val();
+            var Search = $('#Managersearch').val();
+            var Month = $('#selectmonth').val();
+            var Year = $('#selectYear').val();
+            var URL = "/PricingRating/GetManagerViewRatingList?searchKeyword='" + Search + "'";
+            URL += '&Year=' + Year;
+            URL += '&Month=' + Month;
+            URL += '&PageNumber=' + pageNumber;
+
+            $.ajax({
+                url: URL,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+                    var tbodyHTML = '';
+                    if (json != null) {
+                        $(json.DateList).each(function (idx, elm) {
+                            var formattedDate = ($.formattedDate(new Date(parseInt(elm.CreatedDate.substr(6)))));
+                            tbodyHTML += "<tr>";
+                            tbodyHTML += "<td hidden>" + elm.ID + "</td>";
+                            tbodyHTML += "<td>" + elm.AssociateName + "</td>";
+                            tbodyHTML += "<td>" + elm.Year + "</td>";
+                            tbodyHTML += "<td>" + elm.Month + "</td>";
+                            tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-info' value='Show' onclick=ShowDetails('" + elm.Id + "')>" + "</td>";
+                            tbodyHTML += "<td>" + elm.AssociateRating + "</td>";
+                            tbodyHTML += "<td>" + elm.CreatedBy + "</td>";
+                            tbodyHTML += "<td>" + formattedDate + "</td>";
+                            tbodyHTML += "<td>" + elm.TotalRating + "</td>";                           
+                            tbodyHTML += "</tr>"
+                        });
+
+                        $('#ManagerdivPagging').html(GetPaginationHTML(json));
+                        $('#pageSize').val(json.PageSize);
+
+                    }
+                    else {
+                        tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                    }
+
+                    //$('#CountAssignProduct').text('Assign Products : ' + TotalCount + '');
+                    $('.Managertbodydata').html(tbodyHTML);
+                }
+            });
+        }
+
+
+
+
+
+        function ShowDetails(value) {
+            var URL = "/PricingRating/GetRatingDetails?id=" + value;
+            $.ajax({
+                url: URL,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (json) {
+                    debugger;
+                    if (json != null) {
+                        $(json).each(function (idx, elm) {
+                            CKEDITOR.instances.Description.setData(elm.Details);
+                            $('#DassociateName').html(elm.AssociateName)
+                            $("#AddMoreRating").css("display", "block");
+                        });
+                    }
+                }
+            });
+        }
+
+
+</script>
+
+
+
+

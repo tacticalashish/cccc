@@ -1,0 +1,237 @@
+﻿
+@{
+    ViewBag.Title = "CompanyMaster";
+    // when opened inside the "+ New Customer" popup on the Customers page it's
+    // fetched via AJAX ($.load) — skip the site layout in that case so the
+    // popup doesn't end up embedding the whole header/nav a second time.
+    Layout = Request.IsAjaxRequest() ? null : "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* several site-wide stylesheets redefine .white-wrapper / .eq-form / the
+       form-control fields with a dark background + white text (meant for
+       other, dark-themed pages) — force everything back to white/readable
+       here, specifically for this form, regardless of stylesheet load order. */
+    .update-profile-wrapper.update-profile-wrapper .white-wrapper {
+        background: #ffffff !important;
+    }
+
+    .update-profile-wrapper .eq-form.eq-form {
+        background: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    .update-profile-wrapper .eq-form .form-control.form-control {
+        background: #ffffff !important;
+        color: #1a1a1a !important;
+        border-bottom: 1px solid #ccc !important;
+    }
+
+    .update-profile-wrapper .eq-form .form-control::placeholder {
+        color: #8a978f !important;
+    }
+
+    .update-profile-wrapper .eq-form .form-control::-webkit-input-placeholder {
+        color: #8a978f !important;
+    }
+
+    .update-profile-wrapper .eq-form .form-control::-moz-placeholder {
+        color: #8a978f !important;
+    }
+
+    .update-profile-wrapper .eq-form .form-control:-ms-input-placeholder {
+        color: #8a978f !important;
+    }
+</style>
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper">
+        <div class="col-md-5 col-lg-8 col-md-offset-2">
+            <div class="eq-form">
+
+                <div class="">
+                   <div class="col-md-12"><center><h2 class="addUser" style="color:#1a4d2e;text-align:center!important;font-size:24px;">Add Company Details</h2></center></div>
+                        <div class="col-md-12 form-group">
+                            <input type="text" class="form-control mb-1" placeholder="Company Name*" id="CompanyName" name="CompanyName" autocomplete="off" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="text" class="form-control mb-1" placeholder="FirstContactName*" id="FirstContactName" name="FirstContactName" autocomplete="off" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="text" class="form-control mb-1" placeholder="FirstContactEmail*" id="FirstContactEmail" name="FirstContactEmail" autocomplete="off" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="number" class="form-control mb-1" onKeyPress="if(this.value.length==12)return false;" placeholder="FirstContactNumber*" id="FirstContactNumber" name="FirstContactNumber" autocomplete="off" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="text" class="form-control mb-1" placeholder="Designation*" id="Designation" name="Designation" autocomplete="off" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="text" class="form-control mb-1" placeholder="SecondContactName" id="SecondContactName" name="SecondContactName" autocomplete="off" />
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="text" class="form-control mb-1" placeholder="SecondContactEmail" id="SecondContactEmail" name="SecondContactEmail" autocomplete="off" /> 
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <input type="number" class="form-control mb-1" onKeyPress="if(this.value.length==12)return false;" placeholder="SecondContactNumber" id="SecondContactNumber" name="SecondContactNumber" autocomplete="off" />
+                        </div>
+                    <div class="col-md-4 form-group">
+                        <select class="form-control mb-1" id="CRM" name="CRM" title="CRM">
+                            <option value="">Select CRM</option>
+                        </select>
+                    </div>
+
+                        <div class="">
+                            <center><input type="submit" class="btn btn-success" style="padding:3px 12px" value="Submit" onclick="SaveCompnayRecord()"></center>
+                        </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</div> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<style>
+    .swal-overlay, .sweet-overlay { position: fixed !important; inset: 0 !important; background: rgba(0,0,0,.45) !important; z-index: 100000 !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+    .swal-modal, .sweet-alert { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; z-index: 100001 !important; margin: 0 !important; background: #fff !important; border-radius: 10px !important; padding: 24px !important; max-width: 90vw !important; width: 400px !important; box-shadow: 0 12px 40px rgba(0,0,0,.25) !important; text-align: center !important; }
+</style>
+
+<script>
+
+    $(document).ready(function () {
+        GetAllDropdowndata();
+    });
+    function GetAllDropdowndata() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetAllDropdowndata",
+            async: true,
+            success: function (data) {
+
+                var Objdic_CRM = "";
+                Objdic_CRM += "<option  value = ''>" + "Select CRM" + "</option>";
+
+                $(data.DataList.Objdic_CRM).each(function (index, value) {
+                    if (value.CRM != null || value.CRM != "" || value.CRM != undefined) {
+                        Objdic_CRM += "<option value = '" + value.CrmId + "'> " + value.CRM + "</option>"
+                    }
+                })
+                $('#CRM').html(Objdic_CRM);
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    } 
+
+
+    function SaveCompnayRecord() {
+        var CRM = $("#CRM").val();
+
+        var CompanyName = $("#CompanyName").val();
+        var FirstContactEmail = $("#FirstContactEmail").val();
+        var FirstContactName = $("#FirstContactName").val();
+        var FirstContactNumber = $("#FirstContactNumber").val();
+        var FirstContactDetail = $("#FirstContactDetail").val();
+        var SecondContactEmail = $("#SecondContactEmail").val();
+        var SecondContactName = $("#SecondContactName").val();
+        var SecondContactNumber = $("#SecondContactNumber").val();
+        var SecondContactDetail = $("#SecondContactDetail").val();
+        var Designation = $("#Designation").val();
+
+        if (CompanyName == "" || CompanyName == null || CompanyName == undefined) {
+            swal("Warning", "Please Insert Company Name", "error");
+            return false;
+        }
+        else if (isEmail(FirstContactEmail) == false) {
+            swal("Warning", "Please Insert Valid First Contact Email", "error");
+            return false;
+        }
+        else if (FirstContactEmail == "" || FirstContactEmail == null || FirstContactEmail == undefined) {
+            swal("Warning", "Please Insert First Contact Email", "error");
+        }
+        else if (CRM == "" || CRM == null || CRM == undefined) {
+            swal("Warning", "Please select CRM", "error");
+        }
+        else if (FirstContactName == "" || FirstContactName == null || FirstContactName == undefined) {
+            swal("Warning", "Please Insert First Contact Name", "error");
+            return false;
+        }
+        else if (FirstContactNumber == "" || FirstContactNumber == null || FirstContactNumber == undefined) {
+            swal("Warning", "Please Insert First Contact Number", "error");
+            return false;
+        }
+        else if (Designation == "" || Designation == null || Designation == undefined) {
+            swal("Warning", "Please Insert Designation", "error");
+            return false;
+        }
+        else {
+            var ObjComm = {
+                ID: "",
+                CompanyName: CompanyName,
+                FirstContactEmail: FirstContactEmail,
+                FirstContactName: FirstContactName,
+                FirstContactNumber: FirstContactNumber,
+                FirstContactDetail: FirstContactDetail,
+                SecondContactEmail: SecondContactEmail,
+                SecondContactName: SecondContactName,
+                SecondContactNumber: SecondContactNumber,
+                SecondContactDetail: SecondContactDetail,
+                CreatedTime: "",
+                CreatedDateView: "",
+                UpdatedTime: "",
+                RowNumber: "",
+                Designation: Designation,
+                CRM: CRM
+
+            }
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/SaveCompanyMaster",
+                data: JSON.stringify(ObjComm),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var responseMessage = response;
+                    if (responseMessage == "Success") {
+                        $('#dvTable').hide();
+                        swal({
+                            title: "Thank you!",
+                            text: "Created Sucessfully.",
+                            type: "success"
+                        }).then(function () {
+                            // when opened from the "+ New Customer" popup on the Customers page,
+                            // the page defines window.onCompanyMasterSaved to close the popup and
+                            // refresh the list instead of navigating away
+                            if (typeof window.onCompanyMasterSaved === 'function') {
+                                window.onCompanyMasterSaved();
+                            } else {
+                                window.location.href = '/LeadManagementSubscription/CreateLead';
+                            }
+                        });
+                    }
+                    else {
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "error"
+                        }).then(function () {
+
+                        });
+                    }
+                },
+                Error: function (ErrMsg) {
+
+                }
+            })
+        }
+    }
+
+    function isEmail(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email);
+    }
+</script>

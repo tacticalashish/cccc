@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<script src="..\ckeditor/ckeditor.js" type="text/javascript"></script>*@
+<script src="~\ckeditor/ckeditor.js" type="text/javascript"></script>
+@model ChemAnalyst.Models.SA_Company_SWOT
+<div class="update-profile-wrapper">
+
+    <h3><a href="@Url.Action("CompanySWOT","Company" )"><i class="fa fa-list"></i>SWOT Content</a></h3>
+
+    <div class="white-wrapper">
+
+        <div class="col-md-6 col-lg-7 col-md-offset-2">
+
+            <div class="eq-form">
+                <div class="change">
+                    <img src="~/images/change-img.jpg" alt="" />
+                    <p>Add New SWOT</p>
+                </div>
+
+                <div class="eq-form-box">
+                    @using (Html.BeginForm("SaveCompanySWOT", "Company", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div style="visibility:hidden">
+                            @Html.TextBoxFor(model => model.Id, new { @class = "form-control", @placeholder = "Title * ", required = "required" })
+                        </div>
+
+
+                        <div class="col-sm-4 col-lg-12 form-group">
+
+                            @Html.DropDownListFor(m => m.CompanyId, ChemAnalyst.DAL.ProductDataStore.GetCompany(), "Select Company", new { @class = "form-control", required = "required" })
+
+                        </div>
+                        <div class="col-sm-4 col-lg-12 form-group">
+                            @if (ViewBag.PId != null)
+                            {
+                               @*<span>@ViewBag.P</span>*@
+                                @*@Html.DropDownListFor(m => m.ProductId, new SelectList(ViewBag.P, "Value", "Text"), "Select product", new { @id = "ProductId", @class = "form-control", required = "required", @readonly="@readonly"})*@
+                                <select name="ProductId" id="ProductId" class="form-control" required="required">
+                                    <option value="@ViewBag.PId" selected>@ViewBag.PName</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <select name="ProductId" id="ProductId" class="form-control" required="required">
+                                    <option>Select Product</option>
+                                </select>
+                            }
+                        </div>
+
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Strength</label>
+                            @Html.TextAreaFor(model => model.Strength, new { @class = "form-control", @rows = 200, @placeholder = "Strength * ", id = "Strength" })
+                        </div>
+
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Weakness</label>
+                            @Html.TextAreaFor(model => model.Weakness, new { @class = "form-control", @rows = 200, @placeholder = "Weakness * ", id = "Weakness" })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Opportunity</label>
+                            @Html.TextAreaFor(model => model.Opportunity, new { @class = "form-control", @rows = 200, @placeholder = "Opportunity * ", id = "Opportunity" })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Threat</label>
+                            @Html.TextAreaFor(model => model.Threat, new { @class = "form-control", @rows = 200, @placeholder = "Threat * ", id = "Threat" })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Company Expansion Block</label>
+                            @Html.TextAreaFor(model => model.CompanyExpansionBlock, new { @class = "form-control", @rows = 200, @placeholder = "CompanyExpansionBlock * ", id = "CompanyExpansionBlock" })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Strategy</label>
+                            @Html.TextAreaFor(model => model.Strategy, new { @class = "form-control", @rows = 200, @placeholder = "Strategy * ", id = "Strategy" })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <label>Perspective</label>
+                            @Html.TextAreaFor(model => model.Perspective, new { @class = "form-control", @rows = 200, @placeholder = "Perspective * ", id = "Perspective" })
+                        </div>
+                        <script>
+
+                            CKEDITOR.replace("Strength");
+
+                        </script>
+                        <script>
+
+                            CKEDITOR.replace("Weakness");
+
+                        </script>
+                        <script>
+
+                            CKEDITOR.replace("Opportunity");
+
+                        </script>
+                        <script>
+
+                            CKEDITOR.replace("Threat");
+
+                        </script>
+
+                        <script>
+
+                            CKEDITOR.replace("CompanyExpansionBlock");
+
+                        </script>
+                        <script>
+
+                            CKEDITOR.replace("Strategy");
+
+                        </script>
+                        <script>
+
+                            CKEDITOR.replace("Perspective");
+
+                        </script>
+                        <div class="col-md-4 col-lg-12 form-group">
+                            <input type="file" name="file" class="custom-file-input" required />
+                        </div>
+
+                        <div class="btn-wrapper">
+
+                            <input type="submit" class="btn btn-primary" value="Save">
+
+                        </div>
+
+                    }
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#CompanyId").on("change",function () {
+            debugger;
+            var CompanyId = $("#CompanyId").find("option:selected").val();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetCompanyProducts", "Company")",
+                data: "{ id:" + CompanyId + "}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    var product = $("#ProductId");
+                    product.empty().append('<option selected="selected" value="">Select Product</option>');
+                    if (response != undefined && response != null && response.length > 0) {
+                        $.each(response, function () {
+                            product.append($("<option></option>").val(this['Value']).html(this['Text']));
+                        });
+                    }
+                },
+                failure: function (response) {
+                    console.error(response);
+                    // alert(response.responseText);
+                },
+                error: function (response) {
+                    console.error(response);
+                    // alert(response.responseText);
+                }
+            });
+        });
+        
+        $('.custom-file-input').change(function (e) {
+            var productName = $("#ProductId option:selected").text().trim();
+            var fileName = e.target.files[0].name;
+            var nameArr = fileName.split('.')[0].split('_');
+            if (nameArr.length > 0) {
+                if (!(nameArr[0].toLowerCase() === productName.toLowerCase() && nameArr[1].toLowerCase() === "indiamap")) {
+                    swal({
+                        text: "The selected file is Incorrect. Please check and upload again"
+                    })
+                        .then(() => {
+                            document.location.reload(true);
+                        });
+                    //$($('.custom-file-input')[0]).val('')//code to remove file incase needed
+                    $('input[type=submit]').attr('disabled', 'disabled');
+                } else {
+                    $('input[type=submit]').removeAttr('disabled');
+                }
+            }
+        });
+    });
+    $(function () {
+        $('#Strength').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+
+        $('#Weakness').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+
+        $('#Opportunity').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+
+        $('#Threat').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+
+        $('#CompanyExpansionBlock').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+
+        $('#Strategy').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+
+        $('#Perspective').ckeditor({
+            toolbar: 'Full',
+            enterMode: CKEDITOR.ENTER_BR,
+            shiftEnterMode: CKEDITOR.ENTER_P
+        });
+    });
+</script>
+
+
+<script>
+
+    $(document).on('click', '.browse', function () {
+        var file = $(this).parent().parent().parent().find('.file');
+        file.trigger('click');
+    });
+    $(document).on('change', '.file', function () {
+        $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+    });
+
+</script>
+
+

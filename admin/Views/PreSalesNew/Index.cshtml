@@ -1,0 +1,1291 @@
+@{
+    ViewBag.Title = "Leads";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .pl-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .pl-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .pl-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pl-header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .pl-btn {
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .pl-btn-outline {
+        background: #fff;
+        color: #33383f;
+        border-color: #d7dade;
+    }
+
+        .pl-btn-outline:hover {
+            background: #f7f8f9;
+            color: #33383f;
+            text-decoration: none;
+        }
+
+    .pl-btn-primary {
+        background: #1f5a37;
+        color: #fff;
+    }
+
+        .pl-btn-primary:hover {
+            background: #17452b;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .pl-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 26px 28px;
+    }
+
+    .pl-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .pl-search {
+        position: relative;
+        flex: 1 1 260px;
+        min-width: 220px;
+    }
+
+        .pl-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .pl-search input {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .pl-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .pl-filters select,
+    .pl-filters input[type="date"] {
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 8px 28px 8px 12px;
+        font-size: 13px;
+        color: #444;
+        background: #fbfbfc;
+        min-width: 140px;
+    }
+
+    .pl-filters input[type="date"] {
+        padding: 8px 10px;
+    }
+
+        .pl-filters select:focus {
+            outline: none;
+            border-color: #c7cad0;
+        }
+
+        .pl-filters select:disabled {
+            color: #b6bac0;
+            cursor: not-allowed;
+        }
+
+    .pl-count {
+        font-size: 13px;
+        color: #7c828a;
+        white-space: nowrap;
+        margin-left: auto;
+        align-self: center;
+    }
+
+    table.pl-table {
+        width: 100%;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+        table.pl-table th,
+        table.pl-table td {
+            border: none;
+        }
+
+        table.pl-table thead tr {
+            background: #fafbfc;
+        }
+
+        table.pl-table thead th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+        }
+
+        table.pl-table tbody td {
+            padding: 15px 14px;
+            font-size: 13px;
+            color: #33383f;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: top;
+        }
+
+        table.pl-table tbody tr:hover {
+            background: #eaf7ee;
+        }
+
+    .pl-name {
+        font-weight: 600;
+        color: #22262b;
+    }
+
+    .pl-sub {
+        display: block;
+        margin-top: 2px;
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .pl-dash {
+        color: #c2c6cc;
+    }
+
+    .pl-source-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #55595f;
+        background: #f1f2f4;
+        border-radius: 20px;
+        padding: 3px 10px;
+        white-space: nowrap;
+    }
+
+        .pl-source-badge i {
+            font-size: 11px;
+        }
+
+    .pl-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 3px 10px 3px 8px;
+    }
+
+        .pl-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+    .pl-status-new { background: #eef2fb; color: #3f5fa8; }
+    .pl-status-new .dot { background: #3f5fa8; }
+
+    .pl-status-contacted { background: #e6f4fb; color: #1f7ab0; }
+    .pl-status-contacted .dot { background: #1f7ab0; }
+
+    .pl-status-progress { background: #fff6e6; color: #b3791f; }
+    .pl-status-progress .dot { background: #d99a2b; }
+
+    .pl-status-demo-done { background: #e3ecfb; color: #3f6fd4; }
+    .pl-status-demo-done .dot { background: #3f6fd4; }
+
+    .pl-status-transferred { background: #e6e9f9; color: #3d4a9e; }
+    .pl-status-transferred .dot { background: #3d4a9e; }
+
+    .pl-status-done { background: #eaf7ee; color: #2f9e50; }
+    .pl-status-done .dot { background: #2f9e50; }
+
+    .pl-status-lost { background: #fdecec; color: #b3453f; }
+    .pl-status-lost .dot { background: #b3453f; }
+
+    .pl-status-unknown { background: #f1f2f4; color: #7c828a; }
+    .pl-status-unknown .dot { background: #a4aab3; }
+
+    .pl-action-btn {
+        border: 1px solid #d7dade;
+        background: #fff;
+        color: #33383f;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .pl-action-btn:hover {
+            background: #f7f8f9;
+        }
+
+    .pl-action-btn.pl-action-transfer {
+        background: #1f5a37;
+        color: #fff;
+        border-color: #1f5a37;
+    }
+
+        .pl-action-btn.pl-action-transfer:hover {
+            background: #17452b;
+        }
+
+    .pl-empty {
+        text-align: center;
+        padding: 40px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .pl-pager {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+    }
+
+        .pl-pager button {
+            border: 1px solid #e3e5e9;
+            background: #fff;
+            color: #444;
+            border-radius: 6px;
+            padding: 5px 11px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+            .pl-pager button.active {
+                background: #1f5a37;
+                border-color: #1f5a37;
+                color: #fff;
+            }
+
+            .pl-pager button:disabled {
+                color: #c2c6cc;
+                cursor: default;
+            }
+
+        .pl-pager-ellipsis {
+            color: #a4aab3;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+
+    .pl-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 4000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .pl-modal-backdrop.active {
+            display: flex;
+        }
+
+    .pl-modal {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px;
+        width: 420px;
+        max-width: 92vw;
+    }
+
+    .pl-modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 12px;
+    }
+
+    .pl-modal textarea {
+        width: 100%;
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+        color: #444;
+        resize: vertical;
+    }
+
+    .pl-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .pl-drawer-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 4500;
+    }
+
+        .pl-drawer-backdrop.active {
+            display: block;
+        }
+
+    .pl-drawer {
+        position: fixed;
+        top: 0; right: 0; bottom: 0;
+        width: 420px;
+        max-width: 92vw;
+        background: #fff;
+        box-shadow: -2px 0 12px rgba(20, 20, 30, .12);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pl-drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 20px 22px;
+        border-bottom: 1px solid #edeef1;
+    }
+
+    .pl-drawer-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pl-drawer-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        line-height: 1;
+        color: #a4aab3;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .pl-drawer-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 20px 22px;
+    }
+
+    .pl-drawer-field {
+        margin-bottom: 14px;
+    }
+
+        .pl-drawer-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #55595f;
+            margin-bottom: 5px;
+        }
+
+        .pl-drawer-field label .req {
+            color: #d9534f;
+        }
+
+        .pl-drawer-field input[type="text"],
+        .pl-drawer-field input[type="tel"],
+        .pl-drawer-field select,
+        .pl-drawer-field textarea {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #33383f;
+            background: #fbfbfc;
+        }
+
+            .pl-drawer-field input:focus,
+            .pl-drawer-field select:focus,
+            .pl-drawer-field textarea:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .pl-drawer-row {
+        display: flex;
+        gap: 10px;
+    }
+
+        .pl-drawer-row .pl-drawer-field {
+            flex: 1 1 0;
+        }
+
+    .pl-drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 16px 22px;
+        border-top: 1px solid #edeef1;
+    }
+
+    .pl-bulk-header-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .pl-bulk-icon-box {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #1f5a37;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex: none;
+    }
+
+    .pl-bulk-subtitle {
+        font-size: 12px;
+        color: #8a8f98;
+        margin-top: 3px;
+    }
+
+    .pl-bulk-dropzone {
+        display: block;
+        border: 1.5px dashed #d3d6db;
+        border-radius: 8px;
+        padding: 26px 16px;
+        text-align: center;
+        background: #fafbfc;
+        cursor: pointer;
+        font-size: 13px;
+        color: #55595f;
+    }
+
+        .pl-bulk-dropzone i {
+            font-size: 22px;
+            color: #1f5a37;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+    .pl-bulk-filename {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #22262b;
+        font-weight: 700;
+    }
+
+    .pl-bulk-download-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .pl-bulk-download-btn {
+        flex: 1 1 0;
+        text-align: center;
+        padding: 9px 8px;
+        border-radius: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid transparent;
+    }
+
+        .pl-bulk-download-btn.light-blue {
+            background: #eaf4fb;
+            color: #0f5c8f;
+            border-color: #cfe6f5;
+        }
+
+            .pl-bulk-download-btn.light-blue:hover {
+                background: #dcedf9;
+                color: #0f5c8f;
+                text-decoration: none;
+            }
+
+        .pl-bulk-download-btn.dark-blue {
+            background: #0f5c8f;
+            color: #fff;
+        }
+
+            .pl-bulk-download-btn.dark-blue:hover {
+                background: #0c4a72;
+                color: #fff;
+                text-decoration: none;
+            }
+
+    .pl-bulk-note {
+        font-size: 11px;
+        color: #8a8f98;
+        margin-top: 14px;
+        line-height: 1.5;
+    }
+</style>
+<div class="pl-wrap">
+    <div class="pl-header">
+        <div class="pl-title">Leads</div>
+        <div class="pl-header-right">
+            <a href="@Url.Action("SearchDomain", "PreSalesNew")" class="pl-btn pl-btn-outline"><i class="fa fa-search" style="margin-right:6px"></i>Search Domain</a>
+            <button type="button" class="pl-btn pl-btn-outline" onclick="OpenBulkUploadPanel()"><i class="fa fa-upload" style="margin-right:6px"></i>Bulk upload</button>
+            <button type="button" class="pl-btn pl-btn-primary" onclick="OpenCreateLeadPanel()">+ Create Lead</button>
+        </div>
+    </div>
+
+    <div class="pl-card">
+        <div class="pl-filters">
+            <div class="pl-search">
+                <i class="fa fa-search"></i>
+                <input type="text" id="LeadSearch" placeholder="Search name, company or email..." />
+            </div>
+            <select id="LeadSourceFilter">
+                <option value="">All sources</option>
+            </select>
+            <select id="LeadStatusFilter">
+                <option value="">All statuses</option>
+            </select>
+            <select id="LeadIndustryFilter" disabled>
+                <option value="">All industries</option>
+            </select>
+            <select id="LeadSizeFilter" disabled>
+                <option value="">Any size</option>
+            </select>
+            <input type="date" id="LeadFromDate" title="Created from" />
+            <input type="date" id="LeadToDate" title="Created to" />
+            <div class="pl-count" id="LeadCount"></div>
+        </div>
+
+        <table class="pl-table">
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>Sector / Size</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="LeadRows">
+                <tr><td colspan="7" class="pl-empty">Loading...</td></tr>
+            </tbody>
+        </table>
+
+        <div class="pl-pager" id="LeadPager"></div>
+    </div>
+</div>
+
+<div class="pl-modal-backdrop" id="TransferModalBackdrop">
+    <div class="pl-modal">
+        <div class="pl-modal-title">Transfer lead to sales</div>
+        <textarea id="TransferMailChain" rows="4" placeholder="Paste client email chain here..."></textarea>
+        <div class="pl-modal-actions">
+            <button type="button" class="pl-btn pl-btn-outline" id="TransferCancelBtn">Cancel</button>
+            <button type="button" class="pl-btn pl-btn-primary" id="TransferConfirmBtn">Transfer</button>
+        </div>
+    </div>
+</div>
+
+<div class="pl-drawer-backdrop" id="CreateLeadBackdrop">
+    <div class="pl-drawer">
+        <div class="pl-drawer-header">
+            <div class="pl-drawer-title">+ Create Pre-Sales lead</div>
+            <button type="button" class="pl-drawer-close" id="CreateLeadCloseBtn">&times;</button>
+        </div>
+        <div class="pl-drawer-body">
+            <div class="pl-drawer-field">
+                <label>Lead source <span class="req">*</span></label>
+                <select id="CreateLeadSource">
+                    <option value="" disabled selected>Select LeadSource</option>
+                    <option value="WebsiteForms">Website Forms</option>
+                    <option value="Chat">Live Chat</option>
+                    <option value="Email">Email</option>
+                    <option value="SocialMedia">Social Media</option>
+                    <option value="Event/Conference">Event/Conference</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="pl-drawer-field">
+                <label>Name <span class="req">*</span></label>
+                <input type="text" id="CreateLeadName" placeholder="Full name" autocomplete="off" />
+            </div>
+            <div class="pl-drawer-field">
+                <label>Corp email <span class="req">*</span></label>
+                <input type="text" id="CreateLeadCorpEmail" placeholder="name@company.com" autocomplete="off" oninput="this.value = this.value.replace(/\s/g, '')" />
+            </div>
+            <div class="pl-drawer-row">
+                <div class="pl-drawer-field">
+                    <label>Mobile number</label>
+                    <input type="tel" id="CreateLeadMobile" maxlength="15" autocomplete="off" />
+                </div>
+                <div class="pl-drawer-field">
+                    <label>Telephone</label>
+                    <input type="tel" id="CreateLeadTelephone" maxlength="15" autocomplete="off" />
+                </div>
+            </div>
+            <div class="pl-drawer-field">
+                <label>Designation</label>
+                <input type="text" id="CreateLeadDesignation" placeholder="Designation" autocomplete="off" />
+            </div>
+            <div class="pl-drawer-field">
+                <label>Company <span class="req">*</span></label>
+                <input type="text" id="CreateLeadCompany" placeholder="Company name" autocomplete="off" />
+            </div>
+            <div class="pl-drawer-field">
+                <label>Country <span class="req">*</span></label>
+                <select id="CreateLeadCountry">
+                    <option value="" disabled selected>Select Country</option>
+                </select>
+            </div>
+            <div class="pl-drawer-field" id="CreateLeadStateField" style="display:none">
+                <label>State</label>
+                <select id="CreateLeadState">
+                    <option value="" disabled selected>Select State</option>
+                </select>
+            </div>
+            <div class="pl-drawer-field">
+                <label>Client query</label>
+                <textarea id="CreateLeadMessage" rows="4" placeholder="What does the client want?"></textarea>
+            </div>
+        </div>
+        <div class="pl-drawer-footer">
+            <button type="button" class="pl-btn pl-btn-outline" id="CreateLeadCancelBtn">Cancel</button>
+            <button type="button" class="pl-btn pl-btn-primary" id="CreateLeadSaveBtn">Save Lead</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk lead upload: real form posting straight to the existing
+     LeadManagementSubscription/SelesExcelUpload action (EPPlus + SqlBulkCopy
+     import, unchanged). This is a genuine full-page postback, not AJAX --
+     the real action returns a freshly rendered CreatePreSalesLead view with
+     its own success/failure banner, so a successful upload will navigate
+     away from this drawer to that page rather than closing inline. -->
+<div class="pl-drawer-backdrop" id="BulkUploadBackdrop">
+    <div class="pl-drawer">
+        <div class="pl-drawer-header">
+            <div class="pl-bulk-header-row">
+                <div class="pl-bulk-icon-box"><i class="fa fa-upload"></i></div>
+                <div>
+                    <div class="pl-drawer-title">Bulk lead upload</div>
+                    <div class="pl-bulk-subtitle">Import a cold-email or exhibition list</div>
+                </div>
+            </div>
+            <button type="button" class="pl-drawer-close" id="BulkUploadCloseBtn">&times;</button>
+        </div>
+        <form id="BulkUploadForm" action="@Url.Action("SelesExcelUpload", "LeadManagementSubscription")" method="post" enctype="multipart/form-data">
+            <div class="pl-drawer-body">
+                <div class="pl-drawer-field">
+                    <label>Excel file <span class="req">*</span></label>
+                    <label class="pl-bulk-dropzone" for="BulkUploadFile">
+                        <i class="fa fa-cloud-upload"></i>
+                        <div>Click to browse for your Excel file</div>
+                        <div class="pl-bulk-filename" id="BulkUploadFileName"></div>
+                    </label>
+                    <input type="file" id="BulkUploadFile" name="file" accept=".xls,.xlsx" required style="display:none" onchange="BulkUploadFileChanged(this)" />
+                </div>
+                <div class="pl-bulk-download-row">
+                    <a class="pl-bulk-download-btn light-blue" href="/admin/DownloadFile?filePath=/FreightIndexImport/PreSales/DemoExcelFormat.xlsx&fileName=DemoExcelFormat.xlsx" target="_blank"><i class="fa fa-download" style="margin-right:6px"></i>Download Excel Format</a>
+                    <a class="pl-bulk-download-btn dark-blue" href="/admin/DownloadFile?filePath=/FreightIndexImport/PreSales/Download Country and State ID.xlsx&fileName=Download Country and State ID.xlsx" target="_blank"><i class="fa fa-download" style="margin-right:6px"></i>Download Country &amp; State ID</a>
+                </div>
+                <div class="pl-bulk-note">Each row needs Name, Country and a lead source filled in the file itself. Rows whose email already exists in your leads are rejected on import.</div>
+            </div>
+            <div class="pl-drawer-footer">
+                <button type="button" class="pl-btn pl-btn-outline" id="BulkUploadCancelBtn">Cancel</button>
+                <button type="button" class="pl-btn pl-btn-primary" id="BulkUploadSubmitBtn" onclick="BulkUploadDoUpload()">Upload</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput-jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<style>
+    /* The admin theme's global list/dropdown CSS bleeds white text into
+       intlTelInput's country picker, making the highlighted/selected row
+       unreadable. Force dark text explicitly, same fix pattern as the
+       Activity timeline's white-text bug. */
+    .iti__country-list, .iti__country-list li, .iti__country-name, .iti__dial-code {
+        color: #33383f !important;
+    }
+    .iti__country.iti__highlight {
+        background-color: #f0f1f3 !important;
+    }
+    .iti__country.iti__highlight .iti__country-name,
+    .iti__country.iti__highlight .iti__dial-code {
+        color: #33383f !important;
+    }
+    /* Same theme-CSS bleed also strips intlTelInput's own max-height/
+       overflow rules off the country list, so it renders full-length and
+       spills over the rest of the drawer instead of scrolling. Force it
+       back to a fixed, scrollable height. */
+    .iti__country-list {
+        max-height: 200px !important;
+        overflow-y: auto !important;
+    }
+</style>
+
+<script>
+    var LeadPageSize = 15;
+    var LeadCurrentPage = 1;
+    var TransferCorpEmail = null;
+
+    // Icon per source is purely decorative (matches the reference design),
+    // keyed off the same OutboundLeadSource values the filter dropdown
+    // already lists (Chat, WebsiteForms, Email, SocialMedia, Event/Conference,
+    // Others) plus the raw "Cold Email"/"Live Chat"/"Exhibition" labels the
+    // real data sometimes stores. Falls back to a generic dot for anything
+    // else instead of guessing.
+    function LeadSourceIcon(source) {
+        var s = (source || "").toLowerCase();
+        if (s.indexOf("chat") >= 0) return "fa-comment-o";
+        if (s.indexOf("email") >= 0 || s.indexOf("mail") >= 0) return "fa-envelope-o";
+        if (s.indexOf("website") >= 0 || s.indexOf("form") >= 0) return "fa-globe";
+        if (s.indexOf("social") >= 0) return "fa-share-alt";
+        if (s.indexOf("event") >= 0 || s.indexOf("exhibition") >= 0 || s.indexOf("conference") >= 0) return "fa-fire";
+        return "fa-circle-o";
+    }
+
+    function LeadSourceBadge(source) {
+        if (!source) return "<span class='pl-dash'>&mdash;</span>";
+        var label = $("<div>").text(source).html();
+        return "<span class='pl-source-badge'><i class='fa " + LeadSourceIcon(source) + "'></i>" + label + "</span>";
+    }
+
+    // Maps a lead's free-text Status to a badge style + the action button
+    // shown for that row. Only "New" and "Transferred" are confirmed to
+    // occur in SA_MaskEmail_PreSales today, but this stays open-ended so
+    // any future status (Contacted, Demo agreed, Demo done, Won, Lost --
+    // whatever the real column ends up holding) still gets a sensible,
+    // distinct color instead of falling through to gray. The Transfer
+    // *action*, though, follows the real GetPreSalesLeadList.cshtml rule
+    // exactly: Transfer to Sales is only ever offered when Status === 'New'
+    // -- every other status (Transferred or anything else) gets a plain
+    // View action, same as that page hides its Transfer/Edit buttons for
+    // any non-'New' row.
+    function LeadStatusInfo(status) {
+        var s = (status || "").toLowerCase();
+        if (!s || s === "new") {
+            return { cls: "pl-status-new" };
+        }
+        if (s === "contacted") {
+            return { cls: "pl-status-contacted" };
+        }
+        if (s === "demo agreed") {
+            return { cls: "pl-status-progress" };
+        }
+        if (s === "demo done") {
+            return { cls: "pl-status-demo-done" };
+        }
+        if (s === "transferred") {
+            return { cls: "pl-status-transferred" };
+        }
+        if (s === "won") {
+            return { cls: "pl-status-done" };
+        }
+        if (s === "lost") {
+            return { cls: "pl-status-lost" };
+        }
+        return { cls: "pl-status-unknown" };
+    }
+
+    function LeadStatusBadge(status) {
+        var info = LeadStatusInfo(status);
+        var label = status ? $("<div>").text(status).html() : "Unknown";
+        return "<span class='pl-status " + info.cls + "'><span class='dot'></span>" + label + "</span>";
+    }
+
+    function LeadActionButton(lead) {
+        if (lead.Status === "New") {
+            return "<button type='button' class='pl-action-btn pl-action-transfer' onclick='event.stopPropagation(); OpenTransferModal(" + lead.ID + ", " + JSON.stringify(lead.CorpEmail || "") + ")'>Transfer &rarr;</button>";
+        }
+        return "<button type='button' class='pl-action-btn' onclick='event.stopPropagation(); OpenLeadDetail(" + lead.ID + ")'>View</button>";
+    }
+
+    var LeadDetailUrl = '@Url.Action("LeadDetail", "PreSalesNew")';
+
+    function OpenLeadDetail(leadId) {
+        window.location.href = LeadDetailUrl + "?id=" + leadId;
+    }
+
+    function OpenTransferModal(leadId, corpEmail) {
+        TransferCorpEmail = corpEmail;
+        $("#TransferMailChain").val("");
+        $("#TransferModalBackdrop").addClass("active");
+    }
+
+    function CloseTransferModal() {
+        $("#TransferModalBackdrop").removeClass("active");
+        TransferCorpEmail = null;
+    }
+
+    $("#TransferCancelBtn").click(function () {
+        CloseTransferModal();
+    });
+
+    // Matches GetPreSalesLeadList.cshtml's TransferLead() exactly: MailChain
+    // is required, and the endpoint returns a plain string ("Success" /
+    // "Already exist" / some other message), not an object/array.
+    $("#TransferConfirmBtn").click(function () {
+        if (!TransferCorpEmail) {
+            CloseTransferModal();
+            return;
+        }
+        var mailChain = $.trim($("#TransferMailChain").val());
+        if (mailChain === "") {
+            swal({ title: "Error", text: "This Field Is required.", type: "error" });
+            return;
+        }
+        var GetDetails = { CorpEmail: TransferCorpEmail, MailChain: mailChain };
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/TransferLeadPreSales",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(GetDetails)
+        }).done(function (response) {
+            if (response === "Success") {
+                swal({ title: "Thank you!", text: "Created Successfully.", type: "success" }).then(function () {
+                    CloseTransferModal();
+                    LoadLeads();
+                });
+            } else if (response === "Already exist") {
+                swal({ title: "Already exist", text: "Already exist", type: "error" }).then(function () {
+                    CloseTransferModal();
+                    LoadLeads();
+                });
+            } else {
+                swal({ title: "Error", text: response, type: "error" }).then(function () {
+                    CloseTransferModal();
+                    LoadLeads();
+                });
+            }
+        }).fail(function () {
+            swal("Error", "This Field Is required.", "error");
+        });
+    });
+
+    function FormatCreatedDate(dotNetDate) {
+        if (!dotNetDate) return "<span class='pl-dash'>&mdash;</span>";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "<span class='pl-dash'>&mdash;</span>";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function RenderLeadRows(list) {
+        if (!list || list.length === 0) {
+            $("#LeadRows").html("<tr><td colspan='7' class='pl-empty'>No leads found.</td></tr>");
+            return;
+        }
+
+        var html = '';
+        $.each(list, function (i, lead) {
+            var nameText = lead.Name ? $("<div>").text(lead.Name).html() : "(unnamed)";
+            var emailText = lead.CorpEmail ? $("<div>").text(lead.CorpEmail).html() : "";
+            var companyText = lead.CompanyName ? $("<div>").text(lead.CompanyName).html() : "<span class='pl-dash'>&mdash;</span>";
+            var countryText = lead.CountryName ? $("<div>").text(lead.CountryName).html() : "";
+            var sectorSizeText = (lead.Sector || lead.Size)
+                ? $("<div>").text([lead.Sector, lead.Size].filter(Boolean).join(" / ")).html()
+                : "<span class='pl-dash'>&mdash;</span>";
+            var createdDate = lead.CreatedDate || lead.RequestedDate;
+
+            html += "<tr style='cursor:pointer' onclick='OpenLeadDetail(" + lead.ID + ")'>";
+            html += "<td>" + LeadSourceBadge(lead.OutboundLeadSource) + "</td>";
+            html += "<td><span class='pl-name'>" + nameText + "</span>" + (emailText ? "<span class='pl-sub'>" + emailText + "</span>" : "") + "</td>";
+            html += "<td>" + companyText + (countryText ? "<span class='pl-sub'>" + countryText + "</span>" : "") + "</td>";
+            html += "<td>" + sectorSizeText + "</td>";
+            html += "<td>" + LeadStatusBadge(lead.Status) + "</td>";
+            html += "<td>" + FormatCreatedDate(createdDate) + "</td>";
+            html += "<td>" + LeadActionButton(lead) + "</td>";
+            html += "</tr>";
+        });
+
+        $("#LeadRows").html(html);
+    }
+
+    // Builds a compact page-number list -- 1,2,3,4,5,...,N near the start;
+    // 1,...,N-4..N near the end; 1,...,cur-1,cur,cur+1,...,N in the middle --
+    // instead of one button per page, so a long list doesn't turn into a
+    // wall of buttons.
+    function PlCompactPageList(current, total) {
+        if (total <= 7) {
+            var all = [];
+            for (var i = 1; i <= total; i++) all.push(i);
+            return all;
+        }
+        if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+        if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+        return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+
+    function RenderLeadPager(totalCount) {
+        var numberOfPages = Math.max(1, Math.ceil(totalCount / LeadPageSize));
+        var html = '';
+
+        html += "<button " + (LeadCurrentPage <= 1 ? "disabled" : "onclick='GoToLeadPage(" + (LeadCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = PlCompactPageList(LeadCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='pl-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === LeadCurrentPage ? "active" : "") + "' onclick='GoToLeadPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (LeadCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToLeadPage(" + (LeadCurrentPage + 1) + ")'") + ">Next</button>";
+
+        $("#LeadPager").html(html);
+    }
+
+    function GoToLeadPage(page) {
+        LeadCurrentPage = page;
+        LoadLeads();
+    }
+
+    function LoadLeads() {
+        var search = $.trim($("#LeadSearch").val());
+        var source = $("#LeadSourceFilter").val();
+        var status = $("#LeadStatusFilter").val();
+        var fromDate = $("#LeadFromDate").val();
+        var toDate = $("#LeadToDate").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetLeadList",
+            data: { search: search, source: source, status: status, fromDate: fromDate, toDate: toDate, pageNumber: LeadCurrentPage, pageSize: LeadPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var total = (response && response.TotalCount) || 0;
+
+            RenderLeadRows(list);
+            RenderLeadPager(total);
+            $("#LeadCount").text(list.length + " of " + total + (total === 1 ? " lead" : " leads"));
+        }).fail(function () {
+            $("#LeadRows").html("<tr><td colspan='7' class='pl-empty'>Couldn't load leads - please refresh.</td></tr>");
+        });
+    }
+
+    function LoadLeadFilters() {
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetSourceList",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var html = "<option value=''>All sources</option>";
+            $.each(list, function (i, item) {
+                html += "<option value='" + $("<div>").text(item.Value).html() + "'>" + $("<div>").text(item.Text).html() + "</option>";
+            });
+            $("#LeadSourceFilter").html(html);
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetStatusList",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var html = "<option value=''>All statuses</option>";
+            $.each(list, function (i, item) {
+                html += "<option value='" + $("<div>").text(item.Value).html() + "'>" + $("<div>").text(item.Text).html() + "</option>";
+            });
+            $("#LeadStatusFilter").html(html);
+        });
+    }
+
+    var LeadSearchTimer = null;
+    $("#LeadSearch").on('input', function () {
+        clearTimeout(LeadSearchTimer);
+        LeadSearchTimer = setTimeout(function () {
+            LeadCurrentPage = 1;
+            LoadLeads();
+        }, 300);
+    });
+
+    $("#LeadSourceFilter, #LeadStatusFilter, #LeadFromDate, #LeadToDate").change(function () {
+        LeadCurrentPage = 1;
+        LoadLeads();
+    });
+
+    $(document).ready(function () {
+        LoadLeadFilters();
+        LoadLeads();
+    });
+
+    // ---- Create Pre-Sales lead drawer -------------------------------
+    // Mirrors LeadManagementSubscription/CreatePreSalesLead.cshtml's form
+    // fields/validation exactly and posts to that same controller's
+    // SavePreSalesLeadDetails action (the real insert logic lives in the
+    // compiled blLeadManagementSubscription.InsertPreSalesLeadRecord, so
+    // this reuses that endpoint rather than re-implementing it here) —
+    // only the panel is a fresh, inline slide-over instead of a full page.
+    var CreateLeadCountriesLoaded = false;
+
+    function OpenCreateLeadPanel() {
+        if (!CreateLeadCountriesLoaded) {
+            LoadCreateLeadCountries();
+        }
+        $("#CreateLeadBackdrop").addClass("active");
+    }
+
+    function CloseCreateLeadPanel() {
+        $("#CreateLeadBackdrop").removeClass("active");
+    }
+
+    function ResetCreateLeadForm() {
+        $("#CreateLeadSource").val("");
+        $("#CreateLeadName").val("");
+        $("#CreateLeadCorpEmail").val("");
+        $("#CreateLeadMobile").val("");
+        $("#CreateLeadTelephone").val("");
+        $("#CreateLeadDesignation").val("");
+        $("#CreateLeadCompany").val("");
+        $("#CreateLeadCountry").val("");
+        $("#CreateLeadState").html("<option value='' disabled selected>Select State</option>");
+        $("#CreateLeadStateField").hide();
+        $("#CreateLeadMessage").val("");
+    }
+
+    $("#CreateLeadCloseBtn, #CreateLeadCancelBtn").click(function () {
+        CloseCreateLeadPanel();
+    });
+
+    // Bulk upload drawer. The form itself posts for real to the existing
+    // SelesExcelUpload action -- no AJAX interception here, since that
+    // action does a full server-side redirect/re-render, not JSON.
+    function OpenBulkUploadPanel() {
+        $("#BulkUploadForm")[0].reset();
+        $("#BulkUploadFileName").text("");
+        $("#BulkUploadBackdrop").addClass("active");
+    }
+
+    function CloseBulkUploadPanel() {
+        $("#BulkUploadBackdrop").removeClass("active");
+    }
+
+    function BulkUploadFileChanged(input) {
+        var name = (input.files && input.files.length > 0) ? input.files[0].name : "";
+        $("#BulkUploadFileName").text(name);
+    }
+
+    $("#BulkUploadCloseBtn, #BulkUploadCancelBtn").click(function () {
+        CloseBulkUploadPanel();
+    });
+
+    // Upload via AJAX so we stay on THIS page (PreSalesNew/Index) instead of
+    // following the action's server-side redirect. On completion we just
+    // close the drawer and refresh the leads list here.
+    function BulkUploadDoUpload() {
+        var file = $("#BulkUploadFile")[0];
+        if (!file || !file.files || file.files.length === 0) {
+            if (window.swal) swal("Pick a file", "Choose an Excel file to upload.", "warning");
+            return;
+        }
+        var $btn = $("#BulkUploadSubmitBtn");
+        var $form = $("#BulkUploadForm");
+        $btn.prop('disabled', true).text('Uploading...');
+        $.ajax({
+            type: "POST",
+            url: $form.attr("action"),
+            data: new FormData($form[0]),
+            contentType: false,
+            processData: false
+        }).done(function (resp) {
+            $btn.prop('disabled', false).text('Upload');
+            var txt = (typeof resp === 'string') ? resp : '';
+            // Response poora HTML view hota hai jisme inline JS ke "error:" bhi
+            // hote hain — isliye sirf asli failure marker pe check karo, warna
+            // success pe bhi galat "Couldn't upload" aata hai.
+            var failed = /File could not upload/i.test(txt);
+            CloseBulkUploadPanel();
+            LeadCurrentPage = 1;
+            LoadLeads();
+            if (failed) {
+                var m = (txt.match(/File could not upload[^<]*/i) || ["Upload failed. Please check the Excel file."])[0];
+                if (window.swal) swal("Couldn't upload", m, "error"); else alert(m);
+            } else {
+                if (window.swal) swal("Uploaded", "Leads imported. New rows will show in the list.", "success");
+            }
+        }).fail(function () {
+            $btn.prop('disabled', false).text('Upload');
+            CloseBulkUploadPanel();
+            if (window.swal) swal("Couldn't upload", "Please try again.", "error");
+        });
+    }
+
+    function LoadCreateLeadCountries() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCountry",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            CreateLeadCountriesLoaded = true;
+            var html = "<option value='' disabled selected>Select Country</option>";
+            $((data && data.DataList) || []).each(function (index, value) {
+                if (value.CountryName) {
+                    html += "<option value='" + value.CountryID + "'>" + $("<div>").text(value.CountryName).html() + "</option>";
+                }
+            });
+            $("#CreateLeadCountry").html(html);
+        }).fail(function () {
+            CreateLeadCountriesLoaded = false;
+        });
+    }
+
+    $("#CreateLeadCountry").change(function () {
+        var countryId = $(this).val();
+        if (countryId == "1") {
+            $("#CreateLeadStateField").show();
+            $.ajax({
+                type: "GET",
+                url: "/PreSalesNew/GetStateList",
+                data: { countryId: countryId },
+                dataType: "json"
+            }).done(function (response) {
+                var list = (response && response.DataList) || [];
+                var html = "<option value='' disabled selected>Select State</option>";
+                $.each(list, function (index, value) {
+                    if (value.Text) {
+                        html += "<option value='" + value.Value + "'>" + $("<div>").text(value.Text).html() + "</option>";
+                    }
+                });
+                $("#CreateLeadState").html(html);
+            });
+        } else {
+            $("#CreateLeadStateField").hide();
+            $("#CreateLeadState").html("<option value='' disabled selected>Select State</option>");
+        }
+    });
+
+    $("#CreateLeadMobile, #CreateLeadTelephone").intlTelInput({
+        initialCountry: "in",
+        separateDialCode: true
+    });
+
+    $("#CreateLeadMobile").on('input', function () {
+        $(this).val($(this).val().replace(/\D/g, ''));
+    });
+
+    $("#CreateLeadSaveBtn").click(function () {
+        var Name = $.trim($("#CreateLeadName").val());
+        var CorpEmail = $.trim($("#CreateLeadCorpEmail").val());
+        var CompanyName = $.trim($("#CreateLeadCompany").val());
+        var OutboundLeadSource = $("#CreateLeadSource").val();
+        var CountryText = $("#CreateLeadCountry option:selected").text().trim();
+        var CountryVal = $("#CreateLeadCountry").val();
+
+        if (Name === "") { swal("Warning", "Please Insert Name", "error"); return; }
+        if (CorpEmail === "") { swal("Warning", "Please Insert CorpEmail", "error"); return; }
+        if (CompanyName === "") { swal("Warning", "Please Insert CompanyName", "error"); return; }
+        if (!CountryVal) { swal("Warning", "Please Insert CountryName", "error"); return; }
+        if (!OutboundLeadSource) { swal("Warning", "Please Insert LeadSource", "error"); return; }
+
+        var Contactcode = $("#CreateLeadMobile").intlTelInput("getSelectedCountryData").dialCode;
+        var Mobile = $("#CreateLeadMobile").val();
+        var Telecode = $("#CreateLeadTelephone").intlTelInput("getSelectedCountryData").dialCode;
+        var Telephone = $("#CreateLeadTelephone").val();
+        var State = (CountryText === "India") ? $("#CreateLeadState option:selected").text().trim() : null;
+
+        var GetDetails = {
+            Name: Name,
+            CorpEmail: CorpEmail,
+            Phone: Telephone,
+            Organisation: CompanyName,
+            Country: CountryText,
+            State: State,
+            OutboundLeadSource: OutboundLeadSource,
+            LeadType: "Outbound",
+            DiscriptionMessage: $.trim($("#CreateLeadMessage").val()),
+            Mobile: Mobile,
+            Designation: $.trim($("#CreateLeadDesignation").val()),
+            ContactCountryCode: Contactcode,
+            TelephoneCountryCode: Telecode
+        };
+
+        $("#CreateLeadSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SavePreSalesLeadDetails",
+            data: JSON.stringify(GetDetails),
+            contentType: "application/json; charset=utf-8"
+        }).done(function (response) {
+            $("#CreateLeadSaveBtn").prop("disabled", false).text("Save lead");
+            var success = false, alreadyExists = false;
+            $(response || []).each(function (index, value) {
+                if (value.ValidationMessage === "SUCCESS") { success = true; }
+                else if (value.ValidationMessage === "Already exists") { alreadyExists = true; }
+            });
+            if (success) {
+                swal({ title: "Thank you!", text: "Created Successfully.", type: "success" }).then(function () {
+                    ResetCreateLeadForm();
+                    CloseCreateLeadPanel();
+                    LeadCurrentPage = 1;
+                    LoadLeads();
+                    LoadLeadFilters();
+                });
+            } else if (alreadyExists) {
+                swal("Already exists!", "Already exists.", "error");
+            } else {
+                swal("Error", "Could not save lead - please try again.", "error");
+            }
+        }).fail(function () {
+            $("#CreateLeadSaveBtn").prop("disabled", false).text("Save lead");
+            swal("Error", "Could not save lead - please try again.", "error");
+        });
+    });
+</script>

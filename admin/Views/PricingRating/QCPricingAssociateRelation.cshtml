@@ -1,0 +1,303 @@
+﻿
+@{
+    ViewBag.Title = "QCPricingAssociateRelation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+
+   
+    .select2-container--default .select2-selection--multiple {
+        background-color: white;
+        color: black;
+        border: 1px solid #ccc;
+    }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: white;
+            color: black; 
+            border: 1px solid #444;
+        }
+
+   
+    .select2-container--default .select2-results__option {
+        background-color: white;
+        color: black;
+    }
+
+  
+    .select2-container--default .select2-results__option--highlighted {
+        background-color: white; 
+        color: black;
+    }
+    
+</style>
+
+
+<div class="update-profile-wrapper">
+
+    <div class="white-wrapper pt-0 mt-0 container-fluid">
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-sm-12 col-md-6" style="padding: 10px 24px;background: #171718; margin: 13px 0px; border-radius: 6px;">
+                <h3 class="text-white pb-2"> Pricing QC Associate Relation</h3>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select Year</label>
+                            <select id="EmployeeYear" class="form-control">
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select Month</label>
+                            <select id="EmployeeMonth" class="form-control" >
+                                 <option value="January">January</option>
+                                    <option value="February">February</option>
+                                    <option value="March">March</option>
+                                    <option value="April">April</option>
+                                    <option value="May">May</option>
+                                    <option value="June">June</option>
+                                    <option value="July">July</option>
+                                    <option value="August">August</option>
+                                    <option value="September">September</option>
+                                    <option value="October">October</option>
+                                    <option value="November">November</option>
+                                    <option value="December">December</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select QC Name</label>
+                            <select id="QCName" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Associate Name</label>
+                            <select name="Associatename" id="Associatename" class="selectpicker form-control" data-live-search="true" data-selected-text-format="count > 2" data-none-selected-text="Select Product" multiple data-actions-box="true" style="width:100%!important"></select>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-12 col-md-12 text-center mt-2">
+                        <button class="btn btn-primary btn-md" type="submit" onclick="SubmitQCRelation()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+
+    <script>
+        function populateYearDropdown() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth(); // January is 0
+
+            const $yearDropdown = $('#EmployeeYear');
+            $yearDropdown.empty(); // Clear existing options
+            $yearDropdown.append(`<option value="">--Select Year--</option>`);
+
+            if (currentMonth <= 1) { // If the month is January (0) or February (1)
+                $yearDropdown.append(`<option value="${currentYear - 1}">${currentYear - 1}</option>`);
+            }
+
+            $yearDropdown.append(`<option value="${currentYear}">${currentYear}</option>`);
+        }
+
+
+        function populateMonthDropdown() {
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            const dropdown = document.getElementById('EmployeeMonth');
+            const currentDate = new Date();
+
+            // Get current and last two month indices
+            const currentMonth = currentDate.getMonth();
+            const previousMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+            const twoMonthsAgo = (previousMonth === 0) ? 11 : previousMonth - 1;
+
+            // Array of months to show in dropdown
+            const monthsToShow = [twoMonthsAgo, previousMonth, currentMonth];
+
+            // Add options dynamically
+            monthsToShow.forEach(monthIndex => {
+                const option = document.createElement('option');
+                option.value = monthNames[monthIndex];
+                option.textContent = monthNames[monthIndex];
+                dropdown.appendChild(option);
+            });
+        }
+
+        function BindQCPricingName() {
+
+            $.ajax({
+                type: "POST",
+                url: "/PricingRating/GetPricingQCName",
+                success: function (response) {
+                    var innerHTMLs = '<option value="">--Select name--</option>';
+                    $(response).each(function (idx, Value) {
+                        debugger;
+                        innerHTMLs += "<option value=" + Value.AssociateID + ">" + Value.AssociateName + "</option>"
+                    });
+
+                    $('#QCName').html(innerHTMLs);
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+
+        function BindAssociatePricingName() {
+            $.ajax({
+                type: "POST",
+                url: "/PricingRating/GetPricingAssociateName",
+                success: function (response) {
+                    // Clear previous options and add a placeholder
+                    var innerHTMLs = '<option value="">--Select name--</option>';
+                    $(response).each(function (idx, Value) {
+                        innerHTMLs += "<option value='" + Value.AssociateID + "'>" + Value.AssociateName + "</option>";
+                    });
+
+                    $('#Associatename').html(innerHTMLs);
+
+                    // Initialize Select2
+                    $('#Associatename').select2({
+                        placeholder: "--Select name--",
+                        allowClear: true,
+                        width: 'resolve',
+                        closeOnSelect: false
+                    });
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
+
+
+        $(document).ready(function () {
+            BindAssociatePricingName();
+            BindQCPricingName();
+            //populateYearDropdown();
+            //populateMonthDropdown();
+
+        });
+
+
+
+        function SubmitQCRelation() {
+            debugger;
+            var QCid = $("#QCName").val();
+            var Associateid = $("#Associatename").val();
+            var EmployeeYear = $("#EmployeeYear").val();
+            var EmployeeMonth = $("#EmployeeMonth").val();
+
+
+            
+            if (EmployeeYear == "") {
+                Swal.fire({
+                    title: "Please Select Year!",
+                    type: "success"
+                }).then(function () {
+                });
+            } else if (QCid == "") {
+                Swal.fire({
+                    title: "Please Enter QC Name!",
+                    type: "success"
+                }).then(function () {
+                });
+            }
+            else if (EmployeeMonth == "") {
+                Swal.fire({
+                    title: "Please Select Month!",
+                    type: "success"
+                }).then(function () {
+                });
+            } else if ((Associateid == "" || Associateid == [] || Associateid == null)) {
+                Swal.fire({
+                    title: "Please Select Associate Name!",
+                    type: "success",
+                    customClass: {
+                        popup: 'small-popup'
+                    }
+                }).then(function () {
+                });
+            }
+            
+            else {
+                $.ajax({
+                    url: "/PricingRating/insertQCAssociatePricingRelation",
+                    type: "POST",
+                    dataType: 'json',
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    data: {
+                        QCid: QCid,
+                        Associateid: JSON.stringify(Associateid),
+                        EmployeeYear: EmployeeYear,
+                        EmployeeMonth: EmployeeMonth
+                    },
+                    success: function (response) {
+                        debugger;
+                        var responseMessage = response;
+                        if (responseMessage == "Success") {
+                            Swal.fire({
+                                title: "Thank you!",
+                                text: "Insert Sucessfully.",
+                                icon: "success"
+                            }).then(function () {
+                                window.location.href = "../../PricingRating/QCPricingAssociateRelation";
+                            });
+                        }
+                        else if (responseMessage == "Already Exist") {
+                            Swal.fire({
+                                title: "Failed!",
+                                text: "Already Exist.",
+                                icon: "error"
+                            }).then(function () {
+                                window.location.href = "../../PricingRating/QCPricingAssociateRelation";
+                            });
+                        }
+
+                        else {
+                            swal({
+                                title: "Failed!",
+                                text: "Failed Try Again.",
+                                type: "success"
+                            }).then(function () {
+                                window.location.href = "../../PricingRating/QCPricingAssociateRelation";
+                            });
+                        }
+                    },
+                    Error: function (ErrMsg) {
+                        window.location.href = "../../PricingRating/QCPricingAssociateRelation";
+                    }
+                });
+
+
+
+            }
+
+        }
+    </script>

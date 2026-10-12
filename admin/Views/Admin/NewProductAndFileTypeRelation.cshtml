@@ -1,0 +1,251 @@
+﻿@using ChemAnalyst.DAL
+@model ChemAnalyst.ViewModel.SA_ProductAndFileTypeRelationViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            @if (Model != null && Model.ID > 0)
+            {
+                @:$('#@Html.IdFor(item=> item.RegionFID)').trigger('change');
+
+                @:setTimeout(function () {
+                @:$('#@Html.IdFor(item=> item.CountryFID)').val('@Model.CountryFID');
+                @:$('#@Html.IdFor(item=> item.CountryFID)').trigger('change'); }, 500);
+
+                @:setTimeout(function () {
+                @:$('#@Html.IdFor(item=> item.CategoryFID)').val('@Model.CategoryFID');
+                @:$('#@Html.IdFor(item=> item.CategoryFID)').trigger('change'); }, 1000);
+
+                @:setTimeout(function () {
+                @:$('#@Html.IdFor(item=> item.ProductFID)').val('@Model.ProductFID'); }, 1500);
+
+            }
+        });
+
+        $(document).on('change', '#@Html.IdFor(item=> item.RegionFID)', function () {
+            var regionID = $(this).val()
+
+            if (regionID == '') {
+                $('#@Html.IdFor(item=> item.CountryFID)').html("<option value=''>Select Country *</option>");
+                return true;
+            }
+
+            var innerHTML = "<option>loading...</option>"
+            $('#@Html.IdFor(item=> item.CountryFID)').html(innerHTML);
+
+            $.ajax({
+                url: "/ProductAndCategory/GetCountryBasedOnRegion",
+                data: { regionID: regionID }
+            }).complete(function (jqXHR, textStatus) {
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    innerHTML = "<option value=''>Select Country *</option>"
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<option value=" + value.id + ">" + value.CountryName + "</option>"
+                    });
+                    $('#@Html.IdFor(item=> item.CountryFID)').html(innerHTML);
+                }
+            });
+        });
+
+
+         $(document).on('change', '#@Html.IdFor(item=> item.CountryFID)', function () {
+            var countryID = $(this).val()
+
+             if (countryID == '') {
+                $('#@Html.IdFor(item=> item.CategoryFID)').html("<option value=''>Select Category *</option>");
+                return true;
+            }
+
+            var innerHTML = "<option>loading...</option>"
+            $('#@Html.IdFor(item=> item.CategoryFID)').html(innerHTML);
+
+            $.ajax({
+                url: "/ProductAndCategory/GetCategoryBasedOnCountry",
+                data: { countryID: countryID }
+            }).complete(function (jqXHR, textStatus) {
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    innerHTML = "<option value=''>Select Category *</option>"
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<option value=" + value.id + ">" + value.CategoryName + "</option>"
+                    });
+
+                    $('#@Html.IdFor(item=> item.CategoryFID)').html(innerHTML);
+                }
+            });
+        });
+
+        $(document).on('change', '#@Html.IdFor(item=> item.CategoryFID)', function () {
+            var categoryID = $(this).val()
+
+            if (categoryID == '') {
+                $('#@Html.IdFor(item=> item.ProductFID)').html("<option value=''>Select Product *</option>");
+                return true;
+            }
+
+            var innerHTML = "<option>loading...</option>"
+            $('#@Html.IdFor(item=> item.ProductFID)').html(innerHTML);
+
+            $.ajax({
+                url: "/ProductAndCategory/GetProductBasedOnCategory",
+                data: { categoryID: categoryID }
+            }).complete(function (jqXHR, textStatus) {
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    innerHTML = "<option value=''>Select Product *</option>"
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<option value=" + value.id + ">" + value.ProductName + "</option>"
+                    });
+
+                    $('#@Html.IdFor(item=> item.ProductFID)').html(innerHTML);
+                }
+            });
+        });
+
+        $("#formProduct").submit(function () {
+            return ValidateForm();
+        });
+
+        function ValidateForm() {
+            var result = true;
+
+            if (!$('form').valid()) {
+                result = false;
+            }
+
+            if ($('#@Html.IdFor(item=> item.RegionFID)').val() == '') {
+                result = false;
+            }
+
+            if ($('#@Html.IdFor(item=> item.CountryFID)').val() == '') {
+                result = false;
+            }
+
+            if ($('#@Html.IdFor(item=> item.CategoryFID)').val() == '') {
+                result = false;
+            }
+
+            if ($('#@Html.IdFor(item=> item.ProductFID)').val() == '') {
+                result = false;
+            }
+
+            return result;
+        }
+
+    </script>
+
+}
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper">
+        <div class="col-md-6 col-lg-7 col-md-offset-2">
+            <div class="eq-form">
+                <div class="change">
+                    <i class="fa fa fa-users" aria-hidden="true"></i>
+                    <p>Product and File Type Relationship</p>
+                </div>
+                <div class="eq-form-box">
+                    @using (Html.BeginForm("SaveProductAndFileTypeRelation", "Admin", FormMethod.Post, new { id = "formProductAndFileTypeRelation" }))
+                    {
+                        @Html.HiddenFor(item => item.ID)
+                        <div class="col-sm-12 col-lg-12 form-group">
+                            @Html.DropDownListFor(item => item.RegionFID, new DALHelper().IEnumerableRegion(new SelectListItem { Text = "Select Region  *", Value = "" }), new { @class = "form-control", required = "required" })
+                        </div>
+                        <div class="col-sm-12 col-lg-12 form-group">
+                            <select id="@Html.IdFor(item=> item.CountryFID)" name="@Html.NameFor(item=> item.CountryFID)" class="form-control" required="required">
+                                <option value="">Select Country *</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-lg-12 form-group">
+                            <select id="@Html.IdFor(item=> item.CategoryFID)" name="@Html.NameFor(item=> item.CategoryFID)" class="form-control" required="required">
+                                <option value="">Select Category *</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 col-lg-12 form-group">
+                            @*@Html.DropDownListFor(item => item.ProductFID, new SelectList(Model.listOfSA_Product, "id", "ProductName"), "Select Product *", new { @class = "form-control", @required = "required" })*@
+                            <select id="@Html.IdFor(item=> item.ProductFID)" name="@Html.NameFor(item=> item.ProductFID)" class="form-control" required="required">
+                                <option value="">Select Product *</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 col-lg-12 form-group multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="showCheckBoxes()">
+                                <select class="form-control">
+                                    <option>Select Range</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="checkboxes" style="display:none;margin-top: 15px; height: 150px; overflow: scroll; border-style: groove; padding: 5px 15px 15px;">
+                                @for (int i = 0; i < Model.ListOfSA_FileType.Count(); i++)
+                                {
+                                    @*@Html.CheckBoxFor(p => Model.CompanyProduct[i].IsSelected,new { @class = "checkboxes[]" }) <span style="padding-right: 2px;"></span> @Html.DisplayFor(p => Model.CompanyProduct[i].ProductName) <span style="padding-right: 15px;"></span>
+                                        @Html.HiddenFor(p => Model.CompanyProduct[i].id)*@
+                                    <div>
+                                        <label id="@Model.ListOfSA_FileType[i].ID">
+                                            @Html.CheckBoxFor(p => Model.ListOfSA_FileType[i].IsSelected, new { @class = "checkboxes[]" })
+                                            @Html.DisplayFor(p => Model.ListOfSA_FileType[i].Name) <span style="padding-right: 15px;"></span>
+                                            @Html.HiddenFor(p => Model.ListOfSA_FileType[i].ID)
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="btn-wrapper">
+
+                            <a class="gray-btn" href="@Url.Action("ProductAndFileTypeRelation","Admin")">Cancel</a>
+
+                            <input type="submit" class="btn btn-success" value="Save">
+                        </div>
+
+                    }
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    function showCheckBoxes() {
+        $("#checkboxes").toggle();
+    }
+
+
+    $("#formProductAndFileTypeRelation").submit(function (e) {
+        var selected = [];
+
+        $('#checkboxes input:checked').each(function () {
+            selected.push($(this).attr('name'));
+        });
+
+
+        if (selected.length == 0) {
+            swal("Warning", "Please select at least one range.", "error");
+            e.preventDefault();
+        }
+        else {
+            return true;
+        }
+    });
+
+
+
+
+
+
+</script>

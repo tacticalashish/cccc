@@ -1,0 +1,107 @@
+﻿@model IEnumerable<ChemAnalyst.Models.SA_Category>
+
+<div class="container">
+
+    <div class="title">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2>Market <strong>Analysis</strong></h2>
+            </div>
+
+            <div class="col-md-4 text-right"><a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")" class="common-btn">Browse 175+ Chemicals</a></div>
+        </div>
+    </div>
+
+
+    <div class="row">
+       
+            <div class="col-md-3">
+                
+                    <div class="mrket-list" >
+                        <ul>
+                            @*@foreach (var item in Model)
+                    {
+                        <li><a href="#"><strong>@item.CategoryName</strong></a>
+                            <p>@(item.CategoryDiscription.Length > 65 ? (item.CategoryDiscription.Substring(0, 65)) : item.CategoryDiscription)</p>
+                    </li>
+                    }*@
+                            <h3  style="background: #3368c6;color: #fff;font-size: 20px;padding: 10px 15px;margin-top: -10px;margin-left: -40px;"><i class="fa fa-bell-o"></i> Analysis Parameters</h3>
+                           
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Capacity By Company</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Capacity By Location</></a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Capacity By Technology</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Capacity By Process</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Production By Company</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Operating Efficiency</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Demand By EndUse</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Demand By Grade</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Demand By Type</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Demand By SalesChannel</a>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Demand By Region</a>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Country-wise Export</a>
+                                </li>
+
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Country-wise Import</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Demand Supply Gap</a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Company Shares</a>
+                                </li>
+                           
+                        
+
+
+</ul>
+
+                    </div>
+               
+</div>
+
+            <div class="col-md-9 market-pic mt-5">
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                    <div class="col-md-4">
+                        <a href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">
+                            <img src="~/ProductImages/@item.CategoryImg" alt="">
+                            <p>@item.CategoryName</p>
+                        </a>
+                    </div>
+                    }
+                </div>
+            </div>
+
+
+
+        
+    </div>
+</div>
+

@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@Model.Blogs.MetaTitle</title>
+   
+    <link href="~/images/favicon.ico" rel="icon">
+    <meta name="description" content="@Model.Blogs.MetaDiscription" />
+    <meta name="keywords" content="@Model.Blogs.Keywords" />
+    @*< meta name="keywords" content="@Html.DisplayFor(modelItem => Model.Description)"/>*@
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" async="async" fetchpriority="low" />
+    <link rel="shortcut icon" href="~/images/favicon.ico" fetchpriority="low">
+    
+  
+    <link href="https://www.chemanalyst.com/assets-home/css/style.css" rel="stylesheet" async="async" fetchpriority="low" />
+
+    <link rel="stylesheet" href="https://www.chemanalyst.com/css/custom.css" type="text/css" />
+  
+</head>
+<body oncontextmenu="return false;">
+    <!-- Google Tag Manager (noscript) -->
+   
+    <!-- End Google Tag Manager (noscript) -->
+    <script async>  $(document).ready(function () { $(this).bind("contextmenu", function (e) { e.preventDefault(); }); });</script>
+    <!-- ======= Mobile Menu ======= -->
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header"><div class="site-mobile-menu-close mt-3"> <span class="icofont-close js-menu-toggle"></span> <p>Welcome To ChemAnalyst</p> </div></div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+    <!-- ======= Header ======= -->
+
+    <div class="right-contant-bar white-wrapper">@RenderBody()</div>
+    <script src="~/assets-home/vendor/jquery-sticky/jquery.sticky.js" async="async"></script>
+    <script src="~/assets-home/js/main.js" async="async"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

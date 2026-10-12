@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewBag.Title = "CRMTicket";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/ckeditor/ckeditor.js" type="text/javascript"></script>
+
+<div class="white-wrapper  container-fluid">
+    <div class="panel">
+        <div class="panel-heading panel-gray"><h3 class="text-white">Insert Ticket</h3></div>
+        <div class="panel-body bg-black">
+            <div class="row">
+                <div class="col-sm-12 col-md-4">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Select Product</label>
+                                <select id="SelectProduct" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Query For</label>
+                                <select id="QueryFor" class="form-control">
+                                    <option value="">--Select Query For--</option>
+                                    <option value="Pricing">Pricing</option>
+                                    <option value="Insight">Insight</option>
+                                    <option value="Insight">Market Analysis</option>
+                                    <option value="Insight">Market Analysis Insight</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <textarea id="Company" rows="5" placeholder="Company Name" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-8">
+                    <div class="form-group">
+                        <label>Query </label>
+                        <textarea rows="4" style="width:100%;font-size:12px;background-color:#333;color:#fff;border:0.1px solid #5a5858 !important" name="Description" placeholder="Description *"></textarea>
+                        <script type="text/javascript">
+                            CKEDITOR.replace("Description");
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer panel-gray text-right">
+            <button class="btn btn-primary btn-md fw-bold" type="submit" onclick="SubmitTicket()">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        BindProductList();
+    });
+    function BindProductList() {
+
+        $.ajax({
+            type: "POST",
+            url: "/CRMTicket/GetProductList",
+            success: function (response) {
+                var innerHTMLs = '<option value="">--Select name--</option>';
+                $(response).each(function (idx, Value) {
+                    debugger;
+                    innerHTMLs += "<option value=" + Value.ID + ">" + Value.ProductName + "</option>"
+                });
+
+                $('#SelectProduct').html(innerHTMLs);
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+
+
+    function SubmitTicket() {
+        debugger;
+        var ProductName = $("#SelectProduct option:selected").text();
+        var ProductID = $("#SelectProduct").val();
+        var QueryType = $("#QueryFor").val();
+        var Company = $("#Company").val();
+        var Description = CKEDITOR.instances['Description'].getData();
+        var Desc = {
+            ProductName: ProductName,
+            ID: ProductID,
+            QuearyType: QueryType,
+            Queary: Description,
+            CompanyName: Company
+
+
+        };
+        if (ProductID == "") {
+            Swal.fire({
+                title: "Please select Product!",
+                type: "success",
+                customClass: {
+                    popup: 'small-popup'
+                }
+            }).then(function () {
+            });
+        }
+        else if (QueryType == "") {
+            Swal.fire({
+                title: "Please select Query Type !",
+                type: "success"
+            }).then(function () {
+            });
+        } else if (Description == "") {
+            Swal.fire({
+                title: "Please enter Query !",
+                type: "success"
+            }).then(function () {
+            });
+        } else if (Company == "") {
+            Swal.fire({
+                title: "Please enter Company  Name !",
+                type: "success"
+            }).then(function () {
+            });
+        }
+
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/CRMTicket/insertCRMTicket",
+                data: '{Desc: ' + JSON.stringify(Desc) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    debugger;
+                    var responseMessage = response;
+                    if (responseMessage == "Success") {
+                        Swal.fire({
+                            title: "Thank you!",
+                            text: "Insert Sucessfully.",
+                            icon: "success"
+                        }).then(function () {
+                            window.location.href = "../../CRMTicket/CRMTicket";
+                        });
+                    }
+                    else if (responseMessage == "Already Exist") {
+                        Swal.fire({
+                            title: "Failed!",
+                            text: "Already Exist.",
+                            icon: "error"
+                        }).then(function () {
+                            window.location.href = "../../CRMTicket/CRMTicket";
+                        });
+                    }
+
+                    else {
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "../../CRMTicket/CRMTicket";
+                        });
+                    }
+                },
+                Error: function (ErrMsg) {
+                    window.location.href = "../../CRMTicket/CRMTicket";
+                }
+            });
+
+
+
+        }
+
+    }
+</script>

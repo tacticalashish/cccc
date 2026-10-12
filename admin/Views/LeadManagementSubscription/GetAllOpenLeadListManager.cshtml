@@ -1,0 +1,526 @@
+﻿
+@{
+    ViewBag.Title = "GetAllOpenLeadListManager";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .popup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .Dpopup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+        overflow: auto;
+    }
+
+    .child {
+        width: 90%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: #141414;
+        text-align: justify;
+        border: solid #d9d9d9eb 3px;
+        margin: 50px auto;
+        box-shadow: 0px 2px 5px 1px #939393;
+    }
+
+        .child p {
+            font-size: 14px;
+        }
+
+
+    .tableStyle {
+        border: 1px solid #808080;
+        margin-top: 10px;
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+
+    .mt-2 {
+        margin-top: 8px;
+    }
+
+    .data-detail-wrapper table > thead > tr > th {
+        text-transform: none !important;
+        text-align: center;
+    }
+
+    input[type=file] {
+        color: black !important;
+        /*margin-bottom: 5px;*/
+    }
+
+    #CancelBtn {
+        position: absolute;
+        top: -28px;
+        border-radius: 25px;
+        right: -23px;
+    }
+
+    .data-detail-wrapper button.btn.btn-success {
+        padding: 0 0px 0px;
+        font-size: 13px;
+        border-radius: 0px;
+        line-height: 20px;
+    }
+
+    .justify-content-end {
+        justify-content: flex-end
+    }
+</style>
+<div class="position-relative Dpopup-open">
+    <div class="child position-relative">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-2 text-right">
+                    <button class="btn btn-danger btn-sm ms-2" id="CancelBtn"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="col-md-12 mt-2">
+                    <p class="text-white" id="Descriptiondata"></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="white-wrapper">
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <h3 class="text-white">All Sales Team Open LeadList</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <label class="small">From date</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="fromDatess" value="">
+                    <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="small">To date</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="ToDatess" value="">
+                    <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+            <div class="col-md-4 text-right">
+                <label class="small"> &nbsp;</label>
+                <div class="d-flex align-items-center justify-content-end">
+                    <label><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="search" aria-controls="Userlist"></label>
+                    <input type="button" class="btn btn-success ms-2" value="Search" onclick="GetsearchValues()" />
+                </div>
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01" style="overflow:auto">
+            <table id="Leadlist" class="table tableStyle">
+                <thead>
+                    <tr>
+                        <th hidden>ID</th>
+                        <th>Name</th>
+                        <th>CorpEmail</th>
+                        @*<th>Phone</th>*@
+                        @*<th>Company</th>*@
+                        @*<th>Country</th>*@
+                        @*<th>State</th>*@
+                        @*<th>Discription</th>*@
+                        <th>RequestedDate</th>
+                        <th>LeadStatus</th>
+                        <th>Demo</th>
+                        @*<th>LeadSource</th>*@
+                        <th>Created by</th>
+                        <th>Create Date</th>
+                        <th>Client Email Discussion</th>
+                        @*<th>Attechments</th>*@
+                        @* <th>Invoice No</th>*@
+                        <th>Details</th>
+                        <th>Action</th>
+
+
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+
+        <div class="box-footer clearfix" id="divPagging"></div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script>
+            var Search = "";
+            $.formattedDate = function (dateToFormat) {
+                var dateObject = new Date(dateToFormat);
+                var day = dateObject.getDate();
+                var month = dateObject.getMonth() + 1; // Full month name
+                var year = dateObject.getFullYear();
+
+                var formattedDate = day + "-" + month + "-" + year;
+                return formattedDate;
+            };
+            function getFormattedDate(date) {
+                return date.toISOString().split('T')[0];
+            }
+
+            const today = new Date();
+            const fromDate = new Date();
+            fromDate.setDate(today.getDate() - 31)
+            const toDatePlusOne = new Date(today);
+            toDatePlusOne.setDate(toDatePlusOne.getDate() + 1);
+
+            document.getElementById('fromDatess').setAttribute('value', getFormattedDate(fromDate));
+            document.getElementById('ToDatess').setAttribute('value', getFormattedDate(toDatePlusOne));
+
+            $(document).ready(function () {
+
+                $("#ExpectedCloseDate").datepicker({ dateFormat: "dd/MM/yy" });
+                $("#SetFollowUp").datepicker({ dateFormat: "dd/MM/yy" });
+                $("#RemainingPaymentDate").datepicker({ dateFormat: "dd/MM/yy" });
+                $("#fromDatess").datepicker({ dateFormat: "yy-mm-dd" });
+                $("#ToDatess").datepicker({ dateFormat: "yy-mm-dd" });
+                GetLeadOnSearchFilter();
+
+            });
+
+
+
+
+            function GetsearchValues() {
+                Search = $('#search').val();
+                $('#search').html(GetPaginationHTML(Search));
+                GetLeadOnSearchFilter();
+
+            }
+
+            function GetLeadOnSearchFilter() {
+                var path = "/ChemPricingImportfile/LeadDocuments";
+                var pageNumber = $('#PageNumber').val();
+                var Search = $('#search').val();
+                var FromDate = $('#fromDatess').val();
+                var Todate = $('#ToDatess').val();
+                var URL = "/LeadManagementSubscription/GetOpenAllMaskEmailListManager_CustomSearch?searchKeyword='" + Search + "'";
+                URL += '&PageNumber=' + pageNumber;
+                URL += '&DateFrom=' + FromDate;
+                URL += '&DateTo=' + Todate;
+                $.ajax({
+                    url: URL,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    success: function (json) {
+                        var tbodyHTML = '';
+                        if (json != null) {
+                            $(json.DateList).each(function (idx, elm) {
+                                ;
+                                var date = elm.CreatedDate;
+                                var dateRequestedDate = elm.RequestedDate;
+                                var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                var RequestedformattedDate = ($.formattedDate(new Date(parseInt(dateRequestedDate.substr(6)))));
+                                var CreatedDate = ($.formattedDate(new Date(parseInt(elm.CreatedDate.substr(6)))));
+
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                                tbodyHTML += "<td>" + elm.Name + "</td>";
+                                tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                               // tbodyHTML += "<td>" + elm.Phone + "</td>";
+
+                               //tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                               // tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                               // tbodyHTML += "<td>" + elm.StateName + "</td>";
+
+                               //tbodyHTML += "<td style='text-align:center'>" + "<a  onclick=ShowDescription(`" + encodeURIComponent(elm.DiscriptionMessage) + "`)>" + "Read More.." + "</a>" + "</td>"
+
+                                tbodyHTML += "<td>" + RequestedformattedDate + "</td>";
+                                tbodyHTML += "<td>" + elm.Status + "</td>";
+                                if (elm.DemoDiscussion != null) {
+                                    tbodyHTML += "<td>" + elm.DemoDiscussion + "</td>";
+                                } else {
+                                    tbodyHTML += "<td></td>";
+                                }
+                                tbodyHTML += "<td>" + elm.createdby + "</td>";
+                                tbodyHTML += "<td>" + CreatedDate + "</td>";
+                                //tbodyHTML += "<td>" + elm.OutboundLeadSource + "</td>";
+                                tbodyHTML += `<td><input type="button" class="btn btn-xs btn-info" value="Get Email Chat" onclick="Getchat('${elm.CorpEmail}')"></td>`;
+
+                                //if (elm.files == "" || elm.files == null)
+                                //{
+                                //    tbodyHTML += "<td>" + '-' + "</td>";
+                                //}
+                                //else {
+                                //    tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/DownloadFile?filePath=" + path + "/" + elm.files + "&fileName=" + elm.files + "'>" + elm.files + "</a>" + "</td>";
+                                //}
+                               // tbodyHTML += "<td>" + elm.Invoice + "</td>";
+
+                                tbodyHTML += "<td>" + "<button class='btn btn-xs btn-info' onclick=SalesInboundOutboundEditLeadsFullDetails('" + elm.Id + "')><i class='fa fa-list'></i></button>" + "</td>";
+
+                                if (elm.Status == "Won") {
+                                    tbodyHTML += "<td>" + "<i class='fa fa-check text-success'></i>" + "</td>";
+                                }
+                                else if (elm.Status == "Lost") {
+                                    tbodyHTML += "<td>" + "<i class='fa fa-times  text-danger'></i>" + "</td>";
+                                }
+                                else {
+                                    tbodyHTML += "<td>" + "<i class='fa fa-hourglass-half text-warning'></i>" + "</td>";
+                                    //tbodyHTML += "<td>" + "<button class='btn btn-xs btn-info'  onclick=EditPopupSource('" + elm.Id + "')><i class='fa fa-pencil'></i></button>" + "</td>";
+                                }
+
+
+                                //tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-primary' value='Edit' onclick=EditPopupSource('" + elm.InvoiceID + "')>" + "</td>";
+                                tbodyHTML += "</tr>"
+                            });
+
+                            $('#divPagging').html(GetPaginationHTML(json));
+                            $('#pageSize').val(json.PageSize);
+
+                        }
+                        else {
+                            tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                        }
+                        $('.tbodydata').html(tbodyHTML);
+                    }
+                });
+            }
+
+            function Getchat(Email)
+            {
+
+                window.open(`/OutLookChatHistory/EmailHistory?Email=${Email}`, '_blank');
+            }
+            $("#CancelDisRemark").click(function () {
+                $(".popup-open").css("display", "none");
+            });
+
+
+            function ShowDescription(encodedMessage) {
+
+                var decodedMessage = decodeURIComponent(encodedMessage);  // Decode the message to handle special characters
+
+                $(".Dpopup-open").css("display", "block");  // Open the popup
+                $('#Descriptiondata').text(decodedMessage);  // Set the decoded message into the popup content
+            }
+
+            $("#CancelBtn").click(function () {
+                $(".Dpopup-open").css("display", "none");
+            });
+
+
+            function GetPaginationHTML(json) {
+
+                var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+                var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+                pagingInnerHTML += getPaginationButton;
+
+                return pagingInnerHTML;
+            }
+            function PaggingButton(elm) {
+
+                var pageNumber = elm.attr('url');
+
+                $('#PageNumber').val(pageNumber);
+
+                GetLeadOnSearchFilter();
+
+            }
+            function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+                var innerHTML = '';
+                var startLi = pagerSize / pagerSize;
+                var endLi = pagerSize;
+                var multiplier = activePage / pagerSize;
+                var modulo = activePage % pagerSize;
+                var virtualLi = pagerSize - pagerSize;
+                var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+                var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+                if (modulo == 0) {
+                    next = next - pagerSize;
+                    previous = previous - pagerSize;
+                }
+
+                if (activePage > pagerSize) {
+                    for (var i = 1; i <= multiplier; i++) {
+                        virtualLi += pagerSize;
+                    }
+
+                    if (modulo > 0) {
+                        startLi = virtualLi + 1;
+                    }
+                    else {
+                        startLi = virtualLi - pagerSize + 1;
+                    }
+                    endLi = startLi + pagerSize - 1;
+                }
+
+                innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+                if (activePage > 1 && activePage < pagerSize + 1) {
+                    innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+                    innerHTML += "<a href='javascript:void(0);"
+
+                    innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                    innerHTML += "</li>";
+
+                    if (activePage == 1) {
+                        innerHTML += "<li class='paginate_button previous disabled'>";
+                        innerHTML += "<a href='javascript:void(0);";
+                        innerHTML += "'>&laquo;</a>";
+                        innerHTML += "</li>";
+                    }
+                    else {
+                        innerHTML += "<li class='paginate_button previous'>";
+                        innerHTML += "<a href='javascript:void(0);'  url='";
+                        //innerHTML += URL + "&id=" + (activePage - 1);
+                        innerHTML += URL + (activePage - 1);
+                        innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                        innerHTML += "</li>";
+                    }
+                }
+                else if (activePage == 1) {
+                    innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                    innerHTML += "</li>";
+                    innerHTML += "<li class='paginate_button previous disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button previous'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (previous);
+                    innerHTML += URL + (previous);
+                    innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                    innerHTML += "</li>";
+                    innerHTML += "<li class='paginate_button previous'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage - 1);
+                    innerHTML += URL + (activePage - 1);
+                    innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+
+
+                for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+                    if (i == activePage) {
+                        innerHTML += "<li>";
+                        innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+                    }
+                    else {
+                        innerHTML += "<li class='paginate_button'>";
+                        innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                        //innerHTML += URL + "&id=" + i;
+                        innerHTML += URL + i;
+                    }
+
+                    innerHTML += "' >";
+                    innerHTML += i;
+                    innerHTML += "</a>";
+                    innerHTML += "</li>";
+                }
+
+                if (activePage + pagerSize > numberOfPages) {
+                    if (activePage == numberOfPages) {
+                        innerHTML += "<li class='paginate_button next disabled'>";
+                        innerHTML += "<a href='javascript:void(0);";
+                        innerHTML += "'>&raquo;</a>";
+                        innerHTML += "</li>";
+                    }
+                    else {
+                        innerHTML += "<li class='paginate_button next'>";
+                        innerHTML += "<a href='javascript:void(0);'  url='";
+                        //innerHTML += URL + "&id=" + (activePage + 1);
+                        innerHTML += URL + (activePage + 1);
+
+                        innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                        innerHTML += "</li>";
+                    }
+
+                    innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                    innerHTML += "</li>";
+                }
+                else if (activePage == numberOfPages) {
+                    innerHTML += "<li class='paginate_button next disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&raquo;</a>";
+                    innerHTML += "</li>";
+                    innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button next'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage + 1);
+                    innerHTML += URL + (activePage + 1);
+
+                    innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                    innerHTML += "</li>";
+
+                    innerHTML += "<li class='paginate_button next'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (next);
+                    innerHTML += URL + (next);
+
+                    innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                    innerHTML += "</li>";
+                }
+                innerHTML += "</ul>";
+
+                return innerHTML;
+            }
+            function EditPopupSource(id) {
+                var LeadId = id;
+                window.open(`/LeadManagementSubscription/SalesInbound_OutboundEditLeads?Id=${LeadId}`, '_blank');
+            }
+            function SalesInboundOutboundEditLeadsFullDetails(id) {
+                var LeadId = id;
+                window.open(`/LeadManagementSubscription/SalesInboundOutboundEditLeadsFullDetails?Id=${LeadId}`, '_blank');
+            }
+
+</script>
+
+

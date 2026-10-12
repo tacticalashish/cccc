@@ -1,0 +1,407 @@
+﻿@{
+    ViewBag.Title = "Tickets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    :root {
+        --green: #1a4d2e;
+        --green-tint: #eef4f0;
+        --orange: #f58220;
+        --orange-tint: #fff1e3;
+        --red: #c0392b;
+        --red-tint: #fbeae8;
+        --blue: #2a6190;
+        --blue-tint: #e8f0f7;
+        --gray: #697570;
+        --gray-tint: #eef1ef;
+    }
+
+    .d-flex {
+        display: flex
+    }
+
+    .align-center {
+        align-items: center
+    }
+
+    .flex-wrap {
+        flex-wrap: wrap
+    }
+
+    .gap-2 {
+        gap: 8px
+    }
+
+    .ml-auto {
+        margin-left: auto
+    }
+
+    .mb-3 {
+        margin-bottom: 15px
+    }
+
+    .text-muted-sm {
+        color: #8a978f;
+        font-size: 12px
+    }
+
+    .panel {
+        box-shadow: 0 1px 3px rgba(0,0,0,.06)
+    }
+
+    .pill-soft {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 11px;
+        padding: 4px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px
+    }
+
+        .pill-soft .dot-b {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0
+        }
+
+        .pill-soft.ok {
+            background: var(--green-tint);
+            color: var(--green)
+        }
+
+        .pill-soft.warn {
+            background: var(--orange-tint);
+            color: var(--orange)
+        }
+
+        .pill-soft.bad {
+            background: var(--red-tint);
+            color: var(--red)
+        }
+
+        .pill-soft.info {
+            background: var(--blue-tint);
+            color: var(--blue)
+        }
+
+        .pill-soft.gray {
+            background: var(--gray-tint);
+            color: var(--gray)
+        }
+
+    .status-tab {
+        border: 1px solid #e4e9e6;
+        background: #fff;
+        color: #5c6b63;
+        padding: 6px 14px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .status-tab.active {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green)
+        }
+
+    .status-tab-group {
+        display: flex;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+        .status-tab-group .status-tab {
+            border-radius: 0;
+            border-right-width: 0.5px;
+        }
+
+            .status-tab-group .status-tab:first-child {
+                border-radius: 4px 0 0 4px;
+            }
+
+            .status-tab-group .status-tab:last-child {
+                border-radius: 0 4px 4px 0;
+                border-right-width: 1px;
+            }
+
+    @@keyframes ticketsSpin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    table.table th,
+    table.table td {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .modal {
+        display: none !important;
+        position: fixed !important;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 99999 !important;
+        overflow: auto;
+    }
+
+        .modal.in {
+            display: block !important;
+        }
+</style>
+<div class="bg-light p-3">
+    <div class="d-flex align-center gap-2 flex-wrap mb-3">
+        <h3 style="margin:0">Tickets</h3>
+        <input type="text" id="ticketSearchBox" class="form-control" style="max-width:280px; margin-left:auto" placeholder="Search company, email or contact...">
+        @*<button class="btn btn-sm" style="background:var(--green);color:#fff" onclick="window.location.href='@Url.Action("CreateLead", "LeadManagementSubscription")'">+ New ticket</button>*@
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body d-flex align-center gap-2 flex-wrap" style="border-bottom:1px solid #eef1ef">
+            <div class="status-tab-group">
+                <div class="status-tab active" data-status="All" onclick="selectStatusTab(this)">All</div>
+                <div class="status-tab" data-status="PendingAdminResponse" onclick="selectStatusTab(this)">Pending Admin Response</div>
+                <div class="status-tab" data-status="PendingCustomerResponse" onclick="selectStatusTab(this)">Pending Customer Response</div>
+                <div class="status-tab" data-status="Closed" onclick="selectStatusTab(this)">Closed</div>
+            </div>
+            <span class="text-muted-sm ml-auto" id="ticketsCountLabel"></span>
+        </div>
+        <div style="position:relative">
+            <div id="ticketsLoadingOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.75); z-index:10; text-align:center; padding-top:60px;">
+                <div style="display:inline-block; width:32px; height:32px; border:3px solid #eef1ef; border-top-color:var(--green); border-radius:50%; animation:ticketsSpin 0.7s linear infinite;"></div>
+                <div class="text-muted-sm" style="margin-top:8px">Loading...</div>
+            </div>
+            <table class="table" style="margin-bottom:0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Subject</th>
+                        <th>RoleName</th>
+                        <th>Status</th>
+                        <th>Age</th>
+                    </tr>
+                </thead>
+                <tbody id="ticketsTableBody">
+                    <tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer d-flex align-center flex-wrap" style="background:#fff">
+            <span class="text-muted-sm" id="ticketsPagingInfo">Showing 0 of 0</span>
+            <ul class="pagination pagination-sm" id="ticketsPagingControls" style="margin:0 0 0 auto"></ul>
+        </div>
+    </div>
+</div>
+<script>
+    var ticketsCurrentPage = 1;
+    var ticketsCurrentSearch = '';
+    var ticketsCurrentStatus = 'All';
+    var ticketsSearchDebounce = null;
+    var ticketsIsLoading = false;
+
+    $(document).ready(function () {
+        loadTickets();
+    });
+
+    $(document).on('keyup', '#ticketSearchBox', function () {
+        var val = $(this).val();
+        clearTimeout(ticketsSearchDebounce);
+        ticketsSearchDebounce = setTimeout(function () {
+            ticketsCurrentSearch = val;
+            ticketsCurrentPage = 1;
+            loadTickets();
+        }, 400);
+    });
+
+    function selectStatusTab(el) {
+        $('.status-tab').removeClass('active');
+        $(el).addClass('active');
+        ticketsCurrentStatus = $(el).data('status');
+        ticketsCurrentPage = 1;
+        loadTickets();
+    }
+
+    function loadTickets() {
+        if (ticketsIsLoading) return;
+
+        ticketsIsLoading = true;
+        $('#ticketsLoadingOverlay').css('display', 'block');
+        $('#ticketsPagingControls a').css({ 'pointer-events': 'none', opacity: 0.5 });
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetAllTicketsByCRM",
+            data: {
+                FilterType: ticketsCurrentStatus,
+                searchKeyword: ticketsCurrentSearch,
+                PageNumber: ticketsCurrentPage
+            },
+            success: function (response) {
+                console.log('DEBUG tickets response:', response);
+                if (response && response.error) {
+                    $('#ticketsTableBody').html('<tr><td colspan="5" class="text-center text-danger" style="padding:20px">Error: ' + response.message + '</td></tr>');
+                    return;
+                }
+                renderTicketsTable(response.DateList);
+                renderTicketsPaging(response);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#ticketsTableBody').html('<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Failed to load tickets.</td></tr>');
+            },
+            complete: function () {
+                ticketsIsLoading = false;
+                $('#ticketsLoadingOverlay').css('display', 'none');
+                $('#ticketsPagingControls a').css({ 'pointer-events': 'auto', opacity: 1 });
+            }
+        });
+    }
+
+    function goToTicketsPage(page) {
+        if (ticketsIsLoading) return;
+        ticketsCurrentPage = page;
+        loadTickets();
+    }
+
+    function ticketStatusPill(status) {
+        var s = (status || '').toLowerCase();
+        if (s === 'open') return '<span class="pill-soft warn"><span class="dot-b"></span>Open</span>';
+        if (s === 'in progress') return '<span class="pill-soft info"><span class="dot-b"></span>In progress</span>';
+        if (s === 'resolved' || s === 'closed') return '<span class="pill-soft ok"><span class="dot-b"></span>' + status + '</span>';
+        return '<span class="pill-soft gray"><span class="dot-b"></span>' + (status || 'Unknown') + '</span>';
+    }
+
+    // "2d", "5h", "1w" style age, computed from the ticket's most recent activity
+    function ticketAge(createdDate, updatedDate) {
+        var ref = updatedDate || createdDate;
+        if (!ref) return '—';
+        var d = new Date(String(ref).replace(' ', 'T'));
+        if (isNaN(d)) return '—';
+        var diffMs = new Date() - d;
+        var mins = Math.floor(diffMs / 60000);
+        if (mins < 60) return mins + 'm';
+        var hrs = Math.floor(mins / 60);
+        if (hrs < 24) return hrs + 'h';
+        var days = Math.floor(hrs / 24);
+        if (days < 7) return days + 'd';
+        return Math.floor(days / 7) + 'w';
+    }
+
+    function renderTicketsTable(rows) {
+        var html = '';
+        $(rows || []).each(function (i, t) {
+            html += '<tr onclick="openTicketHistory(' + t.ID + ')" style="cursor:pointer">' +
+                '<td>#TK-' + t.ID + '</td>' +
+                '<td><b>' + (t.CompanyName || '') + '</b><div class="text-muted-sm">' + (t.ContactName || '') + '</div></td>' +
+                '<td>' + (t.Subject || '') + '</td>' +
+                '<td>' + (t.RoleName || '') + '</td>' +
+                
+                '<td>' + ticketStatusPill(t.Status) + '</td>' +
+                '<td class="text-muted">' + ticketAge(t.CreatedDate, t.UpdatedDate) + '</td>' +
+            '</tr>';
+        });
+        $('#ticketsTableBody').html(html || '<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">No tickets found</td></tr>');
+    }
+
+    function renderTicketsPaging(response) {
+        var from = response.ShowingFrom;
+        var to = response.ShowingTo;
+        var total = response.RecordsCount;
+        var active = response.ActivePage;
+        var totalPages = response.NumberOfPages;
+
+        $('#ticketsPagingInfo').text(total > 0 ? ('Showing ' + from + ' to ' + to + ' of ' + total + ' records') : 'No records');
+        $('#ticketsCountLabel').text(total + ' ticket(s)');
+
+        var html = '';
+        html += '<li class="' + (active <= 1 ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + (active - 1) + ')">&laquo;</a></li>';
+
+        var windowSize = 10;
+        var startPage = Math.max(1, active - Math.floor(windowSize / 2));
+        var endPage = Math.min(totalPages, startPage + windowSize - 1);
+        startPage = Math.max(1, endPage - windowSize + 1);
+
+        for (var p = startPage; p <= endPage; p++) {
+            html += '<li class="' + (p === active ? 'active' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + p + ')">' + p + '</a></li>';
+        }
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + (active + 1) + ')">&raquo;</a></li>';
+
+        $('#ticketsPagingControls').html(html);
+    }
+
+    /* ---------- ticket history popup (reuses the existing GetTicketHistoryById action) ---------- */
+    function openTicketHistory(ticketId) {
+        var modal = document.getElementById('ticketHistoryModal');
+        if (!modal) {
+            var html =
+                '<div id="ticketHistoryModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">' +
+                    '<div style="background:#ffffff; max-width:560px; margin:40px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;">' +
+                        '<div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff;">' +
+                            '<h4 id="ticketHistoryTitle" style="margin:0; color:#1a1a1a; font-size:16px; font-weight:bold;">Ticket history</h4>' +
+                            '<span onclick="closeTicketHistory()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>' +
+                        '</div>' +
+                        '<div id="ticketHistoryBody" style="padding:20px; background:#fafafa; overflow-y:auto; flex:1;"></div>' +
+                    '</div>' +
+                '</div>';
+            $('body').append(html);
+            modal = document.getElementById('ticketHistoryModal');
+        }
+
+        $('#ticketHistoryTitle').text('Ticket #TK-' + ticketId + ' history');
+        $('#ticketHistoryBody').html('<div style="text-align:center;color:#8a978f;padding:20px;">Loading...</div>');
+        $('#ticketHistoryModal').css('display', 'block');
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTicketHistoryById",
+            data: { ticketId: ticketId },
+            success: function (rows) {
+                renderTicketHistory(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#ticketHistoryBody').html('<div style="text-align:center;color:#c0392b;padding:20px;">Failed to load ticket history.</div>');
+            }
+        });
+    }
+
+    function closeTicketHistory() {
+        $('#ticketHistoryModal').css('display', 'none');
+    }
+
+    function renderTicketHistory(rows) {
+        if (!rows || rows.length === 0) {
+            $('#ticketHistoryBody').html('<div style="text-align:center;color:#8a978f;padding:20px;">No comments on this ticket yet.</div>');
+            return;
+        }
+        var html = '';
+        $(rows).each(function (i, c) {
+            var isManager = c.IsManagerReply;
+            var bubbleBg = isManager ? '#eef4f0' : '#ffffff';
+            var align = isManager ? 'flex-start' : 'flex-end';
+            var label = isManager ? 'Support' : 'Customer';
+            var fileHtml = c.FileName ? '<div style="margin-top:6px;font-size:11px;color:#2a6190;">&#128206; ' + c.FileName + '</div>' : '';
+
+            html += '<div style="display:flex; justify-content:' + align + '; margin-bottom:12px;">' +
+                '<div style="max-width:75%; background:' + bubbleBg + '; border:1px solid #e4e9e6; border-radius:8px; padding:10px 14px;">' +
+                    '<div style="font-size:11px; font-weight:bold; color:#1a4d2e; margin-bottom:4px;">' + label + '</div>' +
+                    '<div style="font-size:13px; color:#1a1a1a;">' + (c.Comment || '') + '</div>' +
+                    fileHtml +
+                    '<div style="font-size:10.5px; color:#8a978f; margin-top:6px; text-align:right;">' + c.CreatedDate + '</div>' +
+                '</div>' +
+            '</div>';
+        });
+        $('#ticketHistoryBody').html(html);
+    }
+</script>

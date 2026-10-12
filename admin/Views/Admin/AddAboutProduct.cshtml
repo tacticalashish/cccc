@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewBag.Title = "AddAboutProduct";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="~\ckeditor/ckeditor.js" type="text/javascript"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        BindProduct();
+    });
+
+
+    function BindProduct() {
+        debugger
+        $.ajax({
+            type: "GET",
+            url: "/ChemicalPricing/BindProduct",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+
+                innerHTML = "";
+                if (response.length != 0) {
+                    $(response).each(function (idx, elm) {
+
+                        innerHTML += "<option>" + elm.ProductName + "</option>";
+
+                    });
+                    $('#product').html(innerHTML);
+                    $('#product').selectpicker('refresh');
+
+                }
+                else {
+
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function AddAboutProduct() {
+        debugger;
+
+        var ProductName = $('#product option:selected').text();
+        var AboutProduct =  CKEDITOR.instances['AboutProduct'].getData();
+       
+        var enProductdescription = {
+            ProductName: ProductName,
+            AboutProduct: AboutProduct
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/ProductSearch/InsertAboutProduct",
+            data: '{enProductdescription: ' + JSON.stringify(enProductdescription) + '}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            
+            success: function () {
+                window.location.href = '/Admin/AboutProduct';
+
+            },
+            error: function (response) {
+
+                alert("Failed");
+            }
+        });
+    }
+
+
+</script>
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12"><h3 style="text-align:center; color:white;margin:10px 0px;"> Add About Product </h3></div>
+        <div class="col-md-6">
+            <select name="product" id="product" class="form-control" data-live-search="true" data-live-search-placeholder="Enter Your Product Name Ex: Methanol, Acetic Acid" data-max-options="1" data-none-selected-text="Select Product"></select>
+        </div>
+
+        <div class="col-md-8">
+            <label>About Product</label>
+
+            <textarea class="ckeditor" cols="80" id="AboutProduct" name="editor1" rows="10"></textarea>
+            <script>
+                CKEDITOR.replace("AboutProduct");
+            </script>
+
+        </div>
+
+    </div>
+</div>
+    <div class="col-md-2">
+        <input type="button" value="Submit" class="btn btn-success" onclick="AddAboutProduct()" />
+    </div>
+

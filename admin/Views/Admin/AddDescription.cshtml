@@ -1,0 +1,265 @@
+﻿@using ChemAnalyst.DAL
+@model ChemAnalyst.Models.Productdescription
+
+@{
+    ViewBag.Title = "AddDescription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    input[type=file] {
+        color: #220808!important;
+        margin-bottom: 5px;
+    }
+</style>
+
+<script src="~\ckeditor/ckeditor.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+     
+            @if (Model != null && Model.Id > 0)
+             {
+
+                @:$('#Region').val('@TempData["Region"]').trigger('change');
+               
+                @:setTimeout(function () {
+                @:$('#Country').val('@Model.Country');
+                @:$('#Country').trigger('change'); }, 300);
+
+                @:setTimeout(function () {
+                @:$('#Product').val('@Model.Product'); }, 600);
+             }
+      
+
+    });
+
+        $(document).on('change', '#Region', function() {
+            var regionID = $(this).val()
+
+            if (regionID == '') {
+                $('#Country').html("<option value=''>Select Country *</option>");
+                return true;
+            }
+
+            var innerHTML = "<option>loading...</option>"
+            $('#Country').html(innerHTML);
+
+            $.ajax({
+                url: "/ProductAndCategory/GetCountryBasedOnRegion",
+                data: { regionID: regionID }
+            }).complete(function (jqXHR, textStatus) {
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    innerHTML = "<option value=''>Select Country *</option>"
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<option value=" + value.id + ">" + value.CountryName + "</option>"
+                    });
+                    $('#Country').html(innerHTML);
+                }
+            });
+        });
+
+
+        $(document).on('change', '#Country', function () {
+            var countryFID = $(this).val()
+
+            if (countryFID == '') {
+                $('#Product').html("<option value=''>Select Product *</option>");
+                return true;
+            }
+
+            var innerHTML = "<option>loading...</option>"
+            $('#Product').html(innerHTML);
+
+            $.ajax({
+                url: "/ProductAndCategory/GetProductBasedOnCountry",
+                data: { countryFID: countryFID }
+            }).complete(function (jqXHR, textStatus) {
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    innerHTML = "<option value=''>Select Product *</option>"
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<option value=" + value.id + ">" + value.ProductName + "</option>"
+                    });
+
+                    $('#Product').html(innerHTML);
+                }
+            });
+        });
+
+
+
+</script>
+
+
+
+
+<div class="">
+    <div class="">
+        @using (Html.BeginForm("SaveProductDescription", "Admin", null, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+        { 
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            
+            <div class="col-md-12" style="background-color:Black;">
+                <div class="col-md-6" style="margin-top:10px;"><h3 style="color: white;"> Add Product Description</h3></div>
+                <div class="col-md-6" style="margin-top:10px;margin-bottom:10px"><button class="btn btn-default" style="float:right;color:#fff!important">@Html.ActionLink("Back to List", "DescriptionList" )</button></div>
+              
+ 
+                <div class="col-md-4 form-group">
+                    @Html.DropDownList("Region", new DALHelper().IEnumerableRegion(new SelectListItem { Text = "Select Region  *", Value = "" }), new { @class = "form-control", required = "required" })
+                </div>
+
+                <div class="col-md-4 form-group">
+                    <select id="@Html.IdFor(item => item.Country)" name="@Html.NameFor(item => item.Country)" class="form-control"   placeholder="Select Country *" required="required">
+                        <option value="">Select Country *</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 form-group">
+
+                    <select id="@Html.IdFor(item => item.Product)" name="@Html.NameFor(item => item.Product)" class="form-control"  placeholder="Select Product *" required="required" onchange="GetProductDetails()">
+                        <option value="">Select Product *</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 form-group">
+                    @Html.TextBoxFor(model => model.Iupac, new { @class = "form-control", @placeholder = "Iupac ", required = "required" })
+                </div>
+
+                <div class="col-md-12 form-group">
+                    @Html.TextBoxFor(model => model.Cas, new { @class = "form-control", @placeholder = "Cas ", required = "required" })
+                </div>
+
+                <div class="col-md-12 form-group">
+                    @Html.LabelFor(model => model.Feedstock)
+                    @Html.TextAreaFor(model => model.Feedstock, new { @class = "form-control", @rows = 200, @placeholder = "Feedstock  ", id = "Fds" })
+                </div>
+                <script>
+                    CKEDITOR.replace("Fds");
+                </script>
+                <div class="col-md-12 form-group">
+                    @Html.LabelFor(model => model.Grades)
+                    @Html.TextAreaFor(model => model.Grades, new { @class = "form-control", @rows = 200, @placeholder = "Grades  ", id = "Grad" })
+                </div>
+                <script>
+                    CKEDITOR.replace("Grad");
+                </script>
+
+                <div class="col-md-12 form-group">
+                    @Html.LabelFor(model => model.Enduse)
+                    @Html.TextAreaFor(model => model.Enduse, new { @class = "form-control", @rows = 200, @placeholder = "Enduse  ", id = "End" })
+                </div>
+                <script>
+                    CKEDITOR.replace("End");
+                </script>
+                <div class="col-md-12 form-group">
+                    @Html.LabelFor(model => model.Referallinks)
+                    @Html.TextAreaFor(model => model.Referallinks, new { @class = "form-control", @rows = 200, @placeholder = "Referallinks  ", id = "Rlink" })
+                </div>
+                <script>
+                    CKEDITOR.replace("Rlink");
+                </script>
+
+                <div class="col-md-3">
+                    @Html.LabelFor(model => model.ProductionProcess)
+                    <input type="hidden" name="productionprocess" value="@Model.ProductionProcess" />
+                    <input type="file" name="file" class="form-control" value="@Model.ProductionProcess" />
+                </div>
+                <div class="col-md-3"><div style="visibility:hidden">
+    @Html.TextBoxFor(model => model.Id, new { @class = "", @placeholder = "Title * ", required = "required" })
+</div></div>
+
+                <div style="visibility:hidden" class="col-md-12">
+
+                    <div class="">
+                        @Html.LabelFor(model => model.CreatedBy, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-2">
+                            @Html.EditorFor(model => model.CreatedBy, new { htmlAttributes = new { @class = "form-control"  } })
+                            @Html.ValidationMessageFor(model => model.CreatedBy, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="">
+                        @Html.LabelFor(model => model.CreatedDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-2">
+                            @Html.TextBox("CreatedDate", String.Format("{0:s}", Model.CreatedDate))
+                            @*@Html.EditorFor(model => model.CreatedDate, new { @class = "form-control"})*@
+                            @Html.ValidationMessageFor(model => model.CreatedDate, "", new { @class = "text-danger" })
+                            
+                        </div>
+                    </div>                
+                 </div>
+
+                    <div class=" col-md-3">
+                        <input type="submit" value="Save" class="btn btn-success" />
+                    </div>
+  
+                <div class="col-md-12 " style="margin-top:10px;">
+                   
+                </div>
+
+              
+            </div>
+         }
+         </div>
+       </div>
+
+
+
+
+
+<script>
+
+ 
+          function GetProductDetails() {
+
+            if ($("#Id").val() != null && $("#Id").val() > 0) {
+
+            }
+            else {
+                var feed = {};
+                feed.product = $("#Product").val();
+                //feed.CountryName = $('#Country option:selected').text();
+
+                $.ajax({
+
+                    type: "POST",
+                    url: "/ProductSearch/GetproductDetails",
+                    async: false,
+                    data: feed,
+                    success: function (json) {
+
+                        var data = json.result;
+                        if (data == true) {
+                            $(".btn-success").hide();
+                        alert("Please Select Another Product");
+                        }
+                        else {
+                            $(".btn-success").show();
+                        }
+                    },
+                    error: function (response) {
+                            alert("Failed");
+                    }
+                });
+            }
+          }
+
+
+</script>
+
+
+
+
+
+
+
+
+

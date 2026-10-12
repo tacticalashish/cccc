@@ -1,0 +1,345 @@
+﻿
+@{
+    ViewBag.Title = "UpdateSalesPackageSubscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h2>UpdateSalesPackageSubscriptions</h2>*@
+
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">*@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css">
+@*<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />*@
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper">
+        <div class="col-md-6 col-lg-7 col-md-offset-2">
+        </div>
+        <div class="eq-form" style="margin-top:10px;">
+            <div class="eq-form-box">
+                <div class="col-md-4 col-lg-12 form-group">
+                    <input type="text" class="form-control" placeholder="Email" id="Email" name="Email" autocomplete="off" />
+                    <input type="text" id="Id" hidden="hidden"/>
+                </div>
+                <div class="col-md-4 col-lg-12 form-group">
+                    <button style="float:right" class="btn btn-primary btn-sm" onclick="AddRange()">Add Range</button>
+                    <input type="text" class="form-control" placeholder="Product" id="Product" name="Product" autocomplete="off" />
+                  
+                </div>
+                <div class="col-md-4 col-lg-12 form-group" id="dvCountry">
+                    <input type="text" class="form-control" placeholder="Country" id="Country" name="Country" autocomplete="off" />
+                </div>
+                <div class="col-md-4 col-lg-12 form-group">
+                    <input type="text" class="form-control" placeholder="Region" id="Region" name="Region" autocomplete="off" />
+                </div>
+                <div class="col-md-4 col-lg-12 form-group">
+                    <input type="text" class="form-control" placeholder="CreatedDate" id="CreatedDate" name="CreatedDate" autocomplete="off" />
+                </div>
+                <div class="col-md-4 col-lg-12 form-group">
+                    <input type="text" class="form-control" placeholder="Fromdate" id="Fromdate" name="Fromdate" autocomplete="off" />
+                </div>
+                <div class="col-md-4 col-lg-12 form-group">
+                    <input type="text" class="form-control" placeholder="Todate" id="Todate" name="Todate" autocomplete="off" />
+                </div>
+                <div class="col-md-4 col-lg-12 form-group">
+                    <input type="text" class="form-control" placeholder="Module" id="Module" name="Module" autocomplete="off" />
+                </div>
+                <div class="col-md-3 " id="dvChemicalPricingRange">
+                    <label>Chemical Range</label>
+                    <select class="form-control selectpicker" id="ChemicalRange" data-live-search="true" data-none-selected-text="Select Chemical Range" multiple data-actions-box="true" data-selected-text-format="count > 3">
+                        <option value="">Select Chemical Range</option>
+                    </select>
+                </div>
+                <div class="col-md-3 " id="dvMarketAnalysisRange">
+                    <label>Market Analysis Range</label>
+                    <select class="form-control selectpicker" id="MarketAnalysisRange" data-live-search="true" data-none-selected-text="Select Market Analysis Range" multiple data-actions-box="true" data-selected-text-format="count > 3">
+                        <option value="">Select Market Analysis Range</option>
+                    </select>
+                </div>
+                <div class="btn-wrapper">  
+                    <button class="bttn bttn-success" onclick="UpdatePackage()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<script>
+    var SalesPackageID =@ViewBag.SalesPackageID;
+
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1;
+        var year = dateObject.getFullYear();
+        day = day < 10 ? "0" + day : day;
+        month = month < 10 ? "0" + month : month;
+        var formattedDate = day + "/" + month + "/" + year;
+        return formattedDate;
+    };
+    $(document).ready(function () {
+        $("#CreatedDate").prop("disabled", true);
+        $("#Region").prop("disabled", true);
+        $("#Country").prop("disabled", true);
+        $("#Email").prop("disabled", true);
+        BinddataonLoad();
+
+    });
+    $(function () {
+        // $("#CreatedTime").val('');
+        jQuery('#CreatedDate').datetimepicker();
+        jQuery('#Fromdate').datetimepicker();
+        jQuery('#Todate').datetimepicker();
+    });
+    var checkRangeModule = "";
+    function BinddataonLoad() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetRecordBySalesPackageID",
+            data: { SalesPackageID: SalesPackageID },
+            success: function (response) {
+                $(response).each(function (idx, Value) {
+                  
+                    var Email = Value.CorpEmail;
+                    var Product = Value.ProductName;
+                    var Country = Value.CountryName;
+                    var Region = Value.RegionName;
+                    var CreatedDate = Value.CreatedDate;
+                    var Fromdate = Value.DateFrom;
+                    var Todate = Value.DateTo;
+                    var Module = Value.module;
+                    var Chemical_Range = Value.Chemical_Range;
+                    var Market_Analysis_Range = Value.Market_Analysis_Range;
+
+                    if (Country == "" || Country == null || Country == undefined) {
+                        $("#dvCountry").hide();
+                    }
+                    else {
+                        $("#dvCountry").show();
+                    }
+                    if (Market_Analysis_Range == "" || Market_Analysis_Range == null || Market_Analysis_Range == undefined) {
+                        $("#dvMarketAnalysisRange").hide();
+                    }
+                    else {
+                        checkRangeModule = "MarketAnalysisRange";
+                        $("#dvMarketAnalysisRange").show();
+                    }
+                    if (Chemical_Range == "" || Chemical_Range == null || Chemical_Range == undefined) {
+                        $("#dvChemicalPricingRange").hide();
+                    }
+                    else {
+                        checkRangeModule = "ChemicalPricingRange";
+                        $("#dvChemicalPricingRange").show();
+                    }
+
+                    var formattedDate = ($.formattedDate(new Date(parseInt(CreatedDate.substr(6)))));
+                    var formattedFromdate = ($.formattedDate(new Date(parseInt(Fromdate.substr(6)))));
+                    var formattedTodate= ($.formattedDate(new Date(parseInt(Todate.substr(6)))));
+                    $("#Email").val(Email);
+                    $("#Product").val(Product);
+                    $("#Country").val(Country);
+                    $("#Region").val(Region);
+                    $("#CreatedDate").val(formattedDate);
+                    $("#Fromdate").val(formattedFromdate);
+                    $("#Todate").val(formattedTodate);
+                    $("#Id").val(SalesPackageID);
+                    $("#Module").val(Module);
+                    
+                    
+                });
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+
+    }
+
+    function UpdatePackage() {
+
+        var Product = $("#Product").val();
+        var Fromdate = $("#Fromdate").val();
+        var Todate = $("#Todate").val();
+        var Id = $("#Id").val();
+        var Module = $("#Module").val();
+        var ChemicalRange = $("#ChemicalRange").val();
+        var MarketAnalysis = $("#MarketAnalysisRange").val();
+        var ChemicalPricingRange = GetRangeCheckbox('ChemicalRange');
+        var MarketAnalysisRange = null;
+        MarketAnalysisRange = GetRangeCheckbox('MarketAnalysisRange');
+        if ((checkRangeModule == "ChemicalPricingRange") && (ChemicalRange == "" || ChemicalRange == null || ChemicalRange == undefined)) {
+            swal("Warning", "Please Insert ChemicalRange", "error");
+            return false;
+        }
+        else if ((checkRangeModule == "MarketAnalysisRange") && (MarketAnalysis == "" || MarketAnalysis == null || MarketAnalysis == undefined)) {
+
+            swal("Warning", "Please Insert MarketRange", "error");
+            return false;
+
+        }
+       
+        else {
+            var LeadDetails = {
+                Id: Id,
+                Name: "",
+                CorpEmail: "",
+                Organisation: "",
+                CountryName: "",
+                CountryID: "",
+                StateName: "",
+                StateId: "",
+                Phone: "",
+                module: Module,
+                InterestArea: "",
+                UserType: "",
+                Subject: "",
+                Query: "",
+                Status: "",
+                AssignTo: "",
+                Designation: "",
+                AssignDate: "",
+                IPAddress: "",
+                BillingEmail: "",
+                SubscriptionType: "",
+                AssignAnalyst: "",
+                SecondaryClintEmail: "",
+                SubscriptionDateFrom: Fromdate,
+                SubscriptionDateTo: Todate,
+                Subscription_Country: "",
+                Subscription_Product: Product,
+                Chemical_Range: ChemicalPricingRange,
+                Market_Analysis_Range: MarketAnalysisRange,
+                SubSubscriptionRemark: "",
+                ProcedureName: "",
+                ConnectionTime: "",
+                RegionId: Region,
+                RegionName: "",
+                ModuleId: "",
+                ModuleName: "",
+                MarketRangeID: "",
+                MarketRangeName: "",
+                files: "",
+                PaymentMode: "",
+                CRM: ""
+            }
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/UpdateSalesPackage",
+                data: '{LeadDetails: ' + JSON.stringify(LeadDetails) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+
+                    var responseMessage = response;
+                    if (responseMessage == "Success") {
+
+                        swal({
+                            title: "Thank you!",
+                            text: "Updated Sucessfully.",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "../../LeadManagementSubscription/ListOfSalesPackageSubscriptions";
+                        });
+                    }
+                    else {
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "success"
+                        }).then(function () {
+                            //  window.location.href = "../../AdminChemicalPricing/AdminChemicalPricing";
+                        });
+                    }
+                },
+                Error: function (ErrMsg) {
+                    // window.location.href = "../../AdminChemicalPricing/AdminChemicalPricing";
+                }
+            });
+        }
+    }
+    function GetchemicalRange() {
+        
+        var ProductList = "";
+        ProductList = $('#Product').val();
+        var CountryName = $("#Country").val();
+        CountryName = $.trim(CountryName);
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetChemicalRange",
+            data: "{ productlist: '" + ProductList + "', CountryName: '" + CountryName + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var innerHTML = '';
+                $(response).each(function (jsonIndex, Value) {
+                    innerHTML += "<option product-value='" + Value.ProductId + "'range-value='" + Value.Chemical_RangeID + "' >  " + Value.Chemical_Range + "</option > ";
+                });
+                $('#ChemicalRange').html(innerHTML);
+                $('#ChemicalRange').selectpicker('refresh');
+            },
+            failure: function (response) { },
+            error: function (response) { }
+        });
+    }
+    function GetMarketAnalysisRange() {
+        
+        var ProductList = "";
+        var CountryName = $("#Country").val();
+       // CountryName = CountryName.replace(/ /g, '');
+        CountryName = $.trim(CountryName);
+        var region = $("#Region").val();
+        region = $.trim(region);
+        ProductList = $('#Product').val();
+        // Loading(true);
+        $.ajax({
+            url: "/LeadManagementSubscription/GetMarketAnalysisRange",
+            type: "POST",
+            dataType: "json",
+            async: true,
+            data: "{productlist: '" + ProductList + "', CountryName: '" + CountryName + "',region: '" + region + "'}",
+            contentType: "application/json; charset=utf-8",
+            success: function (response) { // Loading(false);
+                var MarketAnalysisRangeinnerHTML = '';
+                $(response.DataList).each(function (jsonIndex, Value) {
+                    MarketAnalysisRangeinnerHTML += "<option product-value='" + Value.ProductId + "'range-value='" + Value.MarketRangeID + "' >  " + Value.MarketRangeName + "</option > ";
+                });
+                $('#MarketAnalysisRange').html(MarketAnalysisRangeinnerHTML);
+                $('#MarketAnalysisRange').selectpicker('refresh');
+            },
+            failure: function (response) { },
+            error: function (response) { }
+        });
+    }
+
+    function AddRange()
+    {
+        GetchemicalRange();
+        GetMarketAnalysisRange();
+    }
+    function GetRangeCheckbox(elm) {
+        var data = []
+        $($('#' + elm).find('option:selected')).each(function (idx, val) {
+            var innerData = {};
+            innerData['PID'] = $(this).attr('product-value');
+            innerData['RID'] = $(this).attr('range-value');
+            data.push(innerData);
+        });
+        var rangeCollection = JSON.stringify(data);
+        if (rangeCollection == '[]')
+            return '';
+        else
+            return rangeCollection;
+    }
+</script>

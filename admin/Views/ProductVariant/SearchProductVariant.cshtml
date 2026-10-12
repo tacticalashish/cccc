@@ -1,0 +1,378 @@
+﻿@using ChemAnalyst.DAL
+
+
+@{
+    ViewBag.Title = "SearchProductVariant";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h2>SearchProductVariant</h2>*@
+
+
+<script type="text/javascript">
+      
+       function ValidateForm() {
+           var r = true;
+
+           if (!$('form').valid()) {
+               r = false;
+           }
+           else {
+               $('#btnSubmit,#btnCancel').hide();
+               $('#btnVirtualSubmit').attr('disabled', 'disabled');
+               $('#btnVirtualSubmit').show();
+           }
+           return r;
+       }
+
+       $(document).on('change', '#Region', function () {
+           $('#hdnddlRegion').val($('#Region option:selected').text());
+
+           var regionID = $(this).val();
+          
+           var fileBase = "country";
+
+           if (fileBase == 'country') {
+               BindCountry(regionID);
+           }
+           else {
+               BindCategory(regionID);
+           }
+       });
+
+       function BindCategory(regionID) {
+
+           if (regionID == '') {
+               $('#ddlCategory').html("<option value=''>Select Category *</option>");
+               return true;
+           }
+
+           var innerHTML = "<option>loading...</option>"
+           $('#ddlCategory').html(innerHTML);
+
+           $.ajax({
+               url: "/ProductAndCategory/GetCategoryBasedOnRegion",
+               data: { regionID: regionID }
+           }).complete(function (jqXHR, textStatus) {
+               if (textStatus == "success" && jqXHR.responseText != null) {
+                   var json = JSON.parse(jqXHR.responseText);
+                   innerHTML = "<option value=''>Select Category *</option>"
+
+                   $(json).each(function (index, value) {
+                       innerHTML += "<option value=" + value.id + " real-value='" + value.CategoryName + "'>" + value.CategoryDiscription + "</option>"
+                   });
+
+                   $('#ddlCategory').html(innerHTML);
+               }
+           });
+       }
+
+       function BindCountry(regionID) {
+           if (regionID == '') {
+               $('#Country').html("<option value=''>Select Country *</option>");
+               return true;
+           }
+
+           var innerHTML = "<option>loading...</option>"
+           $('#Country').html(innerHTML);
+
+           $.ajax({
+               url: "/ProductAndCategory/GetCountryBasedOnRegion",
+               data: { regionID: regionID }
+           }).complete(function (jqXHR, textStatus) {
+               if (textStatus == "success" && jqXHR.responseText != null) {
+                   var json = JSON.parse(jqXHR.responseText);
+                   innerHTML = "<option value=''>Select Country *</option>"
+
+                   $(json).each(function (index, value) {
+                       innerHTML += "<option value=" + value.id + ">" + value.CountryName + "</option>"
+                   });
+                   $('#Country').html(innerHTML);
+               }
+           });
+       }
+
+       $(document).on('change', '#Country', function () {
+           $('#hdnddlCountry').val($('#ddlCountry option:selected').text());
+
+           var countryID = $(this).val()
+
+           if (countryID == '') {
+               $('#ddlCategory').html("<option value=''>Select Category *</option>");
+               return true;
+           }
+
+           var innerHTML = "<option>loading...</option>"
+           $('#ddlCategory').html(innerHTML);
+
+           $.ajax({
+               url: "/ProductAndCategory/GetCategoryBasedOnCountry",
+               data: { countryID: countryID }
+           }).complete(function (jqXHR, textStatus) {
+               if (textStatus == "success" && jqXHR.responseText != null) {
+                   var json = JSON.parse(jqXHR.responseText);
+                   innerHTML = "<option value=''>Select Category *</option>"
+
+                   $(json).each(function (index, value) {
+                       innerHTML += "<option value=" + value.id + ">" + value.CategoryName + "</option>"
+                   });
+
+                   $('#ddlCategory').html(innerHTML);
+               }
+           });
+       });
+
+       $(document).on('change', '#ddlCategory', function () {
+           var categoryID = $(this).val()
+
+           if (categoryID == '') {
+               $('#Product').html("<option value=''>Select Product *</option>");
+               return true;
+           }
+
+           var innerHTML = "<option>loading...</option>"
+           $('#Product').html(innerHTML);
+
+           $.ajax({
+               url: "/ProductAndCategory/GetProductBasedOnCategory",
+               data: { categoryID: categoryID }
+           }).complete(function (jqXHR, textStatus) {
+               if (textStatus == "success" && jqXHR.responseText != null) {
+                   var json = JSON.parse(jqXHR.responseText);
+                   innerHTML = "<option value=''>Select Product *</option>"
+
+                   $(json).each(function (index, value) {
+                       innerHTML += "<option value=" + value.id + ">" + value.ProductName + "</option>"
+                   });
+
+                   $('#Product').html(innerHTML);
+               }
+           });
+       });
+
+
+
+
+       function Searchdata() {
+           debugger;
+           var feeddata = {};
+           feeddata.ProductID = $("#Product").val();
+           feeddata.CountryName = $('#Country option:selected').text();
+
+           $.ajax({
+               type: "GET",
+               //contentType: "application/json; charset=utf-8",
+               url: "/ProductVariant/SearchVariant",
+               async: false,
+               data: feeddata,
+               success: function (json) {
+                   debugger;
+                   var data = json;
+                   var tbodyHTML = '';
+
+                   if (data.length != 0) {
+                       $(data).each(function (idx, elm) {
+                           fileName = elm.ProductionProcess;
+                           tbodyHTML += "<tr>";
+
+                           tbodyHTML += "<td>" + elm.ID + "</td>";
+                          
+                           tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                           tbodyHTML += "<td>" + elm.ProductId + "</td>";
+                           tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                           tbodyHTML += "<td>" + elm.ProductVariant + "</td>";
+
+                           tbodyHTML += "<td>" + "<a class='DeleteCss' onclick=GetData('" + elm.ID + "','" + elm.ProductId + "','" + elm.CountryName + "','" + encodeURIComponent(elm.ProductVariant) + "')><li class='fa fa-pencil-square-o'></li></a>" + "</td>";
+
+                           tbodyHTML += "</tr>"
+
+                       });
+
+                      
+                       $(".tbodydata").html(tbodyHTML);
+                       $("#searchtable").show();
+                       $("#popup").hide();
+                      
+                   }
+                   else {
+                      
+                   }
+
+               }
+           });
+
+       }
+
+
+ 
+       function GetData(Id,Product,Country, ProductVariant)
+       {
+           debugger;
+           var id = Id;
+           var product = Product;
+           var country = Country;
+           var productVariant = decodeURIComponent(ProductVariant);
+
+           $("#Id").val(id); 
+           $("#ProductId").val(product); 
+           $("#CountryName").val(country); 
+           $("#Productvarient").val(productVariant);
+           $("#popup").show();
+
+       }
+
+
+       function savedata()
+       {
+           debugger;
+           var feeddata = {};
+           feeddata.Id=  $("#Id").val();
+           feeddata.ProductId = $("#ProductId").val();
+           feeddata.CountryName = $("#CountryName").val();
+           feeddata.ProductVariant = $("#Productvarient").val();
+
+          $.ajax({
+              type: "GET",
+              //contentType: "application/json; charset=utf-8",
+              url: "/ProductVariant/SaveProductvariant",
+              async: false,
+              data: feeddata,
+              success: function (response) {
+                  debugger;
+                  var responseData = "";
+                  $(response).each(function (idx, elm) {
+                      responseData = elm.ValidationMessage;
+                  });
+                  if (responseData != "" || responseData != null || responseData != undefined) {
+
+                      swal({
+                          title: responseData,
+                         
+                          type: "success"
+                      }).then(function () {
+                          window.location.href = "../../ProductVariant/SearchProductVariant";
+                      });
+                  }
+                  else {
+                      swal({
+                          title: 'Failed',
+                         
+                          type: "success"
+                      }).then(function () {
+                          window.location.href = "../../ProductVariant/SearchProductVariant";
+                      });
+                  }
+                     
+              }
+             
+          });
+
+       }
+      
+</script>
+
+    <link href="~/css/adminPricing.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<style>
+    .mb-2 {
+        margin-bottom: 5px !important
+    }
+
+    .table > thead > tr > th {
+        border-bottom: 1px solid #808080 !important;
+        border: 1px solid #808080
+    }
+
+    .table > tbody > tr > td {
+        border: 1px solid #808080 !important
+    }
+</style>
+
+
+
+
+
+
+<div class="update-profile-wrapper">
+
+
+    <div class="white-wrapper container-fluid" style="margin-top:0px!important">
+
+        <div class="col-md-3 col-md-offset-0">
+            <div class="col-md-12"><h4 style="color: #a5a8ad;text-align:center;display:block;margin-top:5px;margin-bottom:20px"> Product Variant </h4></div>
+
+            <form id="frmChemicalPrice">
+                <div class="col-sm-12 col-lg-12 mb-2">
+                    @Html.DropDownList("Region", new DALHelper().IEnumerableRegion(new SelectListItem { Text = "Select Region  *", Value = "" }), new { @class = "form-control", required = "required" })
+                    <input type="hidden" id="hdnddlRegion" name="hdnddlRegion" />
+                </div>
+                <div class="col-sm-12 col-lg-12 mb-2">
+                    @Html.DropDownList("Country", new List<SelectListItem> { new SelectListItem { Text = "Select Country *", Value = "" } }, new { @class = "form-control", @name = "Country" })
+                    <input type="hidden" id="hdnddlCountry" name="hdnddlCountry" />
+                </div>
+                <div class="col-sm-12 col-lg-12 mb-2">
+                    @Html.DropDownList("ddlCategory", new List<SelectListItem> { new SelectListItem { Text = "Select Category *", Value = "" } }, new { @class = "form-control", required = "required" })
+                </div>
+                <div class="col-sm-12 col-lg-12 mb-2">
+                    @Html.DropDownList("Product", new List<SelectListItem> { new SelectListItem { Text = "Select Product *", Value = "" } }, new { @id = "Product", @class = "form-control", @name = "Product", required = "required" })
+                    @Html.Hidden("hdproductid", null, new { @id = "hdproductid" })
+                </div>
+              
+
+                <div class="col-sm-12 col-lg-12 mb-2">
+                    <center>
+                        <input id="btnSubmit" name="btnSubmit" type="button" style="background-color:#7db11a;color:#fff;width:100%!important;" class="btn  blue-btn btn-block" value="Submit" onclick="Searchdata()">
+                      
+                    </center>
+
+                </div>
+
+            </form>
+        </div>
+
+        <div class="col-md-9">
+            <div class="data-detail-wrapper">
+                <div class="col-lg-12">
+                    <table id="searchtable" class="table" style="margin-top:10px;border:1px solid #808080; display:none">
+                        <thead>
+                            <tr>
+                                <th> ID</th>
+                                <th> ProductName</th>
+                                <th> ProductId</th>
+                                <th> CountryName</th>
+                                <th> productvariant</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbodydata"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div id="popup" class="col-lg-12" style="display:none">
+
+                <div class="col-md-12" style="padding:0px">
+                    <p style="color:#fff">Productvarient</p>
+
+                    <input type="text" class="form-control" id="Productvarient" />
+                </div>
+                <div class="col-md-3" style="padding:0px"><input id="save" type="button" class="btn blue-btn " style="padding:1px 10px;background-color:#7db11a;color:#fff;width:100%!important;" value="Submit" onclick="savedata()"></div>
+               
+
+               
+                <input type="text" id="Id" style="visibility:hidden" />
+                <input type="text" id="ProductId" style="visibility:hidden" />
+                <input type="text" id="CountryName" style="visibility:hidden" />
+            </div>
+        </div>
+      
+    </div>
+   
+</div>
+
+

@@ -1,0 +1,1290 @@
+@{
+    ViewBag.Title = "Pre-Sales Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    :root {
+        --green: #1f5a37;
+    }
+
+    .pd-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .pd-stats-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .pd-stat-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 18px 20px;
+    }
+
+    .pd-stat-clickable {
+        cursor: pointer;
+    }
+
+        .pd-stat-clickable:hover {
+            box-shadow: 0 2px 8px rgba(20, 20, 30, .12);
+        }
+
+    .pd-detail-row {
+        padding: 10px 0;
+        border-bottom: 1px solid #f2f3f5;
+        font-size: 13px;
+    }
+
+        .pd-detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .pd-stat-label {
+        font-size: 11px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        color: #7c828a;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .pd-stat-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pd-stat-sub {
+        font-size: 11px;
+        color: #a4aab3;
+        margin-top: 2px;
+    }
+
+    .pd-row2 {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+        align-items: stretch;
+    }
+
+        .pd-row2 .pd-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+    #PdWorkList {
+        overflow-y: auto;
+        max-height: 190px;
+    }
+
+    .pd-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 18px 22px;
+        margin-bottom: 14px;
+    }
+
+    .pd-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 14px;
+    }
+
+    .pd-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pd-card-note {
+        font-size: 11px;
+        color: #a4aab3;
+    }
+
+    .pd-incentive-boxes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .pd-incentive-box {
+        border-radius: 10px;
+        padding: 20px 22px;
+        color: #fff;
+    }
+
+        .pd-incentive-box.green {
+            background: linear-gradient(135deg, var(--green), #22633d);
+        }
+
+        .pd-incentive-box.blue {
+            background: linear-gradient(135deg, #0f5c8f, #1577b5);
+        }
+
+    .pd-incentive-amount {
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .pd-incentive-label {
+        font-size: 12px;
+        opacity: .85;
+        margin-top: 6px;
+    }
+
+    .pd-section-label {
+        font-size: 11px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: #a4aab3;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .pd-credited-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f2f3f5;
+        font-size: 13px;
+    }
+
+        .pd-credited-row:last-child {
+            border-bottom: none;
+        }
+
+    .pd-credited-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+        .pd-credited-name .co {
+            font-weight: 400;
+            color: #7c828a;
+        }
+
+    .pd-credited-meta {
+        font-size: 11px;
+        color: #a4aab3;
+        margin-top: 2px;
+    }
+
+    .pd-credited-amount {
+        font-weight: 700;
+        color: #2f9e50;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .pd-worklist-count {
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .pd-work-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f2f3f5;
+    }
+
+        .pd-work-row:last-child {
+            border-bottom: none;
+        }
+
+    .pd-work-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+        .pd-work-name .co {
+            font-weight: 400;
+            color: #7c828a;
+        }
+
+    .pd-work-badges {
+        margin-top: 4px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .pd-badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 2px 9px;
+        background: #f1f2f4;
+        color: #55595f;
+        white-space: nowrap;
+    }
+
+    .pd-badge-blue { background: #eef2fb; color: #3f5fa8; }
+    .pd-badge-orange { background: #fdf1e6; color: #b5711f; }
+    .pd-badge-green { background: #eaf7ee; color: #2f9e50; }
+
+    .pd-btn {
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #d7dade;
+        background: #fff;
+        color: #33383f;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .pd-btn:hover {
+            background: #f7f8f9;
+        }
+
+    .pd-btn-primary {
+        background: #1f5a37;
+        color: #fff;
+        border-color: #1f5a37;
+    }
+
+        .pd-btn-primary:hover {
+            background: #17452b;
+        }
+
+    .pd-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 4000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .pd-modal-backdrop.active {
+            display: flex;
+        }
+
+    .pd-modal {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px;
+        width: 420px;
+        max-width: 92vw;
+    }
+
+    .pd-modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 12px;
+    }
+
+    .pd-modal textarea {
+        width: 100%;
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+        color: #444;
+        resize: vertical;
+    }
+
+    .pd-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .pd-table-card {
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .pd-table-toolbar {
+        padding: 16px 16px 0 16px;
+    }
+
+    .pd-search {
+        position: relative;
+        max-width: 320px;
+    }
+
+        .pd-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .pd-search input {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .pd-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .pd-pager {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 16px;
+    }
+
+        .pd-pager button {
+            border: 1px solid #e3e5e9;
+            background: #fff;
+            color: #444;
+            border-radius: 6px;
+            padding: 5px 11px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+            .pd-pager button.active {
+                background: #1f5a37;
+                border-color: #1f5a37;
+                color: #fff;
+            }
+
+            .pd-pager button:disabled {
+                color: #c2c6cc;
+                cursor: default;
+            }
+
+        .pd-pager-ellipsis {
+            color: #a4aab3;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+
+    .pd-table {
+        width: 100%;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+        font-size: 13px;
+    }
+
+        .pd-table th,
+        .pd-table td {
+            border: none;
+        }
+
+        .pd-table thead tr {
+            background: #fafbfc;
+        }
+
+        .pd-table th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 14px 16px;
+            border-bottom: 1px solid #edeef1;
+        }
+
+        .pd-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f2f3f5;
+            color: #33383f;
+            vertical-align: middle;
+        }
+
+        .pd-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .pd-link {
+        color: #3f6fd4;
+        font-weight: 600;
+    }
+
+    .pd-tag {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 3px 10px;
+        margin-right: 8px;
+    }
+
+    .pd-tag-overdue { background: #fceaea; color: #c94b4b; }
+    .pd-tag-due { background: #fdf1e0; color: #c07a1f; }
+    .pd-tag-upcoming { background: #eef2fb; color: #3f6fd4; }
+
+    .pd-muted {
+        color: #a4aab3;
+    }
+
+    .pd-empty {
+        color: #a4aab3;
+        font-size: 13px;
+        padding: 10px 0;
+    }
+
+    .pd-activity-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr;
+        gap: 14px;
+    }
+
+    .pd-chart-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 14px 18px;
+    }
+
+    .pd-chart-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 12px;
+    }
+
+    .pd-funnel-card {
+        grid-column: 1 / span 2;
+    }
+
+    .pd-funnel-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .pd-funnel-tip {
+        display: none;
+        position: absolute;
+        top: -28px;
+        left: 100px;
+        background: #22262b;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 5px;
+        white-space: nowrap;
+        z-index: 20;
+        pointer-events: none;
+    }
+
+        .pd-funnel-tip:after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 14px;
+            border: 5px solid transparent;
+            border-top-color: #22262b;
+        }
+
+    .pd-funnel-row:hover .pd-funnel-tip {
+        display: block;
+    }
+
+    .pd-funnel-label {
+        width: 90px;
+        flex-shrink: 0;
+        font-size: 12px;
+        color: #55595f;
+        font-weight: 600;
+    }
+
+    .pd-funnel-bar-track {
+        flex: 1 1 auto;
+        background: #f2f3f5;
+        border-radius: 4px;
+        height: 20px;
+        overflow: hidden;
+    }
+
+    .pd-funnel-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: #3f6fd4;
+    }
+
+    .pd-funnel-count {
+        width: 34px;
+        text-align: right;
+        flex-shrink: 0;
+        font-size: 12px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    @@media (max-width: 1100px) {
+        .pd-stats-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .pd-row2, .pd-activity-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .pd-funnel-card {
+            grid-column: 1;
+        }
+    }
+</style>
+<div class="pd-wrap">
+    <div class="pd-stats-row" id="PdStatsRow">
+        <div class="pd-stat-card pd-stat-clickable" id="PdCardLeadsGenerated"><div class="pd-stat-label">Leads generated</div><div class="pd-stat-value" id="PdStatLeads">&mdash;</div><div class="pd-stat-sub">this month</div></div>
+        <div class="pd-stat-card pd-stat-clickable" id="PdCardDemosFixed"><div class="pd-stat-label">Demos Done</div><div class="pd-stat-value" id="PdStatDemos">&mdash;</div><div class="pd-stat-sub">in play</div></div>
+        <div class="pd-stat-card pd-stat-clickable" id="PdCardIncentive"><div class="pd-stat-label">Incentive earned</div><div class="pd-stat-value" id="PdStatIncentive">&mdash;</div><div class="pd-stat-sub">this month</div></div>
+        <div class="pd-stat-card pd-stat-clickable" id="PdCardFollowups"><div class="pd-stat-label">Follow-ups due</div><div class="pd-stat-value" id="PdStatFollowups">&mdash;</div><div class="pd-stat-sub">never followed up</div></div>
+        <div class="pd-stat-card pd-stat-clickable" id="PdCardPendingTransfer"><div class="pd-stat-label">Pending transfer</div><div class="pd-stat-value" id="PdStatPending">&mdash;</div><div class="pd-stat-sub">demo agreed</div></div>
+        <div class="pd-stat-card pd-stat-clickable" id="PdCardAwaitingDemo"><div class="pd-stat-label">Awaiting demo</div><div class="pd-stat-value" id="PdStatAwaiting">&mdash;</div><div class="pd-stat-sub">transferred to Sales</div></div>
+    </div>
+
+    <div class="pd-row2">
+        <div class="pd-card" style="margin-bottom:0">
+            <div class="pd-card-head">
+                <div class="pd-card-title">Your incentive</div>
+                <div class="pd-card-note">&#8377;700 / completed demo &middot; <a href="@Url.Action("Incentives", "PreSalesNew")">full breakdown</a></div>
+            </div>
+            <div class="pd-incentive-boxes">
+                <div class="pd-incentive-box green">
+                    <div class="pd-incentive-amount" id="PdIncentiveMonth">&#8377;0</div>
+                    <div class="pd-incentive-label">This month<br />demos completed, &#8377;700 each</div>
+                </div>
+                <div class="pd-incentive-box blue">
+                    <div class="pd-incentive-amount" id="PdIncentiveQuarter">&#8377;0</div>
+                    <div class="pd-incentive-label" id="PdIncentiveQuarterLabel">This quarter</div>
+                </div>
+            </div>
+        </div>
+        <div class="pd-card" style="margin-bottom:0">
+            <div class="pd-card-head">
+                <div class="pd-card-title">Work these today</div>
+                <div class="pd-worklist-count" id="PdWorkCount"></div>
+            </div>
+            <div id="PdWorkList"><div class="pd-empty">Loading...</div></div>
+        </div>
+    </div>
+
+    <div class="pd-section-label" style="margin-bottom:8px">Follow-ups</div>
+    <div class="pd-card pd-table-card">
+        <div class="pd-table-toolbar">
+            <div class="pd-search">
+                <i class="fa fa-search"></i>
+                <input type="text" id="PdFollowupSearch" placeholder="Search lead or company..." />
+            </div>
+        </div>
+        <table class="pd-table">
+            <thead>
+                <tr><th>When</th><th>Lead</th><th>Company</th><th>Note</th><th></th></tr>
+            </thead>
+            <tbody id="PdFollowupsBody">
+                <tr><td colspan="5" class="pd-empty">Loading...</td></tr>
+            </tbody>
+        </table>
+        <div class="pd-pager" id="PdFollowupsPager"></div>
+    </div>
+
+    <div class="pd-section-label" style="margin-bottom:8px">Transferred &mdash; Awaiting sales demo(Top 10)</div>
+    <div class="pd-card pd-table-card">
+        <table class="pd-table">
+            <thead>
+                <tr><th>Company</th><th>Contact</th><th>Source</th><th>Transferred to</th><th>Status</th></tr>
+            </thead>
+            <tbody id="PdTransferredBody">
+                <tr><td colspan="5" class="pd-empty">Loading...</td></tr>
+            </tbody>
+        </table>
+        <div class="pd-pager" id="PdTransferredPager"></div>
+    </div>
+
+    <div class="pd-card-title" style="margin-bottom:14px">Activity</div>
+    <div class="pd-activity-grid">
+        <div class="pd-chart-card">
+            <div class="pd-chart-title">Leads by source</div>
+            <div style="height:180px"><canvas id="PdSourceChart"></canvas></div>
+        </div>
+        <div class="pd-chart-card">
+            <div class="pd-chart-title">Demos by month</div>
+            <div style="height:180px"><canvas id="PdDemoChart"></canvas></div>
+        </div>
+        <div class="pd-chart-card pd-funnel-card">
+            <div class="pd-chart-title">Lead funnel</div>
+            <div id="PdFunnelBody"><div class="pd-empty">Loading...</div></div>
+        </div>
+    </div>
+</div>
+
+<div class="pd-modal-backdrop" id="PdTransferModalBackdrop">
+    <div class="pd-modal">
+        <div class="pd-modal-title">Transfer lead to sales</div>
+        <textarea id="PdTransferMailChain" rows="4" placeholder="Paste client email chain here..."></textarea>
+        <div class="pd-modal-actions">
+            <button type="button" class="pd-btn" id="PdTransferCancelBtn">Cancel</button>
+            <button type="button" class="pd-btn pd-btn-primary" id="PdTransferConfirmBtn">Transfer</button>
+        </div>
+    </div>
+</div>
+
+<div class="pd-modal-backdrop" id="PdDetailModalBackdrop">
+    <div class="pd-modal" style="width:480px">
+        <div class="pd-modal-title" id="PdDetailModalTitle">Details</div>
+        <div class="pd-search" id="PdDetailSearchWrap" style="margin:10px 0">
+            <i class="fa fa-search"></i>
+            <input type="text" id="PdDetailSearch" placeholder="Search lead or company..." />
+        </div>
+        <div id="PdDetailModalBody" style="max-height:360px;overflow-y:auto"></div>
+        <div class="pd-modal-actions">
+            <button type="button" class="pd-btn" id="PdDetailCloseBtn">Close</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+    function PdEscape(val) {
+        return val ? $("<div>").text(val).html() : "";
+    }
+
+    function PdFormatDate(dotNetDate) {
+        if (!dotNetDate) return "";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function PdDateOnly(dotNetDate) {
+        if (!dotNetDate) return null;
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return null;
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    function PdSourceBadgeClass(source) {
+        var s = (source || "").toLowerCase();
+        if (s.indexOf("chat") >= 0) return "pd-badge-blue";
+        if (s.indexOf("exhibition") >= 0 || s.indexOf("event") >= 0) return "pd-badge-orange";
+        return "pd-badge";
+    }
+
+    // ---- Incentive summary --------------------------------------------
+    // The 3 KPI numbers (this month/quarter, and the popup's 6-month
+    // breakdown) are computed and counted entirely in SQL now
+    // (GetIncentiveKpiCounts / GetIncentiveLast6MonthsBreakdown) instead of
+    // fetching every demoed lead to the browser -- that list can get huge
+    // in production, so the browser should never have to hold it all.
+    var PdPerDemoIncentive = 700;
+    var PdMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function PdFormatRupees(amount) {
+        var n = amount || 0;
+        return "&#8377;" + n.toLocaleString("en-IN");
+    }
+
+    function LoadIncentiveSummary() {
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetIncentiveKpiCounts", dataType: "json" })
+            .done(function (response) {
+                var counts = (response && response.DataItem) || {};
+                var now = new Date();
+                var curMonth = now.getMonth();
+                var quarterStart = Math.floor(curMonth / 3) * 3;
+
+                var thisMonthAmount = (counts.ThisMonth || 0) * PdPerDemoIncentive;
+                $("#PdStatIncentive").html(PdFormatRupees(thisMonthAmount));
+                $("#PdIncentiveMonth").html(PdFormatRupees(thisMonthAmount));
+
+                var quarterAmount = (counts.ThisQuarter || 0) * PdPerDemoIncentive;
+                $("#PdIncentiveQuarter").html(PdFormatRupees(quarterAmount));
+                $("#PdIncentiveQuarterLabel").html("This quarter<br />" + PdMonthNames[quarterStart] + "-" + PdMonthNames[quarterStart + 2] + " " + now.getFullYear());
+            })
+            .fail(function () {
+                $("#PdStatIncentive").text("0");
+                $("#PdIncentiveMonth, #PdIncentiveQuarter").html("&#8377;0");
+            });
+    }
+
+    // ---- KPI stat cards --------------------------------------------------
+    function LoadStats() {
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardStats", dataType: "json" })
+            .done(function (response) {
+                var s = (response && response.DataItem) || {};
+                $("#PdStatLeads").text(s.LeadsGenerated || 0);
+                $("#PdStatDemos").text(s.DemosFixed || 0);
+                $("#PdStatFollowups").text(s.FollowUpsDue || 0);
+                $("#PdStatPending").text(s.PendingTransfer || 0);
+                $("#PdStatAwaiting").text(s.AwaitingDemo || 0);
+            })
+            .fail(function () {
+                $("#PdStatLeads, #PdStatDemos, #PdStatFollowups, #PdStatPending, #PdStatAwaiting").text("0");
+            });
+    }
+
+    // ---- Work these today --------------------------------------------------
+    function LoadWorkToday() {
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardWorkTodayList", dataType: "json" })
+            .done(function (response) {
+                RenderWorkToday(response && response.DataList);
+            })
+            .fail(function () {
+                RenderWorkToday(null);
+            });
+    }
+
+    function RenderWorkToday(list) {
+        list = list || [];
+        $("#PdWorkCount").text(list.length + (list.length === 1 ? " lead" : " leads"));
+        if (!list.length) {
+            $("#PdWorkList").html("<div class='pd-empty'>Nothing to work on right now.</div>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var isNew = item.Status === "New";
+            var badge2 = item.LastOutcome
+                ? "<span class='pd-badge pd-badge-green'>" + PdEscape(item.LastOutcome) + "</span>"
+                : "<span class='pd-badge'>" + PdEscape(item.Status || "New") + "</span>";
+            html += "<div class='pd-work-row'>";
+            html += "  <div>";
+            html += "    <div class='pd-work-name'>" + PdEscape(item.Name || "(unnamed)") + " <span class='co'>&middot; " + PdEscape(item.CompanyName) + "</span></div>";
+            html += "    <div class='pd-work-badges'>";
+            html += "      <span class='" + PdSourceBadgeClass(item.OutboundLeadSource) + " pd-badge'>" + PdEscape(item.OutboundLeadSource || "Other") + "</span>";
+            html += "      " + badge2;
+            html += "    </div>";
+            html += "  </div>";
+            if (isNew) {
+                html += "  <button type='button' class='pd-btn pd-btn-primary' onclick='OpenPdTransferModal(" + item.ID + ", " + JSON.stringify(item.CorpEmail || "") + ")'>Transfer &rarr;</button>";
+            } else {
+                html += "  <button type='button' class='pd-btn' onclick=\"window.location.href='/PreSalesNew/LeadDetail?id=" + item.ID + "'\">Work</button>";
+            }
+            html += "</div>";
+        }
+        $("#PdWorkList").html(html);
+    }
+
+    // ---- Transfer to sales — same modal + endpoint + response contract as
+    // the Leads list page (Views/PreSalesNew/Index.cshtml OpenTransferModal /
+    // TransferConfirmBtn), reused here for the "Work these today" list.
+    var PdTransferCorpEmail = null;
+
+    function OpenPdTransferModal(leadId, corpEmail) {
+        PdTransferCorpEmail = corpEmail;
+        $("#PdTransferMailChain").val("");
+        $("#PdTransferModalBackdrop").addClass("active");
+    }
+
+    function ClosePdTransferModal() {
+        $("#PdTransferModalBackdrop").removeClass("active");
+        PdTransferCorpEmail = null;
+    }
+
+    $("#PdTransferCancelBtn").click(function () {
+        ClosePdTransferModal();
+    });
+
+    $("#PdTransferConfirmBtn").click(function () {
+        if (!PdTransferCorpEmail) {
+            ClosePdTransferModal();
+            return;
+        }
+        var mailChain = $.trim($("#PdTransferMailChain").val());
+        if (mailChain === "") {
+            swal({ title: "Error", text: "This Field Is required.", type: "error" });
+            return;
+        }
+        var GetDetails = { CorpEmail: PdTransferCorpEmail, MailChain: mailChain };
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/TransferLeadPreSales",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(GetDetails)
+        }).done(function (response) {
+            if (response === "Success") {
+                swal({ title: "Thank you!", text: "Created Successfully.", type: "success" }).then(function () {
+                    ClosePdTransferModal();
+                    LoadWorkToday();
+                    LoadStats();
+                });
+            } else if (response === "Already exist") {
+                swal({ title: "Already exist", text: "Already exist", type: "error" }).then(function () {
+                    ClosePdTransferModal();
+                    LoadWorkToday();
+                    LoadStats();
+                });
+            } else {
+                swal({ title: "Error", text: response, type: "error" }).then(function () {
+                    ClosePdTransferModal();
+                    LoadWorkToday();
+                    LoadStats();
+                });
+            }
+        }).fail(function () {
+            swal("Error", "This Field Is required.", "error");
+        });
+    });
+
+    // ---- Follow-ups table --------------------------------------------------
+    // Paged + searchable (5 per page) -- switches to
+    // GetDashboardFollowupsListPaged instead of the KPI popup's unpaged
+    // GetDashboardFollowupsList.
+    var PdFollowupPageSize = 5;
+    var PdFollowupCurrentPage = 1;
+
+    function LoadFollowupsTable() {
+        var search = $.trim($("#PdFollowupSearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDashboardFollowupsListPaged",
+            data: { search: search, pageNumber: PdFollowupCurrentPage, pageSize: PdFollowupPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            RenderFollowupsTable(response && response.DataList);
+            RenderFollowupsPager((response && response.TotalCount) || 0);
+        }).fail(function () {
+            RenderFollowupsTable(null);
+            RenderFollowupsPager(0);
+        });
+    }
+
+    // "Follow-ups due" now means active (Status='New') leads that have
+    // NEVER had a follow-up set at all, not leads with an open follow-up --
+    // so there's no FollowUpDate/Note to show per row anymore, just a flag
+    // and a button to go set the first one.
+    function RenderFollowupsTable(list) {
+        list = list || [];
+        if (!list.length) {
+            $("#PdFollowupsBody").html("<tr><td colspan='5' class='pd-empty'>Every active lead has a follow-up set.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr>";
+            html += "  <td><span class='pd-tag pd-tag-overdue'>Never followed up</span></td>";
+            html += "  <td class='pd-link'>" + PdEscape(item.LeadName) + "</td>";
+            html += "  <td class='pd-link'>" + PdEscape(item.CompanyName) + "</td>";
+            html += "  <td><span class='pd-muted'>&mdash;</span></td>";
+            html += "  <td><button type='button' class='pd-btn' onclick=\"window.location.href='/PreSalesNew/LeadDetail?id=" + item.LeadID + "'\">Follow up</button></td>";
+            html += "</tr>";
+        }
+        $("#PdFollowupsBody").html(html);
+    }
+
+    // Builds a compact page-number list -- 1,2,3,4,5,...,N near the start;
+    // 1,...,N-4..N near the end; 1,...,cur-1,cur,cur+1,...,N in the middle --
+    // instead of one button per page, so a 29-page list doesn't turn into a
+    // wall of buttons.
+    function PdCompactPageList(current, total) {
+        if (total <= 7) {
+            var all = [];
+            for (var i = 1; i <= total; i++) all.push(i);
+            return all;
+        }
+        if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+        if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+        return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+
+    function RenderFollowupsPager(totalCount) {
+        var numberOfPages = Math.max(1, Math.ceil(totalCount / PdFollowupPageSize));
+        if (numberOfPages <= 1) {
+            $("#PdFollowupsPager").html("");
+            return;
+        }
+        var html = "";
+        html += "<button " + (PdFollowupCurrentPage <= 1 ? "disabled" : "onclick='GoToFollowupPage(" + (PdFollowupCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = PdCompactPageList(PdFollowupCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='pd-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === PdFollowupCurrentPage ? "active" : "") + "' onclick='GoToFollowupPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (PdFollowupCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToFollowupPage(" + (PdFollowupCurrentPage + 1) + ")'") + ">Next</button>";
+        $("#PdFollowupsPager").html(html);
+    }
+
+    function GoToFollowupPage(page) {
+        PdFollowupCurrentPage = page;
+        LoadFollowupsTable();
+    }
+
+    var PdFollowupSearchTimer = null;
+    $("#PdFollowupSearch").on('input', function () {
+        clearTimeout(PdFollowupSearchTimer);
+        PdFollowupSearchTimer = setTimeout(function () {
+            PdFollowupCurrentPage = 1;
+            LoadFollowupsTable();
+        }, 300);
+    });
+
+    // ---- Transferred table --------------------------------------------------
+    // Real server-side page (10/page) -- this can grow very large in
+    // production, so the browser only ever holds the current page, not the
+    // whole history. The "Awaiting demo" KPI popup keeps using the separate,
+    // small GetDashboardTransferredList endpoint for its quick-glance view.
+    var PdTransferredPageSize = 10;
+    var PdTransferredCurrentPage = 1;
+    var PdTransferredTotalCount = 0;
+
+    function LoadTransferredTable() {
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDashboardTransferredListPaged",
+            data: { pageNumber: PdTransferredCurrentPage, pageSize: PdTransferredPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            PdTransferredTotalCount = (response && response.TotalCount) || 0;
+            RenderTransferredTable((response && response.DataList) || []);
+            RenderTransferredPager();
+        }).fail(function () {
+            PdTransferredTotalCount = 0;
+            RenderTransferredTable([]);
+            RenderTransferredPager();
+        });
+    }
+
+    function RenderTransferredPager() {
+        var numberOfPages = Math.max(1, Math.ceil(PdTransferredTotalCount / PdTransferredPageSize));
+        if (numberOfPages <= 1) {
+            $("#PdTransferredPager").html("");
+            return;
+        }
+        var html = "";
+        html += "<button " + (PdTransferredCurrentPage <= 1 ? "disabled" : "onclick='GoToTransferredPage(" + (PdTransferredCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = PdCompactPageList(PdTransferredCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='pd-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === PdTransferredCurrentPage ? "active" : "") + "' onclick='GoToTransferredPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (PdTransferredCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToTransferredPage(" + (PdTransferredCurrentPage + 1) + ")'") + ">Next</button>";
+        $("#PdTransferredPager").html(html);
+    }
+
+    function GoToTransferredPage(page) {
+        PdTransferredCurrentPage = page;
+        LoadTransferredTable();
+    }
+
+    function RenderTransferredTable(list) {
+        if (!list.length) {
+            $("#PdTransferredBody").html("<tr><td colspan='5' class='pd-empty'>No leads transferred yet.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr>";
+            html += "  <td style='font-weight:700;color:#22262b'>" + PdEscape(item.CompanyName) + "</td>";
+            html += "  <td class='pd-link'>" + PdEscape(item.Name) + "</td>";
+            html += "  <td><span class='" + PdSourceBadgeClass(item.OutboundLeadSource) + " pd-badge'>" + PdEscape(item.OutboundLeadSource || "Other") + "</span></td>";
+            html += "  <td>" + (item.MailChain ? PdEscape(item.MailChain) : "<span class='pd-muted'>&mdash;</span>") + "</td>";
+            html += "  <td><span class='pd-badge pd-badge-blue'>" + PdEscape(item.Status || "Transferred") + "</span></td>";
+            html += "</tr>";
+        }
+        $("#PdTransferredBody").html(html);
+    }
+
+    // ---- Activity: leads-by-source donut --------------------------------------------------
+    function LoadSourceChart() {
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardLeadsBySource", dataType: "json" })
+            .done(function (response) {
+                RenderSourceChart((response && response.DataList) || []);
+            })
+            .fail(function () {
+                RenderSourceChart([]);
+            });
+    }
+
+    var PdSourcePalette = ["#3f6fd4", "#a4aab3", "#e08a3c", "#2f9e50", "#8a5fc2", "#c94b4b"];
+
+    function RenderSourceChart(list) {
+        var ctx = document.getElementById("PdSourceChart");
+        if (!ctx || typeof Chart === "undefined") return;
+        if (!list.length) return;
+        var labels = list.map(function (x) { return x.Source || "Other"; });
+        var data = list.map(function (x) { return x.Count; });
+        var colors = list.map(function (x, i) { return PdSourcePalette[i % PdSourcePalette.length]; });
+        new Chart(ctx, {
+            type: "doughnut",
+            data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } }, cutout: "65%" }
+        });
+    }
+
+    // ---- Activity: demos by month bar --------------------------------------------------
+    function LoadDemoChart() {
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardDemosByMonth", dataType: "json" })
+            .done(function (response) {
+                RenderDemoChart((response && response.DataList) || []);
+            })
+            .fail(function () {
+                RenderDemoChart([]);
+            });
+    }
+
+    function RenderDemoChart(list) {
+        var ctx = document.getElementById("PdDemoChart");
+        if (!ctx || typeof Chart === "undefined") return;
+        var labels = list.map(function (x) { return (x.MonthName || "").substring(0, 3) + " " + (x.YearNo ? (x.YearNo % 100) : ""); });
+        var demoData = list.map(function (x) { return x.DemoCount; });
+        var wonData = list.map(function (x) { return x.WonLead; });
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: "Demos", data: demoData, backgroundColor: "#3f6fd4", borderRadius: 4, maxBarThickness: 36 },
+                    { label: "Won", data: wonData, backgroundColor: "#2f9e50", borderRadius: 4, maxBarThickness: 36 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true, position: "bottom", labels: { boxWidth: 10, font: { size: 11 } } } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    // ---- Activity: lead funnel --------------------------------------------------
+    function LoadFunnel() {
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardFunnel", dataType: "json" })
+            .done(function (response) {
+                RenderFunnel((response && response.DataItem) || {});
+            })
+            .fail(function () {
+                RenderFunnel({});
+            });
+    }
+
+    function RenderFunnel(f) {
+        var stages = [
+            { label: "Generated", value: f.Generated || 0 },
+            //{ label: "Contacted", value: f.Contacted || 0 },
+            { label: "Demo Done", value: f.DemoAgreed || 0 },
+            { label: "Transferred", value: f.Transferred || 0 }
+        ];
+        var max = stages[0].value || 1;
+        var html = "";
+        for (var i = 0; i < stages.length; i++) {
+            var pct = Math.round((stages[i].value / max) * 100);
+            var tip = stages[i].label + ": " + stages[i].value;
+            html += "<div class='pd-funnel-row'>";
+            html += "  <span class='pd-funnel-tip'>" + tip + "</span>";
+            html += "  <div class='pd-funnel-label'>" + stages[i].label + "</div>";
+            html += "  <div class='pd-funnel-bar-track'><div class='pd-funnel-bar-fill' style='width:" + pct + "%'></div></div>";
+            html += "  <div class='pd-funnel-count'>" + stages[i].value + "</div>";
+            html += "</div>";
+        }
+        $("#PdFunnelBody").html(html);
+    }
+
+    // ---- KPI card "click to see details" popups --------------------------
+    // Every list-shaped popup (Leads generated, Demos fixed, Follow-ups due,
+    // Pending transfer, Awaiting demo) gets a client-side search box that
+    // filters the already-fetched list -- these are small "quick glance"
+    // lists, not paged, so there's no need to round-trip to the server per
+    // keystroke. PdDetailRenderFn/PdDetailSearchKeys let one shared search
+    // box work across the different row shapes each popup uses.
+    var PdDetailRawList = [];
+    var PdDetailRenderFn = null;
+    var PdDetailSearchKeys = [];
+
+    function OpenStatDetailModal(title, showSearch) {
+        $("#PdDetailModalTitle").text(title);
+        $("#PdDetailModalBody").html("<div class='pd-empty'>Loading...</div>");
+        $("#PdDetailSearch").val("");
+        $("#PdDetailSearchWrap").toggle(!!showSearch);
+        PdDetailRawList = [];
+        PdDetailRenderFn = null;
+        PdDetailSearchKeys = [];
+        $("#PdDetailModalBackdrop").addClass("active");
+    }
+
+    function PdSetDetailList(list, renderFn, searchKeys) {
+        PdDetailRawList = list || [];
+        PdDetailRenderFn = renderFn;
+        PdDetailSearchKeys = searchKeys || [];
+        $("#PdDetailModalBody").html(renderFn(PdDetailRawList));
+    }
+
+    $("#PdDetailSearch").on('input', function () {
+        if (!PdDetailRenderFn) return;
+        var term = $.trim($(this).val()).toLowerCase();
+        if (!term) {
+            $("#PdDetailModalBody").html(PdDetailRenderFn(PdDetailRawList));
+            return;
+        }
+        var filtered = PdDetailRawList.filter(function (item) {
+            for (var i = 0; i < PdDetailSearchKeys.length; i++) {
+                var val = (item[PdDetailSearchKeys[i]] || "").toString().toLowerCase();
+                if (val.indexOf(term) >= 0) return true;
+            }
+            return false;
+        });
+        $("#PdDetailModalBody").html(PdDetailRenderFn(filtered));
+    });
+
+    $("#PdDetailCloseBtn").click(function () {
+        $("#PdDetailModalBackdrop").removeClass("active");
+    });
+
+    // Shared row layout for the three new stat-detail lists (Leads generated,
+    // Demos fixed, Pending transfer) — all three return the same
+    // {ID, Name, CompanyName, DetailDate, DetailNote} shape.
+    function RenderStatDetailGeneric(list) {
+        list = list || [];
+        if (!list.length) return "<div class='pd-empty'>Nothing here.</div>";
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<div class='pd-detail-row'>";
+            html += "  <div><strong>" + PdEscape(item.Name || "(unnamed)") + "</strong> <span class='pd-muted'>&middot; " + PdEscape(item.CompanyName) + "</span></div>";
+            html += "  <div class='pd-muted' style='margin-top:2px'>" + PdFormatDate(item.DetailDate) + (item.DetailNote ? " &middot; " + PdEscape(item.DetailNote) : "") + "</div>";
+            html += "</div>";
+        }
+        return html;
+    }
+
+    // Follow-ups due reuses the existing follow-ups list endpoint, which has
+    // its own field names (LeadName / CompanyName). The card's count, this
+    // popup, and the full table below are all the same set -- every active
+    // (Status='New') lead that has NEVER had a follow-up set, so there's no
+    // FollowUpDate/Note per row, just who still needs a first follow-up.
+    function RenderStatDetailFollowups(list) {
+        list = list || [];
+        if (!list.length) return "<div class='pd-empty'>Nothing here.</div>";
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<div class='pd-detail-row'>";
+            html += "  <div><strong>" + PdEscape(item.LeadName || "(unnamed)") + "</strong> <span class='pd-muted'>&middot; " + PdEscape(item.CompanyName) + "</span></div>";
+            html += "  <div class='pd-muted' style='margin-top:2px'>Never followed up</div>";
+            html += "</div>";
+        }
+        return html;
+    }
+
+    // Awaiting demo reuses the existing transferred-leads endpoint, which
+    // has its own field names (CompanyName / Name / UpdateDate).
+    function RenderStatDetailTransferred(list) {
+        list = list || [];
+        if (!list.length) return "<div class='pd-empty'>Nothing here.</div>";
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<div class='pd-detail-row'>";
+            html += "  <div><strong>" + PdEscape(item.CompanyName || "(unnamed)") + "</strong> <span class='pd-muted'>&middot; " + PdEscape(item.Name) + "</span></div>";
+            html += "  <div class='pd-muted' style='margin-top:2px'>Transferred " + PdFormatDate(item.UpdateDate) + "</div>";
+            html += "</div>";
+        }
+        return html;
+    }
+
+    $("#PdCardLeadsGenerated").click(function () {
+        OpenStatDetailModal("Leads generated this month", true);
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardLeadsGeneratedList", dataType: "json" })
+            .done(function (r) { PdSetDetailList(r && r.DataList, RenderStatDetailGeneric, ["Name", "CompanyName"]); })
+            .fail(function () { $("#PdDetailModalBody").html("<div class='pd-empty'>Could not load details.</div>"); });
+    });
+
+    $("#PdCardDemosFixed").click(function () {
+        OpenStatDetailModal("Demos Done(Top-30)", true);
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardDemosFixedList", dataType: "json" })
+            .done(function (r) { PdSetDetailList(r && r.DataList, RenderStatDetailGeneric, ["Name", "CompanyName"]); })
+            .fail(function () { $("#PdDetailModalBody").html("<div class='pd-empty'>Could not load details.</div>"); });
+    });
+
+    $("#PdCardIncentive").click(function () {
+        OpenStatDetailModal("Incentive earned(Last 6 Month)", false);
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetIncentiveLast6MonthsBreakdown", dataType: "json" })
+            .done(function (response) {
+                var list = (response && response.DataList) || [];
+                if (!list.length) {
+                    $("#PdDetailModalBody").html("<div class='pd-empty'>No demos completed in the last 6 months.</div>");
+                    return;
+                }
+                var html = "";
+                for (var i = 0; i < list.length; i++) {
+                    var entry = list[i];
+                    var amount = (entry.Count || 0) * PdPerDemoIncentive;
+                    html += "<div class='pd-detail-row'><b>" + PdEscape(entry.MonthLabel) + "</b> &mdash; " + (entry.Count || 0) + " demo(s) &mdash; " + PdFormatRupees(amount) + "</div>";
+                }
+                html += "<div class='pd-detail-row' style='color:#a4aab3'>&#8377;700 per completed demo &middot; <a href='@Url.Action("Incentives", "PreSalesNew")'>see full breakdown</a></div>";
+                $("#PdDetailModalBody").html(html);
+            })
+            .fail(function () {
+                $("#PdDetailModalBody").html("<div class='pd-empty'>Could not load details.</div>");
+            });
+    });
+
+    $("#PdCardFollowups").click(function () {
+        OpenStatDetailModal("Follow-ups due(Top 100)", true);
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardFollowupsList", dataType: "json" })
+            .done(function (r) { PdSetDetailList(r && r.DataList, RenderStatDetailFollowups, ["LeadName", "CompanyName"]); })
+            .fail(function () { $("#PdDetailModalBody").html("<div class='pd-empty'>Could not load details.</div>"); });
+    });
+
+    $("#PdCardPendingTransfer").click(function () {
+        OpenStatDetailModal("Pending transfer(Top 100)", true);
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardPendingTransferList", dataType: "json" })
+            .done(function (r) { PdSetDetailList(r && r.DataList, RenderStatDetailGeneric, ["Name", "CompanyName"]); })
+            .fail(function () { $("#PdDetailModalBody").html("<div class='pd-empty'>Could not load details.</div>"); });
+    });
+
+    $("#PdCardAwaitingDemo").click(function () {
+        OpenStatDetailModal("Awaiting demo(top 10)", true);
+        $.ajax({ type: "GET", url: "/PreSalesNew/GetDashboardTransferredList", dataType: "json" })
+            .done(function (r) { PdSetDetailList(r && r.DataList, RenderStatDetailTransferred, ["CompanyName", "Name"]); })
+            .fail(function () { $("#PdDetailModalBody").html("<div class='pd-empty'>Could not load details.</div>"); });
+    });
+
+    $(document).ready(function () {
+        LoadStats();
+        LoadIncentiveSummary();
+        LoadWorkToday();
+        LoadFollowupsTable();
+        LoadTransferredTable();
+        LoadSourceChart();
+        LoadDemoChart();
+        LoadFunnel();
+    });
+</script>

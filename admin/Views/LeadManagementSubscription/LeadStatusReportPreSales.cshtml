@@ -1,0 +1,601 @@
+﻿
+@{
+    ViewBag.Title = "LeadStatusReportPreSales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" />
+@*<link rel="stylesheet" href="~/css/leadStyle.css" />*@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+
+<style>
+    .bootstrap-select .dropdown-toggle:focus, .bootstrap-select > select.mobile-device:focus + .dropdown-toggle {
+        outline: thin dotted #333 !important;
+        outline: 0px auto -webkit-focus-ring-color !important;
+        outline-offset: -2px !important;
+    }
+
+    .pt-4 {
+        padding-top: 16px;
+    }
+
+    .px-4 {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .form-control-sm {
+        height: 28px;
+    }
+
+    .btn-sm {
+        height: 28px
+    }
+
+    .small {
+        font-size:12.5px;
+    }
+
+    .px-4 {
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .dpopup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+        overflow: auto;
+    }
+
+
+    .child {
+        width: 60%;
+        padding: 10px 4px;
+        border-radius: 6px;
+        background: #252525;
+        text-align: justify;
+        border: solid #ffffff63 2px;
+        margin: 50px auto;
+    }
+
+    #CancelBtn {
+        position: absolute;
+        top: -15px;
+        border-radius: 25px;
+        right: -11px;
+    }
+    .table th, .table td {
+        padding: 4px 9px !important;
+        vertical-align:middle!important
+    }
+
+   .d-flex {
+       display:flex;
+   }
+
+   .justify-content-between {
+       justify-content:space-between
+   }
+
+
+   .align-items-center {
+       align-items:center
+   }
+
+   
+
+</style>
+
+<div class="white-wrapper" id="dashboarddiv">
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-12"><h5 style="color:white;margin-bottom:10px!important;line-height: inherit;">Pre Sales Lead Status Report</h5></div>
+
+
+            <div class="col-md-12">
+                <div class="panel bg-black">
+                    <div class="panel-body" style="padding: 5px 10px;">
+                        <div class="row">
+                           
+                            <div class="col-md-4">
+                                <label class="small text-muted">Select</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-control form-control-sm mb-1 selectpicker" placeholder="date" id="salesName" data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5" data-none-selected-text="Select Name" multiple data-actions-box="true" data-selected-text-format="count > 3" > </select>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-2">
+                                @*<label class="small text-muted">To Date</label>*@
+                                <label class="small text-muted"> &nbsp;</label>
+                                <br />
+                                <button type="button" class="btn btn-sm btn-primary px-4" onclick="getStatusReport()">Filter</button>
+                                <button type="button" class="btn btn-sm btn-danger px-4" onclick="ClearFilter()">Clear</button>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="small text-muted">From Date</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm" id="fromDatess"  value="">
+                                    <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small text-muted">To Date</label>
+
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm"  id="ToDatess" value="">
+                                    <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                                </div>
+                             
+                            </div>
+
+                           
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-12">
+                <div class="panel bg-black ">
+                    <div class="panel-body small" id="PreSalesBox" style="display:none">
+                        <table class="table table-sm small table-bordered  text-white text-nowrap">
+                            <thead class="bg-dark">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Month</th>
+                                    <th>Total Lead</th>
+                                    <th>Pending Lead (Not Transfered)</th>
+                                    <th>Lead Transfer</th>
+                                    <th>Won Lead</th>
+                                    <th>Demo Count By Lead date</th>   
+                                    <th>Demo Count By Demo date</th> 
+                                </tr>
+                            </thead>
+                            <tbody id="PreSalesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="position-relative dpopup-open readmore">
+    <div class="child position-relative">
+        <div class="container-fluid">
+            <div class="row">
+                <button class="btn btn-danger ms-2" id="CancelBtn"><i class="fa fa-times" aria-hidden="true"></i></button>
+                <div class="col-md-12 mt-2">
+                    <h4 class="text-white" id="pretypes"></h4>
+                    <div class="table-responsive mt-2">
+                        <table class="table tabls-sm table-dark table-bordered small text-nowrap text-white ">
+                            <thead class="bg-dark">
+                                <tr>
+                                    <th>Country</th>
+                                    <th>Corp Email</th>
+                                    <th>Company</th>
+                                    <th id="Cby"></th>
+                                    <th>Lead Source</th>  
+                                    <th id="DDate" style="display:none">Demo Date</th>
+                                    <th id="LStatus" style="display:none">Lead Status</th>
+                                    <th id="LDemo" style="display:none">Demo</th>
+                                </tr>
+                            </thead>                                                          
+                            <tbody id="CountDetails"></tbody>
+                        </table>
+                    </div>
+                  </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+
+
+<script>
+    $("#CancelBtn").click(function () {
+        $(".dpopup-open").css("display", "none");
+    });
+</script>
+
+
+<script>
+
+    //$(document).ready(function () {
+    //    $('#salesName').select2({
+    //        placeholder: "Select Name",
+    //        allowClear: true
+    //    });
+    //});
+
+
+    function ClearFilter() {
+
+        $('#fromDatess').val('');
+        $('#ToDatess').val('');
+        getStatusReport();
+    }
+    $(document).ready(function () {
+        $("#fromDatess").datepicker({ dateFormat: "yy-mm-dd" });
+        $("#ToDatess").datepicker({ dateFormat: "yy-mm-dd" });
+        GetEmployeeMasterOpenLeadData();
+
+    });
+
+    function getFormattedDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    const today = new Date();
+    const fromDate = new Date();
+    fromDate.setDate(today.getDate() - 30)
+    const toDatePlusOne = new Date(fromDate);
+    toDatePlusOne.setDate(toDatePlusOne.getDate());
+
+
+
+    //document.getElementById('fromDatess').setAttribute('value', getFormattedDate(toDatePlusOne));
+    //document.getElementById('ToDatess').setAttribute('value', getFormattedDate(today));
+
+    function GetEmployeeMasterOpenLeadData() {
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetPreSalesEmployeeName",
+            success: function (response) {
+                debugger;
+                var innerHTML = "";
+                var innerHTML2 = "";
+                innerHTML += "";
+
+                $(response).each(function (index, value) {
+                    if (value.Id != null || value.Id != "" || value.Id != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.Name + "'> " + value.Name + "</option>"
+                    }
+                });
+                if (response == '' || response == null) {
+                    $('#salesName').html("<option value=''>Select Name</option>");
+                    return true;
+                }
+                else {
+
+                    $('#salesName').html(innerHTML);
+
+                }
+                $('#salesName').selectpicker('refresh');
+            },
+
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+
+            }
+        });
+    }
+
+    function getStatusReport() {
+        debugger;
+        var Name = $('#salesName').val();
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/BindLeadStatusPreSalesReport",
+            data: { Name: JSON.stringify(Name), FromDate: fromDatess, ToDate: ToDatess },
+            success: function (response) {
+                $('#PreSalesTableBody').empty(); // clear old rows
+
+                if (!response || response.length === 0) {
+                    $('#PreSalesBox').hide();
+                } else {
+                    $('#PreSalesBox').show();
+
+                    $(response).each(function (index, value) {
+                        let row = `
+                        <tr>              
+                             <td>${value.createdby || ''}</td>
+                            <td>${value.Month || ''} ${value.Year || ''}</td>
+                            <td>${value.TotalLead || 0}</td>
+                            <td>${value.TotalOpenLead || 0}</td>
+                            <td><div class="d-flex justify-content-between align-items-center">${value.LeadTransfer || 0}<button type="button" class="btn btn-sm btn-info px-4" onclick="TransferCountDetils('${value.createdby} ',' ${value.Month || ''}',' ${value.Year || ''}')"> <i class="fa fa-info"></i></button></div></td>
+                            <td><div class="d-flex justify-content-between align-items-center">${value.WonLead || 0} <button type="button" class="btn btn-sm btn-info px-4" onclick="WonCountDetils('${value.createdby} ',' ${value.Month || ''}',' ${value.Year || ''}')"> <i class="fa fa-info"></i></button></div></td>
+                            <td><div class="d-flex justify-content-between align-items-center">${value.DemoCount || 0} <button type="button" class="btn btn-sm btn-info  px-4" onclick="DemoCountDetils('${value.createdby}',' ${value.Month || ''}',' ${value.Year || ''}')"> <i class="fa fa-info"></i></button></div></td>      
+                            <td><div class="d-flex justify-content-between align-items-center">${value.NewDemoCount || 0} <button type="button" class="btn btn-sm btn-info  px-4" onclick="DemoCountDetilsbyCreatedDate('${value.createdby}',' ${value.Month || ''}',' ${value.Year || ''}')"> <i class="fa fa-info"></i></button></div></td>                           
+                        </tr>
+                    `;
+                        $('#PreSalesTableBody').append(row);
+                    });
+                }
+            },
+            failure: function (response) {
+                console.log(response);
+                $('#PreSalesBox').hide();
+            },
+            error: function (response) {
+                console.log(response);
+                $('#PreSalesBox').hide();
+            }
+        });
+    }
+
+
+    function DemoCountDetils(value, Month, Year) { 
+       
+        $('#CountDetails').empty();
+        $(".dpopup-open").css("display", "block");
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+        Month = (Month || '').trim();
+        Year = (Year || '').toString().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/PreSalesDemocountDetails",
+            data: { Name: value, FromDate: fromDatess, ToDate: ToDatess, Year: Year, MonthofMonth: Month },
+            success: function (response) {    
+                $('#pretypes').html("Demo Count");
+                $('#Cby').html("Demo By");
+                $('#LDemo').hide();
+                $('#LStatus').hide();
+                $('#DDate').show();
+                $(response).each(function (index, value) {
+                    var formattedDate = ($.formattedDate(new Date(parseInt(value.CreatedDate.substr(6)))));
+                 let row = `
+                        <tr>              
+                            <td>${value.CountryName || ''}</td>
+                            <td>${value.CorpEmail || ''} </td>
+                            <td>${value.CompanyName || ''} </td>
+                            <td>${value.createdby || 0}</td>
+                            <td>${value.OutboundLeadSource || 0}</td>   
+                            <td>${formattedDate || 0}</td>  
+                        </tr>
+                    `;
+                 $('#CountDetails').append(row);
+             });
+            
+            },
+            failure: function (response) {
+              
+            },
+            error: function (response) {
+                
+            }
+        });
+
+    }
+
+
+    function DemoCountDetilsbyCreatedDate(value, Month, Year) {
+
+        $('#CountDetails').empty();
+        $(".dpopup-open").css("display", "block");
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+        Month = (Month || '').trim();
+        Year = (Year || '').toString().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/PreSalesDemocountDetailsByCreatedDate",
+            data: { Name: value, FromDate: fromDatess, ToDate: ToDatess, Year: Year, MonthofMonth: Month },
+            success: function (response) {
+                $('#pretypes').html("Demo Count");
+                $('#Cby').html("Demo By");
+                $('#LDemo').hide();
+                $('#LStatus').hide();
+                $('#DDate').show();
+                $(response).each(function (index, value) {
+                    var formattedDate = ($.formattedDate(new Date(parseInt(value.CreatedDate.substr(6)))));
+                    let row = `
+                        <tr>              
+                            <td>${value.CountryName || ''}</td>
+                            <td>${value.CorpEmail || ''} </td>
+                            <td>${value.CompanyName || ''} </td>
+                            <td>${value.createdby || 0}</td>
+                            <td>${value.OutboundLeadSource || 0}</td>   
+                            <td>${formattedDate || 0}</td>  
+                        </tr>
+                    `;
+                    $('#CountDetails').append(row);
+                });
+
+            },
+            failure: function (response) {
+
+            },
+            error: function (response) {
+
+            }
+        });
+
+    }
+
+    function WonCountDetils(value, Month, Year) {
+        debugger;
+        $('#CountDetails').empty();
+        $(".dpopup-open").css("display", "block");
+        Month = (Month || '').trim();
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+        Year = (Year || '').toString().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/PreSalesWonCountDetils",
+            data: { Name: value, FromDate: fromDatess, ToDate: ToDatess, Year: Year, MonthofMonth: Month},
+            success: function (response) {
+                $('#pretypes').html("Won Lead");
+                $('#Cby').html("Won By");
+                $('#LDemo').hide();
+                $('#LStatus').hide();
+                $('#DDate').hide();
+                $(response).each(function (index, value) {
+                    debugger;
+                    let row = `
+                        <tr>             
+                             <td>${value.CountryName || ''}</td>
+                             <td>${value.CorpEmail || ''} </td>
+                            <td>${value.CompanyName || ''} </td>
+                            <td>${value.createdby || 0}</td>
+                            <td>${value.OutboundLeadSource || 0}</td>                            
+                        </tr>
+                    `;
+                    $('#CountDetails').append(row);
+                });
+              
+
+            },
+            failure: function (response) {
+
+            },
+            error: function (response) {
+
+            }
+        });
+
+    }
+
+
+
+    function TransferCountDetils(value, Month, Year) {
+        debugger;
+        $('#CountDetails').empty();
+        $(".dpopup-open").css("display", "block");
+        Month = (Month || '').trim();
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+        Year = (Year || '').toString().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/PreSalesTransferCountDetils",
+            data: { Name: value, FromDate: fromDatess, ToDate: ToDatess, Year: Year, MonthofMonth: Month },
+            success: function (response) {
+                $('#pretypes').html("Transfered Lead");
+                $('#Cby').html("Transfered To");
+                $(response).each(function (index, value) {
+                    debugger;
+                    var demoStatus = '';
+                    var leadStatus = '';
+                    if (value.DemoDiscussion == null || value.DemoDiscussion == '') {
+                        demoStatus = 'Pending';
+                    } else {
+                        demoStatus = 'Yes';
+                    }
+
+                    if (value.Status == null || value.Status == '') {
+                        leadStatus = 'Not Open';
+                    } else {
+                        leadStatus = value.Status;
+                    }
+
+                    let row = `
+                        <tr>             
+                            <td>${value.CountryName || ''}</td>
+                            <td>${value.CorpEmail || ''} </td>
+                            <td>${value.CompanyName || ''} </td>
+                            <td>${value.createdby || ''}</td>
+                            <td>${value.OutboundLeadSource || ''}</td> 
+                            <td>${leadStatus || ''}</td>
+                            <td>${demoStatus || ''}</td>
+                        </tr>
+                    `;
+                    $('#CountDetails').append(row);
+
+                    $('#LDemo').show();
+                    $('#LStatus').show();
+                    $('#DDate').hide();
+                });
+
+
+            },
+            failure: function (response) {
+
+            },
+            error: function (response) {
+
+            }
+        });
+
+    }
+
+
+
+    function UnusedCountDetils(value, Month, Year) {
+        debugger;
+        $('#CountDetails').empty();
+        $(".dpopup-open").css("display", "block");
+        Month = (Month || '').trim();
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+        Year = (Year || '').toString().trim();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/PreSalesUnusedCountDetils",
+            data: { Name: value, FromDate: fromDatess, ToDate: ToDatess, Year: Year, MonthofMonth: Month },
+            success: function (response) {
+                $('#pretypes').html("Won Lead");
+                $('#Cby').html("Unused By");
+                $('#LDemo').hide();
+                $('#LStatus').hide();
+                $('#DDate').hide();
+                $(response).each(function (index, value) {
+                    debugger;
+                    let row = `
+                        <tr>             
+                             <td>${value.CountryName || ''}</td>
+                             <td>${value.CorpEmail || ''} </td>
+                            <td>${value.CompanyName || ''} </td>
+                            <td>${value.createdby || 0}</td>
+                            <td>${value.OutboundLeadSource || 0}</td>                            
+                        </tr>
+                    `;
+                    $('#CountDetails').append(row);
+                });
+
+
+            },
+            failure: function (response) {
+
+            },
+            error: function (response) {
+
+            }
+        });
+
+    }
+
+
+</script>
+

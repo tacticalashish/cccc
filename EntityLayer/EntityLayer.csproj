@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6567DA3D-7AD7-43FB-BB86-60F710B5085E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EntityLayer</RootNamespace>
+    <AssemblyName>EntityLayer</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PagedList">
+      <HintPath>..\UIHelper\bin\PagedList.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CompanyFeedbackHistory.cs" />
+    <Compile Include="CompanyFeedbackSettings.cs" />
+    <Compile Include="CustomEntity\enSearchFilter.cs" />
+    <Compile Include="enAccountDetails.cs" />
+    <Compile Include="enAdminChemicalPrice.cs" />
+    <Compile Include="enChat.cs" />
+    <Compile Include="enChemAnalystInvoice.cs" />
+    <Compile Include="enChemicalPricingSession.cs" />
+    <Compile Include="enCompanyMaster.cs" />
+    <Compile Include="enContractSign.cs" />
+    <Compile Include="enCRMTicket.cs" />
+    <Compile Include="enCustomerDashboardAccess.cs" />
+    <Compile Include="enDDLSubcribedProduct.cs" />
+    <Compile Include="enEmailActivity.cs" />
+    <Compile Include="enEvent.cs" />
+    <Compile Include="enExcelLogs.cs" />
+    <Compile Include="enFilterDataResult.cs" />
+    <Compile Include="enGermanConverter.cs" />
+    <Compile Include="eninternaldatashare.cs" />
+    <Compile Include="enLeadManagementSubscription.cs" />
+    <Compile Include="enPricingRating.cs" />
+    <Compile Include="enProductionCost.cs" />
+    <Compile Include="enSalesNew.cs" />
+    <Compile Include="enSelectItem.cs" />
+    <Compile Include="enSpanishConverter.cs" />
+    <Compile Include="enSupplierAnalysis.cs" />
+    <Compile Include="enTicket.cs" />
+    <Compile Include="enCountry.cs" />
+    <Compile Include="enMaskEmail.cs" />
+    <Compile Include="enCurrency.cs" />
+    <Compile Include="enPriceOverView.cs" />
+    <Compile Include="enProduct.cs" />
+    <Compile Include="enRegion.cs" />
+    <Compile Include="enSalesPackageSubscriptions.cs" />
+    <Compile Include="enPreSalesNew.cs" />
+    <Compile Include="enPreSalesDashboard.cs" />
+    <Compile Include="CustomerDocument.cs" />
+    <Compile Include="CustomerHistorySummary.cs" />
+    <Compile Include="enTicketComment.cs" />
+    <Compile Include="InvoicingSetup.cs" />
+    <Compile Include="SubscriptionHistoryItem.cs" />
+    <Compile Include="enSalesManagement.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{f2227b4b-c0f6-4e1f-8416-c371c1a6a44a}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

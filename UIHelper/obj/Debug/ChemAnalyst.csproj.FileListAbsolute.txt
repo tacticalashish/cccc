@@ -1,0 +1,29 @@
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\obj\Debug\ChemAnalyst.csprojResolveAssemblyReference.cache
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\obj\Debug\ChemAnalyst.csproj.CoreCompileInputs.cache
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\bin\ApplicationInsights.config
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\bin\ChemAnalyst.dll.config
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\bin\ChemAnalyst.dll
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\bin\ChemAnalyst.pdb
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\bin\Newtonsoft.Json.dll
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\bin\evointernal.dat
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\obj\Debug\ChemAnalyst.dll
+E:\Jay Kashyap\Jay_Prakash_UI_CHemanalyst_22_10_2020\ChemApp_11-01-2021\chemanalyst_app_new\obj\Debug\ChemAnalyst.pdb
+E:\Project\chemanalyst_app_new\bin\ApplicationInsights.config
+E:\Project\chemanalyst_app_new\bin\ChemAnalyst.dll.config
+E:\Project\chemanalyst_app_new\bin\ChemAnalyst.dll
+E:\Project\chemanalyst_app_new\bin\ChemAnalyst.pdb
+E:\Project\chemanalyst_app_new\bin\Newtonsoft.Json.dll
+E:\Project\chemanalyst_app_new\bin\evointernal.dat
+E:\Project\chemanalyst_app_new\obj\Debug\ChemAnalyst.csprojResolveAssemblyReference.cache
+E:\Project\chemanalyst_app_new\obj\Debug\ChemAnalyst.csproj.CoreCompileInputs.cache
+E:\Project\chemanalyst_app_new\obj\Debug\ChemAnalyst.dll
+E:\Project\chemanalyst_app_new\obj\Debug\ChemAnalyst.pdb
+E:\Project\chemanalyst_app_new\bin\Microsoft.ApplicationBlocks.Data.dll
+E:\Project\chemanalyst_app_new\bin\BusinessLayer.dll
+E:\Project\chemanalyst_app_new\bin\DataLayer.dll
+E:\Project\chemanalyst_app_new\bin\EntityLayer.dll
+E:\Project\chemanalyst_app_new\bin\Utility.dll
+E:\Project\chemanalyst_app_new\bin\BusinessLayer.pdb
+E:\Project\chemanalyst_app_new\bin\DataLayer.pdb
+E:\Project\chemanalyst_app_new\bin\EntityLayer.pdb
+E:\Project\chemanalyst_app_new\bin\Utility.pdb

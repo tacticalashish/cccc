@@ -1,0 +1,480 @@
+E:\Project\ChemAnalyst\UIHelper\bin\ApplicationInsights.config
+E:\Project\ChemAnalyst\UIHelper\bin\BusinessLayer.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Calabonga.Xml.Exports.dll
+E:\Project\ChemAnalyst\UIHelper\bin\DataLayer.dll
+E:\Project\ChemAnalyst\UIHelper\bin\EntityFramework.dll
+E:\Project\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.dll
+E:\Project\ChemAnalyst\UIHelper\bin\EntityLayer.dll
+E:\Project\ChemAnalyst\UIHelper\bin\EPPlus.dll
+E:\Project\ChemAnalyst\UIHelper\bin\evohtmltopdf.dll
+E:\Project\ChemAnalyst\UIHelper\bin\itextsharp.dll
+E:\Project\ChemAnalyst\UIHelper\bin\itextsharp.xmlworker.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Linq.Dynamic.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Helpers.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Http.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Mvc.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Razor.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Webpages.dll
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Utility.dll
+E:\Project\ChemAnalyst\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+E:\Project\ChemAnalyst\UIHelper\bin\BusinessLayer.pdb
+E:\Project\ChemAnalyst\UIHelper\bin\DataLayer.pdb
+E:\Project\ChemAnalyst\UIHelper\bin\EntityLayer.pdb
+E:\Project\ChemAnalyst\UIHelper\bin\Utility.pdb
+E:\Project\ChemAnalyst\UIHelper\bin\EntityFramework.xml
+E:\Project\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.xml
+E:\Project\ChemAnalyst\UIHelper\bin\EPPlus.xml
+E:\Project\ChemAnalyst\UIHelper\bin\evohtmltopdf.xml
+E:\Project\ChemAnalyst\UIHelper\bin\itextsharp.xml
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.xml
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+E:\Project\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Razor.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Webpages.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Helpers.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Mvc.xml
+E:\Project\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Http.xml
+E:\Project\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.xml
+E:\Project\ChemAnalyst\UIHelper\bin\evointernal.dat
+E:\Project\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+E:\Project\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csprojResolveAssemblyReference.cache
+E:\Project\ChemAnalyst\UIHelper\bin\UIHelper.dll.config
+E:\Project\ChemAnalyst\UIHelper\bin\UIHelper.dll
+E:\Project\ChemAnalyst\UIHelper\bin\UIHelper.pdb
+E:\Project\ChemAnalyst\UIHelper\obj\Debug\UIHelper.dll
+E:\Project\ChemAnalyst\UIHelper\obj\Debug\UIHelper.pdb
+E:\Project\ChemAnalyst\UIHelper\bin\Logger.dll
+E:\Project\ChemAnalyst\UIHelper\bin\NLog.dll
+E:\Project\ChemAnalyst\UIHelper\bin\Logger.pdb
+E:\Project\ChemAnalyst\UIHelper\bin\NLog.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\ApplicationInsights.config
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\UIHelper.dll.config
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\UIHelper.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\UIHelper.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\BusinessLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Calabonga.Xml.Exports.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\DataLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EntityFramework.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EntityFramework.SqlServer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EntityLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EPPlus.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\evohtmltopdf.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\itextsharp.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\itextsharp.xmlworker.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Logger.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.Web.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.ApplicationInsights.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Newtonsoft.Json.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Linq.Dynamic.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Net.Http.Formatting.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Helpers.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Http.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Http.WebHost.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Mvc.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Razor.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Webpages.Deployment.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Webpages.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Webpages.Razor.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Utility.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\NLog.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\BusinessLayer.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\DataLayer.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EntityLayer.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Logger.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Utility.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EntityFramework.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EntityFramework.SqlServer.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\EPPlus.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\evohtmltopdf.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\itextsharp.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.Web.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Microsoft.ApplicationInsights.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Razor.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Webpages.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Webpages.Deployment.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Webpages.Razor.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Helpers.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Mvc.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\Newtonsoft.Json.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Net.Http.Formatting.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Http.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\System.Web.Http.WebHost.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\NLog.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\bin\evointernal.dat
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\obj\Debug\UIHelper.csprojResolveAssemblyReference.cache
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\obj\Debug\UIHelper.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\UIHelper\obj\Debug\UIHelper.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\ApplicationInsights.config
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\UIHelper.dll.config
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\UIHelper.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\UIHelper.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\BusinessLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Calabonga.Xml.Exports.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\DataLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EntityFramework.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EntityLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EPPlus.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\evohtmltopdf.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\itextsharp.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\itextsharp.xmlworker.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Logger.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Linq.Dynamic.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Helpers.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Http.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Mvc.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Razor.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Webpages.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Utility.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\NLog.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\BusinessLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\DataLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EntityLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Logger.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Utility.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EntityFramework.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\EPPlus.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\evohtmltopdf.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\itextsharp.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Razor.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Webpages.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Helpers.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Mvc.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Http.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\NLog.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\bin\evointernal.dat
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csprojResolveAssemblyReference.cache
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\obj\Debug\UIHelper.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\UIHelper\obj\Debug\UIHelper.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\ApplicationInsights.config
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\UIHelper.dll.config
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\UIHelper.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\UIHelper.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\BusinessLayer.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Calabonga.Xml.Exports.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\DataLayer.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityLayer.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EPPlus.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\evohtmltopdf.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\itextsharp.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\itextsharp.xmlworker.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Logger.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Linq.Dynamic.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Helpers.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Mvc.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Razor.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Utility.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\NLog.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\BusinessLayer.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\DataLayer.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityLayer.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Logger.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Utility.pdb
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\EPPlus.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\evohtmltopdf.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\itextsharp.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Razor.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Helpers.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Mvc.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\NLog.xml
+E:\chamanalyst final\ChemAnalyst\UIHelper\bin\evointernal.dat
+E:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csprojResolveAssemblyReference.cache
+E:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+E:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.dll
+E:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\ApplicationInsights.config
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\UIHelper.dll.config
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\UIHelper.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\UIHelper.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\BusinessLayer.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Calabonga.Xml.Exports.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\DataLayer.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityLayer.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EPPlus.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\evohtmltopdf.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\itextsharp.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\itextsharp.xmlworker.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Logger.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Linq.Dynamic.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Helpers.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Mvc.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Razor.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Utility.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\NLog.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\BusinessLayer.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\DataLayer.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityLayer.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Logger.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Utility.pdb
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\EPPlus.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\evohtmltopdf.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\itextsharp.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Razor.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Helpers.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Mvc.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\NLog.xml
+D:\chamanalyst final\ChemAnalyst\UIHelper\bin\evointernal.dat
+D:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csprojResolveAssemblyReference.cache
+D:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+D:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.dll
+D:\chamanalyst final\ChemAnalyst\UIHelper\obj\Debug\UIHelper.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\ApplicationInsights.config
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\UIHelper.dll.config
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\UIHelper.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\UIHelper.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\BusinessLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Calabonga.Xml.Exports.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\DataLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EntityFramework.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EntityLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EPPlus.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\evohtmltopdf.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\itextsharp.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\itextsharp.xmlworker.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Logger.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Linq.Dynamic.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Helpers.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Http.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Mvc.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Razor.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Webpages.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Utility.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\NLog.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\BusinessLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\DataLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EntityLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Logger.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Utility.pdb
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EntityFramework.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\EPPlus.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\evohtmltopdf.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\itextsharp.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Razor.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Webpages.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Helpers.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Mvc.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Http.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\NLog.xml
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\bin\evointernal.dat
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csprojResolveAssemblyReference.cache
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\obj\Debug\UIHelper.dll
+E:\Chemanalystlatest\ChemAnalyst\UIHelper\obj\Debug\UIHelper.pdb
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\ApplicationInsights.config
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\UIHelper.dll.config
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\UIHelper.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\UIHelper.pdb
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\BusinessLayer.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Calabonga.Mvc.PagedListExt.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Calabonga.Xml.Exports.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\DataLayer.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EntityFramework.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EntityLayer.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EPPlus.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\evohtmltopdf.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\itextsharp.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\itextsharp.xmlworker.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.Agent.Intercept.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.PerfCounterCollector.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.Web.Infrastructure.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Linq.Dynamic.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Helpers.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Http.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Mvc.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Razor.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Webpages.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Utility.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\X.PagedList.Mvc.PagedListExt.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\BusinessLayer.pdb
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\DataLayer.pdb
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EntityLayer.pdb
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Utility.pdb
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EntityFramework.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EntityFramework.SqlServer.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\EPPlus.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\evohtmltopdf.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\itextsharp.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.DependencyCollector.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.ServerTelemetryChannel.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.Web.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.AI.WindowsServer.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Microsoft.ApplicationInsights.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Razor.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Webpages.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Deployment.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Webpages.Razor.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Helpers.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Mvc.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\Newtonsoft.Json.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Net.Http.Formatting.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Http.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\System.Web.Http.WebHost.xml
+E:\5555555555\crm\ChemAnalyst\UIHelper\bin\evointernal.dat
+E:\5555555555\crm\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.AssemblyReference.cache
+E:\5555555555\crm\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.CoreCompileInputs.cache
+E:\5555555555\crm\ChemAnalyst\UIHelper\obj\Debug\UIHelper.csproj.Up2Date
+E:\5555555555\crm\ChemAnalyst\UIHelper\obj\Debug\UIHelper.dll
+E:\5555555555\crm\ChemAnalyst\UIHelper\obj\Debug\UIHelper.pdb

@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Company Master";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using EntityLayer
+@model enCompanyMaster
+
+
+<div class="update-profile-wrapper">
+
+    <h3><a href="@Url.Action("CompanyReport","Admin")" class="btn btn-info"><i class="fa fa-list"></i> Company List</a></h3>
+
+    <div class="white-wrapper">
+
+        <div class="col-md-5 col-lg-8 col-md-offset-2">
+
+            <div class="eq-form">
+                <div class="change">
+                    <img src="~/images/dummy-user.png" />
+                    <p class="addUser">Company Detail</p>
+                </div>
+
+                <div class="eq-form-box">
+                    @using (Html.BeginForm("SaveCompanyMaster", "Admin", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div style="visibility:hidden">
+                            @Html.HiddenFor(item => item.ID);
+                        </div>
+                        <div class="col-md-12 form-group">
+                            @Html.TextBoxFor(model => model.CompanyName, new { @class = "form-control", @placeholder = "Company Name * ", required = "required" })
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextBoxFor(model => model.FirstContactName, new { @class = "form-control", @placeholder = "Primary Contact Name * ", required = "required" })
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextBoxFor(model => model.FirstContactEmail, new { @class = "form-control", @placeholder = "Primary Contact Email * ", required = "required" })
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextBoxFor(model => model.FirstContactNumber, new { @class = "form-control", @placeholder = "Primary Contact Number * ", required = "required" })
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextBoxFor(model => model.SecondContactName, new { @class = "form-control", @placeholder = "Secondary Contact Name" })
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextBoxFor(model => model.SecondContactEmail, new { @class = "form-control", @placeholder = "Secondary Contact Email" })
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.TextBoxFor(model => model.SecondContactNumber, new { @class = "form-control", @placeholder = "Secondary Contact Number" })
+                        </div>
+                        <div class="btn-wrapper">
+                            <a class="gray-btn" href="@Url.Action("CompanyReport","Admin")">Cancel</a>
+                            <input type="submit" class="blue-btn" value="Submit">
+                        </div>
+
+                    }
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+

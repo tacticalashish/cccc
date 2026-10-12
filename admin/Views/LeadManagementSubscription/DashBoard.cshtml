@@ -1,0 +1,1647 @@
+﻿@{
+    ViewBag.Title = "DashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    :root {
+        --bg-page: #f4f6f5;
+        --bg-panel: #ffffff;
+        --bg-panel-head: #ffffff;
+        --border: #eef1ef;
+        --text: #1a1a1a;
+        --text-soft: #8a978f;
+        --green: #1a4d2e;
+        --green-tint: #eef4f0;
+        --orange: #f58220;
+        --orange-tint: #fff1e3;
+        --red: #c0392b;
+        --red-tint: #fbeae8;
+        --blue: #2a6190;
+        --blue-tint: #e8f0f7;
+        --gray: #697570;
+        --gray-tint: #eef1ef;
+    }
+    /* minimal flex/spacing shim (Bootstrap 3.3.7 has no utility classes for these) */
+    .d-flex {
+        display: flex
+    }
+
+    .align-center {
+        align-items: center
+    }
+
+    .flex-wrap {
+        flex-wrap: wrap
+    }
+
+    .flex-fill {
+        flex: 1
+    }
+
+    .gap-2 {
+        gap: 8px
+    }
+
+    .gap-3 {
+        gap: 12px
+    }
+
+    .ml-auto {
+        margin-left: auto
+    }
+
+    .mb-2 {
+        margin-bottom: 8px
+    }
+
+    .mb-3 {
+        margin-bottom: 15px
+    }
+
+    .mt-3 {
+        margin-top: 15px
+    }
+
+    .mt-4 {
+        margin-top: 22px
+    }
+
+    .p-3 {
+        padding: 15px
+    }
+
+    .text-muted-sm {
+        color: var(--text-soft);
+        font-size: 12px
+    }
+
+    .panel {
+        box-shadow: 0 1px 3px rgba(0,0,0,.06)
+    }
+
+    .panel-heading.d-flex {
+        background: var(--bg-panel-head)
+    }
+    /* KPI icon chips */
+    .kpi-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0
+    }
+
+        .kpi-icon.c-green {
+            background: var(--green-tint);
+            color: var(--green)
+        }
+
+        .kpi-icon.c-orange {
+            background: var(--orange-tint);
+            color: var(--orange)
+        }
+
+        .kpi-icon.c-red {
+            background: var(--red-tint);
+            color: var(--red)
+        }
+
+        .kpi-icon.c-blue {
+            background: var(--blue-tint);
+            color: var(--blue)
+        }
+
+        .kpi-icon.c-gray {
+            background: var(--gray-tint);
+            color: var(--gray)
+        }
+    /* avatar circles */
+    .avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--green-tint);
+        color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        flex-shrink: 0
+    }
+
+    .avatar-lg {
+        width: 54px;
+        height: 54px;
+        font-size: 20px;
+        border-radius: 12px;
+        background: var(--green);
+        color: #fff
+    }
+    /* connected approval timeline */
+    .tl-step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+        padding-top: 12px
+    }
+
+    .tl-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--bg-panel);
+        border: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-soft);
+        margin: 0 auto;
+        position: relative;
+        z-index: 1
+    }
+
+    .tl-step.done .tl-dot {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff
+    }
+
+    .tl-step.cur .tl-dot {
+        border-color: var(--orange);
+        color: var(--orange)
+    }
+
+    .tl-line {
+        position: absolute;
+        top: 23px;
+        left: -50%;
+        width: 100%;
+        height: 2px;
+        background: var(--border);
+        z-index: 0
+    }
+
+    .tl-step.done .tl-line {
+        background: var(--green)
+    }
+
+    .tl-step:first-child .tl-line {
+        display: none
+    }
+
+    .tl-label {
+        font-size: .8rem;
+        font-weight: 600;
+        margin-top: 6px
+    }
+
+    .tl-sub {
+        font-size: .7rem;
+        color: var(--text-soft)
+    }
+    /* CRM renew subscriptions: blue tint + tag so they stand apart from new accounts. */
+    .aps-renew {
+        background: var(--blue-tint);
+        border-left: 3px solid var(--blue);
+    }
+
+        .aps-renew .tl-step.done .tl-dot {
+            background: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .aps-renew .tl-step.done .tl-line {
+            background: var(--blue);
+        }
+
+    .aps-renew-tag {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--blue);
+        border: 1px solid var(--blue);
+        border-radius: 10px;
+        padding: 2px 9px;
+        vertical-align: middle;
+        letter-spacing: .2px;
+    }
+    /* Brand-new accounts: green tint + tag. */
+    .aps-new {
+        background: var(--green-tint);
+        border-left: 3px solid var(--green);
+    }
+
+    .aps-new-tag {
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--green);
+        border: 1px solid var(--green);
+        border-radius: 10px;
+        padding: 2px 9px;
+        vertical-align: middle;
+        letter-spacing: .2px;
+    }
+    /* axis-based grouped bar chart, pure CSS */
+    .chart {
+        display: flex;
+        gap: 10px
+    }
+
+    .chart-y {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-size: 10px;
+        color: var(--text-soft);
+        text-align: right;
+        height: 190px;
+        padding-bottom: 22px
+    }
+
+    .chart-plot {
+        flex: 1;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        height: 190px;
+        border-left: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        position: relative
+    }
+
+        .chart-plot .grp {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end
+        }
+
+        .chart-plot .bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 168px
+        }
+
+        .chart-plot .bar {
+            width: 13px;
+            border-radius: 3px 3px 0 0;
+            cursor: pointer;
+            transition: filter 0.15s ease;
+        }
+
+            .chart-plot .bar:hover {
+                filter: brightness(1.2);
+            }
+
+        .chart-plot .lbl {
+            font-size: 10.5px;
+            color: var(--text-soft);
+            margin-top: 6px;
+            height: 16px
+        }
+
+    .chart-legend {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-soft);
+        margin-top: 8px
+    }
+
+        .chart-legend .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px
+        }
+    /* CSS-only donut charts */
+    .donut {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        flex-shrink: 0
+    }
+
+    .donut-hole {
+        position: absolute;
+        inset: 27%;
+        background: var(--bg-panel);
+        border-radius: 50%
+    }
+
+    .donut-legend {
+        font-size: 12.5px;
+        color: var(--text-soft);
+        max-height: 190px;
+        overflow-y: auto;
+        padding-right: 4px
+    }
+
+        .donut-legend li {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: background 0.15s ease;
+        }
+
+            .donut-legend li:hover {
+                background: #f5f7f6;
+            }
+
+        .donut-legend::-webkit-scrollbar {
+            width: 6px
+        }
+
+        .donut-legend::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px
+        }
+
+        .donut-legend .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px
+        }
+    /* soft status pill with leading dot */
+    .pill-soft {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 11px;
+        padding: 4px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px
+    }
+
+        .pill-soft .dot-b {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0
+        }
+
+        .pill-soft.warn {
+            background: var(--orange-tint);
+            color: var(--orange)
+        }
+
+        .pill-soft.bad {
+            background: var(--red-tint);
+            color: var(--red)
+        }
+
+        .pill-soft.ok {
+            background: var(--green-tint);
+            color: var(--green)
+        }
+
+        .pill-soft.gray {
+            background: var(--gray-tint);
+            color: var(--gray)
+        }
+
+        .pill-soft.info {
+            background: var(--blue-tint);
+            color: var(--blue)
+        }
+    /* rec cards (recommendation) */
+    .rec-card {
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--green);
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 15px
+    }
+
+        .rec-card.warn {
+            border-left-color: var(--orange)
+        }
+
+        .rec-card.bad {
+            border-left-color: var(--red)
+        }
+
+        .rec-card.info {
+            border-left-color: var(--blue)
+        }
+    /* general polish */
+    .panel {
+        border-radius: 8px;
+        transition: box-shadow .2s ease, transform .2s ease;
+    }
+
+        .kpi-card:hover, .panel:hover {
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+
+    .kpi-card {
+        height: 100%;
+    }
+
+    .panel-heading b {
+        color: var(--text);
+    }
+
+    table.table > tbody > tr {
+        transition: background .15s ease;
+    }
+
+    /* horizontal-scroll safety net for charts on narrow screens instead of squishing bars */
+    .chart-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-responsive {
+        border: 0;
+    }
+
+    /* ---------------- theme surface ---------------- */
+    .bg-light {
+        background: var(--bg-page) !important;
+    }
+
+        .bg-light .panel.panel-default {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+
+            .bg-light .panel.panel-default > .panel-heading {
+                background: var(--bg-panel-head);
+                border-bottom: 1px solid var(--border);
+                color: var(--text);
+                flex: 0 0 auto;
+            }
+
+            .bg-light .panel.panel-default > .panel-body,
+            .bg-light .panel.panel-default > .table-responsive {
+                flex: 1 1 auto;
+                color: var(--text);
+            }
+
+        .bg-light .table {
+            color: var(--text);
+            background: transparent;
+        }
+
+            .bg-light .table > thead > tr > th,
+            .bg-light .table > tbody > tr > td,
+            .bg-light .table > tbody > tr > th {
+                border-color: var(--border) !important;
+            }
+
+            .bg-light .table > tbody > tr:hover > td {
+                background: rgba(0,0,0,.035);
+            }
+
+        .bg-light .btn-default {
+            background: var(--bg-panel-head);
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+            .bg-light .btn-default:hover, .bg-light .btn-default:focus {
+                background: #f5f7f6;
+                color: var(--text);
+            }
+
+        .bg-light h5.text-muted,
+        .bg-light .text-muted {
+            color: var(--text-soft) !important;
+        }
+
+        /* ---------------- equal-height boxes (no more "chhota-bada" mismatched panels) ---------------- */
+        .bg-light .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+            .bg-light .row > [class*="col-"] {
+                display: flex;
+                flex-direction: column;
+            }
+
+                .bg-light .row > [class*="col-"] > .panel {
+                    flex: 1 1 auto;
+                    width: 100%;
+                }
+
+    /* KPI row: CSS Grid auto-fit keeps every card equal width and always fills
+       the full row on any device/width, even when the last row has fewer cards */
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .kpi-col {
+        min-width: 0;
+    }
+
+        .kpi-col > .panel {
+            height: 100%;
+            width: 100%;
+        }
+
+    .kpi-panel-body {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .chart-panel-body {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 220px;
+    }
+
+    .donut-panel-body {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 220px;
+    }
+
+    /* Show ~5 account cards, then scroll (top 10 rendered in JS). Top-level
+       rule - not inside a media query, so it applies on desktop too. */
+    #approvalPipelineBody {
+        max-height: 470px;
+        overflow-y: auto !important;
+    }
+
+    /* responsive tweaks */
+    @@media (max-width: 991px) {
+        .tl-label {
+            font-size: .72rem
+        }
+
+        .tl-sub {
+            font-size: .65rem
+        }
+
+        .donut {
+            width: 130px;
+            height: 130px
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .bg-light.p-3 {
+            padding: 10px !important
+        }
+
+        .panel-heading.d-flex {
+            align-items: flex-start
+        }
+
+            .panel-heading.d-flex .ml-auto {
+                margin-left: 0;
+                margin-top: 4px
+            }
+
+        .d-flex.mb-3.flex-wrap .ml-auto {
+            margin-left: 0;
+            width: 100%;
+            margin-top: 8px
+        }
+
+        /* approval pipeline timeline: allow horizontal scroll instead of crushing labels */
+        #approvalPipelineBody .d-flex:not(.gap-2):not(.flex-wrap) {
+            overflow-x: auto;
+            padding-bottom: 6px
+        }
+
+            #approvalPipelineBody .d-flex:not(.gap-2):not(.flex-wrap) .tl-step {
+                min-width: 90px
+            }
+
+        .chart-y {
+            font-size: 9px
+        }
+
+        .chart-plot .lbl {
+            font-size: 9px
+        }
+
+        .donut-legend {
+            font-size: 11.5px
+        }
+
+        [style*="font-size:26px"] {
+            font-size: 22px !important
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .kpi-icon {
+            width: 28px;
+            height: 28px;
+            font-size: 13px
+        }
+
+        .donut {
+            width: 110px;
+            height: 110px
+        }
+    }
+</style>
+<div class="bg-light p-3">
+    <div class="kpi-row">
+        <div class="kpi-col">
+            <div class="panel panel-default kpi-card">
+                <div class="panel-body kpi-panel-body">
+                    <div class="d-flex align-center gap-2 text-muted">
+                        <span class="kpi-icon c-green">&#9673;</span> Active customers
+                    </div>
+                    <div style="font-size:26px;font-weight:700" id="ActiveCustomer" class="mt-3">0</div>
+                    <div id="ThisMonthAdd" class="text-muted-sm">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-col">
+            <div class="panel panel-default kpi-card">
+                <div class="panel-body kpi-panel-body">
+                    <div class="d-flex align-center gap-2 text-muted">
+                        <span class="kpi-icon c-orange">&#8987;</span> Expiring &middot; 90 days
+                    </div>
+                    <div style="font-size:26px;font-weight:700" id="Expthirtydays" class="mt-3">0</div>
+                    <div class="text-muted-sm">&#8377; pipeline at risk</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-col">
+            <div class="panel panel-default kpi-card">
+                <div class="panel-body kpi-panel-body">
+                    <div class="d-flex align-center gap-2 text-muted">
+                        <span class="kpi-icon c-red">&#8377;</span> Payments pending
+                    </div>
+                    <div style="font-size:26px;font-weight:700" class="mt-3" id="PaymentsPending">0</div>
+                    <div class="text-muted-sm" id="Overdues">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-col">
+            <div class="panel panel-default kpi-card">
+                <div class="panel-body kpi-panel-body">
+                    <div class="d-flex align-center gap-2 text-muted">
+                        <span class="kpi-icon c-blue">&#8595;</span> Inactive &middot; 60 days
+                    </div>
+                    <div style="font-size:26px;font-weight:700" class="mt-3" id="inActivesixtydays">0</div>
+                    <div class="text-muted-sm">re-engage Users</div>
+                </div>
+            </div>
+        </div>
+        <div class="kpi-col">
+            <div class="panel panel-default kpi-card">
+                <div class="panel-body kpi-panel-body">
+                    <div class="d-flex align-center gap-2 text-muted">
+                        <span class="kpi-icon c-gray">&#9993;</span> Open tickets
+                    </div>
+                    <div style="font-size:26px;font-weight:700" class="mt-3" id="opentickets">0</div>
+                    <div class="text-muted-sm" id="Awaitingreply">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default mb-3">
+        <div class="panel-heading d-flex align-center flex-wrap">
+            <b>New accounts &middot; approval pipeline</b>
+            <span class="ml-auto text-muted-sm" id="approvalPipelineCount">&nbsp;</span>
+        </div>
+        <div id="approvalPipelineBody" class="table-responsive">
+            <!-- dynamically populated by GetSubscription_status() -->
+        </div>
+    </div>
+    <div class="panel panel-default mb-3">
+        <div class="panel-heading d-flex align-center flex-wrap"><b>Your reminders (last 3 days)</b><span class="ml-auto text-muted-sm" id="todaysRemindersCount">&nbsp;</span></div>
+        <div class="table-responsive">
+            <table class="table" style="margin-bottom:0">
+                <tbody id="todaysRemindersBody">
+                    <tr><td class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center flex-wrap"><b>Needs attention today</b><span class="ml-auto text-muted-sm" id="needsAttentionCount"></span></div>
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom:0">
+                        <thead><tr><th>Customer</th><th>Why</th><th>Due</th><th></th></tr></thead>
+                        <tbody id="needsAttentionBody">
+                            <tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center flex-wrap"><b>Renewals this quarter</b><span class="ml-auto text-muted-sm" id="renewalsQtrLabel"></span></div>
+                <div class="table-responsive" style="max-height:70vh; overflow-y:auto; flex:0 0 auto;">
+                    <table class="table" style="margin-bottom:0">
+                        <tbody id="renewalsQtrBody">
+                            <tr><td colspan="2" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h5 class="text-uppercase text-muted mt-4 mb-2"><b>Growth &amp; revenue</b></h5>
+    @{
+        var rrev = new[] { 42, 55, 38, 61, 72, 49, 66, 81, 58, 74 }; var rlost = new[] { 8, 6, 12, 9, 15, 7, 11, 14, 9, 8 };
+        var revYax = new[] { "90", "80", "70", "60", "50", "40", "30", "20", "10", "0" }; var revMax = 90.0;
+        var months = new[] { "Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun" };
+    }
+    <div class="row">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center flex-wrap"><b>Customers Renew vs lost</b><span class="ml-auto text-muted-sm">monthly, last 2 years</span></div>
+                <div class="panel-body chart-panel-body">
+                    <div id="custAddedLostChart" class="chart-scroll"><div class="text-center text-muted-sm" style="padding:20px">Loading...</div></div>
+                    <div class="chart-legend"><span><span class="dot" style="background:var(--green)"></span>Added</span><span><span class="dot" style="background:var(--orange)"></span>Lost (non-renewal)</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center flex-wrap"><b>Users added vs lost</b><span class="ml-auto text-muted-sm">monthly, last 2 years</span></div>
+                <div class="panel-body chart-panel-body">
+                    <div id="usrAddedLostChart" class="chart-scroll"><div class="text-center text-muted-sm" style="padding:20px">Loading...</div></div>
+                    <div class="chart-legend"><span><span class="dot" style="background:var(--green)"></span>Added</span><span><span class="dot" style="background:var(--orange)"></span>Lost (non-renewal)</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center flex-wrap"><b>Renewal revenue vs revenue lost</b><span class="ml-auto text-muted-sm">&#8377; Lakh</span></div>
+                <div class="panel-body chart-panel-body">
+                    <div id="renewalRevChart"><div class="text-center text-muted-sm" style="padding:30px">Loading&hellip;</div></div>
+                    <div class="chart-legend"><span><span class="dot" style="background:var(--green)"></span>Renewal revenue</span><span><span class="dot" style="background:var(--red)"></span>Revenue lost</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>Avg revenue &amp; users per customer</b></div>
+                <div class="panel-body chart-panel-body">
+                    <div id="avgRevUsersChart"><div class="text-center text-muted-sm" style="padding:30px">Loading&hellip;</div></div>
+                    <div class="chart-legend"><span><span class="dot" style="background:var(--green)"></span>Avg revenue / customer (&#8377;L)</span><span><span class="dot" style="background:var(--orange)"></span>Avg users / customer</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>Customers by country</b></div>
+                <div class="panel-body donut-panel-body d-flex align-center gap-3 flex-wrap" id="countryDonutBody">
+                    <div class="text-center text-muted-sm" style="padding:20px">Loading...</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12 mb-3">
+            <div class="panel panel-default">
+                <div class="panel-heading"><b>Customers by industry</b></div>
+                <div class="panel-body donut-panel-body d-flex align-center gap-3 flex-wrap" id="industryDonutBody">
+                    <div class="text-center text-muted-sm" style="padding:20px">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* ---------- shared chart tooltip (used by all graphs on this page) ---------- */
+    function showChartTooltip(evt, text) {
+        var tip = document.getElementById('sharedChartTooltip');
+        if (!tip) {
+            tip = document.createElement('div');
+            tip.id = 'sharedChartTooltip';
+            tip.style.cssText = 'position:fixed; z-index:999999; background:#1a1a1a; color:#fff; padding:6px 10px; border-radius:5px; font-size:12px; font-weight:600; pointer-events:none; white-space:nowrap; opacity:0; transition:opacity 0.15s ease; box-shadow:0 4px 12px rgba(0,0,0,.25);';
+            document.body.appendChild(tip);
+        }
+        tip.textContent = text;
+        tip.style.opacity = '1';
+        positionChartTooltip(evt, tip);
+    }
+    // Tooltip ko viewport ke andar rakho — agar right/bottom edge se bahar
+    // jaaye to cursor ke left/upar flip kar do (clip na ho).
+    function positionChartTooltip(evt, tip) {
+        var pad = 8, gap = 14;
+        var w = tip.offsetWidth, h = tip.offsetHeight;
+        var left = evt.clientX + gap;
+        var top = evt.clientY + gap;
+        if (left + w + pad > window.innerWidth) {
+            left = evt.clientX - gap - w;          // right edge → flip left
+            if (left < pad) { left = window.innerWidth - w - pad; }
+        }
+        if (top + h + pad > window.innerHeight) {
+            top = evt.clientY - gap - h;            // bottom edge → flip up
+            if (top < pad) { top = window.innerHeight - h - pad; }
+        }
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+    }
+    function moveChartTooltip(evt) {
+        var tip = document.getElementById('sharedChartTooltip');
+        if (tip) { positionChartTooltip(evt, tip); }
+    }
+    function hideChartTooltip() {
+        var tip = document.getElementById('sharedChartTooltip');
+        if (tip) tip.style.opacity = '0';
+    }
+
+    // detects which conic-gradient segment the mouse is over, based on angle from center
+    // (matches CSS conic-gradient's convention: 0% = top, increasing clockwise)
+    function donutHover(evt, el, segments) {
+        var rect = el.getBoundingClientRect();
+        var cx = rect.left + rect.width / 2;
+        var cy = rect.top + rect.height / 2;
+        var dx = evt.clientX - cx;
+        var dy = evt.clientY - cy;
+        var angle = (Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360;
+        var pct = angle / 360 * 100;
+
+        for (var i = 0; i < segments.length; i++) {
+            if (pct >= segments[i].start && pct < segments[i].end) {
+                var share = (segments[i].end - segments[i].start);
+                showChartTooltip(evt, segments[i].label + ': ' + share.toFixed(2) + '%');
+                return;
+            }
+        }
+    }
+
+    $(document).ready(function () {
+
+        GetUsersdata();
+        GetSubscription_status();
+        loadTodaysReminders();
+        loadNeedsAttentionToday();
+        loadRenewalsThisQuarter();
+        loadCountryDonut();
+        loadIndustryDonut();
+        loadCustAddedLost();
+        loadUsrAddedLost();
+        loadRenewalRevenue();
+        loadAvgRevUsers();
+
+    });
+
+    function GetUsersdata() {
+        debugger
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetUsersdata",
+            data: {},
+            success: function (response) {
+                $(response).each(function (index, value) {
+                    debugger;
+                    $("#ActiveCustomer").text(value.ActiveCustomer);
+                    $("#Expthirtydays").text(value.Expthirtydays);
+                    $("#PaymentsPending").text(value.PaymentsPending);
+                    $("#inActivesixtydays").text(value.inActivesixtydays);
+                    $("#opentickets").text(value.opentickets);
+                    $("#ThisMonthAdd").text(value.ThisMonthAdd + '-Added This Month');
+                    $("#Overdues").text(value.Overdues);
+                    $("#Awaitingreply").text(value.Awaitingreply);
+
+                });
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    //------------------step counter of subcription
+
+    var STEP_ORDER = ["Sales", "Operation", "Finance", "Dept Head", "Login active"];
+
+    function initials(name) {
+        return name.replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase();
+    }
+
+    function formatDate(d) {
+        var dt = new Date(d);
+        if (isNaN(dt)) return d;
+        var day = ("0" + dt.getDate()).slice(-2);
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return day + " " + months[dt.getMonth()];
+    }
+
+    // Feeds the timeline from the same working subscription-request list the
+    // Sales "Subscriptions" page (GetSalesIndexList) shows, mapped into the
+    // per-stage rows renderApprovalPipeline expects.
+    function GetSubscription_status() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetCRMApprovalPipeline",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            renderApprovalPipeline(ApsToPipelineRows(list));
+        }).fail(function (response) {
+            console.log(response);
+            $('#approvalPipelineBody').html('<div class="panel-body text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+        });
+    }
+
+    // How many of STEP_ORDER (Sales, Operation, Finance, Dept Head, Login
+    // active) are complete for a given subscription-request status.
+    // Convert Lead_Master.StepCounter into completed-step count (0..5).
+    // Returns -1 when the value isn't a known step so the caller can fall back.
+    function ApsDoneFromStepCounter(sc) {
+        sc = parseInt(sc, 10);
+        if (isNaN(sc)) return -1;
+        if (sc === 20) return 1;   // Disapproved from Operation  -> Sales done
+        if (sc === 30) return 2;   // Disapproved from Accounts   -> Sales+Operation done
+        if (sc === 40) return 3;   // Disapproved from Sales Mgr  -> +Finance done
+        if (sc >= 1 && sc <= 5) return sc;  // 1..5 pending/created
+        return -1;
+    }
+
+    function ApsCompletedStepCount(status) {
+        var s = (status || "").toLowerCase();
+        if (s.indexOf("created") !== -1 || s.indexOf("approved") !== -1) return 5;
+        if (s.indexOf("dept") !== -1) return 3;
+        if (s.indexOf("finance") !== -1) return 2;
+        if (s.indexOf("operation") !== -1) return 1;
+        return 1;
+    }
+
+    function ApsFmtDate(value) {
+        if (!value) return "";
+        var s = String(value);
+        var m = /\/Date\((-?\d+)\)\//.exec(s);
+        var d = m ? new Date(parseInt(m[1], 10)) : new Date(s.indexOf("T") === -1 ? s.replace(" ", "T") : s);
+        if (isNaN(d.getTime())) return "";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function ApsToPipelineRows(list) {
+        var STEPS = ["Sales", "Operation", "Finance", "Dept Head", "Login active"];
+        var rows = [];
+        for (var i = 0; i < list.length; i++) {
+            var it = list[i];
+            // Map the real StepCounter to how many of the 5 steps are DONE.
+            // Pending: 1=>1(Sales done, Operation pending) ... 5=>5(all done).
+            // Disapproved: 20=>1, 30=>2, 40=>3 (step before the rejection is done).
+            var done = ApsDoneFromStepCounter(it.StepCounter);
+            if (done < 0) { done = ApsCompletedStepCount(it.SalesIndexStatus); }
+            var company = it.CompanyName || ("Request " + (it.RequestNumber || (i + 1)));
+            // Company details shown under the name in the timeline header.
+            var detailParts = [];
+            if (it.PrimaryContactName) detailParts.push(it.PrimaryContactName);
+            if (it.PackageSummary) detailParts.push(it.PackageSummary);
+            if (it.CoverageSummary) detailParts.push(it.CoverageSummary);
+            var received = ApsFmtDate(it.RequestCreatedDate);
+            if (received) detailParts.push("received " + received);
+            var detail = detailParts.join(" \u00B7 ");
+            var isRenew = (it.Renew || "").toString().toLowerCase().indexOf("renew") !== -1;
+            for (var j = 0; j < done; j++) {
+                rows.push({
+                    CompanyName: company,
+                    LeadStatus: STEPS[j],
+                    CreatedBy: it.CSM || it.PrimaryContactName || "Sales",
+                    CreatedDate: it.RequestCreatedDate,
+                    Detail: detail,
+                    Renew: isRenew
+                });
+            }
+        }
+        return rows;
+    }
+
+    function renderApprovalPipeline(rows) {
+        // group rows by CompanyName -> { LeadStatus: { by, date } }
+        var companies = {};
+        $(rows || []).each(function (i, r) {
+            if (!companies[r.CompanyName]) companies[r.CompanyName] = {};
+            companies[r.CompanyName][r.LeadStatus] = { by: r.CreatedBy, date: r.CreatedDate };
+            if (r.Detail && !companies[r.CompanyName]._detail) {
+                companies[r.CompanyName]._detail = r.Detail;
+            }
+            if (r.Renew) { companies[r.CompanyName]._renew = true; }
+        });
+
+        var html = '';
+        var pendingCount = 0;
+        var rendered = 0;
+
+        $.each(companies, function (companyName, stepData) {
+            // Only the top 10 accounts are shown here.
+            if (rendered >= 10) { return false; }
+            rendered++;
+            // last step that HAS data = last completed step
+            var lastDoneIdx = -1;
+            for (var i = 0; i < STEP_ORDER.length; i++) {
+                if (stepData[STEP_ORDER[i]]) lastDoneIdx = i;
+            }
+            var curIdx = lastDoneIdx + 1; // next step = current/pending
+
+            if (curIdx < STEP_ORDER.length) pendingCount++;
+
+            var headerBadge;
+            if (curIdx >= STEP_ORDER.length) {
+                headerBadge = '<span class="pill-soft ok ml-auto"><span class="dot-b"></span>Ready — create logins</span>';
+            } else {
+                headerBadge = '<span class="pill-soft warn ml-auto"><span class="dot-b"></span>Awaiting ' + STEP_ORDER[curIdx] + ' approval</span>';
+            }
+
+            // Company details (contact / package / coverage / received) under
+            // the name; the per-step name/date stays removed.
+            var subLine = stepData._detail || '';
+
+            // Renewal accounts are tinted blue + tagged "Renewal"; brand-new
+            // accounts are tinted green + tagged "New", so the two stand apart.
+            var isRenew = !!stepData._renew;
+
+            var stepsHtml = '';
+            for (var i = 0; i < STEP_ORDER.length; i++) {
+                var step = STEP_ORDER[i];
+                // Renewal flow me pehla step "Sales" ki jagah "CRM" dikhega.
+                var stepLabel = (isRenew && i === 0) ? 'CRM' : step;
+                var info = stepData[step];
+                var cls = 'tl-step';
+                var dot = (i + 1);
+                if (info) {
+                    cls += ' done';
+                    dot = '&#10003;';
+                } else if (i === curIdx) {
+                    cls += ' cur';
+                }
+                stepsHtml += '<div class="' + cls + '"><div class="tl-line"></div><div class="tl-dot">' + dot + '</div><div class="tl-label">' + stepLabel + '</div></div>';
+            }
+
+            var bodyCls = 'panel-body ' + (isRenew ? 'aps-renew' : 'aps-new');
+            var renewTag = isRenew
+                ? ' <span class="aps-renew-tag">Renewal</span>'
+                : ' <span class="aps-new-tag">New</span>';
+
+            html += '<div class="' + bodyCls + '" style="border-top:1px solid var(--border)">' +
+                '<div class="d-flex align-center gap-2 mb-3 flex-wrap">' +
+                '<span class="avatar">' + initials(companyName) + '</span>' +
+                '<div><div><b>' + companyName + '</b>' + renewTag + '</div><div class="text-muted-sm">' + subLine + '</div></div>' +
+                headerBadge +
+                '</div>' +
+                '<div class="d-flex">' + stepsHtml + '</div>' +
+                '</div>';
+        });
+
+        $('#approvalPipelineBody').html(html || '<div class="panel-body text-center text-muted-sm" style="padding:20px">No pending approvals</div>');
+        $('#approvalPipelineCount').text(pendingCount + ' awaiting decisions');
+    }
+
+    ////-------------------end step counter step-----------------------------
+
+    /* ---------- Your reminders today (dynamic) ---------- */
+    function loadTodaysReminders() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetTodaysReminders",
+            data: {},
+            success: function (rows) {
+                renderTodaysReminders(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#todaysRemindersBody').html('<tr><td class="text-center text-muted-sm" style="padding:20px">Failed to load reminders.</td></tr>');
+            }
+        });
+    }
+
+    function renderTodaysReminders(rows) {
+        $('#todaysRemindersCount').text(rows.length + ' due');
+
+        if (!rows || rows.length === 0) {
+            $('#todaysRemindersBody').html('<tr><td class="text-center text-muted-sm" style="padding:20px">No reminders in the last 3 days.</td></tr>');
+            return;
+        }
+
+        var html = '';
+        $(rows).each(function (i, r) {
+            var icon = (r.ReminderType === 'Call') ? '&#128222;' : '&#9993;';
+            html += '<tr id="reminderRow-' + r.Id + '">' +
+                '<td style="width:40px">' + icon + '</td>' +
+                '<td><div><b>' + r.Note + '</b></div><div class="text-muted-sm">' + r.CompanyName + '</div></td>' +
+                '<td class="text-right text-muted">' + (r.ReminderTime || '') + '</td>' +
+                '<td class="text-right"><button class="btn btn-default btn-sm" onclick="markReminderDone(' + r.Id + ')">Mark done</button></td>' +
+                '</tr>';
+        });
+        $('#todaysRemindersBody').html(html);
+    }
+
+    function markReminderDone(reminderId) {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/MarkReminderComplete",
+            data: { reminderId: reminderId },
+            success: function (response) {
+                if (response && response.success) {
+                    $('#reminderRow-' + reminderId).fadeOut(200, function () { $(this).remove(); });
+                }
+            },
+            error: function (e) { console.log(e); }
+        });
+    }
+
+    /* ---------- Needs attention today (dynamic) ---------- */
+    function loadNeedsAttentionToday() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetNeedsAttentionToday",
+            data: {},
+            success: function (rows) {
+                renderNeedsAttention(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#needsAttentionBody').html('<tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Failed to load.</td></tr>');
+            }
+        });
+    }
+
+    function needsAttentionText(r) {
+        if (r.Reason === 'expired') return 'Subscription expired &mdash; win-back';
+        if (r.Reason === 'renewal_due') return 'Renewal due &mdash; package expires in ' + r.DaysToRenewal + ' days';
+        if (r.Reason === 'inactive') {
+            var days = r.DaysInactive != null ? r.DaysInactive : '60+';
+            return 'Inactive ' + days + ' days &mdash; onboarding stalled';
+        }
+        return '';
+    }
+
+    function needsAttentionAction(reason) {
+        if (reason === 'expired') return 'Win-back';
+        if (reason === 'renewal_due') return 'Renew';
+        return 'Re-engage';
+    }
+
+    function needsAttentionDuePill(r) {
+        if (r.Reason === 'expired' || r.Reason === 'inactive') {
+            return '<span class="pill-soft bad"><span class="dot-b"></span>Overdue</span>';
+        }
+        return '<span class="pill-soft gray">' + formatDate(r.RenewsDate) + '</span>';
+    }
+
+    function renderNeedsAttention(rows) {
+        $('#needsAttentionCount').text(rows.length + ' item(s)');
+
+        if (!rows || rows.length === 0) {
+            $('#needsAttentionBody').html('<tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Nothing needs attention right now.</td></tr>');
+            return;
+        }
+
+        var html = '';
+        $(rows).each(function (i, r) {
+            html += '<tr onclick="location.href=\'/LeadManagementSubscription/CustomerDetail?id=' + r.ID + '\'" style="cursor:pointer">' +
+                '<td><div class="d-flex align-center gap-2"><span class="avatar">' + initials(r.CompanyName) + '</span>' +
+                '<div><div><b>' + r.CompanyName + '</b></div><div class="text-muted-sm">' + (r.PrimaryContact || '') + '</div></div></div></td>' +
+                '<td>' + needsAttentionText(r) + '</td>' +
+                '<td>' + needsAttentionDuePill(r) + '</td>' +
+                '<td><button class="btn btn-default btn-sm">' + needsAttentionAction(r.Reason) + '</button></td>' +
+                '</tr>';
+        });
+        $('#needsAttentionBody').html(html);
+    }
+
+    /* ---------- Renewals this quarter (dynamic) ---------- */
+    function loadRenewalsThisQuarter() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetRenewalsThisQuarter",
+            data: {},
+            success: function (rows) {
+                renderRenewalsThisQuarter(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#renewalsQtrBody').html('<tr><td colspan="2" class="text-center text-muted-sm" style="padding:20px">Failed to load.</td></tr>');
+            }
+        });
+    }
+
+    function currentQuarterLabel() {
+        var m = new Date().getMonth() + 1; // 1-12
+        return 'Q' + Math.ceil(m / 3);
+    }
+
+    function renderRenewalsThisQuarter(rows) {
+        $('#renewalsQtrLabel').text(currentQuarterLabel());
+
+        if (!rows || rows.length === 0) {
+            $('#renewalsQtrBody').html('<tr><td colspan="2" class="text-center text-muted-sm" style="padding:20px">No renewals due this quarter.</td></tr>');
+            return;
+        }
+
+        var html = '';
+        $(rows).each(function (i, r) {
+            var pillCls = r.Status === 'overdue' ? 'bad' : 'warn';
+            var pillText = r.Status === 'overdue' ? 'Overdue' : 'Due';
+            html += '<tr onclick="location.href=\'/LeadManagementSubscription/CustomerDetail?id=' + r.ID + '\'" style="cursor:pointer">' +
+                '<td><div><b>' + r.CompanyName + '</b></div><div class="text-muted-sm">Expires ' + r.RenewsDate + '</div></td>' +
+                '<td class="text-right"><span class="pill-soft ' + pillCls + '"><span class="dot-b"></span>' + pillText + '</span></td>' +
+                '</tr>';
+        });
+        $('#renewalsQtrBody').html(html);
+    }
+
+    /* ---------- dynamic donut charts (Customers by country / industry) ---------- */
+    var DONUT_COLORS = ['var(--green)', 'var(--orange)', 'var(--blue)', '#5fa57c', '#e0a52e', '#7a5ca8', 'var(--red)', '#5c8a72', '#aab4ae', '#8a978f'];
+
+    function loadCountryDonut() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetCustomersByCountry",
+            data: {},
+            success: function (rows) {
+                renderDonut('countryDonutBody', rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#countryDonutBody').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    function loadIndustryDonut() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetCustomersByIndustry",
+            data: {},
+            success: function (rows) {
+                renderDonut('industryDonutBody', rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#industryDonutBody').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    // rows: [{ Label, CustomerCount }, ...] — builds a conic-gradient donut + legend + hover tooltip
+    function renderDonut(containerId, rows) {
+        if (!rows || rows.length === 0) {
+            $('#' + containerId).html('<div class="text-center text-muted-sm" style="padding:20px">No data available.</div>');
+            return;
+        }
+
+        var total = 0;
+        $(rows).each(function (i, r) { total += r.CustomerCount; });
+
+        var gradientParts = [];
+        var legendItems = [];
+        var segments = [];
+        var cursor = 0;
+
+        $(rows).each(function (i, r) {
+            var color = DONUT_COLORS[i % DONUT_COLORS.length];
+            var pct = total > 0 ? (r.CustomerCount / total * 100) : 0;
+            var start = cursor;
+            var end = cursor + pct;
+            gradientParts.push(color + ' ' + start.toFixed(2) + '% ' + end.toFixed(2) + '%');
+            segments.push({ label: r.Label, start: start, end: end });
+            legendItems.push(
+                '<li onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + r.Label + ': ' + Math.round(pct) + '%\')" onmouseout="hideChartTooltip()">' +
+                '<span class="dot" style="background:' + color + '"></span>' + r.Label + ' <span class="text-muted-sm">(' + r.CustomerCount + ')</span>' +
+                '</li>'
+            );
+            cursor = end;
+        });
+
+        var donutHtml =
+            '<div style="position:relative">' +
+            '<div class="donut" style="background:conic-gradient(' + gradientParts.join(', ') + ')" ' +
+            'onmousemove="donutHover(event, this, ' + JSON.stringify(segments).replace(/"/g, '&quot;') + ')" ' +
+            'onmouseout="hideChartTooltip()"></div>' +
+            '<div class="donut-hole"></div>' +
+            '</div>' +
+            '<ul class="list-unstyled donut-legend" style="margin-bottom:0">' + legendItems.join('') + '</ul>';
+
+        $('#' + containerId).html(donutHtml);
+    }
+
+    /* ---------- Customers / Users added vs lost (dynamic, last 24 months) ---------- */
+    var MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function niceAxisMax(value) {
+        if (value <= 0) return 5;
+        var exponent = Math.floor(Math.log(value) / Math.LN10);
+        var fraction = value / Math.pow(10, exponent);
+        var niceFraction;
+        if (fraction <= 1) niceFraction = 1;
+        else if (fraction <= 2) niceFraction = 2;
+        else if (fraction <= 5) niceFraction = 5;
+        else niceFraction = 10;
+        return niceFraction * Math.pow(10, exponent);
+    }
+
+    // builds the full last-24-months (Yr, Mo) sequence, oldest first, and
+    // fills in zero counts for months with no data from the server
+    function buildLast24Months(rows) {
+        var lookup = {};
+        $(rows || []).each(function (i, r) { lookup[r.Yr + '-' + r.Mo] = r; });
+
+        var result = [];
+        var d = new Date();
+        d.setDate(1);
+        d.setMonth(d.getMonth() - 23);
+        for (var i = 0; i < 24; i++) {
+            var yr = d.getFullYear();
+            var mo = d.getMonth() + 1;
+            var key = yr + '-' + mo;
+            var found = lookup[key];
+            result.push({
+                // no apostrophe here — an apostrophe inside this label breaks
+                // the single-quoted JS string in the tooltip's onmouseover attribute,
+                // which is why the tooltip wasn't firing at all
+                label: MONTH_NAMES[mo - 1] + " " + String(yr).slice(2),
+                added: found ? found.AddedCount : 0,
+                lost: found ? found.LostCount : 0
+            });
+            d.setMonth(d.getMonth() + 1);
+        }
+        return result;
+    }
+
+    function loadCustAddedLost() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetCustomersAddedVsLostByMonth",
+            data: {},
+            success: function (rows) {
+                renderAddedLostChart('custAddedLostChart', buildLast24Months(rows));
+            },
+            error: function (e) {
+                console.log(e);
+                $('#custAddedLostChart').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    function loadUsrAddedLost() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetUsersAddedVsLostByMonth",
+            data: {},
+            success: function (rows) {
+                renderAddedLostChart('usrAddedLostChart', buildLast24Months(rows));
+            },
+            error: function (e) {
+                console.log(e);
+                $('#usrAddedLostChart').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    // fully inline-styled grouped bar chart (same bulletproof pattern used elsewhere)
+    function renderAddedLostChart(containerId, months) {
+        var rawMax = 1;
+        $(months).each(function (i, m) {
+            if (m.added > rawMax) rawMax = m.added;
+            if (m.lost > rawMax) rawMax = m.lost;
+        });
+        var max = niceAxisMax(rawMax);
+
+        var CHART_HEIGHT = 190;
+        var BAR_AREA_HEIGHT = 168;
+        var TICKS = 5;
+
+        var axisHtml = '<div style="display:flex; flex-direction:column; justify-content:space-between; height:' + CHART_HEIGHT + 'px; padding-bottom:22px; font-size:10px; color:var(--text-soft) !important; text-align:right; flex-shrink:0; margin-right:10px;">';
+        for (var i = TICKS; i >= 0; i--) {
+            axisHtml += '<div style="line-height:1; color:var(--text-soft) !important;">' + Math.round(max * i / TICKS) + '</div>';
+        }
+        axisHtml += '</div>';
+
+        var gridHtml = '<div style="position:absolute; top:0; left:0; right:0; height:' + BAR_AREA_HEIGHT + 'px;">';
+        for (var g = 0; g <= TICKS; g++) {
+            var topPos = Math.round(BAR_AREA_HEIGHT * g / TICKS);
+            gridHtml += '<div style="position:absolute; left:0; right:0; top:' + topPos + 'px; height:1px; background:var(--border);"></div>';
+        }
+        gridHtml += '</div>';
+
+        var barsHtml = '<div style="position:relative; flex:1; display:flex; align-items:flex-end; gap:10px; height:' + CHART_HEIGHT + 'px; border-left:1px solid var(--border); border-bottom:1px solid var(--border); padding:0 4px; overflow-x:auto;">' + gridHtml;
+
+        $(months).each(function (i, m) {
+            var addedHeight = max > 0 ? Math.round(m.added / max * BAR_AREA_HEIGHT) : 0;
+            var lostHeight = max > 0 ? Math.round(m.lost / max * BAR_AREA_HEIGHT) : 0;
+            barsHtml += '<div style="position:relative; z-index:1; min-width:34px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">' +
+                '<div style="display:flex; align-items:flex-end; gap:3px; height:' + BAR_AREA_HEIGHT + 'px;">' +
+                '<div onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + m.label + ': ' + m.added + ' added\')" onmouseout="hideChartTooltip()" ' +
+                'style="width:13px; height:' + addedHeight + 'px; background:var(--green); border-radius:2px 2px 0 0; cursor:pointer;"></div>' +
+                '<div onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + m.label + ': ' + m.lost + ' lost\')" onmouseout="hideChartTooltip()" ' +
+                'style="width:13px; height:' + lostHeight + 'px; background:var(--orange); border-radius:2px 2px 0 0; cursor:pointer;"></div>' +
+                '</div>' +
+                '<div style="font-size:10px; color:var(--text-soft) !important; margin-top:6px; white-space:nowrap;">' + m.label + '</div>' +
+                '</div>';
+        });
+        barsHtml += '</div>';
+
+        $('#' + containerId).html('<div style="display:flex;">' + axisHtml + barsHtml + '</div>');
+    }
+
+    /* ---------- Renewal revenue vs revenue lost (dynamic) ---------- */
+    function loadRenewalRevenue() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetRenewalRevenueVsLostByMonth",
+            data: {},
+            success: function (rows) {
+                renderRevenueChart('renewalRevChart', buildRevMonths(rows));
+            },
+            error: function (e) {
+                console.log(e);
+                $('#renewalRevChart').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    // Proc rows (Yr, Mo, RenewalRevenue, RevenueLost) -> last 24 months, values in Lakh.
+    function buildRevMonths(rows) {
+        var lookup = {};
+        $(rows || []).each(function (i, r) { lookup[r.Yr + '-' + r.Mo] = r; });
+
+        var result = [];
+        var d = new Date();
+        d.setDate(1);
+        d.setMonth(d.getMonth() - 23);
+        for (var i = 0; i < 24; i++) {
+            var yr = d.getFullYear();
+            var mo = d.getMonth() + 1;
+            var found = lookup[yr + '-' + mo];
+            result.push({
+                label: MONTH_NAMES[mo - 1] + " " + String(yr).slice(2),
+                renewal: found ? (Number(found.RenewalRevenue) / 100000) : 0,  // Lakh
+                lost: found ? (Number(found.RevenueLost) / 100000) : 0
+            });
+            d.setMonth(d.getMonth() + 1);
+        }
+        return result;
+    }
+
+    function renderRevenueChart(containerId, months) {
+        var rawMax = 1;
+        $(months).each(function (i, m) {
+            if (m.renewal > rawMax) rawMax = m.renewal;
+            if (m.lost > rawMax) rawMax = m.lost;
+        });
+        var max = niceAxisMax(rawMax);
+
+        var CHART_HEIGHT = 190, BAR_AREA_HEIGHT = 168, TICKS = 5;
+
+        var axisHtml = '<div style="display:flex; flex-direction:column; justify-content:space-between; height:' + CHART_HEIGHT + 'px; padding-bottom:22px; font-size:10px; color:var(--text-soft) !important; text-align:right; flex-shrink:0; margin-right:10px;">';
+        for (var i = TICKS; i >= 0; i--) {
+            axisHtml += '<div style="line-height:1; color:var(--text-soft) !important;">' + Math.round(max * i / TICKS) + '</div>';
+        }
+        axisHtml += '</div>';
+
+        var gridHtml = '<div style="position:absolute; top:0; left:0; right:0; height:' + BAR_AREA_HEIGHT + 'px;">';
+        for (var g = 0; g <= TICKS; g++) {
+            var topPos = Math.round(BAR_AREA_HEIGHT * g / TICKS);
+            gridHtml += '<div style="position:absolute; left:0; right:0; top:' + topPos + 'px; height:1px; background:var(--border);"></div>';
+        }
+        gridHtml += '</div>';
+
+        var barsHtml = '<div style="position:relative; flex:1; display:flex; align-items:flex-end; gap:10px; height:' + CHART_HEIGHT + 'px; border-left:1px solid var(--border); border-bottom:1px solid var(--border); padding:0 4px; overflow-x:auto;">' + gridHtml;
+
+        $(months).each(function (i, m) {
+            var rh = max > 0 ? Math.round(m.renewal / max * BAR_AREA_HEIGHT) : 0;
+            var lh = max > 0 ? Math.round(m.lost / max * BAR_AREA_HEIGHT) : 0;
+            var rTxt = m.renewal.toFixed(1), lTxt = m.lost.toFixed(1);
+            barsHtml += '<div style="position:relative; z-index:1; min-width:34px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">' +
+                '<div style="display:flex; align-items:flex-end; gap:3px; height:' + BAR_AREA_HEIGHT + 'px;">' +
+                '<div onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + m.label + ': ₹' + rTxt + 'L renewal revenue\')" onmouseout="hideChartTooltip()" ' +
+                'style="width:13px; height:' + rh + 'px; background:var(--green); border-radius:2px 2px 0 0; cursor:pointer;"></div>' +
+                '<div onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + m.label + ': ₹' + lTxt + 'L lost\')" onmouseout="hideChartTooltip()" ' +
+                'style="width:13px; height:' + lh + 'px; background:var(--red); border-radius:2px 2px 0 0; cursor:pointer;"></div>' +
+                '</div>' +
+                '<div style="font-size:10px; color:var(--text-soft) !important; margin-top:6px; white-space:nowrap;">' + m.label + '</div>' +
+                '</div>';
+        });
+        barsHtml += '</div>';
+
+        $('#' + containerId).html('<div style="display:flex;">' + axisHtml + barsHtml + '</div>');
+    }
+
+    /* ---------- Avg revenue & users per customer (dynamic) ---------- */
+    function loadAvgRevUsers() {
+        $.ajax({
+            type: "POST",
+            url: "/CrmDashboardWidgets/GetAvgRevenueUsersPerCustomerByMonth",
+            data: {},
+            success: function (rows) {
+                renderAvgRevUsersChart('avgRevUsersChart', buildAvgMonths(rows));
+            },
+            error: function (e) {
+                console.log(e);
+                $('#avgRevUsersChart').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    // rows (Yr, Mo, AvgRevenue, AvgUsers) -> last 24 months; revenue in Lakh.
+    function buildAvgMonths(rows) {
+        var lookup = {};
+        $(rows || []).each(function (i, r) { lookup[r.Yr + '-' + r.Mo] = r; });
+
+        var result = [];
+        var d = new Date();
+        d.setDate(1);
+        d.setMonth(d.getMonth() - 23);
+        for (var i = 0; i < 24; i++) {
+            var yr = d.getFullYear();
+            var mo = d.getMonth() + 1;
+            var found = lookup[yr + '-' + mo];
+            result.push({
+                label: MONTH_NAMES[mo - 1] + " " + String(yr).slice(2),
+                revenue: found ? (Number(found.AvgRevenue) / 100000) : 0,  // Lakh
+                users: found ? Number(found.AvgUsers) : 0
+            });
+            d.setMonth(d.getMonth() + 1);
+        }
+        return result;
+    }
+
+    // Revenue (Lakh) aur users ka scale alag hota hai, to dono ko apne-apne
+    // max pe scale karke grouped bars dikhate hain; tooltip me actual value.
+    function renderAvgRevUsersChart(containerId, months) {
+        var revRaw = 1, usrRaw = 1;
+        $(months).each(function (i, m) {
+            if (m.revenue > revRaw) revRaw = m.revenue;
+            if (m.users > usrRaw) usrRaw = m.users;
+        });
+        var revMax = niceAxisMax(revRaw);
+        var usrMax = niceAxisMax(usrRaw);
+
+        var CHART_HEIGHT = 190, BAR_AREA_HEIGHT = 168, TICKS = 5;
+
+        // Left axis = revenue (₹L), right axis = users
+        var axisL = '<div style="display:flex; flex-direction:column; justify-content:space-between; height:' + CHART_HEIGHT + 'px; padding-bottom:22px; font-size:10px; color:var(--text-soft) !important; text-align:right; flex-shrink:0; margin-right:8px;">';
+        for (var i = TICKS; i >= 0; i--) { axisL += '<div style="line-height:1;">' + (revMax * i / TICKS).toFixed(1) + '</div>'; }
+        axisL += '</div>';
+
+        var gridHtml = '<div style="position:absolute; top:0; left:0; right:0; height:' + BAR_AREA_HEIGHT + 'px;">';
+        for (var g = 0; g <= TICKS; g++) {
+            var topPos = Math.round(BAR_AREA_HEIGHT * g / TICKS);
+            gridHtml += '<div style="position:absolute; left:0; right:0; top:' + topPos + 'px; height:1px; background:var(--border);"></div>';
+        }
+        gridHtml += '</div>';
+
+        var barsHtml = '<div style="position:relative; flex:1; display:flex; align-items:flex-end; gap:10px; height:' + CHART_HEIGHT + 'px; border-left:1px solid var(--border); border-bottom:1px solid var(--border); padding:0 4px; overflow-x:auto;">' + gridHtml;
+
+        $(months).each(function (i, m) {
+            var rh = revMax > 0 ? Math.round(m.revenue / revMax * BAR_AREA_HEIGHT) : 0;
+            var uh = usrMax > 0 ? Math.round(m.users / usrMax * BAR_AREA_HEIGHT) : 0;
+            barsHtml += '<div style="position:relative; z-index:1; min-width:34px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">' +
+                '<div style="display:flex; align-items:flex-end; gap:3px; height:' + BAR_AREA_HEIGHT + 'px;">' +
+                '<div onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + m.label + ': ₹' + m.revenue.toFixed(2) + 'L avg revenue/customer\')" onmouseout="hideChartTooltip()" ' +
+                'style="width:13px; height:' + rh + 'px; background:var(--green); border-radius:2px 2px 0 0; cursor:pointer;"></div>' +
+                '<div onmousemove="moveChartTooltip(event)" onmouseover="showChartTooltip(event, \'' + m.label + ': ' + m.users.toFixed(1) + ' avg users/customer\')" onmouseout="hideChartTooltip()" ' +
+                'style="width:13px; height:' + uh + 'px; background:var(--orange); border-radius:2px 2px 0 0; cursor:pointer;"></div>' +
+                '</div>' +
+                '<div style="font-size:10px; color:var(--text-soft) !important; margin-top:6px; white-space:nowrap;">' + m.label + '</div>' +
+                '</div>';
+        });
+        barsHtml += '</div>';
+
+        // Right axis = users scale
+        var axisR = '<div style="display:flex; flex-direction:column; justify-content:space-between; height:' + CHART_HEIGHT + 'px; padding-bottom:22px; font-size:10px; color:var(--orange) !important; text-align:left; flex-shrink:0; margin-left:8px;">';
+        for (var k = TICKS; k >= 0; k--) { axisR += '<div style="line-height:1;">' + (usrMax * k / TICKS).toFixed(1) + '</div>'; }
+        axisR += '</div>';
+
+        $('#' + containerId).html('<div style="display:flex;">' + axisL + barsHtml + axisR + '</div>');
+    }
+</script>

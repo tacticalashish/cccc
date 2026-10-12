@@ -1,0 +1,177 @@
+﻿
+@{
+    ViewBag.Title = "Description";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    #tablelist tbody tr td,tr th{
+       text-align:left!important;
+       border:1px solid #dcdcdc!important;
+       font-family:sans-serif;
+       padding:2px 5px;
+    }
+    #tablelist tbody tr th{
+        background-color:forestgreen;
+        padding:2px 5px!important;
+        font-weight:400!important
+    }
+</style>
+<script type="text/javascript">
+$(document).ready(function () {
+
+    DescriptionList();
+
+});   
+
+</script>
+
+
+
+
+<script>
+
+    function DescriptionList() {
+            debugger;
+           
+            $.ajax({
+                type: "GET",
+                url: "/ProductSearch/GetDescriptionList",
+                async: false,
+                success: function (json) {// json
+                   
+                    var data = json;
+                    var tbodyHTML = '';
+
+                    if (data != null) {
+                        $(data).each(function (idx, elm) {
+                        
+                            tbodyHTML += "<tr>";
+                            //tbodyHTML += "<td>" + elm.RegionName + "</td>";
+                            //tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                            tbodyHTML += "<td>" + elm.ProductName + "</td>";                           
+                            //tbodyHTML += "<td>" + "<a class='DeleteCss' href=/Admin/AddDescription/" + elm.Id + "><li class='fa fa-pencil-square-o'></li></a>" + "</td>"; 
+                            //tbodyHTML += "<td>" + "<button onclick=GetDataId(" + elm.Id + ")> Edit </button>" + "</td>";
+                            tbodyHTML += "<td>" + "<a class='DeleteCss' onclick=GetDataId(" + elm.Id + ")><li class='fa fa-pencil-square-o'></li></a>" + "</td>";
+                            tbodyHTML += "<td>" + "<a class='DeleteCss' href=/Admin/DeleteProductDescription/" + elm.Id + "><i class='fa fa-trash-o fa-lg'></i></a>" + "</td>";
+                           
+                            tbodyHTML += "</tr>";
+
+                        });
+                    }
+
+                    $(".tbodydata").html(tbodyHTML);
+                    $("#tablelist").show();
+                    $("#searchtext").val('');
+
+
+                }
+            });
+
+
+    }
+
+
+    function SearchText() {
+        debugger;
+        feed = {};
+        feed.ProductName = $("#searchtext").val();
+        if ($("#searchtext").val() !== '') {
+
+            $.ajax({
+                type: "GET",
+                url: "/ProductSearch/ListBasedOnSearch",
+                async: false,
+                data: feed,
+                success: function (json) {// json
+                    var data = json;
+                    var tbodyHTML = '';
+
+                    if (data != null) {
+                        $(data).each(function (idx, elm) {
+
+                            tbodyHTML += "<tr>";
+                            //tbodyHTML += "<td>" + elm.RegionName + "</td>";
+                            //tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                            tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                           // tbodyHTML += "<td>" + "<a class='DeleteCss' href=/Admin/AddDescription/" + elm.Id + "><li class='fa fa-pencil-square-o'></li></a>" + "</td>";
+                            //tbodyHTML += "<td>" + "<button onclick=GetDataId(" + elm.Id + ")> Edit </button>" + "</td>";
+                            tbodyHTML += "<td>" + "<a class='DeleteCss' onclick=GetDataId(" + elm.Id + ")><li class='fa fa-pencil-square-o'></li></a>" + "</td>";
+                            tbodyHTML += "<td>" + "<a class='DeleteCss' href=/Admin/DeleteProductDescription/" + elm.Id + "><i class='fa fa-trash-o fa-lg'></i></a>" + "</td>";
+
+                            tbodyHTML += "</tr>";
+
+                        });
+                    }
+
+                    $(".tbodydata").html(tbodyHTML);
+                    $("#tablelist").show();
+
+
+                }
+            });
+        }
+
+
+    }
+    function GetDataId(id) {
+
+        var ID = id;
+        var url = "/Admin/EditDescription?ID=" + ID + "";
+        window.open(url, '_blank');
+
+    }
+      
+    </script>
+
+
+
+
+<div class="col-md-12">
+   
+<div class="row">
+    <div class="col-md-12"><h3 style="text-align:center; color:white;margin:10px 0px;"> Description list</h3></div>
+    <div class="col-md-3"><a href="@Url.Action("AddDescription", "Admin")" class="btn btn-success btn-block" style="margin-bottom:10px;"><i class="fa fa-plus"></i> Add Product Description</a></div>
+    <div class="col-md-3 " style="padding:0px"><input type="text" class="form-control" id="searchtext" placeholder="search" /></div>
+    <div class="col-md-3"><input type="button" value="Search"  class="btn btn-success" onclick="SearchText()" />
+    <input type="button" value="Clear" style=" text-align:left" class="btn btn-success" onclick="DescriptionList()" /></div>
+</div></div>
+
+
+
+<div class="data-detail-wrapper">
+    <div class="col-lg-12">
+        <table id="tablelist" class="table" style=" margin-top:10px;width:100%">
+          
+                <tr>
+                    @*<th> Region </th>
+                    <th> Country </th>*@
+                    <th> Product Name </th>
+                    <th> Edit </th>
+                    <th> Delete </th>
+                </tr>
+          
+
+            <tbody class="tbodydata"></tbody>            
+
+          </table>
+    </div>
+    <br /><br />
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

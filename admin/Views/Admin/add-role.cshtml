@@ -1,0 +1,233 @@
+﻿
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model ChemAnalyst.Models.SA_RoleViewModel
+
+
+
+
+
+
+<div class="update-profile-wrapper">
+
+    <h3><a href="@Url.Action("Role","Admin")" class="btn btn-info"><i class="fa fa-list"></i> Role List</a></h3>
+
+    <div class="white-wrapper">
+
+        <div class="col-md-6 col-lg-7 col-md-offset-2">
+
+            <div class="eq-form">
+
+                <div class="change" style="font-size: 20px;">
+                    <i class="fa fa fa-users" aria-hidden="true"></i>
+                    <p>Add New Role</p>
+                </div>
+
+                <div class="eq-form-box">
+                    @using (Html.BeginForm("SaveRole", "Admin", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.HiddenFor(m=>m.CreatedTime)
+
+                        @Html.AntiForgeryToken()
+                        <div style="visibility:hidden">
+                            @Html.TextBoxFor(model => model.id, new { @class = "form-control", @placeholder = "Title * " })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group">
+
+                            @Html.TextBoxFor(model => model.Role, new { @class = "form-control", @placeholder = "Title * ", required = "required" })
+                            @*<input type="text" name="role" value="" size="40" class="form-control" placeholder="Title">*@
+                        </div>
+
+
+
+                        <div class="col-md-4 col-lg-12 form-group">
+                            @*<textarea rows="7"  name="RoleDiscription"class="form-control" placeholder="Description"></textarea>*@
+                            @Html.TextBoxFor(model => model.RoleDiscription, new { @class = "form-control", @rows = 4, @placeholder = "Description * ", required = "required" })
+                        </div>
+
+                        <div class="col-md-4 col-lg-12 form-group">
+
+                            @Html.TextBoxFor(model => model.ForwardingEmail, new { @class = "form-control", @placeholder = "Forward Email * ", required = "required" })
+                            @*<input type="text" name="role" value="" size="40" class="form-control" placeholder="Title">*@
+                        </div>
+                        <div class="col-sm-6 col-lg-12">
+                            <fieldset>
+                                <legend>Access Level</legend>
+                                <div class="col-sm-6col-lg-12">
+
+                                    @Html.CheckBoxFor(m => m.ChemicalPricing)
+                                    <label for="inlineCheckbox2">Chemical Pricing</label>
+
+                                    <div class="clearfix"></div>
+
+                                    @Html.CheckBoxFor(m => m.MarketAnalysis)
+                                    <label for="inlineCheckbox2">Market Analysis </label>
+
+                                    <div class="clearfix"></div>
+
+                                    @*@Html.CheckBoxFor(m => m.CompanyProfile)
+                                    <label for="inlineCheckbox2">Company Profile </label>*@
+
+                                    <div class="clearfix"></div>
+
+                                    @Html.CheckBoxFor(m => m.IndustryReports)
+                                    <label for="inlineCheckbox2">Industry Reports </label>
+
+                                    <div class="clearfix"></div>
+
+                                    @Html.CheckBoxFor(m => m.News)
+                                    <label for="inlineCheckbox2">News </label>
+
+                                    <div class="clearfix"></div>
+
+                                    @Html.CheckBoxFor(m => m.Deals)
+                                    <label for="inlineCheckbox2">Deals </label>
+
+                                    <div class="clearfix"></div>
+
+                                    @Html.CheckBoxFor(m => m.SubscriptionManagement)
+                                    <label for="inlineCheckbox2">Subscription Management </label>
+                              
+                                    @*New checkbox Add by Ashish*@
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.SectoralReport)
+                                    <label for="inlineCheckbox2">Sectoral Report</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.CommentaryManagement)
+                                    <label for="inlineCheckbox2">Commentary Management </label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.DisruptionTracker)
+                                    <label for="inlineCheckbox2">Disruption Tracker</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.AssociateApproval)
+                                    <label for="inlineCheckbox2">Associate Approval</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ConsultantApproval)
+                                    <label for="inlineCheckbox2">Consultant Approval</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.PricingOverview)
+                                    <label for="inlineCheckbox2">Pricing Overview</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.TicketManagement)
+                                    <label for="inlineCheckbox2">Ticket Management</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ReportTool)
+                                    <label for="inlineCheckbox2">Report Tool</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.CustomerManagement)
+                                    <label for="inlineCheckbox2">Customer Management</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.InternalCommentaryAssociate)
+                                    <label for="inlineCheckbox2">Internal Commentary Associate</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.InternalCommentaryConsulatant)
+                                    <label for="inlineCheckbox2">Internal Commentary Consulatant</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ExternalCommentaryAssociate)
+                                    <label for="inlineCheckbox2">External Commentary Associate</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.SalesLeadManagement)
+                                    <label for="inlineCheckbox2">Sales Lead Management</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.OperationLeadApproval)
+                                    <label for="inlineCheckbox2">Operation Lead Approval</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.AccountsLeadApproval)
+                                    <label for="inlineCheckbox2">Accounts Lead Approval</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.SalesManagerLeadApproval)
+                                    <label for="inlineCheckbox2">Sales Manager Lead Approval</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.CRMDashboard)
+                                    <label for="inlineCheckbox2">CRM Dashboard</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.AssociateDisruptionTracker)
+                                    <label for="inlineCheckbox2">Associate Disruption Tracker</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ConsultantDisruptionTracker)
+                                    <label for="inlineCheckbox2">Consultant Disruption Tracker</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.AssociateMarketAnalysis)
+                                    <label for="inlineCheckbox2">Associate Market Analysis</label>
+
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ConsultantMarketAnalysis)
+                                    <label for="inlineCheckbox2">Consultant Market Analysis</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ChemicalPricingDemo)
+                                    <label for="inlineCheckbox2">Chemical Pricing Demo</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.MarketAnalysisDemo)
+                                    <label for="inlineCheckbox2">Market Analysis Demo</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ManagerPricingandCommentary)
+                                    <label for="inlineCheckbox2">Manager Pricing and Commentary</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.QCPricing)
+                                    <label for="inlineCheckbox2">QC Pricing</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.QCCommentary)
+                                    <label for="inlineCheckbox2">QC Commentary</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.FreelPriceAssociate)
+                                    <label for="inlineCheckbox2">FreelPriceAssociate</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ConsultantSales)
+                                    <label for="inlineCheckbox2">Consultant Sales</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.FreightIndex)
+                                    <label for="inlineCheckbox2">Freight Index</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.AssociatePreSales)
+                                    <label for="inlineCheckbox2">Associate Pre Sales</label>
+                                    <div class="clearfix"></div>
+                                    @Html.CheckBoxFor(m => m.ConsultantPreSales)
+                                    <label for="inlineCheckbox2">Consultant Pre Sales</label>
+                                    <div class="clearfix"></div>
+                                  
+
+                                </div>
+
+                            </fieldset>
+                        </div>
+
+                        <div class="btn-wrapper">
+
+                            <a class="gray-btn" href="@Url.Action("Role","Admin")">Cancel</a>
+                            <input type="submit" class="blue-btn" value="Save">
+
+                        </div>
+
+                    }
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

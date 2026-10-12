@@ -1,0 +1,148 @@
+﻿
+@{
+    ViewBag.Title = "EditDescription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~\ckeditor/ckeditor.js" type="text/javascript"></script>
+<script type="text/javascript" src="../CKeditor/adapters/jquery.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        GetDataId();
+
+    });
+
+
+
+    function GetDataId() {
+       
+        var Id = @ViewBag.Id;
+        debugger;
+        $.ajax({
+            type: "GET",
+            url: "/ProductSearch/GetDetailsById",
+            data: { Id:Id },
+            async: false,
+
+            success: function (json) {// json
+                
+                var data = json.listofProductSearch;
+                var tbodyHTML = '';
+
+                if (data != null) {
+                    $(data).each(function (idx, elm) {
+
+                        $("#id").val(elm.Id);
+                        $("#Iupac").val(elm.Iupac);
+                        $("#Cas").val(elm.Cas);
+                        CKEDITOR.instances['Feedstock'].setData(decodeURIComponent(elm.Feedstock));
+                        CKEDITOR.instances['Grades'].setData(decodeURIComponent(elm.Grades));
+                        CKEDITOR.instances['Enduse'].setData(decodeURIComponent(elm.Enduse));
+                        CKEDITOR.instances['Referallinks'].setData(decodeURIComponent(elm.Referallinks));
+                        $("#ProductionProcess").val(elm.ProductionProcess);
+                       // $('input[type=file]').val(elm.ProductionProcess);
+
+
+                    });
+                }
+
+            }
+
+        });
+    }
+
+
+
+    function UpdateDescription() {
+        debugger;
+        
+           var Id = $("#id").val();
+           var Iupac = $("#Iupac").val();
+           var Cas = $("#Cas").val();
+           var Feedstock = encodeURIComponent(CKEDITOR.instances.Feedstock.getData());
+           var Grades = encodeURIComponent(CKEDITOR.instances.Grades.getData());
+           var Enduse = encodeURIComponent(CKEDITOR.instances.Enduse.getData());
+           var Referallinks = encodeURIComponent(CKEDITOR.instances.Referallinks.getData());
+           var ProductionProcess = $('input[type=file]').val().split('\\').pop();
+        
+        $.ajax({
+            type: "POST",
+            url: "/ProductSearch/UpdateDescription",
+            async: false,
+            data: { Id:Id, Iupac:Iupac, Cas:Cas, Feedstock:Feedstock, Grades:Grades, Enduse:Enduse, Grades:Grades, Referallinks:Referallinks, ProductionProcess:ProductionProcess},
+            success: function (json) {
+                debugger;
+                window.location.href = '/Admin/DescriptionList';
+            },
+            error: function (response) {
+
+                alert("Failed");
+            }
+
+        });
+
+    }
+
+</script>
+
+
+
+<html>
+<body>
+    <div class="update-profile-wrapper">
+        <h2 style="text-align:center; color:white"> Edit Description </h2>
+        <input type="text" id="id" class="form-control" placeholder="id" style="display:none" />
+        <label> Iupac</label>
+        <input type="text" id="Iupac" class="form-control" placeholder="Iupac" /> <br />
+        <label> Cas</label>
+        <input type="text" id="Cas" class="form-control" placeholder="Cas" />
+
+        <div class="col-md-12 form-group">
+            <label> Feedstock</label>
+            <textarea id="Feedstock"></textarea>
+        </div>
+
+        <script>
+             CKEDITOR.replace('Feedstock');
+        </script>
+
+        <div class="col-md-12 form-group">
+            <label> Grades</label>
+            <textarea id="Grades"></textarea>
+        </div>
+        <script>
+             CKEDITOR.replace('Grades');
+        </script>
+
+
+        <div class="col-md-12 form-group">
+            <label> Enduse</label>
+            <textarea id="Enduse"></textarea>
+        </div>
+        <script>
+             CKEDITOR.replace('Enduse');
+        </script>
+
+
+        <div class="col-md-12 form-group">
+            <label> Referallinks</label>
+            <textarea id="Referallinks"></textarea>
+        </div>
+        <script>
+             CKEDITOR.replace('Referallinks');
+        </script>
+
+
+        <input type="file" name="file" id="ProductionProcess" placeholder="ProductionProcess" />
+
+        <input type="submit" onclick="UpdateDescription()" />
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+﻿
+@{
+    ViewBag.Title = "Lead Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@model IEnumerable<ChemAnalyst.Models.Lead_Master>
+<head>
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+   
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function convertJsonDateToShortDate(data) {
+                // This function converts a json date to a short date
+                // e.g. /Date(1538377200000)/ to 10/1/2018
+                const dateValue = new Date(parseInt(data.substr(6)));
+                return dateValue.toLocaleDateString();
+            }
+
+            $('#Leadlist').DataTable({
+                "ajax": {
+                    "url": "../SubsManagement/GetLeadManagementList",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+
+                "columnDefs": [
+
+                    {
+                        "targets": [0],
+                        "visible": false
+                    }
+                ],
+                "order": [[0, 'desc']],
+                "columns": [
+
+
+                    //{
+
+                    //    "render": function (data, type, row, meta)
+                    //    { return '<input id="selectall" class="styled" type="checkbox">' }
+                    //},
+                    { "data": "Id" },
+                    { "data": "Name", "autoWidth": true },
+                    { "data": "Phone", "autoWidth": true },
+                    { "data": "CorpEmail", "autoWidth": true },
+                    { "data": "Organisation", "autoWidth": true },
+                    { "data": "AssignTo", "autoWidth": true },
+                     { "data": "IPAddress", "autoWidth": true },
+                    {
+                        "data": "CreatedDate", "render": function (data) { return convertJsonDateToShortDate(data); }
+                    },
+                     {
+                         "data": "Status", "render": function (data, type, row, meta) {
+                             debugger
+                             if (data == "New") {
+                                 return '<span class="label label-primary">' + data + '</span>';
+                             }
+                             if (data == "Assign") {
+                                 return '<span class="label label-info">' + data + '</span>';
+                             }
+                             if (data == "Won") {
+                                 return '<span class="label label-success">' + data + '</span>';
+                             }
+                             else if (data == "Pending") {
+                                 return '<span class="label label-warning">' + data + '</span>';
+                             }
+                             else if (data == "Lost") {
+                                 return '<span class="label label-danger">' + data + '</span>';
+                             }
+
+                         }
+                     },
+                      {
+                          data: null, render: function (data, type, row) {
+                              //return '<a href="/Admin/DeleteUser/' + row.id + '"><i class="fa fa-trash-o fa-lg"></i></a>';
+                              if (row.Status == "New") {
+                                  return '<a class="label label-info" href="../SubsManagement/ViewDetails/' + row.Id + '"> VIEW DETAILS</a>' + @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"])) {<text> ' &nbsp;&nbsp  <a style="cursor: pointer;" href="#" onclick="DeleteLead(' + row.Id + ')" class="label label-danger"><i style="cursor: pointer;" class="fa fa-plus"></i> Delete  </a> ' </text>}else {<text>'' </text>};}
+                              else {
+                                  return '<a class="label label-info" href="../SubsManagement/ViewDetails/' + row.Id + '"> VIEW DETAILS</a>' + @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"])) {<text> ' &nbsp;&nbsp  <a style="cursor: pointer;background: #ccc;" href="#" class="label label-secondary"><i style="cursor: pointer;" class="fa fa-plus"></i> Delete </a> ' </text>}else {<text>'' </text>};}
+                              }
+                          },
+                    {
+                        "render": function (data, type, row, meta) {
+                            var isCoBrowse = $("#sessionInput").val();
+                            debugger
+                            if (isCoBrowse != "Admin") {
+                                if (row.Status == "Won") {
+                                    return '';
+                                }
+                                else {
+                                    if (row.Status == "New") {
+                                        return '<a style="cursor: pointer;background: #ccc;" href="#" class="label label-secondary"><i style="cursor: pointer;" class="fa fa-plus"></i> ADD  </a>';
+                                    }
+                                    else {
+                                        return '<a style="cursor: pointer;" href="../Subscription/AddPackage/' + row.Id + '" class="label label-primary"><i style="cursor: pointer;" class="fa fa-plus"></i> ADD  </a>';
+                                    }
+
+                                }
+
+                            }
+                        }
+                    },
+
+                    {
+                        data: null, render: function (data, type, row) {
+                            return '<a class="label label-info" href="../ApiSubscription/ClintApiSubscription/' + row.Id + '">Add Api</a>';
+                        }
+                    },
+                ]
+            });
+        });
+
+        function DeleteLead(leadId) {
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this lead!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+.then((willDelete) => {
+    if (willDelete) {
+        $.ajax({
+            type: "POST",
+            url: 'DeleteLead?leadId=' + leadId,
+            success: function (data) {
+                debugger
+                if (data.data == "Success") {
+                    //alert("Data has been added successfully.");
+                    // swal("Thank you!", "Lead deleted successfully.", "success");
+                    swal("Thank you! Lead deleted successfully!", {
+                        icon: "success",
+
+                    }).then(function Reload() {
+                        window.location.reload();
+                    });
+                   
+                }
+                else {
+                    alert("Error while inserting data");
+                }
+            },
+            error: function () {
+                alert("Error while inserting data");
+            }
+        });
+
+       
+    } else {
+        swal("Your lead is safe!");
+    }
+});
+
+           
+
+        }
+    </script>
+
+
+</head>
+
+
+
+<input id="sessionInput" type="hidden" value='@Session["User"]' />
+
+<div class="update-profile-wrapper">
+    <h3><a href="@Url.Action("CreateLead", "Admin")" class="btn btn-success"><i class="fa fa-plus"></i> Create New Lead</a></h3>
+
+    <div class="white-wrapper" style="padding-top:10px">
+        <div class="data-detail-wrapper table-responsive">
+
+            <table id="Leadlist" class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Organization</th>
+                        <th>Assign To</th>
+                        <th>IP Address</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Package</th>
+                        <th>Api Package</th>
+
+                        @*<th>Process</th>*@
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>

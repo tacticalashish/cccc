@@ -1,0 +1,1199 @@
+@{
+    ViewBag.Title = "Lead Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .crd-wrap { background: #f4f5f7; padding: 18px 28px 40px; }
+    .crd-crumb { font-size: 13px; color: #7c828a; margin-bottom: 4px; }
+    .crd-crumb a { color: #7c828a; text-decoration: none; }
+    .crd-back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #33383f; text-decoration: none; margin-bottom: 14px; }
+    .crd-card { background: #fff; border: 1px solid #eef0f2; border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 3px rgba(20,20,30,.05); }
+    .crd-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .crd-header-left { display: flex; align-items: center; gap: 14px; }
+    .crd-avatar { width: 46px; height: 46px; border-radius: 10px; background: #1f5a37; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+    .crd-company-name { font-size: 20px; font-weight: 700; color: #22262b; }
+    .crd-sub-line { font-size: 12.5px; color: #7c828a; margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .crd-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 10px; background: #eef0f2; color: #55595f; }
+    .crd-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #9aa0a6; display: inline-block; }
+    .crd-pill-type { background: #f1eafb; color: #6c47c9; }
+    .crd-info-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; border-top: 1px solid #eef0f2; padding-top: 16px; }
+    .crd-info-label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: #a4aab3; font-weight: 600; margin-bottom: 4px; }
+    .crd-info-value { font-size: 15px; font-weight: 700; color: #22262b; }
+    .crd-tabs { display: flex; gap: 22px; border-bottom: 1px solid #e3e5e8; margin: 22px 0 18px; flex-wrap: wrap; }
+    .crd-tab { padding: 8px 2px 12px; font-size: 13.5px; font-weight: 600; color: #7c828a; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .crd-tab.crd-tab-active { color: #22262b; border-bottom-color: #1f5a37; }
+    .crd-tab-content { display: none; }
+    .crd-tab-content.crd-tab-content-active { display: block; }
+    .crd-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+    .crd-panel-title { font-size: 15px; font-weight: 700; color: #22262b; margin-bottom: 12px; }
+    .crd-panel-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #f2f3f5; font-size: 13.5px; }
+    .crd-panel-row:last-child { border-bottom: none; }
+    .crd-panel-label { color: #7c828a; }
+    .crd-panel-value { color: #22262b; font-weight: 600; text-align: right; }
+    .crd-empty-tab { text-align: center; color: #9aa0a6; font-size: 13px; padding: 30px 0; }
+    /* Activity & follow-ups list - scroll after 5 rows (same as Sales) */
+    .crd-act-list { max-height: 300px; overflow-y: auto; }
+    .crd-act-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f2f3f5; }
+    .crd-act-row:last-child { border-bottom: none; }
+    .crd-act-icon { width: 26px; height: 26px; border-radius: 6px; background: #f0f1f3; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-right: 12px; flex-shrink: 0; }
+    .crd-act-title { font-size: 13px; font-weight: 700; color: #22262b; }
+    .crd-act-sub { font-size: 12px; color: #7c828a; margin-top: 2px; }
+    .crd-act-date { font-size: 12px; color: #a4aab3; white-space: nowrap; margin-left: 10px; }
+    /* Add follow-up modal - right side drawer (same as Sales) */
+    .crd-modal-backdrop { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(20,20,30,.35); z-index: 300; justify-content: flex-end; }
+    .crd-modal-backdrop.crd-modal-open { display: flex; }
+    .crd-modal { background: #fff; width: 380px; max-width: 92vw; height: 100%; box-shadow: -4px 0 20px rgba(20,20,30,.15); display: flex; flex-direction: column; }
+    .crd-modal-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 16px 18px; border-bottom: 1px solid #f0f1f3; }
+    .crd-modal-header-left { display: flex; align-items: center; gap: 10px; }
+    .crd-modal-title { font-size: 14px; font-weight: 700; color: #22262b; }
+    .crd-modal-subtitle { font-size: 12px; color: #a4aab3; }
+    .crd-modal-close { cursor: pointer; color: #a4aab3; font-size: 20px; line-height: 1; }
+    .crd-modal-body { padding: 16px 18px; flex: 1; overflow-y: auto; }
+    .crd-modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 18px; border-top: 1px solid #f0f1f3; }
+    .crd-field-label { font-size: 12px; font-weight: 600; color: #33383f; margin: 14px 0 6px; }
+    .crd-field-label:first-child { margin-top: 0; }
+    .crd-type-toggle { display: flex; border: 1px solid #d7dade; border-radius: 6px; overflow: hidden; }
+    .crd-type-btn { flex: 1; border: none; background: #fff; padding: 8px 6px; font-size: 12px; font-weight: 600; color: #6b7078; cursor: pointer; border-right: 1px solid #d7dade; }
+    .crd-type-btn:last-child { border-right: none; }
+    .crd-type-btn.crd-type-btn-active { background: #f0f1f3; color: #22262b; }
+    .crd-textarea, .crd-select, .crd-date-input { width: 100%; box-sizing: border-box; border: 1px solid #d7dade; border-radius: 6px; padding: 8px 10px; font-size: 12px; color: #33383f; }
+    .crd-textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+    .crd-checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #33383f; margin-top: 14px; cursor: pointer; }
+    .crd-btn { border: 1px solid #d7dade; background: #fff; color: #33383f; border-radius: 6px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .crd-btn:hover { background: #f7f8f9; }
+    .crd-btn-primary { background: #e07b1f; border-color: #e07b1f; color: #fff; }
+    .crd-btn-primary:hover { background: #c96c16; }
+    /* Emails tab (same as Sales) */
+    .crd-email-toolbar { display: flex; gap: 8px; margin-bottom: 14px; }
+    .crd-email-toolbar .crd-select { max-width: 320px; }
+    .crd-email-row { border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #eceef0; }
+    .crd-email-row-sent { background: #f4f8f5; }
+    .crd-email-row-received { background: #f7f8fa; }
+    .crd-email-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; margin-bottom: 8px; }
+    .crd-email-badge-sent { background: #eaf7ee; color: #2c8a4b; }
+    .crd-email-badge-received { background: #eef2fb; color: #3f5fa8; }
+    .crd-email-field { font-size: 12px; margin-bottom: 4px; color: #33383f; }
+    .crd-email-field b { color: #7c828a; font-weight: 600; margin-right: 4px; }
+    .crd-email-body-frame { display: block; width: 100%; height: 220px; border: none; border-top: 1px solid #f0f1f3; margin-top: 6px; background: #fff; }
+    .crd-pager { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f2f3f5; }
+    .crd-pg-btn { border: 1px solid #e2e4e8; background: #fff; color: #33383f; border-radius: 5px; min-width: 24px; height: 24px; padding: 0 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .crd-pg-btn:hover:not(:disabled) { background: #f7f8f9; }
+    .crd-pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .crd-pg-btn.crd-pg-active { background: #1f5a37; border-color: #1f5a37; color: #fff; }
+    .crd-pg-dots { font-size: 11px; color: #a4aab3; padding: 0 2px; }
+    /* Contacts tab (same as Sales) */
+    table.crd-table { width: 100%; border-collapse: collapse; border: none; }
+    table.crd-table thead th { text-align: left; font-size: 10px; letter-spacing: .04em; text-transform: uppercase; color: #a4aab3; font-weight: 600; padding: 8px 10px; border: none; border-bottom: 1px solid #edeef1; white-space: nowrap; }
+    table.crd-table tbody td { padding: 10px 10px; font-size: 13px; color: #33383f; border: none; border-bottom: 1px solid #f2f3f5; vertical-align: middle; }
+    table.crd-table tbody tr:last-child td { border-bottom: none; }
+    .crd-pill-blue { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; border-radius: 20px; padding: 2px 9px; white-space: nowrap; background: #eef2fb; color: #3f5fa8; }
+    .crd-pill-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; background: currentColor; opacity: .7; }
+    .iti { width: 100%; display: block; }
+    .iti__country-list { color: #22262b; max-height: 200px; z-index: 400; }
+    /* Order & handover tab (same as Sales) */
+    .crd-order-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .crd-order-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f1f3; font-size: 13px; }
+    .crd-order-label { color: #7c828a; }
+    .crd-order-value { color: #22262b; font-weight: 600; }
+    .crd-btn-success { background: #1f5a37; border-color: #1f5a37; color: #fff; }
+    .crd-btn-success:hover { background: #17452a; }
+    .crd-actions { display: flex; gap: 8px; align-items: center; }
+    .crd-btn-danger { background: #fff; border-color: #e2453c; color: #e2453c; }
+    .crd-btn-danger:hover { background: #fdecec; }
+    .crd-info-banner { border-radius: 8px; padding: 12px 14px; font-size: 12.5px; line-height: 1.5; }
+    .crd-info-banner-green { background: #eaf7ee; color: #1e7b3a; }
+    .crd-info-banner-orange { background: #fdf3e3; color: #8a5a10; }
+    @@media (max-width: 900px) { .crd-order-grid { grid-template-columns: 1fr; } }
+    .crd-loading { text-align: center; color: #9aa0a6; font-size: 13px; padding: 50px 0; }
+    /* Lead summary edit mode */
+    .crd-panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .crd-mini-btn { border: 1px solid #e3e5e8; background: #fff; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 600; color: #33383f; cursor: pointer; }
+    .crd-mini-btn-primary { background: #1f5a37; border-color: #1f5a37; color: #fff; }
+    .crd-edit-input { display: none; width: 55%; border: 1px solid #e3e5e8; border-radius: 6px; padding: 5px 8px; font-size: 13px; color: #33383f; }
+    .crd-card.crd-editing .crd-panel-value { display: none; }
+    .crd-card.crd-editing .crd-edit-input { display: inline-block; }
+    /* Next follow-up editable nahi hai, to edit mode me bhi uski date dikhe */
+    .crd-card.crd-editing #CrdSumFollowup { display: inline !important; }
+    @@media (max-width: 900px) {
+        .crd-two-col { grid-template-columns: 1fr; }
+        .crd-info-row { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+
+<div class="crd-wrap">
+    <div class="crd-crumb"><a href="@Url.Action("Pipeline", "LeadManagementSubscription")">Pipeline</a> / <span id="CrdCrumbName">&hellip;</span></div>
+    <a class="crd-back" href="@Url.Action("Pipeline", "LeadManagementSubscription")">&larr; Back to pipeline</a>
+
+    <div id="CrdLoading" class="crd-loading">Loading lead...</div>
+
+    <div id="CrdContent" style="display:none;">
+        <div class="crd-card">
+            <div class="crd-header-row">
+                <div class="crd-header-left">
+                    <div class="crd-avatar" id="CrdAvatar">?</div>
+                    <div>
+                        <div class="crd-company-name" id="CrdCompanyName">&mdash;</div>
+                        <div class="crd-sub-line">
+                            <span id="CrdSubText">&mdash;</span>
+                            <span class="crd-pill" id="CrdStagePill"><span class="dot"></span><span id="CrdStageText">&mdash;</span></span>
+                            <span class="crd-pill crd-pill-type" id="CrdTypePill" style="display:none;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="crd-actions">
+                    <button type="button" class="crd-btn crd-btn-primary" id="CrdWonBtn" style="display:none;" onclick="CrdOpenWonModal()">&#10003; Mark won</button>
+                    <button type="button" class="crd-btn crd-btn-danger" id="CrdLostBtn" style="display:none;" onclick="CrdOpenLostModal()">&#10007; Lost</button>
+                </div>
+            </div>
+
+            <div class="crd-info-row">
+                <div><div class="crd-info-label">Value</div><div class="crd-info-value" id="CrdValue">&mdash;</div></div>
+                <div><div class="crd-info-label">Expected close</div><div class="crd-info-value" id="CrdExpectedClose">&mdash;</div></div>
+                <div><div class="crd-info-label">Source</div><div class="crd-info-value" id="CrdSource">&mdash;</div></div>
+                <div><div class="crd-info-label">Owner</div><div class="crd-info-value" id="CrdOwner">&mdash;</div></div>
+            </div>
+        </div>
+
+        <div class="crd-tabs">
+            <div class="crd-tab crd-tab-active" data-tab="overview" onclick="CrdSwitchTab('overview')">Overview</div>
+            <div class="crd-tab" data-tab="activity" onclick="CrdSwitchTab('activity')">Activity &amp; follow-ups</div>
+            <div class="crd-tab" data-tab="emails" onclick="CrdSwitchTab('emails')">Emails</div>
+            <div class="crd-tab" data-tab="contacts" onclick="CrdSwitchTab('contacts')">Contacts</div>
+            <div class="crd-tab" data-tab="order" onclick="CrdSwitchTab('order')">Order &amp; handover</div>
+        </div>
+
+        <div class="crd-tab-content crd-tab-content-active" id="CrdTabOverview">
+            <div class="crd-two-col">
+                <div class="crd-card" id="CrdLeadSummaryCard">
+                    <div class="crd-panel-head">
+                        <div class="crd-panel-title" style="margin:0;">Lead summary</div>
+                        <div>
+                            <button type="button" class="crd-mini-btn" id="CrdEditBtn" onclick="CrdStartEdit()">&#9998; Edit</button>
+                            <button type="button" class="crd-mini-btn" id="CrdCancelBtn" style="display:none;" onclick="CrdCancelEdit()">Cancel</button>
+                            <button type="button" class="crd-mini-btn crd-mini-btn-primary" id="CrdSaveBtn" style="display:none;" onclick="CrdSaveEdit()">Save</button>
+                        </div>
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Stage</span>
+                        <span class="crd-panel-value" id="CrdSumStage">&mdash;</span>
+                        <select class="crd-edit-input" id="CrdEditStatus">
+                            <option value="Open">Open</option>
+                            <option value="Won">Won</option>
+                            <option value="Lost">Lost</option>
+                        </select>
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Type</span>
+                        <span class="crd-panel-value" id="CrdSumType">&mdash;</span>
+                        <select class="crd-edit-input" id="CrdEditLeadType">
+                            <option value="">&mdash;</option>
+                            <option value="Inbound">Inbound</option>
+                            <option value="Outbound">Outbound</option>
+                        </select>
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Source</span>
+                        <span class="crd-panel-value" id="CrdSumSource">&mdash;</span>
+                        <input type="text" class="crd-edit-input" id="CrdEditSource" placeholder="Source" />
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Interested in</span>
+                        <span class="crd-panel-value" id="CrdSumInterested">&mdash;</span>
+                        <input type="text" class="crd-edit-input" id="CrdEditMessage" placeholder="Interested in" />
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Value</span>
+                        <span class="crd-panel-value" id="CrdSumValue">&mdash;</span>
+                        <span class="crd-edit-input" style="white-space:nowrap;">
+                            <input type="text" id="CrdEditAmount" placeholder="Amount" style="width:90px;border:1px solid #e3e5e8;border-radius:6px;padding:5px 8px;font-size:13px;" />
+                            <select id="CrdEditCurrency" style="border:1px solid #e3e5e8;border-radius:6px;padding:5px 6px;font-size:13px;">
+                                <option value="">--</option>
+                                <option value="USD">USD</option>
+                                <option value="INR">INR</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Expected close</span>
+                        <span class="crd-panel-value" id="CrdSumClose">&mdash;</span>
+                        <input type="date" class="crd-edit-input" id="CrdEditClose" />
+                    </div>
+                    <div class="crd-panel-row">
+                        <span class="crd-panel-label">Next follow-up</span>
+                        <span class="crd-panel-value" id="CrdSumFollowup">&mdash;</span>
+                    </div>
+                </div>
+
+                <div class="crd-card">
+                    <div class="crd-panel-title">Company &amp; contact</div>
+                    <div class="crd-panel-row"><span class="crd-panel-label">Company</span><span class="crd-panel-value" id="CrdCoCompany">&mdash;</span></div>
+                    <div class="crd-panel-row"><span class="crd-panel-label">Contact</span><span class="crd-panel-value" id="CrdCoContact">&mdash;</span></div>
+                    <div class="crd-panel-row"><span class="crd-panel-label">Email</span><span class="crd-panel-value" id="CrdCoEmail">&mdash;</span></div>
+                    <div class="crd-panel-row"><span class="crd-panel-label">Phone</span><span class="crd-panel-value" id="CrdCoPhone">&mdash;</span></div>
+                    <div class="crd-panel-row"><span class="crd-panel-label">Country</span><span class="crd-panel-value" id="CrdCoCountry">&mdash;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="crd-tab-content" id="CrdTabActivity"><div class="crd-card">
+            <div class="crd-panel-head">
+                <div class="crd-panel-title" style="margin:0;">Activity &amp; follow-ups</div>
+                <button type="button" class="crd-btn crd-btn-primary" onclick="CrdOpenFollowup()">&#9998; Log follow-up</button>
+            </div>
+            <div class="crd-act-list" id="CrdActivityList"><div class="crd-empty-tab">Loading&hellip;</div></div>
+        </div></div>
+        <div class="crd-tab-content" id="CrdTabEmails"><div class="crd-card">
+            <div class="crd-panel-title">Email history</div>
+            <div class="crd-email-toolbar">
+                <select id="CrdEmailSelect" class="crd-select"></select>
+                <button type="button" class="crd-btn crd-btn-primary" onclick="CrdEmailCurrentPage=1; CrdLoadEmailHistory();">Search</button>
+            </div>
+            <div id="CrdEmailList"><div class="crd-empty-tab">Loading&hellip;</div></div>
+            <div class="crd-pager" id="CrdEmailPager"></div>
+        </div></div>
+        <div class="crd-tab-content" id="CrdTabContacts"><div class="crd-card">
+            <div class="crd-panel-title">Contacts</div>
+            <table class="crd-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Designation</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="CrdContactRows">
+                    <tr><td colspan="5" class="crd-empty-tab">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
+        </div></div>
+        <div class="crd-tab-content" id="CrdTabOrder">
+            <div class="crd-order-grid">
+                <div class="crd-card">
+                    <div class="crd-panel-title">Quote</div>
+                    <div class="crd-order-row"><span class="crd-order-label">Products</span><span class="crd-order-value" id="CrdOrderProducts">&mdash;</span></div>
+                    <div class="crd-order-row"><span class="crd-order-label">Amount</span><span class="crd-order-value" id="CrdOrderAmount">&mdash;</span></div>
+                    <div class="crd-order-row"><span class="crd-order-label">Currency</span><span class="crd-order-value" id="CrdOrderCurrency">&mdash;</span></div>
+                    <div class="crd-order-row"><span class="crd-order-label">Payment terms</span><span class="crd-order-value" id="CrdOrderPaymentTerms">&mdash;</span></div>
+                    <button type="button" class="crd-btn crd-btn-success" id="CrdProformaBtn" style="margin-top:14px;" onclick="CrdGoToProformaInvoice()">Create proforma invoice</button>
+                </div>
+                <div class="crd-card">
+                    <div class="crd-panel-title">Closing &amp; handover</div>
+                    <div id="CrdClosingNotWon">
+                        <div class="crd-empty-tab" style="padding:10px 0 16px;">
+                            Win this renewal to begin closing.<br>
+                            Renewal Won &rarr; proforma invoice &rarr; subscription renewed &amp; handed over.
+                        </div>
+                    </div>
+                    <div id="CrdClosingWon" style="display:none;">
+                        <div class="crd-empty-tab" style="padding:10px 0 4px;">This renewal is won &mdash; ready for invoicing and handover.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="crd-modal-backdrop" id="CrdFollowupBackdrop">
+    <div class="crd-modal">
+        <div class="crd-modal-header">
+            <div class="crd-modal-header-left">
+                <div class="crd-avatar" id="CrdFuAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="crd-modal-title">Log follow-up</div>
+                    <div class="crd-modal-subtitle" id="CrdFuSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="crd-modal-close" onclick="CrdCloseFollowup()">&times;</span>
+        </div>
+        <div class="crd-modal-body">
+            <div class="crd-field-label">What happened?</div>
+            <textarea id="CrdFuDiscussion" class="crd-textarea" placeholder="e.g. Discussed renewal scope and pricing"></textarea>
+
+            <div class="crd-field-label">Move to stage</div>
+            <select id="CrdFuStatus" class="crd-select">
+                <option value="Select Stages"  selected="selected">Select Stages</option>
+                <option value="Open For Renewal">Open For Renewal</option>
+                <option value="In Discussion">In Discussion</option>
+                <option value="RenewWon">Renew Won</option>
+                <option value="RenewLost">Renew Lost</option>
+            </select>
+
+            <div class="crd-field-label">Next follow-up date</div>
+            <input type="date" id="CrdFuNextDate" class="crd-date-input" />
+        </div>
+        <div class="crd-modal-footer">
+            <button type="button" class="crd-btn" onclick="CrdCloseFollowup()">Cancel</button>
+            <button type="button" class="crd-btn crd-btn-primary" id="CrdFuSaveBtn" onclick="CrdSaveFollowup()">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="crd-modal-backdrop" id="CrdWonBackdrop">
+    <div class="crd-modal">
+        <div class="crd-modal-header">
+            <div class="crd-modal-header-left">
+                <div class="crd-avatar" id="CrdWonAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="crd-modal-title">Mark won &mdash; start closing</div>
+                    <div class="crd-modal-subtitle" id="CrdWonSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="crd-modal-close" onclick="CrdCloseWonModal()">&times;</span>
+        </div>
+        <div class="crd-modal-body">
+            <div class="crd-info-banner crd-info-banner-green">
+                &#10003; Winning starts the closing process. The account is created and handed to the CSM <b>only after</b> the Sales Order Form is signed and payment is arranged.
+            </div>
+
+            <div class="crd-field-label" style="margin-top:14px;">Final contract value (USD) <span style="color:#e2453c">*</span></div>
+            <input type="number" id="CrdWonAmount" class="crd-select" placeholder="e.g. 1200" min="0" step="0.01">
+
+            <div class="crd-field-label">Currency <span style="color:#e2453c">*</span></div>
+            <select id="CrdWonCurrency" class="crd-select" onchange="CrdWonCurrencyChanged()">
+                <option value="">Select Currency</option>
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+            </select>
+
+            <div id="CrdWonAmountINRField" style="display:none;">
+                <div class="crd-field-label">Final contract value (INR)</div>
+                <input type="number" id="CrdWonAmountINR" class="crd-select" placeholder="e.g. 100000" min="0" step="0.01">
+            </div>
+
+            <div class="crd-field-label">Payment method</div>
+            <div class="crd-type-toggle" id="CrdWonPaymentToggle">
+                <button type="button" class="crd-type-btn crd-type-btn-active" data-method="PurchaseOrder" onclick="CrdSelectWonPaymentMethod('PurchaseOrder')">Purchase Order</button>
+                <button type="button" class="crd-type-btn" data-method="AdvancePayment" onclick="CrdSelectWonPaymentMethod('AdvancePayment')">Advance payment</button>
+            </div>
+
+            <div id="CrdWonPaymentTermsField">
+                <div class="crd-field-label">Payment terms</div>
+                <select id="CrdWonPaymentTerms" class="crd-select">
+                    <option value="Net 30">Net 30</option>
+                    <option value="Net 60">Net 60</option>
+                    <option value="90 days">90 days</option>
+                </select>
+            </div>
+
+            <div id="CrdWonInvoiceField" style="display:none;">
+                <div class="crd-field-label">Invoice Number <span style="color:#e2453c">*</span></div>
+                <input type="text" id="CrdWonInvoiceNumber" class="crd-select" placeholder="Invoice number">
+            </div>
+
+            <div class="crd-field-label">Upload Sales Order Form<span style="color:#e2453c">*</span></div>
+            <input type="file" id="CrdWonFileUpload" name="FileUpload" class="crd-select" onchange="CrdWonFileSelected()" />
+            <div id="CrdWonFileName" style="font-size:11.5px; color:#7c828a; margin-top:4px;">No file chosen</div>
+
+            <div class="crd-info-banner crd-info-banner-orange" style="margin-top:14px;">
+                &rarr; Next, complete the <b>closing checklist</b> on the lead: sign the Sales Order Form and confirm payment. Then you can create the account, which routes <b>Operations &rarr; Finance &rarr; Department Head</b> before logins go live.
+            </div>
+        </div>
+        <div class="crd-modal-footer">
+            <button type="button" class="crd-btn" onclick="CrdCloseWonModal()">Cancel</button>
+            <button type="button" class="crd-btn crd-btn-primary" id="CrdWonSaveBtn" onclick="CrdSaveWonModal()">Mark as won</button>
+        </div>
+    </div>
+</div>
+
+<div class="crd-modal-backdrop" id="CrdLostBackdrop">
+    <div class="crd-modal">
+        <div class="crd-modal-header">
+            <div class="crd-modal-header-left">
+                <div class="crd-avatar" id="CrdLostAvatar" style="width:34px;height:34px;font-size:13px;background:#e2453c;">?</div>
+                <div>
+                    <div class="crd-modal-title">Mark lost</div>
+                    <div class="crd-modal-subtitle" id="CrdLostSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="crd-modal-close" onclick="CrdCloseLostModal()">&times;</span>
+        </div>
+        <div class="crd-modal-body">
+            <div class="crd-field-label" style="margin-top:0;">Reason for loss <span style="color:#e2453c">*</span></div>
+            <div class="crd-type-toggle" id="CrdLostReasonChips" style="flex-wrap:wrap; height:auto;">
+                <button type="button" class="crd-type-btn" onclick="CrdPickLostReason('Budget')">Budget</button>
+                <button type="button" class="crd-type-btn" onclick="CrdPickLostReason('Went with competitor')">Went with competitor</button>
+                <button type="button" class="crd-type-btn" onclick="CrdPickLostReason('No response')">No response</button>
+                <button type="button" class="crd-type-btn" onclick="CrdPickLostReason('Not a fit')">Not a fit</button>
+                <button type="button" class="crd-type-btn" onclick="CrdPickLostReason('Bad timing')">Bad timing</button>
+            </div>
+            <textarea id="CrdLostReasonText" class="crd-textarea" placeholder="Why was this lead lost?"></textarea>
+        </div>
+        <div class="crd-modal-footer">
+            <button type="button" class="crd-btn" onclick="CrdCloseLostModal()">Cancel</button>
+            <button type="button" class="crd-btn crd-btn-danger" id="CrdLostSaveBtn" onclick="CrdSaveLost()">Mark as lost</button>
+        </div>
+    </div>
+</div>
+
+<div class="crd-modal-backdrop" id="CrdAddContactBackdrop">
+    <div class="crd-modal">
+        <div class="crd-modal-header">
+            <div class="crd-modal-header-left">
+                <div class="crd-avatar" id="CrdContactAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="crd-modal-title">Add contact</div>
+                    <div class="crd-modal-subtitle" id="CrdContactSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="crd-modal-close" onclick="CrdCloseAddContact()">&times;</span>
+        </div>
+        <div class="crd-modal-body">
+            <div class="crd-field-label" style="margin-top:0;">Name</div>
+            <input type="text" id="CrdContactName" class="crd-select" placeholder="Contact name" maxlength="80">
+
+            <div class="crd-field-label">Corporate email</div>
+            <input type="text" id="CrdContactEmail" class="crd-select" placeholder="name@company.com" maxlength="80">
+
+            <div class="crd-field-label">Phone</div>
+            <input type="tel" id="CrdContactPhone" class="crd-select" maxlength="15">
+
+            <div class="crd-field-label">Designation</div>
+            <input type="text" id="CrdContactDesignation" class="crd-select" placeholder="e.g. Procurement Manager" maxlength="80">
+        </div>
+        <div class="crd-modal-footer">
+            <button type="button" class="crd-btn" onclick="CrdCloseAddContact()">Cancel</button>
+            <button type="button" class="crd-btn crd-btn-primary" id="CrdContactSaveBtn" onclick="CrdSaveAddContact()">Add contact</button>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<script>
+    var CrdLeadId = @(ViewBag.LeadId ?? 0);
+    var CrdLead = null;
+
+    function CrdSwitchTab(tab) {
+        $(".crd-tab").removeClass("crd-tab-active");
+        $(".crd-tab[data-tab='" + tab + "']").addClass("crd-tab-active");
+        $(".crd-tab-content").removeClass("crd-tab-content-active");
+        $("#CrdTab" + tab.charAt(0).toUpperCase() + tab.slice(1)).addClass("crd-tab-content-active");
+        if (tab === "emails") CrdLoadEmailDropdown();
+        if (tab === "contacts") CrdRenderContacts();
+    }
+
+    function CrdRenderContacts() {
+        if (!CrdLead || !CrdLead.CompanyName) {
+            $("#CrdContactRows").html("<tr><td colspan='5' class='crd-empty-tab'>No contacts yet.</td></tr>");
+            return;
+        }
+        $("#CrdContactRows").html("<tr><td colspan='5' class='crd-empty-tab'>Loading&hellip;</td></tr>");
+        $.ajax({
+            type: "GET",
+            url: "/LeadManagementSubscription/GetCRMContacts",
+            data: { companyName: CrdLead.CompanyName },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            if (!list.length) {
+                $("#CrdContactRows").html("<tr><td colspan='5' class='crd-empty-tab'>No contacts yet.</td></tr>");
+                return;
+            }
+            var html = "";
+            for (var i = 0; i < list.length; i++) {
+                var c = list[i];
+                var isPrimary = (c.Usertype || "").toLowerCase() === "primary";
+                html += "<tr>";
+                html += "  <td>" + CrdOrDash(c.Name) + "</td>";
+                html += "  <td>" + CrdOrDash(c.Email) + "</td>";
+                html += "  <td>" + CrdOrDash(c.Phone) + "</td>";
+                html += "  <td>&mdash;</td>";
+                html += "  <td><span class='crd-pill-blue'><span class='crd-pill-dot'></span>" + CrdOrDash(c.Usertype) + "</span></td>";
+                html += "</tr>";
+            }
+            $("#CrdContactRows").html(html);
+        }).fail(function () {
+            $("#CrdContactRows").html("<tr><td colspan='5' class='crd-empty-tab'>Couldn't load contacts.</td></tr>");
+        });
+    }
+
+    function CrdEsc(v) { return $("<div>").text(v == null ? "" : v).html(); }
+    function CrdOrDash(v) { return (v == null || v === "") ? "&mdash;" : CrdEsc(v); }
+
+    function CrdParseDate(v) {
+        if (!v) return null;
+        var s = String(v);
+        var m = /\/Date\((-?\d+)\)\//.exec(s);
+        var d = m ? new Date(parseInt(m[1], 10)) : new Date(s.indexOf("T") === -1 ? s.replace(" ", "T") : s);
+        return isNaN(d.getTime()) ? null : d;
+    }
+    function CrdFmtDate(v) {
+        var d = CrdParseDate(v);
+        if (!d) return "&mdash;";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+    function CrdInitials(name) {
+        if (!name) return "?";
+        var p = $.trim(name).split(/\s+/);
+        var i = p[0].charAt(0);
+        if (p.length > 1) i += p[p.length - 1].charAt(0);
+        return i.toUpperCase();
+    }
+    function CrdMoney(amount, currency) {
+        if (amount == null || amount === "") return "&mdash;";
+        var n = parseFloat(String(amount).replace(/[^0-9.\-]/g, ""));
+        if (isNaN(n)) return "&mdash;";
+        var sym = "$", code = (currency || "").toUpperCase();
+        if (code === "INR") sym = "&#8377;"; else if (code === "EUR") sym = "&#8364;"; else if (code === "GBP") sym = "&#163;";
+        return sym + Math.round(n).toLocaleString();
+    }
+
+    function CrdRender(lead) {
+        if (!lead) {
+            $("#CrdLoading").text("Lead not found.");
+            return;
+        }
+        CrdLead = lead;
+        $("#CrdLoading").hide();
+        $("#CrdContent").show();
+
+        var heading = lead.CompanyName || lead.Name || "(unnamed)";
+        $("#CrdCrumbName").text(heading);
+        $("#CrdAvatar").text(CrdInitials(heading));
+        $("#CrdCompanyName").html(CrdOrDash(heading));
+
+        var subParts = [];
+        if (lead.Name) subParts.push(CrdEsc(lead.Name));
+        if (lead.CorpEmail) subParts.push(CrdEsc(lead.CorpEmail));
+        if (lead.CountryName) subParts.push(CrdEsc(lead.CountryName));
+        $("#CrdSubText").html(subParts.length ? subParts.join(" &middot; ") : "&mdash;");
+        $("#CrdStageText").text(lead.Status || "In discussion");
+        if (lead.LeadType) { $("#CrdTypePill").text(lead.LeadType).show(); }
+        // Won / Lost buttons - only while the lead is still Open (hidden once won/lost).
+        var isOpen = /^\s*open\s*$/i.test(lead.Status || "");
+        $("#CrdWonBtn").toggle(isOpen);
+        $("#CrdLostBtn").toggle(isOpen);
+
+        // Won (RenewWon) ho chuki lead edit nahi hogi — Edit button hide.
+        var isWonLead = /won/i.test(lead.Status || "");
+        $("#CrdEditBtn").toggle(!isWonLead);
+
+        $("#CrdValue").html(CrdMoney(lead.Amount, lead.Currency));
+        $("#CrdExpectedClose").html(CrdFmtDate(lead.ExpectedCloseDate));
+        $("#CrdSource").html(CrdOrDash(lead.OutboundLeadSource));
+        $("#CrdOwner").html(CrdOrDash(lead.createdby));
+
+        $("#CrdSumStage").html(CrdOrDash(lead.Status));
+        $("#CrdSumType").html(CrdOrDash(lead.LeadType));
+        $("#CrdSumSource").html(CrdOrDash(lead.OutboundLeadSource));
+        $("#CrdSumInterested").html(CrdOrDash(lead.DiscriptionMessage));
+        $("#CrdSumValue").html(CrdMoney(lead.Amount, lead.Currency));
+        $("#CrdSumClose").html(CrdFmtDate(lead.ExpectedCloseDate));
+        $("#CrdSumFollowup").html(CrdFmtDate(lead.SetFollowUp));
+
+        $("#CrdCoCompany").html(CrdOrDash(lead.CompanyName));
+        $("#CrdCoContact").html(CrdOrDash(lead.Name));
+        $("#CrdCoEmail").html(CrdOrDash(lead.CorpEmail));
+        var phone = [lead.ContactCountryCode, lead.Phone].filter(function (x) { return !!x; }).join(" ");
+        $("#CrdCoPhone").html(CrdOrDash($.trim(phone)));
+        $("#CrdCoCountry").html(CrdOrDash(lead.CountryName));
+
+        CrdRenderOrder(lead);
+    }
+
+    function CrdRenderOrder(lead) {
+        if (!lead) return;
+        $("#CrdOrderProducts").html(CrdOrDash(lead.DiscriptionMessage));
+        $("#CrdOrderAmount").html(CrdMoney(lead.Amount, lead.Currency));
+        $("#CrdOrderCurrency").html(CrdOrDash(lead.Currency));
+        $("#CrdOrderPaymentTerms").html(lead.PaymentTerms ? CrdEsc(lead.PaymentTerms) : "To be set on win (PO Net 30/60 or advance)");
+        var isWon = /won/i.test(lead.Status || "");
+        $("#CrdClosingNotWon").toggle(!isWon);
+        $("#CrdClosingWon").toggle(isWon);
+    }
+
+    // ---- Mark won - start closing modal (same as Sales) ------------------
+    var CrdWonPaymentMethod = "PurchaseOrder";
+
+    function CrdOpenWonModal() {
+        if (!CrdLead) return;
+        CrdWonPaymentMethod = "PurchaseOrder";
+        $(".crd-type-btn[data-method]").removeClass("crd-type-btn-active");
+        $(".crd-type-btn[data-method='PurchaseOrder']").addClass("crd-type-btn-active");
+        $("#CrdWonAmount").val("");
+        $("#CrdWonCurrency").val("");
+        $("#CrdWonAmountINR").val("");
+        $("#CrdWonAmountINRField").hide();
+        $("#CrdWonPaymentTerms").val("Net 30");
+        $("#CrdWonPaymentTermsField").show();
+        $("#CrdWonInvoiceField").hide();
+        $("#CrdWonInvoiceNumber").val("");
+        $("#CrdWonFileUpload").val("");
+        $("#CrdWonFileName").text("No file chosen");
+        var heading = (CrdLead.CompanyName || CrdLead.Name) || "Lead";
+        $("#CrdWonAvatar").text(CrdInitials(heading));
+        $("#CrdWonSubtitle").text(heading);
+        $("#CrdWonBackdrop").addClass("crd-modal-open");
+    }
+
+    function CrdCloseWonModal() {
+        $("#CrdWonBackdrop").removeClass("crd-modal-open");
+    }
+
+    function CrdWonCurrencyChanged() {
+        var isInr = $("#CrdWonCurrency").val() === "INR";
+        $("#CrdWonAmountINRField").toggle(isInr);
+        if (!isInr) $("#CrdWonAmountINR").val("");
+    }
+
+    function CrdSelectWonPaymentMethod(method) {
+        CrdWonPaymentMethod = method;
+        $(".crd-type-btn[data-method]").removeClass("crd-type-btn-active");
+        $(".crd-type-btn[data-method='" + method + "']").addClass("crd-type-btn-active");
+        $("#CrdWonPaymentTermsField").toggle(method === "PurchaseOrder");
+        $("#CrdWonInvoiceField").toggle(method === "AdvancePayment");
+    }
+
+    function CrdWonFileSelected() {
+        var input = $("#CrdWonFileUpload").get(0);
+        $("#CrdWonFileName").text(input && input.files && input.files.length ? input.files[0].name : "No file chosen");
+    }
+
+    function CrdUploadWonFile() {
+        var files = $("#CrdWonFileUpload").get(0).files;
+        if (!files || !files.length) return;
+        var fileData = new FormData();
+        fileData.append("LeadId", CrdLeadId);
+        for (var i = 0; i < files.length; i++) fileData.append("FileUpload", files[i]);
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/UploadLeadFiles",
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            data: fileData
+        });
+    }
+
+    function CrdSaveWonModal() {
+        var amount = $.trim($("#CrdWonAmount").val());
+        if (amount === "") {
+            if (window.swal) swal("Warning", "Please enter the final contract value (USD).", "error");
+            else alert("Please enter the final contract value (USD).");
+            return;
+        }
+        var currency = $("#CrdWonCurrency").val();
+        if (!currency) {
+            if (window.swal) swal("Warning", "Please select a currency.", "error");
+            else alert("Please select a currency.");
+            return;
+        }
+        var amountINR = $.trim($("#CrdWonAmountINR").val());
+        var invoiceNumber = $.trim($("#CrdWonInvoiceNumber").val());
+        if (CrdWonPaymentMethod === "AdvancePayment" && !invoiceNumber) {
+            if (window.swal) swal("Warning", "Please enter the invoice number.", "error");
+            else alert("Please enter the invoice number.");
+            return;
+        }
+        var filesval = $("#CrdWonFileUpload").val();
+        var files = "";
+        if (filesval !== "") {
+            var fileInput = $("#CrdWonFileUpload").get(0).files[0];
+            var originalName = fileInput.name;
+            var extension = originalName.substring(originalName.lastIndexOf('.'));
+            var nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'));
+            var dateStamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+            files = nameWithoutExt + "_" + dateStamp + "_" + CrdLeadId + extension;
+        }
+        if (files === "") {
+            if (window.swal) swal("Warning", "Please Upload Sales Order Form.", "error");
+            else alert("Please Upload Sales Order Form.");
+            return;
+        }
+        $("#CrdWonSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/MarkCRMWon",
+            data: {
+                id: CrdLeadId,
+                amount: amount,
+                currency: currency,
+                amountINR: amountINR,
+                paymentOption: CrdWonPaymentMethod,
+                paymentTerms: CrdWonPaymentMethod === "PurchaseOrder" ? $("#CrdWonPaymentTerms").val() : "",
+                invoiceNumber: invoiceNumber,
+                OrderFrom: files
+            }
+        }).done(function (response) {
+            $("#CrdWonSaveBtn").prop("disabled", false).text("Mark as won");
+            if (response && response.Success) {
+                CrdUploadWonFile();
+                CrdCloseWonModal();
+                var goPipeline = function () { window.location.href = "/LeadManagementSubscription/Pipeline"; };
+                if (window.swal) swal("Marked won", "Moved to Renewal Won.", "success").then(goPipeline);
+                else goPipeline();
+            } else {
+                if (window.swal) swal("Couldn't update", (response && response.Message) || "Please try again.", "error");
+                else alert("Couldn't update. Please try again.");
+            }
+        }).fail(function () {
+            $("#CrdWonSaveBtn").prop("disabled", false).text("Mark as won");
+            if (window.swal) swal("Couldn't update", "Please try again.", "error");
+            else alert("Couldn't update. Please try again.");
+        });
+    }
+
+    // ---- Mark lost modal (same as Sales) ---------------------------------
+    function CrdPickLostReason(text) {
+        $("#CrdLostReasonText").val(text);
+    }
+
+    function CrdOpenLostModal() {
+        if (!CrdLead) return;
+        var heading = (CrdLead.CompanyName || CrdLead.Name) || "Lead";
+        $("#CrdLostAvatar").text(CrdInitials(heading));
+        $("#CrdLostSubtitle").text(heading);
+        $("#CrdLostReasonText").val("");
+        $("#CrdLostBackdrop").addClass("crd-modal-open");
+    }
+
+    function CrdCloseLostModal() {
+        $("#CrdLostBackdrop").removeClass("crd-modal-open");
+    }
+
+    function CrdSaveLost() {
+        var reason = $.trim($("#CrdLostReasonText").val());
+        if (!reason) {
+            if (window.swal) swal("Reason needed", "Please enter a reason for the loss.", "warning");
+            else alert("Please enter a reason for the loss.");
+            return;
+        }
+        $("#CrdLostSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/UpdateCRMOpenLead",
+            data: {
+                Id: CrdLeadId,
+                Status: "Lost",
+                LeadType: CrdLead.LeadType || "",
+                OutboundLeadSource: CrdLead.OutboundLeadSource || "",
+                DiscriptionMessage: CrdLead.DiscriptionMessage || "",
+                Amount: CrdLead.Amount || "",
+                Currency: CrdLead.Currency || "",
+                ExpectedCloseDate: CrdDateInput(CrdLead.ExpectedCloseDate),
+                SetFollowUp: CrdDateInput(CrdLead.SetFollowUp),
+                LostReason: reason
+            }
+        }).done(function (response) {
+            $("#CrdLostSaveBtn").prop("disabled", false).text("Mark as lost");
+            if (response && response.Success) {
+                CrdCloseLostModal();
+                var goPipeline = function () { window.location.href = "/LeadManagementSubscription/Pipeline"; };
+                if (window.swal) swal("Marked lost", "Moved to Renewal Lost.", "success").then(goPipeline);
+                else goPipeline();
+            } else {
+                if (window.swal) swal("Couldn't save", "Please try again.", "error");
+                else alert("Couldn't save. Please try again.");
+            }
+        }).fail(function () {
+            $("#CrdLostSaveBtn").prop("disabled", false).text("Mark as lost");
+            if (window.swal) swal("Couldn't save", "Please try again.", "error");
+            else alert("Couldn't save. Please try again.");
+        });
+    }
+
+    function CrdGoToProformaInvoice() {
+        var isWon = CrdLead && /won/i.test(CrdLead.Status || "");
+        if (!isWon) {
+            if (window.swal) swal("Not available yet", "Win this renewal first before creating a proforma invoice.", "error");
+            else alert("Win this renewal first before creating a proforma invoice.");
+            return;
+        }
+        window.location.href = "@Url.Action("ChemAnalystProformaInvoiceList", "Invoice")";
+    }
+
+    // yyyy-MM-dd for <input type=date>
+    function CrdDateInput(v) {
+        var d = CrdParseDate(v);
+        if (!d) return "";
+        var m = ("0" + (d.getMonth() + 1)).slice(-2);
+        var day = ("0" + d.getDate()).slice(-2);
+        return d.getFullYear() + "-" + m + "-" + day;
+    }
+
+    function CrdStartEdit() {
+        if (!CrdLead) return;
+        $("#CrdEditStatus").val(CrdLead.Status || "Open");
+        $("#CrdEditLeadType").val(CrdLead.LeadType || "");
+        $("#CrdEditSource").val(CrdLead.OutboundLeadSource || "");
+        $("#CrdEditMessage").val(CrdLead.DiscriptionMessage || "");
+        $("#CrdEditAmount").val(CrdLead.Amount || "");
+        $("#CrdEditCurrency").val(CrdLead.Currency || "");
+        $("#CrdEditClose").val(CrdDateInput(CrdLead.ExpectedCloseDate));
+        $("#CrdLeadSummaryCard").addClass("crd-editing");
+        $("#CrdEditBtn").hide();
+        $("#CrdCancelBtn, #CrdSaveBtn").show();
+    }
+
+    function CrdCancelEdit() {
+        $("#CrdLeadSummaryCard").removeClass("crd-editing");
+        $("#CrdCancelBtn, #CrdSaveBtn").hide();
+        $("#CrdEditBtn").show();
+    }
+
+    function CrdSaveEdit() {
+        $("#CrdSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/UpdateCRMOpenLead",
+            data: {
+                Id: CrdLeadId,
+                Status: $("#CrdEditStatus").val(),
+                LeadType: $("#CrdEditLeadType").val(),
+                OutboundLeadSource: $.trim($("#CrdEditSource").val()),
+                DiscriptionMessage: $.trim($("#CrdEditMessage").val()),
+                Amount: $.trim($("#CrdEditAmount").val()),
+                Currency: $("#CrdEditCurrency").val(),
+                ExpectedCloseDate: $("#CrdEditClose").val(),
+                SetFollowUp: CrdDateInput(CrdLead.SetFollowUp)
+            }
+        }).done(function (response) {
+            $("#CrdSaveBtn").prop("disabled", false).text("Save");
+            if (response && response.Success) {
+                CrdCancelEdit();
+                // reload fresh data
+                $.ajax({
+                    type: "GET",
+                    url: "/LeadManagementSubscription/GetCRMOpenLeadData",
+                    data: { id: CrdLeadId },
+                    dataType: "json"
+                }).done(function (r) { CrdRender(r && r.DataItem); });
+            } else if (window.swal) {
+                swal("Couldn't save", "Please try again.", "error");
+            }
+        }).fail(function () {
+            $("#CrdSaveBtn").prop("disabled", false).text("Save");
+            if (window.swal) swal("Couldn't save", "Please try again.", "error");
+        });
+    }
+
+    function CrdActivityIcon(status) {
+        var s = (status || "").toLowerCase();
+        if (s.indexOf("won") !== -1) return "&#9989;";      // check
+        if (s.indexOf("lost") !== -1) return "&#10060;";    // cross
+        return "&#128172;";                                  // speech bubble
+    }
+
+    function CrdRenderActivity(list) {
+        var $box = $("#CrdActivityList");
+        var html = "";
+        if (list && list.length) {
+            for (var i = 0; i < list.length; i++) {
+                var a = list[i];
+                var sub = CrdOrDash(a.Discussion);
+                if (a.CreatedBy) sub += " &middot; by " + CrdEsc(a.CreatedBy);
+                if (a.SetFollowUp) sub += " &middot; next " + CrdFmtDate(a.SetFollowUp);
+                html += "<div class='crd-act-row'>";
+                html += "  <div class='crd-act-icon'>" + CrdActivityIcon(a.DiscussionStatus) + "</div>";
+                html += "  <div style='flex:1;'><div class='crd-act-title'>" + (a.DiscussionStatus ? CrdEsc(a.DiscussionStatus) : "Follow-up logged") + "</div>";
+                html += "  <div class='crd-act-sub'>" + sub + "</div></div>";
+                html += "  <div class='crd-act-date'>" + CrdFmtDate(a.CreatedDate) + "</div>";
+                html += "</div>";
+            }
+        }
+        // "Lead created" anchor row at the bottom, like Sales
+        if (CrdLead) {
+            html += "<div class='crd-act-row'>";
+            html += "  <div class='crd-act-icon'>&#128196;</div>";
+            html += "  <div style='flex:1;'><div class='crd-act-title'>Lead created</div>";
+            html += "  <div class='crd-act-sub'>Source: " + CrdOrDash(CrdLead.OutboundLeadSource) + "</div></div>";
+            html += "  <div class='crd-act-date'>" + CrdFmtDate(CrdLead.CreatedDate) + "</div>";
+            html += "</div>";
+        }
+        if (!html) html = '<div class="crd-empty-tab">No activity yet.</div>';
+        $box.html(html);
+    }
+
+    function CrdLoadActivity() {
+        $.ajax({
+            type: "GET",
+            url: "/LeadManagementSubscription/GetCRMFollowUps",
+            data: { id: CrdLeadId },
+            dataType: "json"
+        }).done(function (response) {
+            CrdRenderActivity(response && response.DataItem);
+        }).fail(function () {
+            $("#CrdActivityList").html('<div class="crd-empty-tab">Couldn\'t load activity.</div>');
+        });
+    }
+
+    // ---- Emails tab (same as Sales) --------------------------------------
+    var CrdEmailCurrentPage = 1;
+
+    function CrdCompactPageList(activePage, numberOfPages) {
+        if (numberOfPages <= 7) {
+            var arr = [];
+            for (var i = 1; i <= numberOfPages; i++) arr.push(i);
+            return arr;
+        }
+        if (activePage <= 4) return [1, 2, 3, 4, 5, "...", numberOfPages];
+        if (activePage >= numberOfPages - 3) return [1, "...", numberOfPages - 4, numberOfPages - 3, numberOfPages - 2, numberOfPages - 1, numberOfPages];
+        return [1, "...", activePage - 1, activePage, activePage + 1, "...", numberOfPages];
+    }
+
+    function CrdRenderPager(containerId, activePage, numberOfPages, gotoFnName) {
+        if (!numberOfPages || numberOfPages <= 1) { $("#" + containerId).html(""); return; }
+        var pages = CrdCompactPageList(activePage, numberOfPages);
+        var html = "";
+        html += "<button type='button' class='crd-pg-btn' " + (activePage <= 1 ? "disabled" : "onclick='" + gotoFnName + "(" + (activePage - 1) + ")'") + ">&lsaquo;</button>";
+        for (var i = 0; i < pages.length; i++) {
+            var p = pages[i];
+            if (p === "...") html += "<span class='crd-pg-dots'>&hellip;</span>";
+            else html += "<button type='button' class='crd-pg-btn" + (p === activePage ? " crd-pg-active" : "") + "' onclick='" + gotoFnName + "(" + p + ")'>" + p + "</button>";
+        }
+        html += "<button type='button' class='crd-pg-btn' " + (activePage >= numberOfPages ? "disabled" : "onclick='" + gotoFnName + "(" + (activePage + 1) + ")'") + ">&rsaquo;</button>";
+        $("#" + containerId).html(html);
+    }
+
+    function CrdLoadEmailDropdown() {
+        if (!CrdLead || !CrdLead.CorpEmail) {
+            $("#CrdEmailList").html("<div class='crd-empty-tab'>No email on this lead.</div>");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/OutLookChatHistory/GetEmailDDL",
+            data: { UserType: "NotAdmin", Email: CrdLead.CorpEmail },
+            async: true
+        }).done(function (json) {
+            var list = (json && json.DateList) || [];
+            var html = "<option value=''>Select User Emails</option>";
+            for (var i = 0; i < list.length; i++) {
+                html += "<option value='" + CrdEsc(list[i].Email) + "'>" + CrdEsc(list[i].Email) + "</option>";
+            }
+            $("#CrdEmailSelect").html(html);
+            var emailToBind = CrdLead.CorpEmail;
+            $("#CrdEmailSelect option[value='" + emailToBind + "']").remove();
+            $("#CrdEmailSelect").append(new Option(emailToBind, emailToBind));
+            $("#CrdEmailSelect").val(emailToBind);
+            $("#CrdEmailPager").html("");
+            $("#CrdEmailList").html("<div class='crd-empty-tab'>Select an email and click Search.</div>");
+        }).fail(function () {
+            $("#CrdEmailList").html("<div class='crd-empty-tab'>Couldn't load email list.</div>");
+        });
+    }
+
+    function CrdRenderEmailRows(list) {
+        if (!list || !list.length) {
+            $("#CrdEmailList").html("<div class='crd-empty-tab'>No emails found.</div>");
+            return;
+        }
+        var html = "";
+        var bodies = [];
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var isReceived = !item.SentDate;
+            bodies.push(item.Body || "");
+            html += "<div class='crd-email-row " + (isReceived ? "crd-email-row-received" : "crd-email-row-sent") + "'>";
+            html += isReceived
+                ? "<span class='crd-email-badge crd-email-badge-received'>Received mail</span>"
+                : "<span class='crd-email-badge crd-email-badge-sent'>Sent mail</span>";
+            html += "<div class='crd-email-field'><b>Sender:</b>" + CrdOrDash(item.Sender) + "</div>";
+            html += "<div class='crd-email-field'><b>Subject:</b>" + CrdOrDash(item.Subject) + "</div>";
+            html += "<div class='crd-email-field'><b>Recipient:</b>" + CrdOrDash(item.Recipient) + "</div>";
+            if (item.CC_EMAil) html += "<div class='crd-email-field'><b>CC:</b>" + CrdEsc(item.CC_EMAil) + "</div>";
+            if (item.BCC_EMail) html += "<div class='crd-email-field'><b>BCC:</b>" + CrdEsc(item.BCC_EMail) + "</div>";
+            if (item.DateReceived) html += "<div class='crd-email-field'><b>Received date:</b>" + CrdEsc(item.DateReceived) + "</div>";
+            if (item.SentDate) html += "<div class='crd-email-field'><b>Send date:</b>" + CrdEsc(item.SentDate) + "</div>";
+            html += "<iframe class='crd-email-body-frame' id='CrdEmailFrame_" + i + "' sandbox=''></iframe>";
+            if (item.attachmentFilePaths) {
+                var files = item.attachmentFilePaths.split(",");
+                var attHtml = "";
+                for (var f = 0; f < files.length; f++) {
+                    var fp = $.trim(files[f]);
+                    var fileName = fp.split("\\").pop().split("/").pop();
+                    var url = "/OutLookChatHistory/DownloadFile?filePath=E:\\EmailAttachments&fileName=" + encodeURIComponent(fileName);
+                    attHtml += "<a href='" + url + "' target='_blank' style='display:block;'>" + CrdEsc(fileName) + "</a>";
+                }
+                html += "<div class='crd-email-field'><b>Attachments:</b></div>" + attHtml;
+            }
+            html += "</div>";
+        }
+        $("#CrdEmailList").html(html);
+        for (var b = 0; b < bodies.length; b++) {
+            var frame = document.getElementById("CrdEmailFrame_" + b);
+            if (frame) frame.srcdoc = bodies[b];
+        }
+    }
+
+    function CrdLoadEmailHistory() {
+        var selectedEmail = $("#CrdEmailSelect").val() || (CrdLead && CrdLead.CorpEmail) || "";
+        $("#CrdEmailList").html("<div class='crd-empty-tab'>Loading&hellip;</div>");
+        var url = "/OutLookChatHistory/GetUserEmailAllhistoryDetails?searchKeyword='" + encodeURIComponent(selectedEmail) + "'&PageNumber=" + CrdEmailCurrentPage + "&Email=" + encodeURIComponent(selectedEmail);
+        $.ajax({
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (json) {
+            var list = (json && json.DateList) || [];
+            CrdRenderEmailRows(list);
+            var activePage = (json && json.ActivePage) || 1;
+            var numberOfPages = (json && json.NumberOfPages) || 0;
+            CrdEmailCurrentPage = activePage;
+            CrdRenderPager("CrdEmailPager", activePage, numberOfPages, "GoToCrdEmailPage");
+        }).fail(function () {
+            $("#CrdEmailList").html("<div class='crd-empty-tab'>Couldn't load email history.</div>");
+        });
+    }
+
+    function GoToCrdEmailPage(page) {
+        CrdEmailCurrentPage = page;
+        CrdLoadEmailHistory();
+    }
+
+    // ---- Add contact modal (same as Sales) --------------------------------
+    var CrdContactPhoneIti = null;
+
+    function CrdOpenAddContact() {
+        if (!CrdLead) return;
+        var heading = CrdLead.CompanyName || CrdLead.Name;
+        $("#CrdContactAvatar").text(CrdInitials(heading));
+        $("#CrdContactSubtitle").text(heading || "");
+        $("#CrdContactName").val("");
+        $("#CrdContactEmail").val("");
+        $("#CrdContactDesignation").val("");
+        $("#CrdContactPhone").val("");
+
+        if (window.intlTelInput) {
+            if (CrdContactPhoneIti) { CrdContactPhoneIti.destroy(); CrdContactPhoneIti = null; }
+            CrdContactPhoneIti = window.intlTelInput(document.getElementById("CrdContactPhone"), {
+                initialCountry: "in",
+                separateDialCode: true
+            });
+        }
+        $("#CrdContactPhone").off("input.crdphone").on("input.crdphone", function () {
+            var digits = $(this).val().replace(/\D/g, "");
+            if (digits.length > 15) digits = digits.substring(0, 15);
+            $(this).val(digits);
+        });
+
+        $("#CrdAddContactBackdrop").addClass("crd-modal-open");
+    }
+
+    function CrdCloseAddContact() {
+        $("#CrdAddContactBackdrop").removeClass("crd-modal-open");
+    }
+
+    function CrdSaveAddContact() {
+        var name = $.trim($("#CrdContactName").val());
+        var email = $.trim($("#CrdContactEmail").val());
+        var designation = $.trim($("#CrdContactDesignation").val());
+
+        function warn(t, m) { if (window.swal) swal(t, m, "warning"); else alert(m); }
+
+        if (!name) { warn("Add a name", "Contact name is required."); return; }
+        if (!email) { warn("Add an email", "Corporate email is required."); return; }
+        if (!/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email)) { warn("Check the email", "That doesn't look like a valid email address."); return; }
+        if (name.length > 80 || email.length > 80 || designation.length > 80) { warn("Too long", "Name, email and designation can be at most 80 characters."); return; }
+
+        var countryCode = "";
+        var contactNumber = $.trim($("#CrdContactPhone").val()).replace(/\D/g, "");
+        if (CrdContactPhoneIti) {
+            var countryData = CrdContactPhoneIti.getSelectedCountryData();
+            countryCode = countryData && countryData.dialCode ? "+" + countryData.dialCode : "";
+        }
+        if (!contactNumber) { warn("Add a phone", "Phone number is required."); return; }
+        if (contactNumber.length < 7 || contactNumber.length > 15) { warn("Check the phone", "Phone number should be 7 to 15 digits."); return; }
+
+        $("#CrdContactSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/AddCRMContact",
+            data: {
+                id: CrdLeadId,
+                name: name,
+                corpEmail: email,
+                contactCountryCode: countryCode,
+                contactNumber: contactNumber,
+                designation: designation
+            }
+        }).done(function (response) {
+            $("#CrdContactSaveBtn").prop("disabled", false).text("Add contact");
+            if (response && response.Success) {
+                CrdCloseAddContact();
+                CrdRenderContacts();
+                if (window.swal) swal("Saved", "Contact added.", "success");
+                else alert("Contact added.");
+            } else {
+                var msg = (response && response.Message) || "Please try again.";
+                if (window.swal) swal("Couldn't save", msg, "error");
+                else alert(msg);
+            }
+        }).fail(function () {
+            $("#CrdContactSaveBtn").prop("disabled", false).text("Add contact");
+            if (window.swal) swal("Couldn't save", "Please try again.", "error");
+            else alert("Couldn't save. Please try again.");
+        });
+    }
+
+    function CrdOpenFollowup() {
+        if (!CrdLeadId) return;
+        var heading = (CrdLead && (CrdLead.CompanyName || CrdLead.Name)) || "(unnamed)";
+        $("#CrdFuAvatar").text(CrdInitials(heading));
+        $("#CrdFuSubtitle").text(heading);
+        $("#CrdFuDiscussion").val("");
+        //$("#CrdFuStatus").val(CrdLead && CrdLead.Status && /renew/i.test(CrdLead.Status) ? CrdLead.Status : "Renew");
+        $("#CrdFuNextDate").val(CrdDateInput(CrdLead && CrdLead.SetFollowUp));
+        $("#CrdFollowupBackdrop").addClass("crd-modal-open");
+    }
+
+    function CrdCloseFollowup() {
+        $("#CrdFollowupBackdrop").removeClass("crd-modal-open");
+    }
+
+    function CrdSaveFollowup() {
+        var discussion = $.trim($("#CrdFuDiscussion").val());
+        if (!discussion) {
+            if (window.swal) swal("Add a note", "Describe what happened first.", "warning");
+            else alert("Please describe what happened first.");
+            return;
+        }
+        $("#CrdFuSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/AddCRMFollowUp",
+            data: {
+                openId: CrdLeadId,
+                discussion: discussion,
+                discussionStatus: $("#CrdFuStatus").val(),
+                nextFollowUp: $("#CrdFuNextDate").val()
+            }
+        }).done(function (response) {
+            $("#CrdFuSaveBtn").prop("disabled", false).text("Save");
+            if (response && response.Success) {
+                CrdCloseFollowup();
+                CrdLoadActivity();
+                if (window.swal) swal("Saved", "Follow-up added.", "success");
+                else alert("Follow-up added.");
+            } else {
+                if (window.swal) swal("Couldn't save", "Please try again.", "error");
+                else alert("Couldn't save. Please try again.");
+            }
+        }).fail(function () {
+            $("#CrdFuSaveBtn").prop("disabled", false).text("Save");
+            if (window.swal) swal("Couldn't save", "Please try again.", "error");
+            else alert("Couldn't save. Please try again.");
+        });
+    }
+
+    $(document).ready(function () {
+        if (!CrdLeadId) { CrdRender(null); return; }
+        $.ajax({
+            type: "GET",
+            url: "/LeadManagementSubscription/GetCRMOpenLeadData",
+            data: { id: CrdLeadId },
+            dataType: "json"
+        }).done(function (response) {
+            CrdRender(response && response.DataItem);
+        }).fail(function () {
+            $("#CrdLoading").text("Couldn't load this lead - please refresh.");
+        });
+
+        CrdLoadActivity();
+    });
+</script>

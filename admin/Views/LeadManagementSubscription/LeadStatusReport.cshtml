@@ -1,0 +1,404 @@
+﻿
+@{
+    ViewBag.Title = "LeadStatusReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<style>
+    .select2-results__option[aria-selected] {
+        cursor: pointer;
+        color: black;
+    }
+    .pt-4 {
+        padding-top:16px;
+    }
+    .px-4 {
+        padding-left:8px;
+        padding-right:8px;
+    }
+    .form-control-sm {
+        height: 28px;
+    }
+    .btn-sm {
+        height:28px
+    }
+   
+</style>
+
+<div class="white-wrapper" id="dashboarddiv">
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-12"><h5 style="color:white;margin-bottom:10px!important;line-height: inherit;">Lead Status Report</h5></div>
+
+           
+            <div class="col-md-12">                
+               <div class="panel bg-black">
+                   <div class="panel-body" style="padding: 5px 10px;">
+                       <div class="row">
+                           <div class="col-md-4">
+                               <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+                               <label class="small text-muted">Select</label>
+                               <div class="d-flex align-items-center">
+                                   <select id="salesName" class="form-control form-control-sm" onchange="getStatusReport()">
+                                       <option value="">select Name</option>
+                                   </select>
+
+                               </div>
+
+                           </div>
+                           <div class="col-md-2">
+                               <label class="small text-muted">From Date</label>
+                               <input type="text" class="form-control form-control-sm" id="fromDatess" value="">
+                           </div>
+                           <div class="col-md-2">
+                               <label class="small text-muted">To Date</label>
+                               <input type="text" class="form-control form-control-sm" id="ToDatess" value="">
+                           </div>
+
+                           <div class="col-md-4">
+                               @*<label class="small text-muted">To Date</label>*@
+                               <label class="small text-muted"> &nbsp;</label>
+                               <br />
+                               <button type="button" class="btn btn-sm btn-primary px-4" onclick="getStatusReport()">Filter</button>
+                               <button type="button" class="btn btn-sm btn-danger px-4" onclick="ClearFilter()">Clear</button>
+                           </div>
+
+                       </div>
+                   </div>
+               </div>
+               
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-5">
+                <div class="panel bg-black text-white">
+                    <div class="panel-body small">
+                        <div class="d-flex justify-content-between">Name: <span class="fw-bold" id="Name"></span></div>
+                        <div class="d-flex justify-content-between pt-4">All Lead : <span class="fw-bold" id="TotalLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total Lead Open : <span id="TotalOpenLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Open Lead Status : <span class="fw-bold" id="OpenLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Lost Lead Status : <span class="fw-bold" id="LostLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Won Lead Status : <span class="fw-bold" id="WonLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Follow Up Lead : <span class="fw-bold" id="FollowUpLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">No Follow Up Lead : <span class="fw-bold" id="noFollowUpLead"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Demo Count : <span class="fw-bold" id="DemoCount"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Unused Count : <span class="fw-bold" id="UnusedCount"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total INR Invoice : <span class="fw-bold" id="INRInvoice"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total INR Invoice Amount : <span class="fw-bold" id="INRTotalInvoiceAmount"></span></div>
+
+                        <div class="d-flex justify-content-between pt-4">Total USD Invoice : <span class="fw-bold" id="USDInvoice"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total USD Invoice Amount : <span class="fw-bold" id="USDTotalInvoiceAmount"></span></div>
+
+                        <div class="d-flex justify-content-between pt-4">Total WON Invoice : <span class="fw-bold" id="WONInvoice"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total WON Invoice Amount : <span class="fw-bold" id="WONTotalInvoiceAmount"></span></div>
+
+                        <div class="d-flex justify-content-between pt-4">Total YEN Invoice : <span class="fw-bold" id="YENInvoice"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total YEN Invoice Amount : <span class="fw-bold" id="YENTotalInvoiceAmount"></span></div>
+
+                        <div class="d-flex justify-content-between pt-4">Total EURO Invoice : <span class="fw-bold" id="EUROInvoice"></span></div>
+                        <div class="d-flex justify-content-between pt-4">Total EURO Invoice Amount : <span class="fw-bold" id="EUROTotalInvoiceAmount"></span></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+
+                   
+        </div>
+        
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+        $('#salesName').select2({
+            placeholder: "Select Name",
+            allowClear: true
+        });
+    });
+
+
+    function ClearFilter() {
+
+        $('#fromDatess').val('');
+        $('#ToDatess').val('');
+        getStatusReport();
+    }
+    $(document).ready(function () {
+        $("#fromDatess").datepicker({ dateFormat: "yy-mm-dd" });
+        $("#ToDatess").datepicker({ dateFormat: "yy-mm-dd" });
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetEmployeeMasterOpenLeadData",
+            success: function (response) {
+                debugger;
+                var innerHTML = "";
+                var innerHTML2 = "";
+                innerHTML += "<option value=''>--Select Parent--</option>";
+             
+                $(response).each(function (index, value) {
+                    if (value.Id != null || value.Id != "" || value.Id != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.Name + "'> " + value.Name + "</option>"                     
+                    }
+                });
+                if (response == '' || response == null) {
+                    $('#salesName').html("<option value=''>Select Name</option>");                  
+                    return true;
+                }
+                else {
+
+                    $('#salesName').html(innerHTML);
+                    
+                }
+
+            },
+
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+
+            }
+        });
+    });
+
+    function getStatusReport() {
+
+        var Name = $('#salesName').val().trim();
+        var fromDatess = $('#fromDatess').val().trim();
+        var ToDatess = $('#ToDatess').val().trim();
+        debugger
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/BindLeadStatusReport",
+            data: { Name: Name, DateFrom: fromDatess, DateTo: ToDatess},
+            success: function (response) {
+
+                var innerHTML = "";
+                if (response == null || response == '') {
+                    $('#Name').text('');
+                    $('#TotalLead').text('');
+                    $('#TotalOpenLead').text('');
+                    $('#OpenLead').text('');
+                    $('#LostLead').text('');
+                    $('#WonLead').text('');
+                    $('#FollowUpLead').text('');
+                    $('#noFollowUpLead').text('');
+                    $('#TotalInvoice').text('');
+                    $('#TotalInvoiceAmount').text('');
+                    $('#DemoCount').text('');
+                    $('#UnusedCount').text('');
+                    $('#INRInvoice').text('');
+                    $('#INRTotalInvoiceAmount').text('');
+                    $('#USDInvoice').text('');
+                    $('#USDTotalInvoiceAmount').text('');
+                    $('#WONInvoice').text('');
+                    $('#WONTotalInvoiceAmount').text('');
+                    $('#YENInvoice').text('');
+                    $('#YENTotalInvoiceAmount').text('');
+                    $('#EUROInvoice').text('');
+                    $('#EUROTotalInvoiceAmount').text('');
+
+
+                } else
+                {
+                    $(response).each(function (index, value) {
+                        debugger
+
+                        if (value.Name == 0 || value.Name == '' || value.Name == null) {
+                            $('#Name').text('');
+                        } else {
+                            $('#Name').text(value.Name);
+                        }
+                        if (value.TotalLead == 0 || value.TotalLead == '' || value.TotalLead == null) {
+                            $('#TotalLead').text('0');
+                        } else {
+                            $('#TotalLead').text(value.TotalLead);
+                        }
+                        if (value.TotalOpenLead == 0 || value.TotalOpenLead == '' || value.TotalOpenLead == null) {
+                            $('#TotalOpenLead').text('0');
+                        } else {
+                            $('#TotalOpenLead').text(value.TotalOpenLead);
+                        }
+                        if (value.OpenLead == 0 || value.OpenLead == '' || value.OpenLead == null) {
+                            $('#OpenLead').text('0');
+                        } else {
+                            $('#OpenLead').text(value.OpenLead);
+                        }
+                        if (value.LostLead == 0 || value.LostLead == '' || value.LostLead == null) {
+                            $('#LostLead').text('0');
+                        } else {
+                            $('#LostLead').text(value.LostLead);
+                        }
+                        if (value.WonLead == 0 || value.WonLead == '' || value.WonLead == null) {
+                            $('#WonLead').text('0');
+                        } else {
+                            $('#WonLead').text(value.WonLead);
+                        }
+                        if (value.FollowUpLead == 0 || value.FollowUpLead == '' || value.FollowUpLead == null) {
+                            $('#FollowUpLead').text('0');
+                        } else {
+                            $('#FollowUpLead').text(value.FollowUpLead);
+                        }
+                        if (value.noFollowUpLead == 0 || value.noFollowUpLead == '' || value.noFollowUpLead == null) {
+                            $('#noFollowUpLead').text('0');
+                        } else {
+                            $('#noFollowUpLead').text(value.noFollowUpLead);
+                        }
+                        if (value.TotalInvoice == 0 || value.TotalInvoice == '' || value.TotalInvoice == null) {
+                            $('#TotalInvoice').text('0');
+                        } else {
+                            $('#TotalInvoice').text(value.TotalInvoice);
+
+                        }
+                        if (value.DemoCount == 0 || value.DemoCount == '' || value.DemoCount == null) {
+                            $('#DemoCount').text('0');
+                        } else {
+                            $('#DemoCount').text(value.DemoCount);
+                        }
+                        if (value.UnusedCount == 0 || value.UnusedCount == '' || value.UnusedCount == null) {
+                            $('#UnusedCount').text('0');
+                        } else {
+                            $('#UnusedCount').text(value.UnusedCount);
+                        }
+                        if (value.INRInvoice == 0 || value.INRInvoice == '' || value.INRInvoice == null) {
+                            $('#INRInvoice').text('0');
+                        } else {
+                            $('#INRInvoice').text(value.INRInvoice);
+
+                        }
+                        if (value.INRTotalInvoiceAmount == 0 || value.INRTotalInvoiceAmount == '' || value.INRTotalInvoiceAmount == null) {
+                            $('#INRTotalInvoiceAmount').text('0');
+                        } else {
+                            $('#INRTotalInvoiceAmount').text(value.INRTotalInvoiceAmount);
+
+                        }
+
+                        if (value.USDInvoice == 0 || value.USDInvoice == '' || value.USDInvoice == null) {
+                            $('#USDInvoice').text('0');
+                        } else {
+                            $('#USDInvoice').text(value.USDInvoice);
+
+                        }
+                        if (value.USDTotalInvoiceAmount == 0 || value.USDTotalInvoiceAmount == '' || value.USDTotalInvoiceAmount == null) {
+                            $('#USDTotalInvoiceAmount').text('0');
+                        } else {
+                            $('#USDTotalInvoiceAmount').text(value.USDTotalInvoiceAmount);
+
+                        }
+                        if (value.WONInvoice == 0 || value.WONInvoice == '' || value.WONInvoice == null) {
+                            $('#WONInvoice').text('0');
+                        } else {
+                            $('#WONInvoice').text(value.WONInvoice);
+
+                        }
+                        if (value.WONTotalInvoiceAmount == 0 || value.WONTotalInvoiceAmount == '' || value.WONTotalInvoiceAmount == null) {
+                            $('#WONTotalInvoiceAmount').text('0');
+                        } else {
+                            $('#WONTotalInvoiceAmount').text(value.WONTotalInvoiceAmount);
+
+                        }
+                        if (value.YENInvoice == 0 || value.YENInvoice == '' || value.YENInvoice == null) {
+                            $('#YENInvoice').text('0');
+                        } else {
+                            $('#YENInvoice').text(value.YENInvoice);
+
+                        }
+                        if (value.YENTotalInvoiceAmount == 0 || value.YENTotalInvoiceAmount == '' || value.YENTotalInvoiceAmount == null) {
+                            $('#YENTotalInvoiceAmount').text('0');
+                        } else {
+                            $('#YENTotalInvoiceAmount').text(value.YENTotalInvoiceAmount);
+
+                        }
+                        if (value.EUROInvoice == 0 || value.EUROInvoice == '' || value.EUROInvoice == null) {
+                            $('#EUROInvoice').text('0');
+                        } else {
+                            $('#EUROInvoice').text(value.EUROInvoice);
+
+                        }
+                        if (value.EUROTotalInvoiceAmount == 0 || value.EUROTotalInvoiceAmount == '' || value.EUROTotalInvoiceAmount == null) {
+                            $('#EUROTotalInvoiceAmount').text('0');
+                        } else {
+                            $('#EUROTotalInvoiceAmount').text(value.EUROTotalInvoiceAmount);
+
+                        }
+
+
+
+
+                    });
+
+                }
+               
+            },
+            failure: function (response) {
+                console.log(response)
+                $('#Name').text('');
+                $('#TotalLead').text('');
+                $('#TotalOpenLead').text('');
+                $('#OpenLead').text('');
+                $('#LostLead').text('');
+                $('#WonLead').text('');
+                $('#FollowUpLead').text('');
+                $('#noFollowUpLead').text('');
+                $('#TotalInvoice').text('');
+                $('#TotalInvoiceAmount').text('');
+                $('#DemoCount').text('');
+                $('#INRInvoice').text('');
+                $('#INRTotalInvoiceAmount').text('');
+                $('#USDInvoice').text('');
+                $('#USDTotalInvoiceAmount').text('');
+                $('#WONInvoice').text('');
+                $('#WONTotalInvoiceAmount').text('');
+                $('#YENInvoice').text('');
+                $('#YENTotalInvoiceAmount').text('');
+                $('#EUROInvoice').text('');
+                $('#EUROTotalInvoiceAmount').text('');
+            },
+            error: function (response) {
+                console.log(response)
+                $('#Name').text('');
+                $('#TotalLead').text('');
+                $('#TotalOpenLead').text('');
+                $('#OpenLead').text('');
+                $('#LostLead').text('');
+                $('#WonLead').text('');
+                $('#FollowUpLead').text('');
+                $('#noFollowUpLead').text('');
+                $('#TotalInvoice').text('');
+                $('#TotalInvoiceAmount').text('');
+                $('#DemoCount').text('');
+                $('#INRInvoice').text('');
+                $('#INRTotalInvoiceAmount').text('');
+                $('#USDInvoice').text('');
+                $('#USDTotalInvoiceAmount').text('');
+                $('#WONInvoice').text('');
+                $('#WONTotalInvoiceAmount').text('');
+                $('#YENInvoice').text('');
+                $('#YENTotalInvoiceAmount').text('');
+                $('#EUROInvoice').text('');
+                $('#EUROTotalInvoiceAmount').text('');
+            }
+        });
+
+    }
+
+  
+</script>
+
+
+

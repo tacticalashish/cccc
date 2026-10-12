@@ -1,0 +1,629 @@
+﻿
+@{
+    ViewBag.Title = "GetAllSubs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css" />
+<style>
+
+
+    .tableStyle {
+        border: 1px solid #808080;
+        margin-top: 10px;
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+
+    .mt-2 {
+        margin-top: 8px;
+    }
+    .mt-4 {
+        margin-top: 16px;
+    }
+
+    .data-detail-wrapper table > thead > tr > th {
+        text-transform: none !important;
+        text-align: center;
+    }
+
+    input[type=file] {
+        color: black !important;
+        /*margin-bottom: 5px;*/
+    }
+
+    #CancelBtn {
+        position: absolute;
+        top: -28px;
+        border-radius: 25px;
+        right: -23px;
+    }
+
+    .data-detail-wrapper button.btn.btn-success {
+        padding: 0 0px 0px;
+        font-size: 13px;
+        border-radius: 0px;
+        line-height: 20px;
+    }
+
+    .justify-content-end {
+        justify-content: flex-end
+    }
+
+    .px-4 {
+        padding-left:12px;
+        padding-right:12px;
+    }
+    .form-control-sm {
+        line-height:30px;
+        height:30px;
+    }
+
+
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    height: 20px;
+    width: 250px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.loader--dot {
+    animation-name: loader;
+    animation-timing-function: ease-in-out;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    height: 20px;
+    width: 20px;
+    border-radius: 100%;
+    background-color: black;
+    position: absolute;
+    border: 2px solid white;
+}
+
+    .loader--dot:first-child {
+        background-color: #8cc759;
+        animation-delay: 0.5s;
+    }
+
+    .loader--dot:nth-child(2) {
+        background-color: #8c6daf;
+        animation-delay: 0.4s;
+    }
+
+    .loader--dot:nth-child(3) {
+        background-color: #ef5d74;
+        animation-delay: 0.3s;
+    }
+
+    .loader--dot:nth-child(4) {
+        background-color: #f9a74b;
+        animation-delay: 0.2s;
+    }
+
+    .loader--dot:nth-child(5) {
+        background-color: #60beeb;
+        animation-delay: 0.1s;
+    }
+
+    .loader--dot:nth-child(6) {
+        background-color: #fbef5a;
+        animation-delay: 0s;
+    }
+
+.loader--text {
+    position: absolute;
+    top: 200%;
+    left: 0;
+    right: 0;
+    width: 4rem;
+    margin: auto;
+    color: #fff;
+}
+
+    .loader--text:after {
+        content: "Loading";
+        font-weight: bold;
+        animation-name: loading-text;
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+        color: #fff;
+    }
+
+@@keyframes loader {
+    15% {
+        transform: translateX(0);
+    }
+
+    45% {
+        transform: translateX(230px);
+    }
+
+    65% {
+        transform: translateX(230px);
+    }
+
+    95% {
+        transform: translateX(0);
+    }
+}
+
+@@keyframes loading-text {
+    0% {
+        content: "Loading";
+    }
+
+    25% {
+        content: "Loading.";
+    }
+
+    50% {
+        content: "Loading..";
+    }
+
+    75% {
+        content: "Loading...";
+    }
+}
+</style>
+
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'none';
+    });
+</script>
+
+
+<div class='container' id="loader">
+    <div class='loader'>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--text'></div>
+    </div>
+</div>
+
+
+<div class="white-wrapper">
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <div class="d-flex">
+                    <input type="submit" id="Company" value="Company" class="btn btn-secondary form-control w-100" />
+                    <input type="submit" id="Customer" value="Customer" class="btn btn-secondary  form-control w-100  ms-2" />
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12 col-md-6">
+                  <div class="d-flex">
+                      <select class="form-control selectpicker small no-border border-0"  data-live-search="true"   id="ClientPrimaryEmail" name="ClientPrimaryEmail" title="Client Primary Email">
+                          <option value="">Client Primary Email</option>
+                      </select>
+                      <input type="submit" id="btnSubmit" class="btn btn-primary btn-sm px-4 ms-2"/>
+                  </div>
+            </div>
+           
+            <div class="col-12 col-md-6">
+                <div class="d-flex align-items-center justify-content-end">
+                    @*<select class="form-control mb-1" id="ClientCompany" name="ClientCompany" title="ClientCompany">
+                        <option value="">Select Client Company Name</option>
+                    </select>
+
+                    <input type="submit" id="btnSubmit" class="btn btn-primary btn-sm px-4 ms-2" />*@
+                    <input type="text" id="searchInput" placeholder="Search..." class="form-control mb-3" />
+                    <button id="download" class="btn btn-danger btn-sm ms-2">Download Excel</button>
+                </div>
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01" style="overflow:auto">
+            <table id="subsdata" class="table tableStyle">
+                <thead>
+                    <tr>
+                        <th>CorpEmail</th>
+                        <th>UserName</th>
+                        <th>CompanyName</th>
+                        <th>Primary/Secondary</th>
+                        <th>AccountStatus</th>
+                        <th>FromDate</th>
+                        <th>ToDate</th>
+                        <th>ModuleName</th>
+                        <th>ProductName</th>
+                        <th>Country/Region</th>
+                        <th>ClientType</th>
+                        <th>ApiAccess</th>
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+
+        <div class="box-footer clearfix" id="divPagging"></div>
+    </div>
+</div> 
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Correct table2excel library (GitHub version) -->
+<script src="https://unpkg.com/table2excel@1.1.1/dist/table2excel.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script>
+    var Search = "";
+    var type = "";
+
+
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        var input = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#subsdata tbody tr');
+
+        rows.forEach(function (row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    });
+
+    document.getElementById('download').addEventListener('click', function () {
+        // Get table
+        
+        var table = document.getElementById('subsdata');
+
+        // Convert table to worksheet
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Export to Excel file
+        XLSX.writeFile(wb, 'MyTable.xlsx');
+    });
+    $(document).ready(function () {
+        $("#Company").removeClass('btn-secondary').addClass('btn-primary');
+     //   GetClintEmail();
+        GetCompany();
+    });
+    $('#Customer').on('click', function () {
+        $('#Company').removeClass('btn-primary').addClass('btn-secondary');
+        $(this).removeClass('btn-secondary').addClass('btn-primary');
+        GetClintEmail();
+    });
+    $('#Company').on('click', function () {
+        $("#Customer").removeClass('btn-primary').addClass('btn-secondary');
+        GetCompany();
+        $(this).removeClass('btn-secondary').addClass('btn-primary');
+    });
+
+    function GetCompany() {
+        type = "Company";
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCompany",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                var innerHTML = "";
+                innerHTML += "<option  value = ''>" + "Select Company" + "</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.CompanyName != null || value.CompanyName != "" || value.CompanyName != undefined) {
+                        innerHTML += "<option value = '" + value.CompanyId + "'> " + value.CompanyName + "</option>"
+                    }
+                });
+              
+          
+                $('#ClientPrimaryEmail').html(innerHTML);
+                $('#ClientPrimaryEmail').selectpicker('refresh');
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function GetClintEmail() {
+        type = "Client";
+        var ClintEmailinnerHTML = "";
+        var PrimaryClintEmailinnerHTML = "";
+        var ClintName = "";
+        ClintName += "<option value=''>" + "Select Client Name" + "</option>";
+        PrimaryClintEmailinnerHTML += "<option value=''>" + "Select Primary Client Email" + "</option>";
+        $.ajax({
+            type: "POST",
+            url: "/SubsManagement/GetClintEmail",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                
+                $(data.DataList).each(function (index, value) {
+                    
+                    ClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>"
+                    PrimaryClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>"
+                    ClintName += "<option value = '" + value.Name + "'> " + value.Name + "</option>"
+                });
+               
+                $('#ClientPrimaryEmail').html(PrimaryClintEmailinnerHTML);
+                $('#ClientPrimaryEmail').selectpicker('refresh');
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    $("#btnSubmit").click(function (e) {
+        
+        e.preventDefault(); 
+        GetLeadOnSearchFilter();
+
+    });
+
+
+
+    function GetLeadOnSearchFilter() {
+        
+        var pageNumber = $('#PageNumber').val();
+        var UserId = $("#ClientPrimaryEmail").val();
+        var URL = "/SubsManagement/GellAllClintAllSubsciption?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        URL += '&UserId=' + UserId;
+        URL += '&Type=' + type;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,  // <-- Remove 'false', let it be async
+            beforeSend: function () {
+                $("#loader").show();
+            },
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.UserName + "</td>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.PrimarySecondary + "</td>";
+                        tbodyHTML += "<td>" + elm.AccountStatus + "</td>";
+                        tbodyHTML += "<td>" + elm.FromDate + "</td>";
+                        tbodyHTML += "<td>" + elm.ToDate + "</td>";
+                        tbodyHTML += "<td>" + elm.ModuleName + "</td>";
+                        tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryRegion + "</td>";
+                        tbodyHTML += "<td>" + elm.ClintType + "</td>";
+                        tbodyHTML += "<td>" + elm.ApiAccess + "</td>";
+                        tbodyHTML += "</tr>"
+                    });
+
+                   // $('#divPagging').html(GetPaginationHTML(json));
+                   // $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $("#loader").hide();
+                $('.tbodydata').html(tbodyHTML);
+            },
+            complete: function () {
+                $("#loader").hide();
+            }
+        });
+    }
+
+
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        GetLeadOnSearchFilter();
+
+    }
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+
+</script> 
+
+

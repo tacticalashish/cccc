@@ -1,0 +1,372 @@
+﻿
+@{
+    ViewBag.Title = "InsertPricingQCRating";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper pt-0 mt-0 container-fluid">
+        <div class="row d-flex justify-content-between">
+
+            <div class="col-sm-12 col-md-5" style="padding: 15px 32px;background: #171718; margin: 20px 0px; border-radius: 6px;">
+                <h3 class="text-white pb-2"> Insert QC Rating</h3>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select Name</label>
+                            <select id="EmployeeName" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select Year</label>
+                            <select id="EmployeeYear" class="form-control">
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select Month</label>
+                            <select id="EmployeeMonth" class="form-control" onchange="GetQCTimelineRating()">
+                                <option value="">--Select Month--</option>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Timeline Rating</label>
+                            <select id="TimelineRating" class="form-control">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            @*<input type="text" class="form-control" id="TimelineRating" oninput="this.value = this.value.replace(/[^0-9. ]/g, '').replace(/(\..*?)\..*/g, '$1');" disabled />*@
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Select Quality Rating</label>
+                            <select id="QualityRating" class="form-control" onchange="CALTotalRating();">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label>Total Rating</label>
+                            <input id="TotalRatings" disabled class="form-control" value="" type="text" />
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 text-center mt-2">
+                        <button class="btn btn-primary btn-md" type="submit" onclick="SubmitQCRating()">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-3"  style="padding: 15px;  border-radius: 6px;">
+                <div class="panel panel-gray ">
+                    <div class="panel-heading">
+                        <h4 class="text-danger pb-2 mb-1"> Pending QC Rating</h4>
+                    </div>
+                    <div class="panel-body bg-black p-0">
+                        <div class="mt-2" style="max-height:475px; overflow-y:auto">
+                            <ul type="none" class="text-white pending-data-list" id="PendingAssociate">                               
+                               
+                            </ul>
+                        </div>
+                    </div>                    
+                </div>             
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function CALTotalRating() {
+        debugger;
+        var TimelineRating = parseFloat($('#TimelineRating').val()) || 0;
+        var QualityRating = parseFloat($('#QualityRating').val()) || 0;
+        var totalScore = (TimelineRating * 0.60) + (QualityRating * 0.40)
+        var fix = totalScore.toFixed(3);
+
+        $('#TotalRatings').val(fix)
+
+
+    }
+
+    function populateMonthDropdown() {
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const dropdown = document.getElementById('EmployeeMonth');
+        const currentDate = new Date();
+
+        // Get current and last two month indices
+        const currentMonth = currentDate.getMonth();
+        const previousMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+        const twoMonthsAgo = (previousMonth === 0) ? 11 : previousMonth - 1;
+
+        // Array of months to show in dropdown
+        const monthsToShow = [twoMonthsAgo, previousMonth, currentMonth];
+
+        // Add options dynamically
+        monthsToShow.forEach(monthIndex => {
+            const option = document.createElement('option');
+            option.value = monthNames[monthIndex];
+            option.textContent = monthNames[monthIndex];
+            dropdown.appendChild(option);
+        });
+    }
+
+
+    $(document).ready(function () {
+        BindQCPricingName();
+        //populateYearDropdown();
+        //populateMonthDropdown();
+      
+    });
+
+
+    function BindQCPricingName() {
+
+        $.ajax({
+            type: "POST",
+            url: "/PricingRating/GetPricingQCName",
+            success: function (response) {
+                var innerHTMLs = '<option value="">--Select name--</option>';
+                $(response).each(function (idx, Value) {
+                    debugger;
+                    innerHTMLs += "<option value=" + Value.AssociateID + ">" + Value.AssociateName + "</option>"
+                });
+
+                $('#EmployeeName').html(innerHTMLs);
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function populateYearDropdown() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth(); // January is 0
+
+        const $yearDropdown = $('#EmployeeYear');
+        $yearDropdown.empty(); // Clear existing options
+        $yearDropdown.append(`<option value="">--Select Year--</option>`);
+
+        if (currentMonth <= 1) { // If the month is January (0) or February (1)
+            $yearDropdown.append(`<option value="${currentYear - 1}">${currentYear - 1}</option>`);
+        }
+
+        $yearDropdown.append(`<option value="${currentYear}">${currentYear}</option>`);
+    }
+
+
+
+    function SubmitQCRating() {
+        debugger;
+        var EmployeeName = $("#EmployeeName option:selected").text();
+        var EmployeeNameid = $("#EmployeeName").val();
+        var EmployeeYear = $("#EmployeeYear").val();
+        var EmployeeMonth = $("#EmployeeMonth").val();
+        var TimelineRating = $("#TimelineRating").val();
+        var QualityRating = $("#QualityRating").val();
+        var TotalRating = $("#TotalRatings").val();
+        var Desc = {
+            AssociateName: EmployeeName,
+            AssociateID: EmployeeNameid,
+            Year: EmployeeYear,
+            Month: EmployeeMonth,
+            TimelineRating: TimelineRating,
+            QualityRating: QualityRating,
+            TotalRating: TotalRating
+
+        };
+        if (EmployeeNameid == "") {
+            Swal.fire({
+                title: "Please Select QC Name!",
+                type: "success",
+                customClass: {
+                    popup: 'small-popup'
+                }
+            }).then(function () {
+            });
+        }
+        else if (EmployeeYear == "") {
+            Swal.fire({
+                title: "Please Select Year!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (EmployeeMonth == "") {
+            Swal.fire({
+                title: "Please Select Month!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (QualityRating == "") {
+            Swal.fire({
+                title: "Please select QualityRating!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (TimelineRating == "") {
+            Swal.fire({
+                title: "Please Enter TimelineRating!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (TotalRating == "") {
+            Swal.fire({
+                title: "Please  select QualityRating!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/PricingRating/insertQCRating",
+                data: '{Desc: ' + JSON.stringify(Desc) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    debugger;
+                    var responseMessage = response;
+                    if (responseMessage == "Success") {
+                        Swal.fire({
+                            title: "Thank you!",
+                            text: "Insert Sucessfully.",
+                            icon: "success"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/InsertPricingQCRating";
+                        });
+                    }
+                    else if (responseMessage == "Already Exist") {
+                        Swal.fire({
+                            title: "Failed!",
+                            text: "Already Exist.",
+                            icon: "error"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/InsertPricingQCRating";
+                        });
+                    }
+
+                    else {
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/InsertPricingQCRating";
+                        });
+                    }
+                },
+                Error: function (ErrMsg) {
+                    window.location.href = "../../PricingRating/InsertPricingQCRating";
+                }
+            });
+
+
+
+        }
+
+    }
+
+
+
+    function GetQCTimelineRating() {
+        debugger;
+        var Search = '';
+        var Month = $('#EmployeeMonth').val();
+        var Year = $('#EmployeeYear').val();
+        var EmployeeNameid = $("#EmployeeName").val();
+        var URL = "/PricingRating/GetQCTimelineRating?searchKeyword='" + Search + "'";
+        URL += '&Year=' + Year;
+        URL += '&Month=' + Month;
+        URL += '&Id=' + EmployeeNameid;
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                $(json).each(function (idx, Value) {
+                    $("#TimelineRating").val(Value.ValidationMessage);
+                    PendingAssociateQC();
+                });
+            }
+        });
+    }
+
+
+    function PendingAssociateQC() {
+        debugger;   
+        var Search = '';
+        var Type = 'Pricing';
+        var Month = $('#EmployeeMonth').val();
+        var Year = $('#EmployeeYear').val();
+        var EmployeeNameid = $("#EmployeeName").val();
+        var URL = "/PricingRating/PendingAssociateQC?searchKeyword=" + Search;
+        URL += '&Year=' + Year;
+        URL += '&Month=' + Month;
+        URL += '&Id=' + EmployeeNameid;
+         URL += '&Type=' + Type;
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {               
+                var tbodyHTML = '';
+                $(response).each(function (idx, Value) {  
+                               
+                    tbodyHTML += " <li>" + Value.AssociateName + " </li>";
+                });
+
+                $('#PendingAssociate').html(tbodyHTML);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error: " + error);
+            }
+        });
+    }
+
+
+
+</script>

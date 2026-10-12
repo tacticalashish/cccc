@@ -1,0 +1,795 @@
+@{
+    ViewBag.Title = "Pipeline";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .cpl-wrap {
+        background: #f4f5f7;
+        padding: 18px 28px 40px;
+    }
+
+    .cpl-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .cpl-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #22262b;
+        margin: 0;
+    }
+
+    .cpl-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid #e3e5e8;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+    }
+
+    .cpl-toggle-group {
+        display: flex;
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .cpl-toggle-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #7c828a;
+        background: #fff;
+        border: none;
+        cursor: pointer;
+    }
+
+        .cpl-toggle-btn.active {
+            background: #22262b;
+            color: #fff;
+        }
+
+    .cpl-toolbar-search {
+        flex: 1;
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+
+    .cpl-select {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 13px;
+        color: #33383f;
+        background: #fff;
+    }
+
+    .cpl-create-btn {
+        background: #1f5a37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+        .cpl-create-btn:hover {
+            color: #fff;
+            text-decoration: none;
+            background: #17472b;
+        }
+
+    .cpl-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .cpl-pill-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .cpl-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #fff;
+        border: 1px solid #e3e5e8;
+        color: #33383f;
+    }
+
+    .cpl-pill-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .cpl-dot-discussion {
+        background: #e8752f;
+    }
+
+    .cpl-dot-won {
+        background: #2f9e5c;
+    }
+
+    .cpl-view-all {
+        font-size: 13px;
+        font-weight: 600;
+        color: #33383f;
+        text-decoration: none;
+    }
+
+    .cpl-board {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .cpl-column {
+        flex: 1;
+        min-width: 0;
+        background: #f0f1f3;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .cpl-column-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 0 2px;
+    }
+
+    .cpl-column-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .cpl-column-count {
+        background: #dfe2e6;
+        color: #55595f;
+        border-radius: 10px;
+        padding: 1px 8px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .cpl-column-total {
+        font-size: 12px;
+        color: #7c828a;
+        font-weight: 600;
+    }
+
+    .cpl-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-left: 3px solid #d8dbdf;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+        .cpl-card:hover {
+            border-color: #c7ccd2;
+        }
+
+    /* Show ~5 cards per column, then scroll instead of growing the column. */
+    #CplNewCards, #CplOpenCards, #CplDiscussionCards, #CplWonCards {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .cpl-card-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .cpl-card-sub {
+        font-size: 12px;
+        color: #7c828a;
+        margin-top: 2px;
+    }
+
+    .cpl-card-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    .cpl-card-amount {
+        font-size: 12px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .cpl-empty-col {
+        font-size: 12px;
+        color: #9aa0a6;
+        padding: 14px 4px;
+        text-align: center;
+    }
+
+    .cpl-loading-col {
+        font-size: 12px;
+        color: #9aa0a6;
+        padding: 14px 4px;
+        text-align: center;
+    }
+
+    .cpl-list-meta {
+        font-size: 12px;
+        color: #7c828a;
+        margin-bottom: 8px;
+    }
+
+    .cpl-list-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+
+    .cpl-type-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 5px;
+        background: #eef0f2;
+        color: #55595f;
+        letter-spacing: 0.3px;
+    }
+
+    .cpl-type-badge-in {
+        background: #e6f0fb;
+        color: #3f6fd4;
+    }
+
+    .cpl-type-badge-out {
+        background: #fdeee0;
+        color: #e07b1f;
+    }
+
+    .cpl-stage-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 10px;
+        background: #eef0f2;
+        color: #55595f;
+    }
+
+    .cpl-stage-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #9aa0a6;
+        display: inline-block;
+    }
+
+    .cpl-stage-dot-new { background: #3b6fd6; }
+    .cpl-stage-dot-open { background: #8a63d2; }
+    .cpl-stage-dot-discussion { background: #e8752f; }
+    .cpl-stage-dot-won { background: #2f9e5c; }
+
+    .cpl-stage-pill-new { background: #e9eefb; color: #3b6fd6; }
+    .cpl-stage-pill-open { background: #f1eafb; color: #7c4fd4; }
+    .cpl-stage-pill-discussion { background: #fdeee0; color: #e07b1f; }
+    .cpl-stage-pill-won { background: #e5f3ea; color: #2c8a4b; }
+
+    table.cpl-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+    }
+
+        table.cpl-list-table th, table.cpl-list-table td {
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+
+        table.cpl-list-table th {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7c828a;
+            text-transform: uppercase;
+            background: #fafbfc;
+        }
+
+        table.cpl-list-table tbody tr {
+            cursor: pointer;
+        }
+
+            table.cpl-list-table tbody tr:hover {
+                background: #f7f8f9;
+            }
+
+    .cpl-list-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .cpl-list-sub {
+        font-size: 12px;
+        color: #7c828a;
+        margin-top: 2px;
+    }
+
+    .cpl-pager {
+        margin-top: 14px;
+    }
+
+        .cpl-pager:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .cpl-pager .pagination {
+            margin: 0;
+        }
+
+        .cpl-pager .paginate_button > a {
+            cursor: pointer;
+        }
+</style>
+
+<div class="cpl-wrap">
+    <div class="cpl-header-row">
+        <div class="cpl-title">Pipeline</div>
+    </div>
+
+    <div class="cpl-toolbar">
+        <div class="cpl-toggle-group">
+            <button type="button" class="cpl-toggle-btn active" id="CplBoardBtn" onclick="CplShowBoard()">Board</button>
+            <button type="button" class="cpl-toggle-btn" id="CplListBtn" onclick="CplShowList()">List</button>
+        </div>
+        <input type="text" class="cpl-toolbar-search" id="CplSearch" placeholder="Search leads, company or contact..." />
+        <select class="cpl-select" id="CplStageFilter">
+            <option value="">All stages</option>
+            <option value="Open For Renewal">Open For Renewal</option>
+            <option value="In discussion">In discussion</option>
+            <option value="Renewal Lost">Renewal Lost</option>
+            <option value="Renewal Won">Renewal Won</option>
+        </select>
+        <select class="cpl-select" id="CplTypeFilter">
+            <option value="">All types</option>
+            <option value="Inbound">Inbound</option>
+            <option value="Outbound">Outbound</option>
+        </select>
+        @*<a href="@Url.Action("CreateLead", "LeadManagementSubscription")" class="cpl-create-btn">+ Create lead</a>*@
+    </div>
+
+    <div class="cpl-summary-row">
+        <div class="cpl-pill-group">
+            <span class="cpl-pill"><span class="cpl-pill-dot cpl-dot-discussion"></span><span id="CplDiscussionSummary">In discussion 0</span></span>
+            <span class="cpl-pill"><span class="cpl-pill-dot cpl-dot-won"></span><span id="CplWonSummary">Won 0</span></span>
+        </div>
+        <a class="cpl-view-all" href="javascript:void(0);" onclick="CplShowList()">View all leads &rarr;</a>
+    </div>
+
+    <div class="cpl-board" id="CplBoardView">
+        <div class="cpl-column">
+            <div class="cpl-column-head">
+                <div class="cpl-column-title"><span class="cpl-stage-dot cpl-stage-dot-new"></span>Open For Renewal<span class="cpl-column-count" id="CplNewCount">Top 30</span></div>
+                <div class="cpl-column-total" id="CplNewTotal"></div>
+            </div>
+            <div id="CplNewCards"><div class="cpl-loading-col">Loading&hellip;</div></div>
+        </div>
+        <div class="cpl-column">
+            <div class="cpl-column-head">
+                <div class="cpl-column-title"><span class="cpl-stage-dot cpl-stage-dot-open"></span>In discussion <span class="cpl-column-count" id="CplOpenCount">Top 30</span></div>
+                <div class="cpl-column-total" id="CplOpenTotal"></div>
+            </div>
+            <div id="CplOpenCards"><div class="cpl-loading-col">Loading&hellip;</div></div>
+        </div>
+        <div class="cpl-column">
+            <div class="cpl-column-head">
+                <div class="cpl-column-title"><span class="cpl-stage-dot cpl-stage-dot-discussion"></span>Renewal Lost<span class="cpl-column-count" id="CplDiscussionCount">Top 30</span></div>
+                <div class="cpl-column-total" id="CplDiscussionTotal"></div>
+            </div>
+            <div id="CplDiscussionCards"><div class="cpl-loading-col">Loading&hellip;</div></div>
+        </div>
+        <div class="cpl-column">
+            <div class="cpl-column-head">
+                <div class="cpl-column-title"><span class="cpl-stage-dot cpl-stage-dot-won"></span>Renewal Won <span class="cpl-column-count" id="CplWonCount">Top 30</span></div>
+                <div class="cpl-column-total" id="CplWonTotal"></div>
+            </div>
+            <div id="CplWonCards"><div class="cpl-loading-col">Loading&hellip;</div></div>
+        </div>
+    </div>
+
+    <div id="CplListView" style="display:none;">
+        <div class="cpl-list-meta" id="CplListMeta">&nbsp;</div>
+        <div class="cpl-list-card">
+            <table class="cpl-list-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Company</th>
+                        <th>Lead</th>
+                        <th>Country</th>
+                        <th>Stage</th>
+                        <th>Source</th>
+                        <th>Value</th>
+                        <th>Exp. close</th>
+                        <th>Next follow-up</th>
+                    </tr>
+                </thead>
+                <tbody id="CplListRows">
+                    <tr><td colspan="9" class="cpl-empty-col">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cpl-pager" id="CplListPager"></div>
+    </div>
+</div>
+
+<script>
+    // Stage keys here must match the "Stage" literals the stored proc
+    // usp_LeadManagementSubscription_GetCRMPipeline computes (plain ASCII
+    // hyphen for "Won - onboarding", not the em-dash shown on screen).
+    var CplAllData = [];
+    var CplListCurrentPage = 1;
+    var CplListPageSize = 15;
+    var CplCurrentView = "board";
+
+    function CplEscape(text) {
+        if (text === null || text === undefined) return "";
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function CplValueOrDash(text) {
+        return (text === null || text === undefined || text === "") ? "&mdash;" : CplEscape(text);
+    }
+
+    function CplParseAmount(amount) {
+        if (amount === null || amount === undefined || amount === "") return null;
+        var n = parseFloat(String(amount).replace(/[^0-9.\-]/g, ""));
+        return isNaN(n) ? null : n;
+    }
+
+    function CplFormatMoney(amount, currency) {
+        var n = CplParseAmount(amount);
+        if (n === null) return "&mdash;";
+        var symbol = "$";
+        var code = (currency || "").toUpperCase();
+        if (code === "INR") symbol = "\u20B9";
+        else if (code === "EUR") symbol = "\u20AC";
+        else if (code === "GBP") symbol = "\u00A3";
+        return symbol + Math.round(n).toLocaleString();
+    }
+
+    function CplFormatDate(value) {
+        if (!value) return "&mdash;";
+        var d = new Date(value);
+        if (isNaN(d.getTime())) return "&mdash;";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function CplFormatRelativeDate(value) {
+        if (!value) return "&mdash;";
+        var d = new Date(value);
+        if (isNaN(d.getTime())) return "&mdash;";
+        var today = new Date();
+        var dOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        var tOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var diffDays = Math.round((dOnly - tOnly) / 86400000);
+        if (diffDays === 0) return "Today";
+        if (diffDays === 1) return "Tomorrow";
+        if (diffDays === -1) return "Yesterday";
+        return CplFormatDate(value);
+    }
+
+    function CplTypeBadge(leadType) {
+        if (!leadType) return "&mdash;";
+        var t = leadType.toUpperCase();
+        if (t.indexOf("OUT") === 0) return "<span class='cpl-type-badge cpl-type-badge-out'>OUT</span>";
+        if (t.indexOf("IN") === 0) return "<span class='cpl-type-badge cpl-type-badge-in'>IN</span>";
+        return "<span class='cpl-type-badge'>" + CplEscape(leadType) + "</span>";
+    }
+
+    function CplStageKey(stage) {
+        var s = (stage || "");
+        if (s === "Open For Renewal") return "new";
+        if (s === "In discussion") return "open";
+        if (s === "Renewal Lost") return "discussion";
+        if (s === "Renewal Won") return "won";
+        return "new";
+    }
+
+    function CplStagePill(stage) {
+        var key = CplStageKey(stage);
+        return "<span class='cpl-stage-pill cpl-stage-pill-" + key + "'><span class='cpl-stage-dot cpl-stage-dot-" + key + "'></span>" + CplValueOrDash(stage) + "</span>";
+    }
+
+    // Opens the same CRM full-details page the existing open/renew lead
+    // lists use (window.open, new tab) - keyed by the lead Id.
+    function CplGoToLead(id, isRenewalDue) {
+        if (isRenewalDue) {
+            // Open For Renewal cards -> the existing Customer detail page
+            // (id = CompanyMaster.ID, same as the Customers list uses).
+            // fromRenewal=1 makes that page show the "Open" button.
+            window.location.href = "/LeadManagementSubscription/CustomerDetail?id=" + id + "&fromRenewal=1";
+        } else {
+            // In discussion / Renewal Lost / Won cards (SA_MaskEmailOpen_CRM
+            // rows) -> the CRM lead-detail page for that lead ID.
+            window.location.href = "/LeadManagementSubscription/CRMLeadDetail?id=" + id;
+        }
+    }
+
+    // ===== filtering =====
+    function CplMatches(item) {
+        var search = $.trim($("#CplSearch").val()).toLowerCase();
+        var leadType = $("#CplTypeFilter").val();
+        if (search) {
+            var hay = ((item.Name || "") + " " + (item.CompanyName || "") + " " + (item.CorpEmail || "")).toLowerCase();
+            if (hay.indexOf(search) === -1) return false;
+        }
+        if (leadType && (item.LeadType || "") !== leadType) return false;
+        return true;
+    }
+
+    function CplFilteredByStage(stage) {
+        var out = [];
+        for (var i = 0; i < CplAllData.length; i++) {
+            var item = CplAllData[i];
+            if (item.Stage === stage && CplMatches(item)) {
+                out.push(item);
+            }
+        }
+        return out;
+    }
+
+    function CplColumnTotal(list) {
+        var total = 0;
+        var hasAny = false;
+        for (var i = 0; i < list.length; i++) {
+            var n = CplParseAmount(list[i].Amount);
+            if (n !== null) { total += n; hasAny = true; }
+        }
+        return hasAny ? CplFormatMoney(total, list.length ? list[0].Currency : "") : "";
+    }
+
+    // ===== board =====
+    function CplRenderCards(containerId, list) {
+        if (!list || !list.length) {
+            $("#" + containerId).html("<div class='cpl-empty-col'>No leads here.</div>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var heading = item.CompanyName || item.Name;
+            var subParts = [];
+            if (item.CompanyName && item.Name) subParts.push(CplEscape(item.Name));
+            if (item.CountryName) subParts.push(CplEscape(item.CountryName));
+            var isRenewalDue = item.Stage === "Open For Renewal";
+            var cardId = isRenewalDue ? item.CompanyId : item.Id;
+            html += "<div class='cpl-card' onclick=\"CplGoToLead(" + cardId + ", " + isRenewalDue + ")\">";
+            html += "  <div class='cpl-card-name'>" + CplValueOrDash(heading) + "</div>";
+            html += "  <div class='cpl-card-sub'>" + (subParts.length ? subParts.join(" &middot; ") : CplValueOrDash(item.CorpEmail)) + "</div>";
+            html += "  <div class='cpl-card-bottom'>";
+            html += "    " + CplStagePill(item.Stage);
+            html += "    <span class='cpl-card-amount'>" + CplFormatMoney(item.Amount, item.Currency) + "</span>";
+            html += "  </div>";
+            html += "</div>";
+        }
+        $("#" + containerId).html(html);
+    }
+
+    function CplRenderBoard() {
+        var newList = CplFilteredByStage("Open For Renewal");
+        var openList = CplFilteredByStage("In discussion");
+        var discussionList = CplFilteredByStage("Renewal Lost");
+        var wonList = CplFilteredByStage("Renewal Won");
+
+        // Board cards: sirf top 30 per column (List me poora data dikhta hai)
+        CplRenderCards("CplNewCards", newList.slice(0, 30));
+        CplRenderCards("CplOpenCards", openList.slice(0, 30));
+        CplRenderCards("CplDiscussionCards", discussionList.slice(0, 30));
+        CplRenderCards("CplWonCards", wonList.slice(0, 30));
+
+        // Column headers me fixed "Top 30" hi rehta hai (actual count nahi),
+        // kyunki har column top 30 records pe cap hai.
+
+        $("#CplNewTotal").html(CplColumnTotal(newList));
+        $("#CplOpenTotal").html(CplColumnTotal(openList));
+        $("#CplDiscussionTotal").html(CplColumnTotal(discussionList));
+        $("#CplWonTotal").html(CplColumnTotal(wonList));
+
+        $("#CplDiscussionSummary").text("In discussion " + discussionList.length);
+        $("#CplWonSummary").text("Won " + wonList.length);
+    }
+
+    // ===== list =====
+    function CplFilteredForList() {
+        var stage = $("#CplStageFilter").val();
+        var out = [];
+        for (var i = 0; i < CplAllData.length; i++) {
+            var item = CplAllData[i];
+            if (stage && item.Stage !== stage) continue;
+            if (!CplMatches(item)) continue;
+            out.push(item);
+        }
+        return out;
+    }
+
+    function CplRenderListRows(list) {
+        if (!list || !list.length) {
+            $("#CplListRows").html("<tr><td colspan='9' class='cpl-empty-col'>No leads found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var rowIsRenewalDue = item.Stage === "Open For Renewal";
+            var rowId = rowIsRenewalDue ? item.CompanyId : item.Id;
+            html += "<tr onclick=\"CplGoToLead(" + rowId + ", " + rowIsRenewalDue + ")\">";
+            html += "  <td>" + CplTypeBadge(item.LeadType) + "</td>";
+            html += "  <td class='cpl-list-name'>" + CplValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td><div class='cpl-list-name'>" + CplValueOrDash(item.Name) + "</div><div class='cpl-list-sub'>" + CplValueOrDash(item.CorpEmail) + "</div></td>";
+            html += "  <td>" + CplValueOrDash(item.CountryName) + "</td>";
+            html += "  <td>" + CplStagePill(item.Stage) + "</td>";
+            html += "  <td>" + CplValueOrDash(item.OutboundLeadSource) + "</td>";
+            html += "  <td>" + CplFormatMoney(item.Amount, item.Currency) + "</td>";
+            html += "  <td>" + CplFormatDate(item.ExpectedCloseDate) + "</td>";
+            html += "  <td>" + CplFormatRelativeDate(item.SetFollowUp) + "</td>";
+            html += "</tr>";
+        }
+        $("#CplListRows").html(html);
+    }
+
+    function CplRenderList() {
+        var all = CplFilteredForList();
+        var total = all.length;
+        var pageCount = Math.max(1, Math.ceil(total / CplListPageSize));
+        if (CplListCurrentPage > pageCount) CplListCurrentPage = pageCount;
+        var start = (CplListCurrentPage - 1) * CplListPageSize;
+        var pageRows = all.slice(start, start + CplListPageSize);
+
+        CplRenderListRows(pageRows);
+
+        var isFiltered = !!($.trim($("#CplSearch").val()) || $("#CplStageFilter").val() || $("#CplTypeFilter").val());
+        var showingFrom = total === 0 ? 0 : (start + 1);
+        var showingTo = start + pageRows.length;
+        $("#CplListMeta").text(total + (total === 1 ? " lead" : " leads") + (isFiltered ? " \u00B7 filtered" : ""));
+        $("#CplListPager").html(CplGetPaginationHTML(showingFrom, showingTo, total, CplListCurrentPage, pageCount));
+    }
+
+    // Client-side pager - same visual structure as the app-wide pager,
+    // just driven by the in-memory list instead of a server round trip.
+    function CplGetPaginationHTML(showingFrom, showingTo, recordsCount, activePage, numberOfPages) {
+        var html = "<span class='pull-left' style='color:#7c828a; font-size:12px;'>(Showing " + showingFrom + " to " + showingTo + " of " + recordsCount + " records)</span>";
+        html += "<ul class='pagination pagination-sm no-margin pull-right'>";
+        html += "<li class='paginate_button previous" + (activePage <= 1 ? " disabled" : "") + "'>";
+        if (activePage <= 1) {
+            html += "<a href='javascript:void(0);'>&laquo;</a>";
+        } else {
+            html += "<a href='javascript:void(0);' onclick='CplGoToPage(" + (activePage - 1) + ");'>&laquo;</a>";
+        }
+        html += "</li>";
+        var startPage = Math.max(1, activePage - 2);
+        var endPage = Math.min(numberOfPages, startPage + 4);
+        startPage = Math.max(1, Math.min(startPage, endPage - 4));
+        for (var i = startPage; i <= endPage; i++) {
+            if (i === activePage) {
+                html += "<li class='active'><a href='javascript:void(0);' style='background-color:gainsboro;'>" + i + "</a></li>";
+            } else {
+                html += "<li class='paginate_button'><a href='javascript:void(0);' onclick='CplGoToPage(" + i + ");'>" + i + "</a></li>";
+            }
+        }
+        html += "<li class='paginate_button next" + (activePage >= numberOfPages ? " disabled" : "") + "'>";
+        if (activePage >= numberOfPages) {
+            html += "<a href='javascript:void(0);'>&raquo;</a>";
+        } else {
+            html += "<a href='javascript:void(0);' onclick='CplGoToPage(" + (activePage + 1) + ");'>&raquo;</a>";
+        }
+        html += "</li>";
+        html += "</ul>";
+        return html;
+    }
+
+    function CplGoToPage(page) {
+        CplListCurrentPage = page;
+        CplRenderList();
+    }
+
+    // ===== view switching =====
+    function CplShowBoard() {
+        CplCurrentView = "board";
+        $("#CplBoardBtn").addClass("active");
+        $("#CplListBtn").removeClass("active");
+        $("#CplBoardView").show();
+        $("#CplListView").hide();
+        $("#CplStageFilter").prop("disabled", true);
+        CplRenderBoard();
+    }
+
+    function CplShowList() {
+        CplCurrentView = "list";
+        $("#CplListBtn").addClass("active");
+        $("#CplBoardBtn").removeClass("active");
+        $("#CplBoardView").hide();
+        $("#CplListView").show();
+        $("#CplStageFilter").prop("disabled", false);
+        CplListCurrentPage = 1;
+        CplRenderList();
+    }
+
+    function CplApplyFilters() {
+        if (CplCurrentView === "list") {
+            CplListCurrentPage = 1;
+            CplRenderList();
+        } else {
+            CplRenderBoard();
+        }
+    }
+
+    function CplLoad() {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetCRMPipelineData", "LeadManagementSubscription")",
+            data: { search: "" },
+            dataType: "json"
+        }).done(function (response) {
+            CplAllData = response.DataList || [];
+            CplApplyFilters();
+        }).fail(function () {
+            $("#CplNewCards, #CplOpenCards, #CplDiscussionCards, #CplWonCards").html("<div class='cpl-empty-col'>Couldn't load - please refresh.</div>");
+            $("#CplListRows").html("<tr><td colspan='9' class='cpl-empty-col'>Couldn't load - please refresh.</td></tr>");
+        });
+    }
+
+    var CplSearchTimer = null;
+    $(document).ready(function () {
+        $("#CplStageFilter").prop("disabled", true);
+        CplLoad();
+
+        $("#CplSearch").on("input", function () {
+            clearTimeout(CplSearchTimer);
+            CplSearchTimer = setTimeout(CplApplyFilters, 250);
+        });
+        $("#CplStageFilter").on("change", CplApplyFilters);
+        $("#CplTypeFilter").on("change", CplApplyFilters);
+    });
+</script>

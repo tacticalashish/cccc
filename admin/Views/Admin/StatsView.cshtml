@@ -1,0 +1,456 @@
+﻿
+@{
+    ViewBag.Title = "StatsView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+<style>
+   
+    .table-cont tr th {
+        padding: 4px;
+        position: sticky;
+        top: -1px;
+        font-size: 12px;
+        background-color: #141414;
+        white-space: nowrap;
+        border-top: 1px solid #485461;
+        border-bottom: 1px solid #485461;
+    }
+
+    .table-cont tr th {
+        border: 1px solid #808080;
+        color: #b6ff00;
+        font-weight: 400 !important;
+        white-space: nowrap;
+    }
+    .popup-open {
+        top: 0;
+        left: 0;
+        background: rgb(0 0 0 / 59%);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+        position: absolute;
+    }
+
+    .position-relative {
+        position: relative;
+    }
+    .child {
+        z-index: 999;
+        background: #161616;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 16px 25px;
+        color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0px 1px 8px 0px #b1b1b15e;
+        width: 310px;
+        overflow: auto;
+        font-size: 14px;
+    }
+
+
+
+    .tablemaxheight {
+        overflow-y: scroll;
+        max-height: 310px;
+        display: block;
+        padding: 0px 2px;
+    }
+    .bootstrap-select .dropdown-menu {
+        width:100%!important
+    }
+    .bootstrap-select .no-results {
+        padding: 3px;
+        background: #ffffff;
+        margin: 0 5px;
+        color: black;
+        white-space: nowrap;
+    }
+</style>
+<div class="update-profile-wrapper">
+    <div class="white-wrapper">
+        <div class="container-fluid">
+            <h4 class="text-white">Stats</h4>
+
+
+            <div style="border: solid 1px #80808059;    padding: 5px 14px;    border-radius: 4px;">
+                <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group">
+                            <label class="small">Search Company</label>
+
+                            <select class="form-control" placeholder="date" id="CompanyName" data-container="body" data-live-search="true" data-dropup-auto="false" data-size="5" data-none-selected-text="Select Name" onchange="LoginCustomer()" data-selected-text-format="count > 3"></select>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 d-flex">
+                        <div class="form-group">
+                            <label class="small">From</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="FromDate" onchange="LoginCustomer()" autocomplete="off" />
+                                <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="small">To</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control ms-2" id="Todate" onchange="LoginCustomer()" autocomplete="off" />
+                                <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-1 text-right">
+                        <div class="form-group">
+                            <label class="small"></label><br />
+                            <button  class="btn btn-primary" onclick="clearFilter()">Clear Filter</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-1 text-right" style="display:block">
+                       
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 mt-2">
+                    <div class="table-responsive">
+                        <table class="table table-bordered  table-sm text-white table-cont" id="CustomerEmailTable">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th hidden>ID</th>
+                                    <th>Email</th>
+                                    <th>Login Count</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="CustomerCount"></tbody>
+                        </table>
+                    </div>
+                </div>
+               
+
+
+                <div>
+                    <div class="col-sm-12 col-md-12" id="AllDetailsByUser" style="display:none">
+                      <div class="table-responsive">
+                          <table class="table table-bordered  table-sm text-white table-cont" id="tblUserDetails">
+                              <thead>
+                                  <tr>
+                                      <th>Commodity Pricing Count</th>
+                                      <th>Disruption Count</th>
+                                      <th>Exim Count</th>
+                                      <th>Freight Index Count</th>
+                                      <th>Market Analysis Count</th>
+                                      <th>API Hit Count</th>
+                                  </tr>
+                              </thead>
+                              <tbody id="AllDetailsCount"></tbody>
+                          </table>
+                      </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="popup-open">
+    <div class="child">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="fw-bold">Product Data</div>
+            <div class="form-group" hidden>
+                <label class="small">Download</label><br />
+                <a href="#" class="btn btn-primary" id="DownloadExcel"><i class="fa fa-file-excel-o"></i></a>
+            </div>
+            <button class="btn btn-danger btn-sm" id="CancelProducts"><i class="fa fa-times"></i></button>
+        </div>
+
+        <div class="table-responsive tablemaxheight mt-2">
+            <table class="table table-bordered table-sm pe-1" id="tblProductDetails">
+                <thead class="bg-dark fw-bold">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Count</th>
+                        <th id="Country" hidden>Country</th>
+                        <th id="Range" hidden>Range</th>
+                    </tr>
+                </thead>
+                <tbody id="ProductDiscription" class="ProductDiscription"> </tbody>
+            </table>
+        </div>
+       
+       
+    </div>
+</div>
+
+
+
+@*<script src="~/js/bootstrap-select.js"></script>*@
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+
+    //calendar field show when click the calendar icon
+    $(document).ready(function () {
+        $('.input-group-addon').click(function () {
+            $(this).siblings('input').focus();  
+        });
+
+        CompanyMasterData();
+    });
+
+
+
+    function PopupSource(Product) {
+       
+        var Product = (Product);
+        $("#ProductDiscription").html(Product);
+        $(".popup-open").css("display", "block");
+       
+    }
+
+    $("#CancelProducts").click(function () {
+        $('#ProductDiscription').val('');
+        $(".popup-open").css("display", "none");
+    });
+
+
+
+
+    $(document).ready(function () {
+        $("#Todate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#FromDate").datepicker({ dateFormat: "dd/MM/yy" });  
+      
+    });
+
+
+    function AllLoginDetail(ID) {
+        $('#AllDetailsByUser').show();
+        var data = {
+            ID: ID,
+            FromDate: $('#FromDate').val() || null,
+            ToDate: $('#Todate').val() || null
+        }; 
+
+        $.ajax({
+            url: "/Admin/CustomerAllLoginDetail",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(data), 
+            success: function (response) {
+             
+                var tbodyHTML = '';
+
+                if (response && response.length > 0) {
+                    $(response).each(function (index, value) {
+                        $("#AllDetailsByUser").show();
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td><button class='btn btn-primary px-2' title='Show detail' onclick=\"AllLoginProductDetailsbyID(" + ID + ", 'CommodityCount')\"> " + value.CommodityCount + " <i class='fa fa-eye'></i> </button></td>";
+                        tbodyHTML += "<td><button class='btn btn-primary px-2' title='Show detail' onclick=\"AllLoginProductDetailsbyID(" + ID + ", 'DisruptionCount')\"> " + value.DisruptionCount + "  <i class='fa fa-eye'></i>  </button></td>";
+                        tbodyHTML += "<td><button class='btn btn-primary px-2' title='Show detail' onclick=\"AllLoginProductDetailsbyID(" + ID + ", 'EximCount')\"> " + value.EximCount + "  <i class='fa fa-eye'></i>  </button></td>";
+                        tbodyHTML += "<td><button class='btn btn-primary px-2' title='Show detail' onclick=\"AllLoginProductDetailsbyID(" + ID + ", 'FreightIndexCount')\"> " + value.FreightIndexCount + " <i class='fa fa-eye'></i>  </button></td>";
+                        tbodyHTML += "<td><button class='btn btn-primary px-2' title='Show detail' onclick=\"AllLoginProductDetailsbyID(" + ID + ", 'MarketAnalysisCount')\"> " + value.MarketAnalysisCount + " <i class='fa fa-eye'></i>  </button></td>";                   
+                        tbodyHTML += "<td><button class='btn btn-primary px-2' title='Show detail' onclick=\"AllLoginProductDetailsbyID(" + ID + ", 'SA_ApiHitsLog')\"> " + value.ApiCount + " <i class='fa fa-eye'></i>  </button></td>";                   
+                        tbodyHTML += "</tr>";
+                    });
+
+                    $('#AllDetailsCount').html(tbodyHTML);
+                }
+                else {
+                    $('#AllDetailsCount').html(
+                        "<tr><td class='text-center' colspan='20'><span>No records found..!!</span></td></tr>"
+                    );
+                }
+            },
+            error: function () {
+                alert("Something went wrong!");
+            }
+        });
+    }
+
+    function CompanyMasterData() {
+
+        $.ajax({
+            type: "POST",
+            url: "/Admin/GetCompanyMasterData",
+            success: function (response) {
+                
+                var innerHTML = "";
+                var innerHTML2 = "";
+                innerHTML += "<option value=''>Select Company</option>";
+
+                $(response).each(function (index, value) {
+                    if (value.CompanyName != null || value.CompanyName != "" || value.CompanyName != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.CompanyName + "'> " + value.CompanyName + "</option>"
+                    }
+                });
+                if (response == '' || response == null) {
+                    $('#CompanyName').html("<option value=''>Select Company</option>");
+                    return true;
+                }
+                else {
+
+                    $('#CompanyName').html(innerHTML);
+
+                }
+                $('#CompanyName').selectpicker('refresh');
+            },
+
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+
+            }
+        });
+    }
+
+
+
+    function LoginCustomer() {
+     
+        var data = {
+            CompanyName: $('#CompanyName').val(),
+            FromDate: $('#FromDate').val() || null,
+            ToDate: $('#Todate').val() || null
+        };     
+       
+        $.ajax({
+            url: "/Admin/GetLoginCustomer",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json", 
+            data: JSON.stringify(data),
+            success: function (response) {
+                
+                var tbodyHTML = '';              
+                if (response && response.length > 0) {
+                    $(response).each(function (index, value) {
+                        
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + (index + 1) + "</td>";
+                        tbodyHTML += "<td hidden>" + value.ID + "</td>";
+                        tbodyHTML += "<td>" + value.Email + "</td>";
+                        tbodyHTML += "<td>" + value.RecordsCount + "</td>";
+                        if (value.CompanyPrimaryId=="1"){
+                            tbodyHTML += "<td>Primary User</td>";
+                        } else
+                        {
+                            tbodyHTML += "<td>Secondary User</td>";
+                        }
+
+                        if (value.Status=='True'){
+                            tbodyHTML += "<td>Active</td>";
+                        } else {
+                            tbodyHTML += "<td>Not active</td>";
+                        }
+                      
+                       
+                        tbodyHTML += "<td><input type='button' class='btn btn-success btn-sm px-2' value='View' onclick='AllLoginDetail(" + value.ID + ")' /></td>";
+
+                        tbodyHTML += "</tr>";
+                    });
+
+                    $('#CustomerCount').html(tbodyHTML);
+                    $('#AllDetailsByUser').hide();
+                }
+                else {
+                    $('#AllDetailsCount').html("");
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                    $('#CustomerCount').html(tbodyHTML);
+                }
+            }
+        });
+    }
+    function AllLoginProductDetailsbyID(ID, Type) {
+
+
+        var data = {
+            ID: ID,
+            UserType: Type,
+            FromDate: $('#FromDate').val() || null,
+            ToDate: $('#Todate').val() || null
+        }; 
+
+        $.ajax({
+            url: "/Admin/GetAllLoginProductDetailsbyID",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (response) {  
+                
+                var tbodyHTML = '';
+                if (response && response.length > 0) {
+                 
+                    $(response).each(function (index, value) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + value.ProductName + "</td>";
+                        tbodyHTML += "<td>" + value.RecordsCount + "</td>";
+                        if (value.CountryName != '') {
+                            $('#Country').show();
+                            $('#Range').show();
+                            tbodyHTML += "<td>" + value.CountryName + "</td>";
+                            tbodyHTML += "<td>" + value.Range + "</td>";
+                        } else {
+                            $('#Country').hide();
+                            $('#Range').hide();
+                        }
+
+                   });
+
+                    tbodyHTML += "</tr>";
+
+                        PopupSource(tbodyHTML);                  
+                }
+                else {
+                    
+                }
+            },
+            error: function () {
+                alert("Something went wrong!");
+            }
+        });
+    }
+    function clearFilter() {
+        $("#Todate").val("")
+        $("#FromDate").val("") 
+        LoginCustomer();
+    }
+    $("#DownloadExcel").on("click", function () {
+
+        const tableIds = [
+            { id: "CustomerEmailTable", name: "Customer Login" },
+            { id: "tblUserDetails", name: "User Details" },
+            { id: "tblProductDetails", name: "Product Details" }
+        ];
+
+        const wb = XLSX.utils.book_new();
+
+        tableIds.forEach(function (t) {
+            const table = document.getElementById(t.id);
+            if (table) {
+                const ws = XLSX.utils.table_to_sheet(table);
+                XLSX.utils.book_append_sheet(wb, ws, t.name.substring(0, 30));
+            }
+        });
+
+        XLSX.writeFile(wb, "LoginCustomerData.xlsx");
+    });
+
+</script>

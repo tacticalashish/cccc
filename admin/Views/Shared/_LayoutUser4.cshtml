@@ -1,0 +1,330 @@
+﻿<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
+    <title>Chem Analyst</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald|Roboto+Condensed:400,700|Work+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/animate.css" type="text/css" />
+    <link href="~/css/oswald-font.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
+    <link rel="shortcut icon" href="~/images/favicon.ico">
+    <!-- Owl Stylesheets -->
+    <link rel="stylesheet" href="~/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="~/css/custom.css" type="text/css" />
+    <link rel="stylesheet" href="~\css/scroll.css">
+    <link href="../css/multiselect.css" rel="stylesheet" />
+    @{
+        var headerData = ChemAnalyst.DAL.ProductDataStore.GetHeaderData();
+    }
+</head>
+<body oncontextmenu="return false;">
+    <script>
+        $(document).ready(function () {
+
+            $(this).bind("contextmenu", function (e) {
+
+                e.preventDefault();
+
+            });
+
+
+        });
+
+    </script>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4"><div class="logo"><a href="@Url.Action("Index", "ChemAnalyst")"><img src="~/images/logo.png" alt=""></a></div></div>
+                <div class="col-md-8 ml-auto">
+                    <div class="top-con-bar">
+                        <div class="row justify-content-end">
+                            <div class="col-sm-3">
+                                <div class="icon"><i class="fa fa-phone"></i></div>
+                                <div class="top-bt-txt">
+                                    <h4>Telephone</h4>
+                                    <p>@headerData.PhoneNumber</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="icon"><i class="fa fa-envelope"></i></div>
+                                <div class="top-bt-txt">
+                                    <h4>Email Address</h4>
+                                    <p>@headerData.EmailAddress </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-nav">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg p-0" id="mainNav">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"><span class="fa fa-bars 2x"></span> Menu</button>
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("MarketAnalysisChart", "MarketAnalysis")">Market Analysis </a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("ChecmPriceChart", "ChemicalPricing")">Chemical Pricing</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Reportsection", "Industry")">Industry Reports</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("CompanyProfile", "Company")">Company Profile</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("NewsHome", "NewsAndDeals")">News</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("DealsHome", "NewsAndDeals")">Deals</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Contact", "ChemAnalyst")">Contact Us</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("FreeTrail", "ChemAnalyst")"> Free Trial</a> </li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Login")"><i class="fa fa-user"></i> Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "ChemAnalyst")"><i class="fa fa-home"></i> Home</a></li>
+                        </ul>
+                    </div>
+
+                </nav>
+            </div>
+        </div>
+    </header>
+    <div class="right-contant-bar">
+        @RenderBody()
+    </div>
+    <footer>
+        <div class="container-fluid">
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <p>
+                            <table>
+                                <tr><a href="#"><i class="fa fa-twitter" style="font-size:27px;color:white"></i></a></tr>
+                                <tr><a href="#"><i class="fa fa-facebook" style="font-size:27px;color:white"></i></a></tr>
+                                <tr><a href="#"><i class="fa fa-linkedin" style="font-size:27px;color:white"></i></a></tr>
+                            </table>
+                        </p>
+
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+                            <p><a href="@Url.Action("AboutUs", "ChemAnalyst")">About Us</a></p>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+                            <p><a href="@Url.Action("Faq", "ChemAnalyst")">FAQs</a></p>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+                            <p><a href="@Url.Action("Privacypolicy", "ChemAnalyst")">Privacy Policy</a></p>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="foot-links">
+
+                            <p><a href="@Url.Action("Terms", "ChemAnalyst")">Terms &amp; Conditions</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright text-center">
+                    <p>Copyright 2019. Chem Analyst. All Rights Reservered. </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script src="../js/multiselect.js"></script>
+
+    <script type="text/javascript">
+        $('#txtAreaInterest').multiselect();
+        $("body").on("change", "#txtCountry", function () {
+            debugger
+            var country = $(txtCountry).find("option:selected").val();
+
+            var state = $("#txtState");
+            state.empty().append('<option selected="selected" value="" disabled = "disabled">Loading.....</option>');
+            $.ajax({
+                type: "POST",
+                url: "../ChemAnalyst/GetState",
+                data: JSON.stringify({ 'country': country }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    debugger
+                    state.empty().append('<option selected="selected" value=""> Select State</option>');
+                    $.each(response, function () {
+                        state.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                failure: function (response) {
+                    // alert(response.responseText);
+                },
+                error: function (response) {
+                    // alert(response.responseText);
+                }
+            });
+
+
+        });
+
+        $(document).on('click', '#btnSave', function (e) {
+
+        });
+
+
+
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+
+        function isValidEmailAddress(emailAddress) {
+            debugger;
+            var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+            return pattern.test(emailAddress);
+        }
+
+
+         $(function () {
+             $("#btnSave").click(function () {
+            $("#btnSave").prop('disabled', true);
+            var freeTrail = {};
+            debugger
+            if ($("#txtName").val() == "") {
+                swal("Warning", "Please enter name :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            if ($("#txtCorpEmail").val() == "") {
+                swal("Warning", "Please enter email :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            if ($("#txtCorpEmail").val() != "") {
+                if (!isValidEmailAddress($("#txtCorpEmail").val())) {
+                    debugger
+                    swal("Warning", "Invalid email address :)", "error");
+                    $("#btnSave").prop('disabled', false);
+                    return false;
+                }
+                else {
+
+                }
+            }
+
+            if ($("#txtOrganisation").val() == "") {
+                swal("Warning", "Please enter organisation :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            //if ($("#txtCountry").val() == "") {
+            //    swal("Warning", "Please enter country :)", "error");
+            //    return false;
+            //}
+            //if ($("#txtState").val() == "") {
+            //    swal("Warning", "Please enter state :)", "error");
+            //    return false;
+            //}
+            if ($("#txtPhone").val() == "") {
+                swal("Warning", "Please enter phone number :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            if ($("#txtAreaInterest").val() == "") {
+                swal("Warning", "Please enter area of interest :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            if ($("#txtUserType").val() == "") {
+                swal("Warning", "Please enter user type :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            if ($("#txtSubject").val() == "") {
+                swal("Warning", "Please enter subject :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            if ($("#txtQuery").val() == "") {
+                swal("Warning", "Please enter query :)", "error");
+                $("#btnSave").prop('disabled', false);
+                return false;
+            }
+            debugger
+            var modules = "";
+            $.each($("input[name='sport']:checked"), function(){
+                //modules.push($(this).val());
+                modules += $(this).val();
+                modules +=" , ";
+            });
+           // alert("My favourite sports are: " + modules.join(", "));
+
+
+            freeTrail.module = modules;
+            freeTrail.Name = $("#txtName").val();
+            freeTrail.CorpEmail = $("#txtCorpEmail").val();
+            freeTrail.Organisation = $("#txtOrganisation").val();
+            freeTrail.Country = $("#txtCountry").val();
+            freeTrail.State = $("#txtState").val();
+            freeTrail.Phone = $("#txtPhone").val();
+
+            var items = [];
+            $('#txtAreaInterest option:selected').each(function () { items.push($(this).val()); });
+            var result4 = items.join(', ');
+            freeTrail.InterestArea = result4;
+            freeTrail.UserType = $("#txtUserType").val();
+            freeTrail.Subject = $("#txtSubject").val();
+            freeTrail.Query = $("#txtQuery").val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveFreeTrialAsync")',
+                data:  freeTrail,
+                success: function (data) {
+                    if (data && data.result) {
+                        //alert("Data has been added successfully.");
+                        swal("Thank you!", "Your Query has been submitted successfully", "success");
+                        $("#txtName").val('');
+                        $("#txtCorpEmail").val('');
+                        $("#txtOrganisation").val('');
+                        $("#txtCountry").val('');
+                        $("#txtState").val('');
+                        $("#txtPhone").val();
+                        $("#txtAreaInterest").val('');
+                        $("#txtUserType").val('');
+                        $("#txtSubject").val('');
+                        $("#txtQuery").val('');
+
+                        $("#btnSave").prop('disabled', false);
+                    }
+                    else {
+                        $("#btnSave").prop('disabled', false);
+                        alert("Error while inserting data");
+                    }
+                },
+                error: function () {
+                    $("#btnSave").prop('disabled', false);
+                    alert("Error while inserting data");
+                }
+            });
+            return false;
+        });
+    });
+    </script>
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

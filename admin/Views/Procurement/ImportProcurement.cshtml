@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "ImportProcurement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <h4 class="text-white">Procurement Company Excel Upload</h4>
+
+    @using (Html.BeginForm("ExcelUploadCompany", "Procurement", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "formpresales" }))
+    {
+        <div class="import-form mt-2">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-4">
+                    <input type="file" name="file" class="custom-file-input file-border" required />
+                </div>
+                <div class="col-12 col-md-3 col-lg-3">
+                    <input id="btnSubmit" name="btnSubmit" type="submit" class="btn btn-sm btn-success px-4" value="Upload" onclick="return ValidateForm();">
+                    <a class="btn btn-sm btn-danger px-4" id="btnCancel" name="btnCancel" href="@Url.Action("ImportProcurement", "Procurement")">Cancel</a>
+                    <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                </div>
+              
+            </div>
+            <div><a class="btn btn-sm btn-info" target="_blank" href="/Procurement/DownloadFile?filePath=/SupplierAnalysisFiles/CompanyNames.xlsx&fileName=CompanyNames.xlsx">Company Excel Format</a></div>
+        </div>
+    }
+
+</div>
+
+
+<div class="container-fluid">
+    <h4 class="text-white">Procurement Category Upload</h4>
+
+    @using (Html.BeginForm("ExcelUploadCategory", "Procurement", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "formpresales" }))
+    {
+        <div class="import-form mt-2">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-4">
+                    <input type="file" name="file" class="custom-file-input file-border" required />
+                </div>
+                <div class="col-12 col-md-3 col-lg-3">
+                    <input id="btnSubmit" name="btnSubmit" type="submit" class="btn btn-sm btn-success px-4" value="Upload" onclick="return ValidateForm();">
+                    <a class="btn btn-sm btn-danger px-4" id="btnCancel" name="btnCancel" href="@Url.Action("ImportProcurement", "Procurement")">Cancel</a>
+                    <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                </div>
+
+            </div>
+            <div><a class="btn btn-sm btn-info" target="_blank" href="/Procurement/DownloadFile?filePath=/SupplierAnalysisFiles/Category.xlsx&fileName=Category.xlsx">Category Excel Format</a></div>
+        </div>
+    }
+
+</div>
+
+<div class="container-fluid">
+    <h4 class="text-white">Procurement Field Upload</h4>
+
+    @using (Html.BeginForm("ExcelUploadField", "Procurement", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "formpresales" }))
+    {
+        <div class="import-form mt-2">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-4">
+                    <input type="file" name="file" class="custom-file-input file-border" required />
+                </div>
+                <div class="col-12 col-md-3 col-lg-3">
+                    <input id="btnSubmit" name="btnSubmit" type="submit" class="btn btn-sm btn-success px-4" value="Upload" onclick="return ValidateForm();">
+                    <a class="btn btn-sm btn-danger px-4" id="btnCancel" name="btnCancel" href="@Url.Action("ImportProcurement", "Procurement")">Cancel</a>
+                    <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                </div>
+
+            </div>
+            <div><a class="btn btn-sm btn-info" target="_blank" href="/Procurement/DownloadFile?filePath=/SupplierAnalysisFiles/Filed.xlsx&fileName=Filed.xlsx">Filed Excel Format</a></div>
+        </div>
+    }
+
+</div>
+
+<div class="container-fluid">
+    <h4 class="text-white">Procurement Values Upload</h4>
+
+    @using (Html.BeginForm("ExcelUploadProcurementValues", "Procurement", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "formpresales" }))
+    {
+        <div class="import-form mt-2">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-4">
+                    <input type="file" name="file" class="custom-file-input file-border" required />
+                </div>
+                <div class="col-12 col-md-3 col-lg-3">
+                    <input id="btnSubmit" name="btnSubmit" type="submit" class="btn btn-sm btn-success px-4" value="Upload" onclick="return ValidateForm();">
+                    <a class="btn btn-sm btn-danger px-4" id="btnCancel" name="btnCancel" href="@Url.Action("ImportProcurement", "Procurement")">Cancel</a>
+                    <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                </div>
+
+            </div>
+            
+        </div>
+    }
+
+</div>
+
+

@@ -1,0 +1,276 @@
+﻿
+@{
+    ViewBag.Title = "AssociatePricingRating";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" />
+<script src="~/ckeditor/ckeditor.js" type="text/javascript"></script>
+
+<div class="white-wrapper  container-fluid">
+    <div class="panel">
+        <div class="panel-heading panel-gray"><h3 class="text-white">Insert Associate Rating</h3></div>
+        <div class="panel-body bg-black">
+            <div class="row">
+                <div class="col-sm-12 col-md-3">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Select Year</label>
+                                <select id="EmployeeYear" class="form-control">
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Select Month</label>
+                                <select id="EmployeeMonth" class="form-control" onchange="BindAssociatePricingName()">
+                                    <option value="">--Select Month--</option>
+                                    <option value="January">January</option>
+                                    <option value="February">February</option>
+                                    <option value="March">March</option>
+                                    <option value="April">April</option>
+                                    <option value="May">May</option>
+                                    <option value="June">June</option>
+                                    <option value="July">July</option>
+                                    <option value="August">August</option>
+                                    <option value="September">September</option>
+                                    <option value="October">October</option>
+                                    <option value="November">November</option>
+                                    <option value="December">December</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Select Associate Name</label>
+                                <select id="EmployeeName" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12">
+                            <div class="form-group">
+                                <label>Insert Rating</label>
+                                <input id="EmployeeRating" placeholder="Insert Rating"   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1'); if (this.value > 5) this.value = 5; if (this.value < 0) this.value = 0;"  class="form-control" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-9">
+                    <div class="form-group">
+                        <label>Add Details</label>
+                        <textarea rows="3" name="Description" placeholder="Description *"></textarea>
+                        <script type="text/javascript">
+                            CKEDITOR.replace("Description");
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer panel-gray text-right">
+            <button class="btn btn-primary btn-md fw-bold" type="submit" onclick="SubmitAssociateRating()">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        
+        //populateYearDropdown();
+
+        //populateMonthDropdown();
+
+    });
+
+
+    function populateMonthDropdown() {
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        const dropdown = document.getElementById('EmployeeMonth');
+        const currentDate = new Date();
+
+        // Get current and last two month indices
+        const currentMonth = currentDate.getMonth();
+        const previousMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+        const twoMonthsAgo = (previousMonth === 0) ? 11 : previousMonth - 1;
+
+        // Array of months to show in dropdown
+        const monthsToShow = [twoMonthsAgo, previousMonth, currentMonth];
+
+        // Add options dynamically
+        monthsToShow.forEach(monthIndex => {
+            const option = document.createElement('option');
+            option.value = monthNames[monthIndex];
+            option.textContent = monthNames[monthIndex];
+            dropdown.appendChild(option);
+        });
+    }
+
+    function BindAssociatePricingName() {
+        debugger;
+        var Search = '';
+        var EmployeeYear = $("#EmployeeYear").val();
+        var EmployeeMonth = $("#EmployeeMonth").val();       
+        var URL = "/PricingRating/GetPricingassignAssociateName?searchKeyword='" + Search + "'";
+        URL += '&Year=' + EmployeeYear;
+        URL += '&Month=' + EmployeeMonth;       
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                debugger;
+                var innerHTMLs = '<option value="">--Select name--</option>';
+                $(response).each(function (idx, Value) {
+                   
+                    innerHTMLs += "<option value=" + Value.AssociateID + ">" + Value.AssociateName + "</option>"
+                });
+            
+                $('#EmployeeName').html(innerHTMLs);
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+  
+
+    function populateYearDropdown() {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth(); // January is 0
+
+        const $yearDropdown = $('#EmployeeYear');
+        $yearDropdown.empty(); // Clear existing options
+        $yearDropdown.append(`<option value="">--Select Year--</option>`);
+
+        if (currentMonth <= 1) { // If the month is January (0) or February (1)
+            $yearDropdown.append(`<option value="${currentYear - 1}">${currentYear - 1}</option>`);
+        }
+
+        $yearDropdown.append(`<option value="${currentYear}">${currentYear}</option>`);
+    }
+
+
+    function SubmitAssociateRating() {
+        debugger;
+        var EmployeeName = $("#EmployeeName option:selected").text();
+        var EmployeeNameid = $("#EmployeeName").val();
+        var EmployeeYear = $("#EmployeeYear").val();
+        var EmployeeMonth = $("#EmployeeMonth").val();
+        var EmployeeRating = $("#EmployeeRating").val();
+        var desc = CKEDITOR.instances['Description'].getData();
+        var Desc = {
+            AssociateName: EmployeeName,
+            AssociateID: EmployeeNameid,
+            Year: EmployeeYear,
+            Month: EmployeeMonth,
+            AssociateRating: EmployeeRating,
+            Details: desc
+
+        };
+        if (EmployeeNameid == "") {
+            Swal.fire({
+                title: "Please Select Associate Name!",
+                type: "success",
+                customClass: {
+                    popup: 'small-popup'
+                }
+            }).then(function () {
+            });
+        }
+        else if (EmployeeYear == "") {
+            Swal.fire({
+                title: "Please Select Year!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (EmployeeMonth == "") {
+            Swal.fire({
+                title: "Please Select Month!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (EmployeeRating == "") {
+            Swal.fire({
+                title: "Please Enter Associate rating!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else if (desc == "") {
+            Swal.fire({
+                title: "Please Enter Description!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/PricingRating/insertAssociateRating",
+                data: '{Desc: ' + JSON.stringify(Desc) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    debugger;
+                    var responseMessage = response;
+                    if (responseMessage == "Success") {
+                        Swal.fire({
+                            title: "Thank you!",
+                            text: "Insert Sucessfully.",
+                            icon: "success"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/AssociatePricingRating";
+                        });
+                    }
+                    else if (responseMessage == "Already Exist") {
+                        Swal.fire({
+                            title: "Failed!",
+                            text: "Already Exist.",
+                            icon: "error"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/AssociatePricingRating";
+                        });
+                    }
+
+                    else {
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/AssociatePricingRating";
+                        });
+                    }
+                },
+                Error: function (ErrMsg) {
+                    window.location.href = "../../PricingRating/AssociatePricingRating";
+                }
+            });
+
+
+
+        }
+
+    }
+
+</script>

@@ -1,0 +1,740 @@
+@{
+    ViewBag.Title = "Subscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .six-wrap {
+        background: #f4f5f7;
+        padding: 18px 28px 40px;
+    }
+
+    .six-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #22262b;
+        margin: 0 0 16px;
+    }
+
+    .six-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        padding: 18px;
+    }
+
+    .six-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .six-card-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .six-card-note {
+        font-size: 12px;
+        color: #9aa0a6;
+    }
+
+    .six-new-btn {
+        background: #1f5a37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-family: inherit;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        margin-left: 14px;
+        cursor: pointer;
+    }
+
+    .six-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .six-search-box {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+        width: 320px;
+    }
+
+    .six-count {
+        font-size: 12px;
+        color: #7c828a;
+    }
+
+    table.six-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+    }
+
+        table.six-table th, table.six-table td {
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            text-align: left;
+            padding: 10px 8px;
+            font-size: 13px;
+        }
+
+        table.six-table th {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7c828a;
+            text-transform: uppercase;
+        }
+
+    .six-request-id {
+        color: #33383f;
+        font-weight: 600;
+    }
+
+    .six-company {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .six-link {
+        color: #3f6fd4;
+    }
+
+    .six-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 10px;
+    }
+
+    .six-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .six-status-pending { background: #e6f0fb; color: #3f6fd4; }
+    .six-status-pending .six-status-dot { background: #3f6fd4; }
+
+    .six-status-created { background: #e5f3ea; color: #2c8a4b; }
+    .six-status-created .six-status-dot { background: #2c8a4b; }
+
+    .six-status-disapproved { background: #fbe8e6; color: #c0392b; }
+    .six-status-disapproved .six-status-dot { background: #c0392b; }
+
+    .six-empty {
+        font-size: 12px;
+        color: #9aa0a6;
+        padding: 18px 4px;
+        text-align: center;
+    }
+
+    .six-pager {
+        margin-top: 14px;
+    }
+
+        .six-pager:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .six-pager .pagination {
+            margin: 0;
+        }
+
+        .six-pager .paginate_button > a {
+            cursor: pointer;
+        }
+
+    .six-pg-btn {
+        border: 1px solid #e3e5e8;
+        background: #fff;
+        border-radius: 6px;
+        padding: 6px 11px;
+        font-size: 12px;
+        cursor: pointer;
+        color: #33383f;
+    }
+
+        .six-pg-btn.active {
+            background: #22262b;
+            color: #fff;
+            border-color: #22262b;
+        }
+
+        .six-pg-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+    .six-row:hover {
+        background: #fafbfc;
+    }
+
+    /* ---- New subscription drawer ---- */
+    .six-nsmodal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(20,20,30,.35);
+        z-index: 1000;
+        justify-content: flex-end;
+    }
+
+        .six-nsmodal-overlay.six-nsmodal-open {
+            display: flex;
+        }
+
+    .six-nsmodal {
+        background: #fff;
+        width: 480px;
+        max-width: 92vw;
+        height: 100%;
+        box-shadow: -4px 0 20px rgba(20,20,30,.15);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .six-nsmodal-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid #eef0f2;
+    }
+
+    .six-nsmodal-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .six-nsmodal-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        background: #1f5a37;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .six-nsmodal-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1b1f23;
+    }
+
+    .six-nsmodal-subtitle {
+        font-size: 12.5px;
+        color: #8a94a6;
+        margin-top: 1px;
+    }
+
+    .six-nsmodal-close {
+        cursor: pointer;
+        color: #8a94a6;
+        font-size: 20px;
+        line-height: 1;
+        border: none;
+        background: none;
+        padding: 2px;
+    }
+
+    .six-nsmodal-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px 20px 20px;
+    }
+
+    .six-nsmodal-info {
+        background: #eef1fb;
+        border-radius: 6px;
+        padding: 11px 14px;
+        font-size: 12.5px;
+        color: #4a5568;
+        margin-bottom: 18px;
+    }
+
+    .six-nsmodal-section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        color: #9aa0a6;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .six-nsmodal-deal-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+        .six-nsmodal-deal-row:last-child {
+            border-bottom: none;
+        }
+
+    .six-nsmodal-deal-company {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .six-nsmodal-deal-sub {
+        font-size: 12px;
+        color: #9aa0a6;
+        margin-top: 2px;
+    }
+
+    .six-nsmodal-convert-btn {
+        background: #1f5a37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 12.5px;
+        font-family: inherit;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+        .six-nsmodal-convert-btn:hover {
+            background: #17452a;
+        }
+
+    .six-nsmodal-empty {
+        font-size: 12.5px;
+        color: #9aa0a6;
+        padding: 10px 0;
+    }
+
+    .six-nsmodal-blank-btn {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #d7dae0;
+        color: #333;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-family: inherit;
+        font-weight: 600;
+        margin-top: 16px;
+        cursor: pointer;
+    }
+
+        .six-nsmodal-blank-btn:hover {
+            background: #f7f8f9;
+        }
+
+</style>
+
+<div class="six-wrap">
+    <div class="six-title">Subscriptions</div>
+
+    <div class="six-card">
+        <div class="six-card-head">
+            <div>
+                <div class="six-card-title">Subscriptions</div>
+                <div class="six-card-note">accounts you've handed to CSM</div>
+            </div>
+            @*<button type="button" class="six-new-btn" id="SixNewSubscriptionBtn">+ New subscription</button>*@
+        </div>
+
+        <div class="six-toolbar">
+            <input type="text" class="six-search-box" id="SixSearch" placeholder="Search company or contact..." />
+            <div class="six-count" id="SixCount">&nbsp;</div>
+        </div>
+
+        <table class="six-table">
+            <thead>
+                <tr>
+                    <th>Request</th>
+                    <th>Company</th>
+                    <th>Primary contact</th>
+                    <th>Package</th>
+                    <th>Coverage</th>
+                    <th>CSM</th>
+                    <th>Created</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="SixRows">
+                <tr><td colspan="8" class="six-empty">Loading&hellip;</td></tr>
+            </tbody>
+        </table>
+
+        <div class="six-pager" id="SixPager"></div>
+    </div>
+</div>
+
+<div class="six-nsmodal-overlay" id="SixNewSubModalOverlay">
+    <div class="six-nsmodal">
+        <div class="six-nsmodal-head">
+            <div class="six-nsmodal-title-wrap">
+                <div class="six-nsmodal-avatar">CA</div>
+                <div>
+                    <div class="six-nsmodal-title">New subscription</div>
+                    <div class="six-nsmodal-subtitle">Convert a won deal, or start from scratch</div>
+                </div>
+            </div>
+            <span class="six-nsmodal-close" id="SixNewSubModalClose">&times;</span>
+        </div>
+        <div class="six-nsmodal-body">
+            <div class="six-nsmodal-info">
+                <i class="fa fa-info-circle"></i>
+                Subscriptions are usually created from a won deal so the contact &amp; products carry over &mdash; but you can start a blank one too. You'll pick products on the Package step.
+            </div>
+
+            <div class="six-nsmodal-section-label">Won deals ready to convert</div>
+            <div id="SixNewSubDealsList">
+                <div class="six-nsmodal-empty">Loading&hellip;</div>
+            </div>
+
+            <button type="button" class="six-nsmodal-blank-btn hidden" id="SixStartBlankBtn">Start a blank subscription</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    function SixEscape(text) {
+        if (text === null || text === undefined) return "";
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function SixValueOrDash(text) {
+        return (text === null || text === undefined || text === "") ? "&mdash;" : SixEscape(text);
+    }
+
+    function SixParseDate(value) {
+        if (!value) return null;
+        var s = String(value);
+        var m = /\/Date\((-?\d+)\)\//.exec(s);
+        if (m) return new Date(parseInt(m[1], 10));
+        var normalized = s.indexOf("T") === -1 ? s.replace(" ", "T") : s;
+        var d = new Date(normalized);
+        if (!isNaN(d.getTime())) return d;
+        d = new Date(s);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    function SixFormatDate(value) {
+        var d = SixParseDate(value);
+        if (!d) return "&mdash;";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var hours = d.getHours();
+        var ampm = hours >= 12 ? "PM" : "AM";
+        var hours12 = hours % 12;
+        if (hours12 === 0) hours12 = 12;
+        var minutes = String(d.getMinutes()).padStart(2, '0');
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear() + ", " + hours12 + ":" + minutes + " " + ampm;
+    }
+
+    function SixStatusPill(status) {
+        var s = (status || "").toLowerCase();
+        var cls = "six-status-pending";
+        if (s.indexOf("disapprov") !== -1) cls = "six-status-disapproved";
+        else if (s.indexOf("created") !== -1 || s.indexOf("approved") !== -1) cls = "six-status-created";
+        return "<span class='six-status-pill " + cls + "'><span class='six-status-dot'></span>" + SixValueOrDash(status) + "</span>";
+    }
+
+    var SixCurrentPage = 1;
+
+    function SixRenderRows(list) {
+        if (!list || !list.length) {
+            $("#SixRows").html("<tr><td colspan='8' class='six-empty'>No subscription requests found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr class='six-row' style='cursor:pointer' data-company=\"" + SixEscape(item.CompanyName || "") + "\">";
+            html += "  <td class='six-request-id'>" + SixValueOrDash(item.RequestNumber) + "</td>";
+            html += "  <td class='six-company'>" + SixValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td class='six-link'>" + SixValueOrDash(item.PrimaryContactName) + "</td>";
+            html += "  <td class='six-link'>" + SixValueOrDash(item.PackageSummary) + "</td>";
+            html += "  <td>" + SixValueOrDash(item.CoverageSummary) + "</td>";
+            html += "  <td>" + SixValueOrDash(item.CSM) + "</td>";
+            html += "  <td>" + SixFormatDate(item.RequestCreatedDate) + "</td>";
+            html += "  <td>" + SixStatusPill(item.SalesIndexStatus) + "</td>";
+            html += "</tr>";
+        }
+        $("#SixRows").html(html);
+    }
+
+    function SixGetPaginationHTML(json) {
+        var pagingInnerHTML = "<span class='pull-left' style='color:#7c828a; font-size:12px;'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = SixGetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+        return pagingInnerHTML;
+    }
+
+    function SixPaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        SixCurrentPage = pageNumber;
+        SixLoad();
+    }
+
+    function SixGetPagination(activePage, pagerSize, numberOfPages, URL) {
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='SixPaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='SixPaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='SixPaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='SixPaggingButton($(this));' href='javascript:void(0);'  url='";
+                innerHTML += URL + i;
+            }
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage + 1);
+                innerHTML += "' onclick='SixPaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage + 1);
+            innerHTML += "' onclick='SixPaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (next);
+            innerHTML += "' onclick='SixPaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+
+    function SixLoad() {
+        $("#SixRows").html("<tr><td colspan='8' class='six-empty'>Loading&hellip;</td></tr>");
+        var search = $.trim($("#SixSearch").val());
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetSubscriptionRequestsList", "LeadManagementSubscription")",
+            data: { search: search, pageNumber: SixCurrentPage },
+            dataType: "json"
+        }).done(function (response) {
+            SixRenderRows(response.DataList);
+            $("#SixPager").html(SixGetPaginationHTML(response));
+            var count = response.RecordsCount || 0;
+            $("#SixCount").text(count + (count === 1 ? " request" : " requests"));
+        }).fail(function () {
+            $("#SixRows").html("<tr><td colspan='8' class='six-empty'>Couldn't load - please refresh.</td></tr>");
+            $("#SixCount").text("");
+        });
+    }
+
+    function SixRenderNewSubDeals(list) {
+        if (!list || !list.length) {
+            $("#SixNewSubDealsList").html("<div class='six-nsmodal-empty'>No won deals waiting on a subscription right now.</div>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var subParts = [];
+            if (item.Name) subParts.push(SixEscape(item.Name));
+            if (item.Amount != null && item.Amount !== "") {
+                subParts.push(SixEscape("$" + item.Amount + (item.Currency ? (" " + item.Currency) : "")));
+            }
+            html += "<div class='six-nsmodal-deal-row'>";
+            html += "  <div>";
+            html += "    <div class='six-nsmodal-deal-company'>" + SixValueOrDash(item.CompanyName) + "</div>";
+            html += "    <div class='six-nsmodal-deal-sub'>" + (subParts.join(" &middot; ") || "&mdash;") + "</div>";
+            html += "  </div>";
+            html += "  <button type='button' class='six-nsmodal-convert-btn' data-lead-id='" + item.ID + "'>Convert &rarr;</button>";
+            html += "</div>";
+        }
+        $("#SixNewSubDealsList").html(html);
+    }
+
+    function SixOpenNewSubModal() {
+        $("#SixNewSubModalOverlay").addClass("six-nsmodal-open");
+        $("#SixNewSubDealsList").html("<div class='six-nsmodal-empty'>Loading&hellip;</div>");
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetWonLeadsWithoutSubscription", "SalesManagement")",
+            dataType: "json"
+        }).done(function (list) {
+            SixRenderNewSubDeals(list);
+        }).fail(function () {
+            $("#SixNewSubDealsList").html("<div class='six-nsmodal-empty'>Couldn't load - please try again.</div>");
+        });
+    }
+
+    function SixCloseNewSubModal() {
+        $("#SixNewSubModalOverlay").removeClass("six-nsmodal-open");
+    }
+
+    var SixSearchTimer = null;
+    $(document).ready(function () {
+        SixLoad();
+
+        $("#SixSearch").on("input", function () {
+            clearTimeout(SixSearchTimer);
+            SixSearchTimer = setTimeout(function () {
+                SixCurrentPage = 1;
+                SixLoad();
+            }, 300);
+        });
+
+        $("#SixRows").on("click", ".six-row", function () {
+            var company = $(this).attr("data-company") || "";
+            location.href = "@Url.Action("CRMSubscriptionRequestDetail", "LeadManagementSubscription")" + "?company=" + encodeURIComponent(company);
+        });
+
+        $("#SixNewSubscriptionBtn").click(function () {
+            SixOpenNewSubModal();
+        });
+
+        $("#SixNewSubModalClose").click(function () {
+            SixCloseNewSubModal();
+        });
+
+        $("#SixNewSubModalOverlay").click(function (e) {
+            if (e.target === this) {
+                SixCloseNewSubModal();
+            }
+        });
+
+        $("#SixNewSubDealsList").on("click", ".six-nsmodal-convert-btn", function () {
+            var leadId = $(this).attr("data-lead-id");
+            location.href = "@Url.Action("CreateSubscription", "SalesManagement")" + "?leadId=" + encodeURIComponent(leadId) + "&salesFlow=1";
+        });
+
+        $("#SixStartBlankBtn").click(function () {
+            location.href = "@Url.Action("CreateSubscription", "SalesManagement")" + "?salesFlow=1";
+        });
+    });
+
+</script>

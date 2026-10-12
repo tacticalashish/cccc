@@ -1,0 +1,538 @@
+﻿@using ChemAnalyst.DAL
+@{
+    ViewBag.Title = "Email Trigger";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css"/ >
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<div class="update-profile-wrapper">
+    <div class="eq-form" style="margin-top: 1em;">
+        <form id="frmSearchFilter">
+            <input type="hidden" value="@ViewBag.LeadId" id="Leadid" />
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Subscription Type</label>
+                        <select id="ddlSubscriptionType" name="ddlSubscriptionType" class="form-control selectpicker" data-none-selected-text="Select Subscription" multiple data-max-options="1">
+                            <option value="1">Free Trial</option>
+                            <option value="2">Package</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Date From</label>
+                        <input type="text" value="" size="40" class="form-control" placeholder="From Date" id="FromDatepicker">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Date To</label>
+                        <input type="text" value="" size="40" class="form-control" placeholder="To Date" id="ToDatepicker">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Module</label>
+                        <select id="ddlModule" name="ddlModule" class="form-control selectpicker" data-none-selected-text="Select Module" multiple>
+                            <option value="1">Chemical Pricing</option>
+                            <option value="2">Market Analysis</option>
+                            <option value="3">Company Profile</option>
+                            <option value="5">News</option>
+                            <option value="6">Deals</option>
+                            <option value="7">Sectoral Report</option>
+                            <option value="8">Capacity Tracker</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Subscription Region/Country</label>
+                        <select id="ddlSubscriptionRegionCountry" name="ddlSubscriptionRegionCountry" class="form-control selectpicker" data-none-selected-text="select Subscription" multiple data-max-options="1">
+                            <option value="region">Region Wise</option>
+                            <option value="country">Country Wise</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4" id="dvRegion" style="display:none;">
+                    <div class="form-group">
+                        <label>Region</label>
+                        <select id="ddlRegion" name="ddlRegion" data-name="region" class="form-control selectpicker get-product" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Region" multiple data-max-options="1">
+                            @foreach (var item in new DALHelper().IEnumerableRegion(null))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4" id="dvCountry" style="display:none;">
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select id="ddlCountry" name="ddlCountry" data-name="country" class="form-control selectpicker get-product" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Country" multiple data-max-options="1">
+                            @foreach (var item in new DALHelper().IEnumerableCountry(true, null))
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label>Product</label>
+                        <select id="ddlProduct" name="ddlProduct" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Product" multiple data-actions-box="true"></select>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" id="dvChemicalPricingRange" style="display:none;">
+                    <div class="form-group">
+                        <label>Chemical Pricing Range</label>
+                        <select id="ddlChemicalPricingRange" name="ddlChemicalPricingRange" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Chemical Pricing Range" multiple data-actions-box="true"></select>
+                    </div>
+                </div>
+
+                <div class="col-lg-4" id="dvMarketAnalysisRange" style="display:none;">
+                    <div class="form-group">
+                        <label>Market Analysis Range</label>
+                        <select id="ddlMarketAnalysisRange" name="ddlMarketAnalysisRange" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Market Analysis Range" multiple data-actions-box="true"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <a href="javascript:void(0)" onclick="Submit();" class="btn btn-success search-filter"><i class="fa fa-save"></i> Submit</a>
+                    <a href="javascript:void(0)" class="btn btn-warning" onclick="window.location.reload(true)"><i class="fa fa-close"></i> Clear</a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+
+        $(function () {
+            $('#FromDatepicker').datetimepicker();
+            $('#ToDatepicker').datetimepicker();
+        });
+    });
+
+
+    $('#ddlModule').on('changed.bs.select', function (e, clickedIndex) {
+        var selectedValues = $(e.currentTarget).val();
+
+        if (selectedValues != null) {
+            if (selectedValues.indexOf('1') != -1) {
+                $('#dvChemicalPricingRange').show();
+
+            }
+            else {
+                $('#dvChemicalPricingRange').hide();
+                $('#ddlChemicalPricingRange').selectpicker('val', '');
+            }
+
+            if (selectedValues.indexOf('2') != -1) {
+                $('#dvMarketAnalysisRange').show();
+            }
+            else {
+                $('#dvMarketAnalysisRange').hide();
+                $('#ddlMarketAnalysisRange').selectpicker('val', '');
+            }
+        }
+        else {
+            $('#dvChemicalPricingRange').hide();
+            $('#dvMarketAnalysisRange').hide();
+        }
+
+    });
+
+    $('#ddlSubscriptionRegionCountry').on('changed.bs.select', function (e, clickedIndex) {
+        var selectedValues = $(e.currentTarget).val();
+
+        if (selectedValues.indexOf('region') != -1) {
+            $('#dvRegion').show();
+        }
+        else {
+            $('#dvRegion').hide();
+        }
+
+        if (selectedValues.indexOf('country') != -1) {
+            $('#dvCountry').show();
+        }
+        else {
+            $('#dvCountry').hide();
+        }
+    });
+
+
+    $('.get-product').on('changed.bs.select', function (e, clickedIndex) {
+
+        var subscriptionType = $(this).attr('data-name');
+        var withCommaValue = null;
+
+        if ($(e.currentTarget).val() != null && $(e.currentTarget).val()[0] != null) {
+            withCommaValue = $(e.currentTarget).val()[0];
+        }
+
+        if (subscriptionType == 'country') {
+            $('#ddlRegion').selectpicker('val', '');
+        }
+        else if (subscriptionType == 'region') {
+            $('#ddlCountry').selectpicker('val', '');
+        }
+        else {
+            $('#ddlRegion', '#ddlCountry').selectpicker('val', '');
+        }
+
+        if (withCommaValue == null) {
+            return true;
+        };
+
+        GetProduct(withCommaValue, subscriptionType);
+    });
+
+
+    $("#ddlChemicalPricingRange").parent().on('show.bs.dropdown', function () {
+        //clear all data
+        $('#ddlChemicalPricingRange').selectpicker('val', '');
+
+
+        var isCountryWise = null;
+        var countryName = null;
+        var rangeType = 'ChemicalPricing';
+        var productCommaValue = $('#ddlProduct').val().join(",");
+
+
+        if ($('#ddlSubscriptionRegionCountry').val() != null && $('#ddlSubscriptionRegionCountry').val()[0] == 'country') {
+            isCountryWise = true;
+            countryName = $('#ddlCountry').find("option:selected").text();
+        }
+        else if ($('#ddlSubscriptionRegionCountry').val() != null && $('#ddlSubscriptionRegionCountry').val()[0] == 'region') {
+            isCountryWise = false;
+            countryName = $('#ddlRegion').find("option:selected").text();
+        }
+
+        if (isCountryWise == null || countryName == null) {
+            console.log('sebscription type or country/region not selected');
+            return true;
+        }
+
+        //get range for chemical pricing
+        GetRange(isCountryWise, rangeType, productCommaValue, countryName);
+
+    });
+
+    $("#ddlMarketAnalysisRange").parent().on('show.bs.dropdown', function () {
+        //clear all data
+        $('#ddlMarketAnalysisRange').selectpicker('val', '');
+
+
+        var isCountryWise = null;
+        var countryName = null;
+        var rangeType = 'MarketAnalysis';
+        var productCommaValue = $('#ddlProduct').val().join(",");
+
+
+        if ($('#ddlSubscriptionRegionCountry').val() != null && $('#ddlSubscriptionRegionCountry').val()[0] == 'country') {
+            isCountryWise = true;
+            countryName = $('#ddlCountry').find("option:selected").text();
+        }
+        else if ($('#ddlSubscriptionRegionCountry').val() != null && $('#ddlSubscriptionRegionCountry').val()[0] == 'region') {
+            isCountryWise = false;
+            countryName = $('#ddlRegion').find("option:selected").text();
+        }
+
+        if (isCountryWise == null || countryName == null) {
+            console.log('sebscription type or country/region not selected');
+            return true;
+        }
+
+        //get range for chemical pricing
+        GetRange(isCountryWise, rangeType, productCommaValue, countryName);
+    });
+
+
+    function GetRange(isCountryWise, rangeType, commaValue, countryName) {
+        //prepare object for search filter than get data based on filter
+        var data = {
+            'RangeType': rangeType,
+            'Pids': commaValue,
+            'IsCountryWise': isCountryWise,
+            'CountryName': countryName
+        };
+
+        console.log(data)
+
+        Loading(true);
+
+        $.ajax({
+            type: "POST",
+            url: "/ProductAndCategory/GetRange",
+            async: true,
+            data: { value: JSON.stringify(data) }
+        }).complete(function (jqXHR, textStatus) {
+            Loading(false);
+            if (textStatus == "success" && jqXHR.responseText != null) {
+
+                var json = JSON.parse(jqXHR.responseText);
+
+                if (rangeType.toLowerCase() == 'chemicalpricing') {
+                    $('#ddlChemicalPricingRange').selectpicker('val', '');
+
+                    var innerHTML = '';
+                    $(json).each(function (jsonIndex, jsonValue) {
+                        innerHTML += "<option product-value='" + jsonValue.ProductID + "'range-value='" + jsonValue.Key + "' >  " + jsonValue.ProductText + " [" + jsonValue.Value + "]" + "</option > ";
+                    });
+
+                    $('#ddlChemicalPricingRange').html(innerHTML);
+                    $('#ddlChemicalPricingRange').selectpicker('render');
+                    $('#ddlChemicalPricingRange').selectpicker('refresh');
+                }
+
+                if (rangeType.toLowerCase() == 'marketanalysis') {
+                    $('#ddlMarketAnalysisRange').selectpicker('val', '');
+
+                    var innerHTML = '';
+                    $(json).each(function (jsonIndex, jsonValue) {
+
+                        if (jsonValue.Value.toLowerCase() != 'demand supply gap graph' &&
+                            jsonValue.Value.toLowerCase() != 'quarterly' &&
+                            jsonValue.Value.toLowerCase() != 'daily data import' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 1' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 2' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 3' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 4' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 5' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 6') {
+                            innerHTML += "<option product-value='" + jsonValue.ProductID + "'range-value='" + jsonValue.Key + "' >  " + jsonValue.ProductText + " [" + jsonValue.Value + "]" + "</option > ";
+                        }
+
+                        $('#ddlMarketAnalysisRange').html(innerHTML);
+                        $('#ddlMarketAnalysisRange').selectpicker('render');
+                        $('#ddlMarketAnalysisRange').selectpicker('refresh');
+                    });
+                }
+            }
+        });
+    }
+
+
+    function BindRegion() {
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/GetNewsAndDeals",
+            data: "{'isNews':" + isNews + ",'isDeals':" + isDeals + "}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (response) {
+                innerHTML = "";
+                $(response).each(function (index, value) {
+                    innerHTML += "<option value='" + value.ID + "'>" + value.Title + " | " + value.CreatedTimeView2 + " | " + value.CountryNameView + "</option>"
+                });
+                $('#' + elmID).html(innerHTML);
+                $('#' + elmID).selectpicker('refresh');
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+    function GetProduct(withCommaValue, subscriptionType) {
+
+        $.ajax({
+            url: "/ProductAndCategory/GetProductBasedOnRegionOrCountryWise",
+            data: { withCommaValue: withCommaValue, subscriptionType: subscriptionType }
+        }).complete(function (jqXHR, textStatus) {
+            $("#loaderCustom").hide();
+            if (textStatus == "success" && jqXHR.responseText != null) {
+                var json = JSON.parse(jqXHR.responseText);
+
+                var innerHTML = '';
+                $(json).each(function (index, value) {
+                    innerHTML += "<option   value='" + value.id + "'>" + value.ProductName + "</option>";
+                });
+                $('#ddlProduct').html(innerHTML);
+                $('#ddlProduct').selectpicker('refresh');
+            }
+        });
+    }
+
+
+    function Submit() {
+        var subs = {};
+        var subsType = null;
+
+        if ($('#ddlSubscriptionRegionCountry').val() != null && $('#ddlSubscriptionRegionCountry').val()[0] != '') {
+            subsType = $('#ddlSubscriptionRegionCountry').val()[0];
+        }
+
+        if ($('#ddlSubscriptionType').val() != null && $('#ddlSubscriptionType').val()[0] != '') {
+            subs.SubscriptionType = $('#ddlSubscriptionType').val()[0];
+        }
+
+        subs.FromDate = $("#FromDatepicker").val();
+        subs.ToDate = $("#ToDatepicker").val();
+        subs.Description = $("#description").val();
+        subs.LeadId = $("#Leadid").val();
+
+        if ($('#ddlModule').val() != null && $('#ddlModule').val().join(",") != '') { 
+            subs.MenuId = $('#ddlModule').val().join(",");
+        }
+
+        if ($('#ddlRegion').val() != null && $('#ddlRegion').val()[0] != '') {
+            subs.RegionsID = $('#ddlRegion').val()[0];
+        }
+
+        if ($('#ddlCountry').val() != null && $('#ddlCountry').val()[0] != '') {
+            subs.CountriesID = $('#ddlCountry').val()[0];
+        }
+
+        if ($('#ddlProduct').val() != null && $('#ddlProduct').val().join(",") != '') { 
+            subs.ProductId = $('#ddlProduct').val().join(",");
+        }
+
+        subs.ChemicalPricingRange = GetRangeCheckbox('ddlChemicalPricingRange');
+        subs.MarketAnalysisRange = GetRangeCheckbox('ddlMarketAnalysisRange');
+
+
+        if (!subs.SubscriptionType) {
+            //alert("Please Select Subscription Type");
+            swal("Warning", "Please Select Subscription Type", "error");
+            return false;
+        }
+
+        if (!subs.FromDate) {
+            //alert("Please Enter From Date");
+            swal("Warning", "Please Enter From Date", "error");
+            return false;
+        }
+
+        if (!subs.ToDate) {
+            //alert("Please Enter From ToDate");
+            swal("Warning", "Please Enter To Date", "error");
+            return false;
+        }
+
+        if (!subs.MenuId) {
+            //alert("Please Select Module");
+            swal("Warning", "Please Select Module", "error");
+            return false;
+        }
+
+        if (subsType == null)
+        {
+            swal("Warning", "Subscription Region/Country", "error");
+            return false;
+        }
+
+        if (subsType == 'region' && (subs.RegionsID == undefined || subs.RegionsID == '')) {
+            //alert("Please Select Product");
+            swal("Warning", "Please Select Region", "error");
+            return false;
+        }
+
+        if (subsType == 'country' && (subs.CountriesID == undefined || subs.CountriesID == '')) {
+            //alert("Please Select Product");
+            swal("Warning", "Please Select Country", "error");
+            return false;
+        }
+
+        if (!subs.ProductId) {
+            //alert("Please Select Product");
+            swal("Warning", "Please Select Product", "error");
+            return false;
+        }
+
+
+        if ($('#ddlModule').val() != null && $('#ddlModule').val().indexOf('1') == 0 && $('#ddlChemicalPricingRange').val() == null) {
+            //alert("Please Select Product");
+            swal("Warning", "Chemical Pricing Range", "error");
+            return false;
+        }
+
+        if ($('#ddlModule').val() != null && $('#ddlModule').val().indexOf('2') == 1 && $('#ddlMarketAnalysisRange').val() == null) {
+            //alert("Please Select Product");
+            swal("Warning", "Market Analysis Range", "error");
+            return false;
+        }
+
+        
+        Loading(true);
+
+        $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveSalesPackageSubscriptionAsync")',
+                    data:  subs,
+                   success: function (data) {
+                       Loading(false);
+                        if (data && data.result) {
+
+                            swal({
+                                title: "Thank you!",
+                                text: "Subscription Created Sucessfully.",
+                                type: "success"
+                            }).then(function () {
+                                window.location.href = "../../SubsManagement/ShowSubscriptionListForSales";
+                                //window.location.reload(true);
+                            });
+
+                        }
+                        else {
+                            //alert("Error while inserting data");
+                            swal("Warning", "Error while inserting data :)", "error");
+                        }
+                    },
+                   error: function () {
+                       Loading(false);
+                        //alert("Error while inserting data");
+                        swal("Warning", "Error while inserting data :)", "error");
+                    }
+        });
+        return false;
+       
+    }
+
+
+    function GetRangeCheckbox(elm) {
+
+        var data = []
+
+        $($('#' + elm).find('option:selected')).each(function (idx, val) {
+            var innerData = {};
+            innerData['PID'] = $(this).attr('product-value');
+            innerData['RID'] = $(this).attr('range-value');
+            data.push(innerData);
+        });
+
+        var rangeCollection = JSON.stringify(data);
+        if (rangeCollection == '[]')
+            return '';
+        else
+            return rangeCollection;
+
+    }
+
+</script>

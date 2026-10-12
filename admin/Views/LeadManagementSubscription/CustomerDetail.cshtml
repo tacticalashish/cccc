@@ -1,0 +1,3852 @@
+﻿@{
+    ViewBag.Title = "Customer Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    :root {
+        --bg-page: #f4f6f5;
+        --bg-panel: #ffffff;
+        --bg-panel-head: #ffffff;
+        --border: #eef1ef;
+        --text: #1a1a1a;
+        --text-soft: #8a978f;
+        --green: #1a4d2e;
+        --green-tint: #eef4f0;
+        --orange: #f58220;
+        --orange-tint: #fff1e3;
+        --red: #c0392b;
+        --red-tint: #fbeae8;
+        --blue: #2a6190;
+        --blue-tint: #e8f0f7;
+        --gray: #697570;
+        --gray-tint: #eef1ef;
+    }
+
+    .d-flex {
+        display: flex
+    }
+
+    .align-center {
+        align-items: center
+    }
+
+    .align-start {
+        align-items: flex-start
+    }
+
+    .flex-wrap {
+        flex-wrap: wrap
+    }
+
+    .gap-2 {
+        gap: 8px
+    }
+
+    .gap-3 {
+        gap: 12px
+    }
+
+    .ml-auto {
+        margin-left: auto
+    }
+
+    .mb-3 {
+        margin-bottom: 15px
+    }
+
+    /* ---- invoice preview popup (reused from ChemAnalystProformaInvoiceList) ---- */
+    .Ipopup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .Ichild {
+        z-index: 999;
+        background: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: left;
+        padding: 10px;
+        border-radius: 2px;
+        box-shadow: 2px 3px 5px #000;
+        height: 550px;
+        width: auto;
+        overflow: auto;
+        border: solid 2px #eee;
+    }
+
+    .container-section {
+        width: 842px;
+        background: white;
+        height: auto;
+        color: #151515;
+        padding: 10px 60px;
+        margin: 0px auto;
+        display: block;
+        font-family: system-ui, sans-serif;
+        font-weight: 500;
+        font-size: 11px;
+    }
+
+    .row-sec {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .col-left, .col-right {
+        width: 50%;
+    }
+
+    .border-left {
+        border-left: solid .5px #6e902b;
+        padding: 0px 8px;
+        height: 40px;
+    }
+
+    .mb-4 {
+        margin-bottom: 25px;
+    }
+
+    .strong {
+        font-weight: 700;
+    }
+
+    .ps-5 {
+        padding-left: 20px;
+    }
+
+    .mt-6 {
+        margin-top: 24px;
+    }
+
+    .border-right {
+        border-right: solid 1px black;
+        padding: 0px 5px;
+    }
+
+    .mt-20 {
+        margin-top: 30px;
+    }
+
+    .w-50 {
+        width: 50%;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .border-bottom {
+        border-bottom: solid 1px black;
+        width: 12%;
+        text-align: right;
+    }
+
+    .py-2 {
+        padding: 5px 0px;
+    }
+
+    .text-white {
+        color: #fff;
+    }
+
+    .border {
+        border: solid 1px black;
+        padding: 4px;
+    }
+
+    .me-5, .ms-5 {
+        margin-right: 20px;
+    }
+
+    .min-height {
+        min-height: 210px;
+        max-height: 320px;
+    }
+
+    .table-border {
+        border: solid 1px black;
+        border-collapse: collapse;
+    }
+
+        .table-border th {
+            background: #244061;
+            color: white;
+        }
+
+    .w-120 {
+        width: 120px;
+    }
+
+    .container-section th, .container-section td {
+        border: solid 1px black;
+        padding: 0px 4px;
+    }
+
+    .w-42 {
+        width: 42%;
+    }
+
+    .w-33 {
+        width: 33.333%;
+    }
+
+    .w-29 {
+        width: 29%;
+    }
+
+    .w-60 {
+        width: 60%;
+    }
+
+    .w-40 {
+        width: 40%;
+    }
+
+    .py-1 {
+        padding: 2px 0px;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    .panel {
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        border-radius: 8px;
+        transition: box-shadow .2s ease;
+    }
+
+        .panel:hover {
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+
+    .text-muted-sm {
+        color: var(--text-soft);
+        font-size: 12px
+    }
+
+    .avatar-lg {
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
+        background: var(--green);
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0
+    }
+
+    .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--green-tint);
+        color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        flex-shrink: 0
+    }
+
+    .pill-soft {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 11px;
+        padding: 4px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px
+    }
+
+        .pill-soft .dot-b {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0
+        }
+
+        .pill-soft.ok {
+            background: var(--green-tint);
+            color: var(--green)
+        }
+
+        .pill-soft.warn {
+            background: var(--orange-tint);
+            color: var(--orange)
+        }
+
+        .pill-soft.bad {
+            background: var(--red-tint);
+            color: var(--red)
+        }
+
+        .pill-soft.info {
+            background: var(--blue-tint);
+            color: var(--blue)
+        }
+
+        .pill-soft.gray {
+            background: var(--gray-tint);
+            color: var(--gray)
+        }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 20px;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+        .toggle-switch .toggle-track {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--gray-tint);
+            border-radius: 20px;
+            transition: background 0.15s;
+        }
+
+        .toggle-switch .toggle-knob {
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 16px; height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: left 0.15s;
+        }
+
+        .toggle-switch.on .toggle-track {
+            background: var(--green);
+        }
+
+        .toggle-switch.on .toggle-knob {
+            left: 20px;
+        }
+
+    .kpi-strip {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 15px
+    }
+
+        .kpi-strip .kpi-cell {
+            padding: 10px 15px;
+            border-right: 1px solid var(--border)
+        }
+
+            .kpi-strip .kpi-cell:last-child {
+                border-right: none
+            }
+
+        .kpi-strip .kpi-label {
+            font-size: 10.5px;
+            text-transform: uppercase;
+            color: var(--text-soft);
+            letter-spacing: .03em
+        }
+
+        .kpi-strip .kpi-value {
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 2px;
+            color: var(--text)
+        }
+
+    .detail-table td {
+        padding: 10px 15px;
+        border-top: 1px solid var(--border);
+        color: var(--text)
+    }
+
+        .detail-table td.label-col {
+            color: var(--text-soft);
+            width: 220px
+        }
+
+    #t-tickets table th, #t-tickets table td,
+    #t-contacts table th, #t-contacts table td,
+    #t-subs table th, #t-subs table td,
+    #t-deliverables table th, #t-deliverables table td,
+    #t-billing table th, #t-billing table td,
+    #t-docs table th, #t-docs table td,
+    #t-history table th, #t-history table td {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .nav-tabs {
+        border-bottom-color: var(--border);
+    }
+
+        .nav-tabs > li > a {
+            color: var(--text-soft);
+            border: none;
+            background: transparent;
+        }
+
+            .nav-tabs > li > a:hover {
+                background: var(--bg-panel-head);
+                border-color: transparent;
+                color: var(--text);
+            }
+
+        .nav-tabs > li.active > a,
+        .nav-tabs > li.active > a:hover,
+        .nav-tabs > li.active > a:focus {
+            color: var(--green);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--green);
+            font-weight: 600
+        }
+
+    .callout-box {
+        background: var(--orange-tint);
+        border-left: 4px solid var(--orange);
+        padding: 12px 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        font-size: 13px;
+        color: var(--text)
+    }
+
+    .info-box {
+        background: var(--blue-tint);
+        border-radius: 6px;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        font-size: 12.5px;
+        color: var(--text)
+    }
+
+    .rec-card {
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--green);
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: var(--bg-panel-head);
+    }
+
+        .rec-card.warn {
+            border-left-color: var(--orange)
+        }
+
+        .rec-card.bad {
+            border-left-color: var(--red)
+        }
+
+        .rec-card.info {
+            border-left-color: var(--blue)
+        }
+
+    .chart-legend {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-soft);
+    }
+
+        .chart-legend .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+    /* ---------------- dark theme + polish (does NOT apply to the printable
+       invoice popup below, which intentionally stays light/paper-like) ---------------- */
+    .bg-light {
+        background: var(--bg-page) !important;
+    }
+
+    .bg-light .panel.panel-default {
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bg-light .panel-heading,
+    .bg-light .panel-footer {
+        background: var(--bg-panel-head) !important;
+        border-color: var(--border) !important;
+        color: var(--text);
+        flex: 0 0 auto;
+    }
+
+    /* ---- equal-height boxes: paired panels in a row (Account summary /
+       Contacts, Renewal / Upcoming reminders, usage KPI cards, etc.) should
+       never look mismatched, and short content shouldn't leave a big gap ---- */
+    .bg-light .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .bg-light .row > [class*="col-"] {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .bg-light .row > [class*="col-"] > .panel {
+                flex: 1 1 auto;
+                width: 100%;
+            }
+
+    .bg-light .panel.panel-default > .panel-body,
+    .bg-light .panel.panel-default > #remindersListBody {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* tables should stay top-aligned within their (equal-height) box, not centered */
+    .bg-light .panel.panel-default > .table-responsive {
+        flex: 1 1 auto;
+    }
+
+    .bg-light h4, .bg-light h5, .bg-light h6 {
+        color: var(--text);
+    }
+
+    .bg-light .table {
+        color: var(--text);
+        background: transparent;
+    }
+
+        .bg-light .table > thead > tr > th,
+        .bg-light .table > tbody > tr > td {
+            border-color: var(--border) !important;
+        }
+
+        .bg-light .table > tbody > tr:hover > td {
+            background: rgba(0,0,0,.035);
+        }
+
+    .bg-light .text-muted {
+        color: var(--text-soft) !important;
+    }
+
+    .bg-light .btn-default {
+        background: var(--bg-panel-head);
+        border-color: var(--border);
+        color: var(--text);
+    }
+
+        .bg-light .btn-default:hover, .bg-light .btn-default:focus {
+            background: #f5f7f6;
+            color: var(--text);
+        }
+
+    .bg-light .form-control {
+        background: var(--bg-panel-head);
+        border-color: var(--border);
+        color: var(--text);
+        box-shadow: none;
+    }
+
+        .bg-light .form-control:focus {
+            background: var(--bg-panel-head);
+            border-color: var(--green);
+            color: var(--text);
+            box-shadow: none;
+        }
+
+        .bg-light .form-control::placeholder {
+            color: var(--text-soft);
+        }
+
+    .bg-light .pagination > li > a {
+        background: var(--bg-panel-head);
+        border-color: var(--border);
+        color: var(--green);
+    }
+
+    .bg-light .pagination > li.disabled > a {
+        color: var(--text-soft);
+        background: var(--bg-panel-head);
+        border-color: var(--border);
+    }
+
+    .table-responsive {
+        border: 0;
+    }
+
+    /* nav-tabs has 10 items — scroll horizontally on narrow screens instead of
+       wrapping into a messy multi-row tab bar */
+    @@media (max-width: 767px) {
+        .nav-tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+            .nav-tabs > li {
+                float: none;
+                flex: 0 0 auto;
+            }
+
+                .nav-tabs > li > a {
+                    white-space: nowrap;
+                }
+
+        .detail-table td.label-col {
+            width: 150px;
+        }
+
+        .kpi-strip {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+            .kpi-strip .kpi-cell {
+                flex: 1 1 50%;
+                border-bottom: 1px solid var(--border);
+            }
+    }
+
+    /* guard against mobile browsers auto-linkifying plain numbers/dates
+       (iOS "format detection") which can recolor chart axis labels */
+    a[href^="tel:"], a[href^="sms:"], a[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
+
+    @@keyframes subsSpin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* fallback modal styling — guards against a trimmed/custom bootstrap-admin.css
+       that may be missing the standard .modal component CSS, and !important
+       guards against conflicting site-wide rules overriding display/position */
+    .modal {
+        display: none !important;
+        position: fixed !important;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 99999 !important;
+        overflow: auto;
+    }
+
+        .modal.in {
+            display: block !important;
+        }
+
+    .modal-open .modal {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        max-width: 500px;
+        margin: 60px auto;
+        z-index: 100000;
+    }
+
+    .modal-content {
+        position: relative;
+        background: var(--bg-panel);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        box-shadow: 0 5px 25px rgba(0,0,0,.35);
+        outline: 0;
+    }
+
+    .modal-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--border);
+    }
+
+        .modal-header .close {
+            float: right;
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--text);
+            opacity: .2;
+            background: none;
+            border: 0;
+        }
+
+            .modal-header .close:hover {
+                opacity: .5;
+            }
+
+    .modal-title {
+        margin: 0;
+        font-size: 18px;
+        color: var(--text);
+    }
+
+    .modal-body {
+        position: relative;
+        padding: 15px;
+    }
+
+    .modal-footer {
+        padding: 15px;
+        border-top: 1px solid var(--border);
+        text-align: right;
+    }
+
+        .modal-footer .btn {
+            margin-left: 5px;
+        }
+
+    .modal, .modal-dialog, .modal-content {
+        opacity: 1 !important;
+    }
+
+    .modal-backdrop {
+        position: fixed !important;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 99990 !important;
+        background: #000;
+        opacity: .5;
+    }
+</style>
+<div class="bg-light p-3">
+    <a href="/LeadManagementSubscription/Customers" class="text-muted-sm">&larr; Back to customers</a>
+    <div class="panel panel-default mb-3" style="margin-top:10px">
+        <div class="panel-body">
+            <div class="d-flex align-start gap-3 flex-wrap">
+                <span class="avatar-lg" id="cdAvatar">--</span>
+                <div>
+                    <h4 style="margin:0 0 4px" id="cdCompanyName">Loading...</h4>
+                    <div class="text-muted-sm">
+                        <span id="cdContact"></span> &middot; <span id="cdEmail"></span>
+                        &nbsp; <span id="cdStatusPill"></span>
+                    </div>
+                </div>
+                <div class="ml-auto d-flex gap-2 flex-wrap">
+                    <button class="btn btn-sm" id="CustOpenBtn" style="display:none;background:#e8752f;color:#fff" onclick="custOpenRenewal()">&#128193; Open</button>
+                    <button class="btn btn-warning btn-sm" id="CustRenewBtn" onclick="goToRenewSubscription()">&#8635; Renew / extend</button>
+                    <button class="btn btn-sm" onclick="window.location.href='@Url.Action("List", "Ticket")'" style="background:var(--green);color:#fff">+ Raise ticket</button>
+                    <button class="btn btn-default btn-sm" onclick="openReminderModal()">&#9200; Set reminder</button>
+                    <button class="btn btn-default btn-sm" onclick="location.href='@Url.Action("WorkSpaceFileUpload", "AdminChemicalPricing")'">&#8593; Upload report</button>
+
+                </div>
+            </div>
+            <div class="row kpi-strip" style="margin-left:0;margin-right:0">
+                <div class="col-md-3 kpi-cell">
+                    <div class="kpi-label">Modules</div>
+                    <div class="kpi-value" id="cdModules">&mdash;</div>
+                </div>
+                <div class="col-md-3 kpi-cell">
+                    <div class="kpi-label">Active seats</div>
+                    <div class="kpi-value" id="cdSeats">&mdash;</div>
+                </div>
+                <div class="col-md-3 kpi-cell">
+                    <div class="kpi-label">API access</div>
+                    <div class="kpi-value" id="cdApi">&mdash;</div>
+                </div>
+                <div class="col-md-3 kpi-cell">
+                    <div class="kpi-label">Renews on</div>
+                    <div class="kpi-value" id="cdRenews">&mdash;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="nav nav-tabs mb-3">
+        <li class="active"><a href="#t-overview" data-toggle="tab">Overview</a></li>
+        <li><a href="#t-recs" data-toggle="tab">Recommendations</a></li>
+        <li><a href="#t-contacts" data-toggle="tab">Contacts</a></li>
+        <li><a href="#t-subs" data-toggle="tab">Subscriptions</a></li>
+        <li><a href="#t-usage" data-toggle="tab">Usage</a></li>
+        <li><a href="#t-tickets" data-toggle="tab">Tickets</a></li>
+        <li><a href="#t-deliverables" data-toggle="tab">Deliverables</a></li>
+        <li><a href="#t-billing" data-toggle="tab">Billing &amp; invoices</a></li>
+        <li><a href="#t-docs" data-toggle="tab">Documents</a></li>
+        <li><a href="#t-history" data-toggle="tab">History</a></li>
+    </ul>
+    <div class="tab-content">
+        <!-- OVERVIEW (fully dynamic) -->
+        <div class="tab-pane active" id="t-overview">
+            <div class="info-box">
+                &#9432; This record replaces several of your old pages &mdash; Subscription Analytics, Customer Login Detail, 60-Day Inactive, and more all live in these tabs now.
+            </div>
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><b>Account summary</b></div>
+                        <div class="table-responsive">
+                            <table class="table detail-table" style="margin-bottom:0">
+                                <tr><td class="label-col">Company</td><td id="cdSumCompany">&mdash;</td></tr>
+                                <tr><td class="label-col">Assigned CSM</td><td id="cdCSM">&mdash;</td></tr>
+                                <tr><td class="label-col">Assigned analyst</td><td id="cdAnalyst">&mdash;</td></tr>
+                                <tr><td class="label-col">Health</td><td id="cdHealthPill">&mdash;</td></tr>
+                                <tr><td class="label-col">Last login</td><td id="cdLastLogin">&mdash;</td></tr>
+                                <tr><td class="label-col">Created</td><td id="cdCreated">&mdash;</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Contacts</b>
+                            <span class="text-muted-sm ml-auto" id="cdSeatsLabel"></span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table detail-table" style="margin-bottom:0">
+                                <tr>
+                                    <td>
+                                        <div id="cdContactName2">&mdash;</div>
+                                        <div class="text-muted-sm" id="cdContactEmail2"></div>
+                                    </td>
+                                    <td class="text-right"><span class="pill-soft info"><span class="dot-b"></span>Primary</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:15px">
+                <div class="col-md-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Renewal &amp; automated emails</b>
+                            <button class="btn btn-default btn-sm ml-auto" onclick="openFeedbackEditModal()">&#9998; Edit</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table detail-table" style="margin-bottom:0">
+                                <tr><td class="label-col">Current term ends</td><td id="cdTermEnds">&mdash;</td></tr>
+                                <tr><td class="label-col">Renewal status</td><td id="cdRenewalStatus">&mdash;</td></tr>
+                                <tr><td class="label-col">Expiry notifications</td><td id="cdExpiryNotification">&mdash;</td></tr>
+                                <tr><td class="label-col">Quarterly feedback email</td><td id="cdQuarterlyFeedback">&mdash;</td></tr>
+                                <tr><td class="label-col">Next feedback email</td><td id="cdNextFeedbackEmail">&mdash;</td></tr>
+                                <tr><td class="label-col">Last feedback</td><td id="cdLastFeedback">&mdash;</td></tr>
+                            </table>
+                        </div>
+                        <div style="padding:15px">
+                            <button class="btn btn-warning btn-sm CustRenewBtn" onclick="goToRenewSubscription()">&#8635; Start renewal</button>
+                            <button class="btn btn-default btn-sm" onclick="openFeedbackHistoryModal()">View feedback history</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Upcoming reminders</b>
+                            <button class="btn btn-sm ml-auto" style="background:var(--green);color:#fff" onclick="openReminderModal()">&#9200; Set reminder</button>
+                        </div>
+                        <div id="remindersListBody">
+                            <div class="text-center text-muted-sm" style="padding:30px">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- placeholder tabs — no data source wired yet -->
+        <div class="tab-pane" id="t-recs">
+            <div class="text-muted-sm" style="margin-bottom:15px">&#9679; Generated from usage, subscription, seats, spend and engagement signals &middot; refreshed daily</div>
+            <div id="recsBody">
+                <div class="text-center text-muted-sm" style="padding:40px">Loading...</div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-contacts">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center gap-2 flex-wrap">
+                    <b>Users &amp; contacts</b>
+                    <span class="text-muted-sm" id="contactsCountLabel"></span>
+                    <input type="text" id="contactSearchBox" class="form-control" style="max-width:220px; margin-left:auto" placeholder="Search name or email...">
+                    <button class="btn btn-sm" style="background:var(--green);color:#fff" onclick="openAddSecondaryCustomerModal()">+ Add user</button>
+                </div>
+                <div class="table-responsive" style="position:relative">
+                    <div id="contactsLoadingOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.75); z-index:10; text-align:center; padding-top:60px;">
+                        <div style="display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:subsSpin 0.7s linear infinite;"></div>
+                        <div class="text-muted-sm" style="margin-top:8px">Loading...</div>
+                    </div>
+                    <table class="table" style="margin-bottom:0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email / Login</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Last login</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTableBody">
+                            <tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer d-flex align-center flex-wrap">
+                    <span class="text-muted-sm" id="contactsPagingInfo">Showing 0 of 0</span>
+                    <ul class="pagination pagination-sm" id="contactsPagingControls" style="margin:0 0 0 auto"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-subs">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center gap-2 flex-wrap">
+                    <b>Subscriptions &amp; modules</b>
+                    <span class="text-muted-sm" id="subsCountLabel"></span>
+                    <input type="text" id="subsSearchBox" class="form-control" style="max-width:220px; margin-left:auto" placeholder="Search module or product...">
+                </div>
+                <div class="table-responsive" style="position:relative">
+                    <div id="subsLoadingOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.75); z-index:10; text-align:center; padding-top:60px;">
+                        <div style="display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:subsSpin 0.7s linear infinite;"></div>
+                        <div class="text-muted-sm" style="margin-top:8px">Loading...</div>
+                    </div>
+                    <table class="table" style="margin-bottom:0">
+                        <thead>
+                            <tr>
+                                <th>Module</th>
+                                <th>Product</th>
+                                <th>Email</th>
+                                <th>Primary / Secondary</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subsTableBody">
+                            <tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer d-flex align-center flex-wrap">
+                    <span class="text-muted-sm" id="subsPagingInfo">Showing 0 of 0</span>
+                    <ul class="pagination pagination-sm" id="subsPagingControls" style="margin:0 0 0 auto"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-usage">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-muted-sm">&#8599; Logins &middot; this month</div>
+                            <div style="font-size:26px;font-weight:700" id="usgMonthCount" class="mt-3">&mdash;</div>
+                            <div class="text-muted-sm" id="usgMonthSub"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-muted-sm">&#8599; This quarter</div>
+                            <div style="font-size:26px;font-weight:700" id="usgQuarterCount" class="mt-3">&mdash;</div>
+                            <div class="text-muted-sm" id="usgQuarterSub"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-muted-sm">&#8599; This year</div>
+                            <div style="font-size:26px;font-weight:700" id="usgYearCount" class="mt-3">&mdash;</div>
+                            <div class="text-muted-sm" id="usgYearSub"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default mb-3">
+                <div class="panel-heading d-flex align-center">
+                    <b>Usage over time</b>
+                    <span class="ml-auto text-muted-sm">logins / month</span>
+                </div>
+                <div class="panel-body">
+                    <div id="usgChartRoot"></div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Most-monitored pricing products</b>
+                            <span class="ml-auto text-muted-sm">views, 90 days</span>
+                        </div>
+                        <div class="panel-body" id="usgPricingProducts">
+                            <div class="text-center text-muted-sm" style="padding:20px">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Most-viewed disruption trackers</b>
+                            <span class="ml-auto text-muted-sm">views, 90 days</span>
+                        </div>
+                        <div class="panel-body" id="usgDisruptionProducts">
+                            <div class="text-center text-muted-sm" style="padding:20px">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Most-monitored Market Analysis products</b>
+                            <span class="ml-auto text-muted-sm">views, 90 days</span>
+                        </div>
+                        <div class="panel-body" id="usgMarketAnalysisProducts">
+                            <div class="text-center text-muted-sm" style="padding:20px">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading d-flex align-center">
+                            <b>Top 10 most-viewed products</b>
+                            <span class="ml-auto text-muted-sm">all trackers, 90 days</span>
+                        </div>
+                        <div class="panel-body" id="usgCombinedTopProducts">
+                            <div class="text-center text-muted-sm" style="padding:20px">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center">
+                    <b>Recent logins</b>
+                    <a href="javascript:void(0)" class="ml-auto" style="font-size:12px" onclick="openLoginHistoryModal()">Full history</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table" style="margin-bottom:0">
+                        <thead>
+                            <tr><th>Login time</th><th>User</th><th>Device</th></tr>
+                        </thead>
+                        <tbody id="usgRecentLoginsBody">
+                            <tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-tickets">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center gap-2 flex-wrap">
+                    <b>Support tickets</b>
+                    <span class="text-muted-sm" id="ticketsCountLabel"></span>
+                    <input type="text" id="ticketSearchBox" class="form-control" style="max-width:220px; margin-left:auto" placeholder="Search subject or status...">
+                    <button class="btn btn-sm" style="background:var(--green);color:#fff" onclick="window.location.href='@Url.Action("List", "Ticket")'">+ New ticket</button>
+                </div>
+                <div class="table-responsive" style="position:relative">
+                    <div id="ticketsLoadingOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.75); z-index:10; text-align:center; padding-top:60px;">
+                        <div style="display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:subsSpin 0.7s linear infinite;"></div>
+                        <div class="text-muted-sm" style="margin-top:8px">Loading...</div>
+                    </div>
+                    <table class="table" style="margin-bottom:0">
+                        <thead>
+                            <tr><th>ID</th><th>Subject</th><th>Status</th><th>Updated</th></tr>
+                        </thead>
+                        <tbody id="ticketsTableBody">
+                            <tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer d-flex align-center flex-wrap">
+                    <span class="text-muted-sm" id="ticketsPagingInfo">Showing 0 of 0</span>
+                    <ul class="pagination pagination-sm" id="ticketsPagingControls" style="margin:0 0 0 auto"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-deliverables">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center">
+                    <b>Reports delivered</b>
+                    <span class="text-muted-sm" id="delivCountLabel" style="margin-left:10px"></span>
+                    <button class="btn btn-sm ml-auto" style="background:var(--green);color:#fff" onclick="location.href='@Url.Action("WorkSpaceFileUpload", "AdminChemicalPricing")'">&#8593; Upload report</button>
+                </div>
+                <div class="table-responsive" style="position:relative">
+                    <div id="delivLoadingOverlay" style="display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.75); z-index:10; text-align:center; padding-top:60px;">
+                        <div style="display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:subsSpin 0.7s linear infinite;"></div>
+                        <div class="text-muted-sm" style="margin-top:8px">Loading...</div>
+                    </div>
+                    <table class="table" style="margin-bottom:0">
+                        <thead>
+                            <tr>
+                                <th width="20%">Customer Email</th>
+                                <th width="25%">FileName</th>
+                                <th width="25%">Download File</th>
+                                <th width="15%">CreatedDate</th>
+                                <th width="15%">CreatedBy</th>
+                            </tr>
+                        </thead>
+                        <tbody id="delivTableBody">
+                            <tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel-footer">
+                    <span id="delivPagingInfo"></span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-billing">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><b>Quote</b></div>
+                        <div class="table-responsive">
+                            <table class="table detail-table" style="margin-bottom:0">
+                                <tr><td class="label-col">Amount</td><td id="cdQuoteAmount">&mdash;</td></tr>
+                                <tr><td class="label-col">Currency</td><td id="cdQuoteCurrency">&mdash;</td></tr>
+                                <tr><td class="label-col">Payment terms</td><td id="cdQuotePaymentTerms">&mdash;</td></tr>
+                            </table>
+                        </div>
+                        <div style="padding:15px">
+                            <a href="/Invoice/CreateChemAnalystProformaInvoice" class="btn btn-sm" style="background:var(--green);color:#fff">+ Create proforma invoice</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><b>Proforma invoices</b></div>
+                        <div class="table-responsive">
+                            <table class="table" style="margin-bottom:0">
+                                <thead>
+                                    <tr><th>Invoice #</th><th>Date</th><th>Amount</th><th></th></tr>
+                                </thead>
+                                <tbody id="proformaInvoicesBody">
+                                    <tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-docs">
+            <div class="panel panel-default">
+                <div class="panel-heading d-flex align-center">
+                    <b>Documents</b>
+                    <button class="btn btn-sm ml-auto" style="background:var(--green);color:#fff" onclick="openUploadDocumentModal()">&#8593; Upload document</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table detail-table" style="margin-bottom:0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>File</th>
+                                <th>Reference</th>
+                                <th>Uploaded</th>
+                                <th>By</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="docsTableBody">
+                            <tr><td colspan="6" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="t-history">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-muted-sm" style="display:flex;align-items:center;gap:8px">
+                                <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--green-tint);color:var(--green);font-size:12px;flex-shrink:0">&#9733;</span>
+                                Customer since
+                            </div>
+                            <div style="font-size:24px;font-weight:700;margin-top:6px" id="histCustomerSince">&mdash;</div>
+                            <div class="text-muted-sm" id="histCustomerSinceSub"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-muted-sm" style="display:flex;align-items:center;gap:8px">
+                                <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--blue-tint);color:var(--blue);font-size:12px;flex-shrink:0">&#8635;</span>
+                                Renewals
+                            </div>
+                            <div style="font-size:24px;font-weight:700;margin-top:6px" id="histRenewals">&mdash;</div>
+                            <div class="text-muted-sm" id="histRenewalsSub"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-muted-sm" style="display:flex;align-items:center;gap:8px">
+                                <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--orange-tint);color:var(--orange);font-size:12px;flex-shrink:0">&#8377;</span>
+                                Lifetime value
+                            </div>
+                            <div style="font-size:24px;font-weight:700;margin-top:6px" id="histLifetimeValue">&mdash;</div>
+                            <div class="text-muted-sm" id="histLifetimeValueSub">Not tracked yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" style="margin-top:15px">
+                <div class="panel-heading"><b>Subscription history</b></div>
+                <div class="table-responsive">
+                    <table class="table detail-table" style="margin-bottom:0">
+                        <thead>
+                            <tr>
+                                <th style="width:160px">Term</th>
+                                <th>Products subscribed</th>
+                                <th style="width:80px">Users</th>
+                                <th style="width:110px">Amount paid</th>
+                                <th style="width:100px">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subHistoryTableBody">
+                            <tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Login history popup (full history, paged + searchable) -->
+<div id="loginHistoryModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#fff; max-width:760px; margin:50px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Login history</h4>
+            <span onclick="closeLoginHistoryModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div style="padding:16px 20px;">
+            <input type="text" id="loginHistorySearch" placeholder="Search user or device..." style="width:100%; box-sizing:border-box; border:1px solid #d7dade; border-radius:6px; padding:8px 10px; font-size:13px; margin-bottom:12px;" />
+            <div style="max-height:60vh; overflow-y:auto;">
+                <table class="table" style="margin-bottom:0; width:100%;">
+                    <thead>
+                        <tr><th>Login time</th><th>User</th><th>Device</th></tr>
+                    </thead>
+                    <tbody id="loginHistoryBody">
+                        <tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="loginHistoryPager" style="display:flex; justify-content:center; gap:4px; margin-top:12px; flex-wrap:wrap;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Set Reminder popup — fully custom, ALL styles inline (no Bootstrap modal, no external CSS dependency at all) -->
+<div id="reminderModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#ffffff; max-width:460px; margin:60px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Set a reminder</h4>
+            <span onclick="closeReminderModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div style="padding:20px; background:#ffffff;">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; color:#1a1a1a; font-weight:bold; margin-bottom:6px; font-size:13px;">Reminder type</label>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" id="btnTypeCall" onclick="selectReminderType('Call')"
+                            style="flex:1; padding:8px; border-radius:4px; border:1px solid #1a4d2e; background:#1a4d2e; color:#fff; cursor:pointer; font-size:13px;">
+                        &#128222; Call
+                    </button>
+                    <button type="button" id="btnTypeEmail" onclick="selectReminderType('Email')"
+                            style="flex:1; padding:8px; border-radius:4px; border:1px solid #ccc; background:#f5f5f5; color:#333; cursor:pointer; font-size:13px;">
+                        &#9993; Email
+                    </button>
+                </div>
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; color:#1a1a1a; font-weight:bold; margin-bottom:6px; font-size:13px;">What's it for?</label>
+                <input type="text" id="reminderNote" placeholder="e.g. Follow up on renewal"
+                       style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #ccc; border-radius:4px; color:#1a1a1a; background:#fff; font-size:13px;">
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; color:#1a1a1a; font-weight:bold; margin-bottom:6px; font-size:13px;">Date</label>
+                <input type="date" id="reminderDate"
+                       style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #ccc; border-radius:4px; color:#1a1a1a; background:#fff; font-size:13px;">
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; color:#1a1a1a; font-weight:bold; margin-bottom:6px; font-size:13px;">Time <span style="font-weight:normal; color:#888;">optional</span></label>
+                <input type="time" id="reminderTime"
+                       style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #ccc; border-radius:4px; color:#1a1a1a; background:#fff; font-size:13px;">
+            </div>
+            <div style="margin-bottom:5px;">
+                <label style="color:#1a1a1a; font-size:13px;">
+                    <input type="checkbox" id="reminderShowMyDay" checked style="margin-right:6px;">
+                    Show on my My Day page that morning
+                </label>
+            </div>
+        </div>
+        <div style="padding:15px 20px; border-top:1px solid #e5e5e5; text-align:right; background:#fafafa;">
+            <button type="button" onclick="closeReminderModal()"
+                    style="padding:8px 16px; border-radius:4px; border:1px solid #ccc; background:#fff; color:#333; cursor:pointer; margin-right:8px; font-size:13px;">
+                Cancel
+            </button>
+            <button type="button" id="reminderSaveBtn" onclick="saveReminder()"
+                    style="padding:8px 16px; border-radius:4px; border:none; background:#1a4d2e; color:#fff; cursor:pointer; font-size:13px;">
+                Set reminder
+            </button>
+        </div>
+    </div>
+</div>
+<!-- "+ Add user" popup (Contacts tab) — same fields/endpoint as the
+     "Add Secondary Customer" popup on CreateLead.cshtml, styled to match
+     this page instead of reusing the dark .popup-open04/.child classes. -->
+<div id="addSecondaryCustomerModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#ffffff; max-width:420px; margin:60px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Add  User</h4>
+            <span onclick="closeAddSecondaryCustomerModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div style="padding:20px; background:#ffffff;">
+            <input type="text" id="Name" placeholder="Name" name="hdCommentaryRowID" class="form-control" style="margin-bottom:10px" autocomplete="off" />
+            <input type="text" id="Email" placeholder="Email" name="Email" class="form-control" style="margin-bottom:10px" autocomplete="off" />
+            <input type="text" id="Phone" placeholder="Phone No" name="Phone" class="form-control" style="margin-bottom:10px" autocomplete="off" />
+            <input type="text" id="Designation" placeholder="Designation" name="Designation" class="form-control" style="margin-bottom:10px" autocomplete="off" />
+            <select class="form-control" id="ClientCompany" name="ClientCompany" title="ClientCompany" style="margin-bottom:10px">
+                <option value="">Select Client Company Name</option>
+            </select>
+            <label style="display:block; margin-bottom:10px; color:#1a1a1a; font-size:13px;">
+                <input type="checkbox" id="chkprimary" style="margin-right:6px;"> Primary Email
+            </label>
+            <p class="text-danger" id="Alert" style="margin-bottom:5px"></p>
+        </div>
+        <div style="padding:15px 20px; border-top:1px solid #e5e5e5; text-align:right; background:#fafafa;">
+            <button type="button" id="Cancel" onclick="closeAddSecondaryCustomerModal()"
+                    style="padding:8px 16px; border-radius:4px; border:1px solid #ccc; background:#fff; color:#333; cursor:pointer; margin-right:8px; font-size:13px;">
+                Cancel
+            </button>
+            <button type="button" onclick="SaveCustomer()"
+                    style="padding:8px 16px; border-radius:4px; border:none; background:#1a4d2e; color:#fff; cursor:pointer; font-size:13px;">
+                Register
+            </button>
+        </div>
+    </div>
+</div>
+<!-- "Upload document" popup (Documents tab) -->
+<div id="uploadDocumentModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#ffffff; max-width:460px; margin:60px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Upload document</h4>
+            <span onclick="closeUploadDocumentModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div style="padding:20px; background:#ffffff;">
+            <label style="display:block; margin-bottom:6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">Document type</label>
+            <select class="form-control" id="docType" style="margin-bottom:16px">
+                <option value="Purchase Order">Purchase Order</option>
+                <option value="ChemAnalyst Order Form">ChemAnalyst Order Form</option>
+                <option value="Invoice">Invoice</option>
+                <option value="Agreement / MSA">Agreement / MSA</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label style="display:block; margin-bottom:6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">Reference / note <span style="text-transform:none; font-style:italic;">optional</span></label>
+            <input type="text" id="docReferenceNote" class="form-control" style="margin-bottom:16px" placeholder="e.g. PO #4500291847" autocomplete="off" />
+
+            <label style="display:block; margin-bottom:6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">File</label>
+            <input type="file" id="docFile" class="form-control" style="margin-bottom:12px" />
+
+            <div style="background:var(--green-tint); color:var(--green); border-radius:6px; padding:10px 12px; font-size:12.5px;">
+                &#10003; Saved against this account and visible to Finance for invoice processing.
+            </div>
+            <p class="text-danger" id="docUploadAlert" style="margin:10px 0 0"></p>
+        </div>
+        <div style="padding:15px 20px; border-top:1px solid #e5e5e5; text-align:right; background:#fafafa;">
+            <button type="button" onclick="closeUploadDocumentModal()"
+                    style="padding:8px 16px; border-radius:4px; border:1px solid #ccc; background:#fff; color:#333; cursor:pointer; margin-right:8px; font-size:13px;">
+                Cancel
+            </button>
+            <button type="button" id="docUploadBtn" onclick="submitUploadDocument()"
+                    style="padding:8px 16px; border-radius:4px; border:none; background:#1a4d2e; color:#fff; cursor:pointer; font-size:13px;">
+                Upload
+            </button>
+        </div>
+    </div>
+</div>
+<!-- "View all products" popup (History tab, Subscription history table) -->
+<div id="productListModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#ffffff; max-width:560px; margin:60px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden; max-height:75vh; display:flex; flex-direction:column;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff; flex:0 0 auto;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Products subscribed</h4>
+            <span onclick="closeProductListModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div id="productListModalBody" style="padding:20px; overflow-y:auto; flex:1 1 auto;"></div>
+    </div>
+</div>
+<!-- "Edit feedback settings" popup (Overview tab, Renewal & automated emails panel) -->
+<div id="feedbackEditModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#ffffff; max-width:460px; margin:60px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Edit feedback settings</h4>
+            <span onclick="closeFeedbackEditModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div style="padding:20px; background:#ffffff;">
+            @*<label style="color:#1a1a1a; font-size:13px;">
+                <input type="checkbox" id="fbEnabled" style="margin-right:6px;">
+                Quarterly feedback email <span class="text-muted-sm">(every 3 months from start)</span>
+            </label>*@
+
+            <label style="display:block; margin:15px 0 6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">Next feedback email</label>
+            <input type="date" id="fbNextFeedbackEmail" class="form-control" style="margin-bottom:15px" />
+
+            <label style="display:block; margin-bottom:6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">Last feedback date</label>
+            <input type="date" id="fbLastFeedbackDate" class="form-control" style="margin-bottom:15px" />
+
+            <label style="display:block; margin-bottom:6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">Last feedback rating <span style="text-transform:none; font-style:italic;">0-10</span></label>
+            <input type="number" id="fbLastFeedbackRating" class="form-control" min="0" max="10" style="margin-bottom:15px" />
+
+            <label style="display:block; margin-bottom:6px; color:var(--text-soft); font-size:12px; text-transform:uppercase; letter-spacing:.02em;">Notes <span style="text-transform:none; font-style:italic;">optional</span></label>
+            <textarea id="fbNotes" class="form-control" rows="3" style="margin-bottom:5px; resize:vertical;" placeholder="Comments from the customer's last feedback response..."></textarea>
+            <p class="text-danger" id="fbAlert" style="margin:10px 0 0"></p>
+        </div>
+        <div style="padding:15px 20px; border-top:1px solid #e5e5e5; text-align:right; background:#fafafa;">
+            <button type="button" onclick="closeFeedbackEditModal()"
+                    style="padding:8px 16px; border-radius:4px; border:1px solid #ccc; background:#fff; color:#333; cursor:pointer; margin-right:8px; font-size:13px;">
+                Cancel
+            </button>
+            <button type="button" id="fbSaveBtn" onclick="saveFeedbackEntry()"
+                    style="padding:8px 16px; border-radius:4px; border:none; background:#1a4d2e; color:#fff; cursor:pointer; font-size:13px;">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+<!-- "View feedback history" popup (Overview tab, Renewal & automated emails panel) -->
+<div id="feedbackHistoryModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">
+    <div style="background:#ffffff; max-width:560px; margin:60px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; overflow:hidden; max-height:75vh; display:flex; flex-direction:column;">
+        <div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff; flex:0 0 auto;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">Feedback history</h4>
+            <span onclick="closeFeedbackHistoryModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div id="feedbackHistoryModalBody" style="padding:20px; overflow-y:auto; flex:1 1 auto;"></div>
+    </div>
+</div>
+<script>
+    function getQueryParam(name) {
+        var params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    function initials(name) {
+        return (name || '').replace(/[^A-Za-z ]/g, '')
+            .split(' ').filter(Boolean).slice(0, 2)
+            .map(function (w) { return w[0]; }).join('').toUpperCase();
+    }
+
+    function formatDate(d) {
+        if (!d) return '—';
+        return String(d).split(' ')[0];
+    }
+
+    function dedupeModules(moduleStr) {
+        if (!moduleStr) return '—';
+        var parts = moduleStr.split(',').map(function (s) { return s.trim(); });
+        var seen = {};
+        var unique = [];
+        parts.forEach(function (p) {
+            if (p && !seen[p]) { seen[p] = true; unique.push(p); }
+        });
+        return unique.join(', ');
+    }
+
+    function statusPillHtml(status) {
+        if ((status || '').toLowerCase() === 'active') {
+            return '<span class="pill-soft ok"><span class="dot-b"></span>Active</span>';
+        }
+        return '<span class="pill-soft bad"><span class="dot-b"></span>Inactive</span>';
+    }
+
+    function healthPillHtml(health) {
+        if (health === 'at_risk') return '<span class="pill-soft bad"><span class="dot-b"></span>At risk</span>';
+        if (health === 'renewal_due') return '<span class="pill-soft warn"><span class="dot-b"></span>Renewal due</span>';
+        return '<span class="pill-soft ok"><span class="dot-b"></span>Healthy</span>';
+    }
+
+    function apiLabel(api, apiStatus) {
+        if (api !== 'API') return 'Not enabled';
+        return (apiStatus === 'active') ? 'Enabled' : 'Enabled (inactive)';
+    }
+
+    $(document).ready(function () {
+        // Robust tab switching (highlight + pane) — independent of Bootstrap's
+        // own tab plugin, so the active underline always matches the shown pane.
+        $('.nav-tabs a[data-toggle="tab"]').on('click', function (e) {
+            e.preventDefault();
+            var target = $(this).attr('href');
+            $(this).closest('.nav-tabs').find('li').removeClass('active');
+            $(this).closest('li').addClass('active');
+            $('.tab-content > .tab-pane').removeClass('active in');
+            $(target).addClass('active in');
+        });
+
+        var id = getQueryParam('id');
+        if (!id) {
+            $('#cdCompanyName').text('No customer selected');
+            return;
+        }
+        // Show the "Open" button only when we arrived here from the Pipeline
+        // "Open For Renewal" column (?fromRenewal=1). Lead abhi open nahi hui,
+        // isliye Renew/extend tab tak disable rakho jab tak "Open" na ho.
+        if (getQueryParam('fromRenewal') === '1') {
+            $('#CustOpenBtn').show();
+            $('#CustRenewBtn, .CustRenewBtn')
+                .prop('disabled', true)
+                .css({ 'opacity': 0.5, 'cursor': 'not-allowed' })
+                .attr('title', 'Pehle "Open" karo, tab renewal shuru hogi');
+        }
+        GetCustomerDetailById(id);
+    });
+
+    // "Open" - inserts this company's renewal into SA_MaskEmailOpen_CRM so it
+    // moves into the Pipeline "In discussion" column, then goes back there.
+    function custOpenRenewal() {
+        var id = getQueryParam('id');
+        if (!id) { return; }
+        $('#CustOpenBtn').prop('disabled', true);
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/OpenRenewalCompany",
+            data: { companyId: id }
+        }).done(function (response) {
+            if (response && response.Success) {
+                if (window.swal) {
+                    swal({ title: "Opened", text: "Moved to In discussion.", type: "success" }).then(function () {
+                        window.location.href = "/LeadManagementSubscription/Pipeline";
+                    });
+                } else {
+                    window.location.href = "/LeadManagementSubscription/Pipeline";
+                }
+            } else {
+                $('#CustOpenBtn').prop('disabled', false);
+                if (window.swal) { swal("Couldn't open", "Please try again.", "error"); }
+            }
+        }).fail(function () {
+            $('#CustOpenBtn').prop('disabled', false);
+            if (window.swal) { swal("Couldn't open", "Please try again.", "error"); }
+        });
+    }
+
+    function GetCustomerDetailById(id) {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCustomerDetailById",
+            data: { id: id },
+            success: function (r) {
+                if (!r) { $('#cdCompanyName').text('Customer not found'); return; }
+                renderCustomerDetail(r);
+            },
+            error: function (response) {
+                console.log(response);
+                $('#cdCompanyName').text('Failed to load customer');
+            }
+        });
+    }
+
+    function renderCustomerDetail(r) {
+        currentCompanyId = r.ID || r.Id;
+        currentCompanyHealth = r.Health;
+        currentCompanyRenewsDate = r.RenewsDate;
+        currentCompanyName = r.CompanyName;
+
+        $('#cdAvatar').text(initials(r.CompanyName));
+        $('#cdCompanyName').text(r.CompanyName);
+        $('#cdContact').text(r.PrimaryContact);
+        $('#cdEmail').text(r.FirstContactEmail);
+        $('#cdStatusPill').html(statusPillHtml(r.Status));
+
+        $('#cdModules').text(dedupeModules(r.ModuleName));
+        $('#cdSeats').text(r.Activeseats != null ? r.Activeseats : '—');
+        $('#cdApi').text(apiLabel(r.api, r.ApiStatus));
+        $('#cdRenews').text(formatDate(r.RenewsDate));
+
+        $('#cdSumCompany').text(r.CompanyName);
+        $('#cdCSM').text(r.AssignedCSM || '—');
+        $('#cdAnalyst').text(r.Assignedanalyst || '—');
+        $('#cdHealthPill').html(healthPillHtml(r.Health));
+        $('#cdLastLogin').text(formatDate(r.LastLogin));
+        $('#cdCreated').text(formatDate(r.Created));
+
+        $('#cdContactName2').html('<b>' + r.PrimaryContact + '</b>');
+        $('#cdContactEmail2').text(r.FirstContactEmail);
+        $('#cdSeatsLabel').text((r.Activeseats != null ? r.Activeseats : '0') + ' active seat(s)');
+
+        $('#cdTermEnds').text(formatDate(r.Currenttermends));
+        $('#cdRenewalStatus').html(healthPillHtml(r.Health));
+
+        loadReminders(currentCompanyId);
+        loadContacts();
+        loadSubscriptions();
+        loadUsage();
+        loadTickets();
+        loadProformaInvoices(r.CompanyName);
+        // Quote panel payment terms fallback (amount/currency fill from latest proforma)
+        $('#cdQuotePaymentTerms').text('To be set on invoice (PO Net 30/60 or advance)');
+        loadDeliverables();
+        loadRecommendations();
+        loadDocuments();
+        loadHistorySummary();
+        loadRenewalFeedback();
+        loadExpiryNotification();
+    }
+
+    // "Renew / extend" - hands off to the New Subscription wizard with this
+    // company pre-selected, so the Contact step autofills the same way it
+    // would if picked manually there (see PrefillCompanyId in
+    // SalesManagement/CreateSubscription.cshtml). currentCompanyId is only
+    // set once renderCustomerDetail() has run, hence the guard.
+    function goToRenewSubscription() {
+        // Lead open hone se pehle renewal allowed nahi
+        if (getQueryParam('fromRenewal') === '1') {
+            if (window.swal) { swal("Lead not opened", "Pehle 'Open' karke lead ko In-discussion me laao, phir renewal shuru hogi.", "info"); }
+            return;
+        }
+        var url = '@Url.Action("CreateSubscription", "SalesManagement")';
+        if (currentCompanyId) {
+            url += '?companyId=' + currentCompanyId;
+        }
+        location.href = url;
+    }
+
+    /* ---------- expiry notifications toggle (Overview tab) ---------- */
+    function toggleOnOffPillHtml(isOn) {
+        return isOn
+            ? '<span class="pill-soft ok"><span class="dot-b"></span>On</span>'
+            : '<span class="pill-soft gray"><span class="dot-b"></span>Off</span>';
+    }
+
+    function loadExpiryNotification() {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetExpiryNotificationStatus",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                var isEnabled = response && response.success ? response.isEnabled : false;
+                renderExpiryNotificationCell(isEnabled);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#cdExpiryNotification').text('—');
+            }
+        });
+    }
+
+    function renderExpiryNotificationCell(isEnabled) {
+        $('#cdExpiryNotification').html(
+            '<span class="toggle-switch' + (isEnabled ? ' on' : '') + '" onclick="toggleExpiryNotification(' + (!isEnabled) + ')" title="Click to turn ' + (isEnabled ? 'off' : 'on') + '">' +
+            '<span class="toggle-track"></span><span class="toggle-knob"></span>' +
+            '</span>' +
+            '<span class="text-muted-sm" style="margin-left:8px">' + (isEnabled ? 'On' : 'Off') + '</span>'
+        );
+    }
+
+    function toggleExpiryNotification(newValue) {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/UpdateExpiryNotification",
+            data: { companyId: currentCompanyId, isEnabled: newValue },
+            success: function (response) {
+                if (response && response.success) {
+                    renderExpiryNotificationCell(newValue);
+                } else {
+                    alert('Failed to update: ' + (response && response.message ? response.message : 'unknown error'));
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                alert('Failed to update expiry notifications.');
+            }
+        });
+    }
+
+    /* ---------- renewal & automated emails (feedback) ---------- */
+    function ratingPillHtml(rating) {
+        if (rating === null || rating === undefined || rating === '') return '';
+        var cls = rating >= 7 ? 'ok' : (rating >= 4 ? 'warn' : 'bad');
+        return ' &middot; <span class="pill-soft ' + cls + '"><span class="dot-b"></span>' + rating + ' / 10</span>';
+    }
+
+    function loadRenewalFeedback() {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCompanyFeedbackSettings",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                if (!response || !response.success) {
+                    $('#cdQuarterlyFeedback').text('—');
+                    $('#cdNextFeedbackEmail').text('—');
+                    $('#cdLastFeedback').text('—');
+                    return;
+                }
+
+                renderQuarterlyFeedbackCell(!!response.QuarterlyFeedbackEnabled);
+                $('#cdNextFeedbackEmail').text(response.NextFeedbackEmail || '—');
+
+                if (response.LastFeedbackDate) {
+                    $('#cdLastFeedback').html(response.LastFeedbackDate + ratingPillHtml(response.LastFeedbackRating));
+                } else {
+                    $('#cdLastFeedback').text('—');
+                }
+
+                $('#fbEnabled').prop('checked', !!response.QuarterlyFeedbackEnabled);
+                $('#fbNextFeedbackEmail').val(toInputDate(response.NextFeedbackEmail));
+                $('#fbLastFeedbackDate').val(toInputDate(response.LastFeedbackDate));
+                $('#fbLastFeedbackRating').val(response.LastFeedbackRating != null ? response.LastFeedbackRating : '');
+                $('#fbNotes').val(response.Notes || '');
+            },
+            error: function (e) {
+                console.log(e);
+                $('#cdQuarterlyFeedback').text('—');
+                $('#cdNextFeedbackEmail').text('—');
+                $('#cdLastFeedback').text('—');
+            }
+        });
+    }
+
+    function renderQuarterlyFeedbackCell(isEnabled) {
+        $('#cdQuarterlyFeedback').html(
+            '<span class="toggle-switch' + (isEnabled ? ' on' : '') + '" onclick="toggleQuarterlyFeedbackClick(' + (!isEnabled) + ')" title="Click to turn ' + (isEnabled ? 'off' : 'on') + '">' +
+            '<span class="toggle-track"></span><span class="toggle-knob"></span>' +
+            '</span>' +
+            '<span class="text-muted-sm" style="margin-left:8px">' + (isEnabled ? 'On' : 'Off') + ' &middot; every 3 months from start</span>'
+        );
+    }
+
+    function toggleQuarterlyFeedbackClick(newValue) {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/ToggleQuarterlyFeedback",
+            data: { companyId: currentCompanyId, enabled: newValue },
+            success: function (response) {
+                if (response && response.success) {
+                    renderQuarterlyFeedbackCell(newValue);
+                    $('#fbEnabled').prop('checked', newValue);
+                } else {
+                    alert('Failed to update: ' + (response && response.message ? response.message : 'unknown error'));
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                alert('Failed to update quarterly feedback email.');
+            }
+        });
+    }
+
+    function toInputDate(displayDate) {
+        // converts "dd MMM yyyy" (as sent by the controller) to yyyy-MM-dd for <input type="date">
+        if (!displayDate) return '';
+        var d = new Date(displayDate);
+        if (isNaN(d.getTime())) return '';
+        var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+        var dd = ('0' + d.getDate()).slice(-2);
+        return d.getFullYear() + '-' + mm + '-' + dd;
+    }
+
+    function openFeedbackEditModal() {
+        $('#fbAlert').text('');
+        $('#feedbackEditModal').css('display', 'block');
+    }
+
+    function closeFeedbackEditModal() {
+        $('#feedbackEditModal').css('display', 'none');
+    }
+
+    function saveFeedbackEntry() {
+        if (!currentCompanyId) return;
+
+        $('#fbSaveBtn').prop('disabled', true);
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SaveCompanyFeedbackEntry",
+            data: {
+                companyId: currentCompanyId,
+                enabled: $('#fbEnabled').is(':checked'),
+                nextFeedbackEmail: $('#fbNextFeedbackEmail').val(),
+                lastFeedbackDate: $('#fbLastFeedbackDate').val(),
+                lastFeedbackRating: $('#fbLastFeedbackRating').val() || null,
+                notes: $('#fbNotes').val()
+            },
+            success: function (response) {
+                $('#fbSaveBtn').prop('disabled', false);
+                if (response && response.success) {
+                    $('#fbNotes').val('');
+                    closeFeedbackEditModal();
+                    loadRenewalFeedback();
+                } else {
+                    $('#fbAlert').text('Failed to save: ' + (response && response.message ? response.message : 'unknown error'));
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                $('#fbSaveBtn').prop('disabled', false);
+                $('#fbAlert').text('Failed to save feedback settings.');
+            }
+        });
+    }
+
+    function openFeedbackHistoryModal() {
+        if (!currentCompanyId) return;
+
+        $('#feedbackHistoryModalBody').html('<p class="text-muted-sm">Loading...</p>');
+        $('#feedbackHistoryModal').css('display', 'block');
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCompanyFeedbackHistory",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                var list = response && response.success ? (response.DataList || []) : [];
+                if (!list.length) {
+                    $('#feedbackHistoryModalBody').html('<p class="text-muted-sm">No feedback recorded yet.</p>');
+                    return;
+                }
+
+                var html = '<table class="table detail-table" style="margin-bottom:0">' +
+                    '<tr><th>Feedback date</th><th>Rating</th><th>Notes</th><th>Recorded</th></tr>';
+                list.forEach(function (h) {
+                    html += '<tr>' +
+                        '<td>' + (h.FeedbackDate || '—') + '</td>' +
+                        '<td>' + (h.Rating != null ? h.Rating + ' / 10' : '—') + '</td>' +
+                        '<td>' + (h.Notes || '—') + '</td>' +
+                        '<td>' + (h.CreatedBy || '') + (h.CreatedDate ? ' · ' + h.CreatedDate : '') + '</td>' +
+                        '</tr>';
+                });
+                html += '</table>';
+                $('#feedbackHistoryModalBody').html(html);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#feedbackHistoryModalBody').html('<p class="text-danger">Failed to load feedback history.</p>');
+            }
+        });
+    }
+
+    function closeFeedbackHistoryModal() {
+        $('#feedbackHistoryModal').css('display', 'none');
+    }
+
+    /* ---------- billing & invoices tab ---------- */
+    function loadProformaInvoices(companyName) {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetProformaInvoicesByCompanyName",
+            data: { companyName: companyName },
+            success: function (rows) {
+                if (rows && rows.error) {
+                    $('#proformaInvoicesBody').html('<tr><td colspan="4" class="text-center text-danger" style="padding:20px">Error: ' + rows.message + '</td></tr>');
+                    return;
+                }
+                renderProformaInvoices(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#proformaInvoicesBody').html('<tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Failed to load invoices.</td></tr>');
+            }
+        });
+    }
+
+    function renderProformaInvoices(rows) {
+        var html = '';
+        $(rows).each(function (i, inv) {
+            var amountText = inv.TotalAmount != null ? (inv.Currency || '') + ' ' + Number(inv.TotalAmount).toLocaleString() : '—';
+            html += '<tr>' +
+                '<td>' + (inv.InvoiceNo || '') + '</td>' +
+                '<td class="text-muted">' + inv.CreatedDate + '</td>' +
+                '<td>' + amountText + '</td>' +
+                '<td class="text-right"><a href="javascript:;" onclick="PopupInvoice(' + inv.ID + ')">View</a></td>' +
+                '</tr>';
+        });
+        $('#proformaInvoicesBody').html(html || '<tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">No proforma invoices found</td></tr>');
+
+        // Quote panel = latest proforma invoice ki value
+        if (rows && rows.length) {
+            var latest = rows[0];
+            $('#cdQuoteAmount').text(latest.TotalAmount != null ? Number(latest.TotalAmount).toLocaleString() : '—');
+            $('#cdQuoteCurrency').text(latest.Currency || '—');
+            if (latest.PaymentTerms) { $('#cdQuotePaymentTerms').text(latest.PaymentTerms); }
+        } else {
+            $('#cdQuoteAmount').text('—');
+            $('#cdQuoteCurrency').text('—');
+        }
+    }
+
+    /* ---------- invoicing setup (Billing & invoices tab) ---------- */
+    var invoicingSetupData = null; // last-loaded record for this company, or null if none saved yet
+
+    function loadInvoicingSetup() {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetInvoicingSetupByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                if (response && response.error) {
+                    console.log('DEBUG invoicing setup error:', response.message);
+                    invoicingSetupData = null;
+                } else if (response && response.found) {
+                    invoicingSetupData = response;
+                } else {
+                    invoicingSetupData = null;
+                }
+                renderInvoicingSetupView();
+            },
+            error: function (e) {
+                console.log(e);
+                invoicingSetupData = null;
+                renderInvoicingSetupView();
+            }
+        });
+    }
+
+    function renderInvoicingSetupView() {
+        var d = invoicingSetupData || {};
+        $('#invView_HowToSendInvoice').text(d.HowToSendInvoice || '—');
+        $('#invView_InvoiceEmail').text(d.InvoiceEmail || '—');
+        $('#invView_VendorRegistrationNo').text(d.VendorRegistrationNo || '—');
+        $('#invView_PORequiredBeforeInvoice').html(yesNoPillHtml(d.PORequiredBeforeInvoice));
+        $('#invView_UploadPortal').text(d.UploadPortal || '—');
+        $('#invView_HardCopyNeeded').html(yesNoPillHtml(d.HardCopyNeeded));
+        $('#invView_HardCopyAddress').text(d.HardCopyAddress || '—');
+        $('#invView_SpecialInstructions').text(d.SpecialInstructions || '—');
+
+        if (d.UpdatedBy) {
+            $('#invMetaLabel').text('Last updated by ' + d.UpdatedBy + (d.UpdatedDate ? ' on ' + d.UpdatedDate : ''));
+        } else if (d.CreatedBy) {
+            $('#invMetaLabel').text('Created by ' + d.CreatedBy + (d.CreatedDate ? ' on ' + d.CreatedDate : ''));
+        } else {
+            $('#invMetaLabel').text('');
+        }
+    }
+
+    function yesNoPillHtml(val) {
+        return val
+            ? '<span class="pill-soft warn"><span class="dot-b"></span>Yes</span>'
+            : '<span class="pill-soft gray"><span class="dot-b"></span>No</span>';
+    }
+
+    function startInvoicingEdit() {
+        var d = invoicingSetupData || {};
+        $('#invEdit_HowToSendInvoice').val(d.HowToSendInvoice || '');
+        $('#invEdit_InvoiceEmail').val(d.InvoiceEmail || '');
+        $('#invEdit_VendorRegistrationNo').val(d.VendorRegistrationNo || '');
+        $('#invEdit_PORequiredBeforeInvoice').val(d.PORequiredBeforeInvoice ? 'true' : 'false');
+        $('#invEdit_UploadPortal').val(d.UploadPortal || '');
+        $('#invEdit_HardCopyNeeded').val(d.HardCopyNeeded ? 'true' : 'false');
+        $('#invEdit_HardCopyAddress').val(d.HardCopyAddress || '');
+        $('#invEdit_SpecialInstructions').val(d.SpecialInstructions || '');
+
+        $('#invoicingSetupTable .iv-view').css('display', 'none');
+        $('#invoicingSetupTable .iv-edit').css('display', 'block');
+        $('#invActionsView').css('display', 'none');
+        $('#invActionsEdit').css('display', 'block');
+    }
+
+    function cancelInvoicingEdit() {
+        $('#invoicingSetupTable .iv-view').css('display', 'inline');
+        $('#invoicingSetupTable .iv-edit').css('display', 'none');
+        $('#invActionsView').css('display', 'block');
+        $('#invActionsEdit').css('display', 'none');
+    }
+
+    function saveInvoicingSetup() {
+        if (!currentCompanyId) return;
+
+        var payload = {
+            CompanyId: currentCompanyId,
+            HowToSendInvoice: $('#invEdit_HowToSendInvoice').val(),
+            InvoiceEmail: $('#invEdit_InvoiceEmail').val(),
+            VendorRegistrationNo: $('#invEdit_VendorRegistrationNo').val(),
+            PORequiredBeforeInvoice: $('#invEdit_PORequiredBeforeInvoice').val(),
+            UploadPortal: $('#invEdit_UploadPortal').val(),
+            HardCopyNeeded: $('#invEdit_HardCopyNeeded').val(),
+            HardCopyAddress: $('#invEdit_HardCopyAddress').val(),
+            SpecialInstructions: $('#invEdit_SpecialInstructions').val()
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SaveInvoicingSetup",
+            data: payload,
+            success: function (response) {
+                if (response && response.success) {
+                    cancelInvoicingEdit();
+                    loadInvoicingSetup();
+                } else {
+                    alert('Failed to save: ' + (response && response.message ? response.message : 'unknown error'));
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                alert('Failed to save invoicing setup.');
+            }
+        });
+    }
+
+    /* ---------- documents tab ---------- */
+    function loadDocuments() {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCustomerDocumentsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                if (!response || !response.success) {
+                    $('#docsTableBody').html('<tr><td colspan="6" class="text-center text-danger" style="padding:20px">Failed to load documents.</td></tr>');
+                    return;
+                }
+                renderDocumentsTable(response.DataList || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#docsTableBody').html('<tr><td colspan="6" class="text-center text-muted-sm" style="padding:20px">Failed to load documents.</td></tr>');
+            }
+        });
+    }
+
+    function renderDocumentsTable(rows) {
+        var html = '';
+        $(rows).each(function (i, d) {
+            var downloadUrl = "/LeadManagementSubscription/DownloadCustomerDocument?companyId=" + d.CompanyId +
+                "&fileName=" + encodeURIComponent(d.FileName);
+            html += '<tr>' +
+                '<td><span class="pill-soft gray"><span class="dot-b"></span>' + d.DocumentType + '</span></td>' +
+                '<td>' + d.FileName + '</td>' +
+                '<td class="text-muted-sm">' + (d.ReferenceNote || '—') + '</td>' +
+                '<td class="text-muted-sm">' + d.UploadedDate + '</td>' +
+                '<td class="text-muted-sm">' + (d.UploadedBy || '—') + '</td>' +
+                '<td class="text-right"><a href="' + downloadUrl + '" target="_blank">Download</a></td>' +
+                '</tr>';
+        });
+        $('#docsTableBody').html(html || '<tr><td colspan="6" class="text-center text-muted-sm" style="padding:20px">No documents uploaded yet</td></tr>');
+    }
+
+    function openUploadDocumentModal() {
+        $('#docType').val('Purchase Order');
+        $('#docReferenceNote').val('');
+        $('#docFile').val('');
+        $('#docUploadAlert').html('');
+        $('#uploadDocumentModal').css('display', 'block');
+    }
+
+    function closeUploadDocumentModal() {
+        $('#uploadDocumentModal').css('display', 'none');
+    }
+
+    function submitUploadDocument() {
+        if (!currentCompanyId) return;
+
+        var fileInput = document.getElementById('docFile');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            $('#docUploadAlert').html('Please choose a file to upload.');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('CompanyId', currentCompanyId);
+        formData.append('DocumentType', $('#docType').val());
+        formData.append('ReferenceNote', $('#docReferenceNote').val());
+        formData.append('File', fileInput.files[0]);
+
+        $('#docUploadBtn').prop('disabled', true).text('Uploading...');
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/UploadCustomerDocument",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $('#docUploadBtn').prop('disabled', false).text('Upload');
+                if (response && response.success) {
+                    closeUploadDocumentModal();
+                    loadDocuments();
+                } else {
+                    $('#docUploadAlert').html((response && response.message) ? response.message : 'Failed to upload document.');
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                $('#docUploadBtn').prop('disabled', false).text('Upload');
+                $('#docUploadAlert').html('Failed to upload document.');
+            }
+        });
+    }
+
+    /* ---------- history tab ---------- */
+    function loadHistorySummary() {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCustomerHistorySummary",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                if (!response || !response.success) {
+                    $('#histCustomerSince').text('—');
+                    $('#histRenewals').text('—');
+                    return;
+                }
+
+                if (response.CustomerSince) {
+                    var sinceDate = new Date(response.CustomerSince);
+                    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    $('#histCustomerSince').text(monthNames[sinceDate.getMonth()] + ' ' + sinceDate.getFullYear());
+
+                    var years = (new Date() - sinceDate) / (1000 * 60 * 60 * 24 * 365.25);
+                    $('#histCustomerSinceSub').text(years.toFixed(1) + ' years on platform');
+                } else {
+                    $('#histCustomerSince').text('—');
+                    $('#histCustomerSinceSub').text('');
+                }
+
+                $('#histRenewals').text(response.Renewals != null ? response.Renewals : '—');
+                $('#histRenewalsSub').text('100% retention');
+
+                if (response.LifetimeValue != null) {
+                    $('#histLifetimeValue').text('₹ ' + Number(response.LifetimeValue).toLocaleString());
+                    $('#histLifetimeValueSub').text('');
+                } else {
+                    $('#histLifetimeValue').text('—');
+                    $('#histLifetimeValueSub').text('Not tracked yet');
+                }
+            },
+            error: function (e) {
+                console.log(e);
+                $('#histCustomerSince').text('—');
+                $('#histRenewals').text('—');
+            }
+        });
+
+        loadSubscriptionHistory();
+    }
+
+    function loadSubscriptionHistory() {
+        if (!currentCompanyId) return;
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetSubscriptionHistoryByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (response) {
+                if (!response || !response.success) {
+                    $('#subHistoryTableBody').html('<tr><td colspan="5" class="text-center text-danger" style="padding:20px">Failed to load subscription history.</td></tr>');
+                    return;
+                }
+                renderSubscriptionHistory(response.DataList || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#subHistoryTableBody').html('<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Failed to load subscription history.</td></tr>');
+            }
+        });
+    }
+
+    var subHistoryProductsByRow = [];
+
+    function renderSubscriptionHistory(rows) {
+        var html = '';
+        subHistoryProductsByRow = [];
+
+        $(rows).each(function (i, h) {
+            var allProducts = (h.ProductsSubscribed || '')
+                .split(',')
+                .map(function (p) { return p.trim(); })
+                .filter(function (p) { return p.length > 0; });
+            subHistoryProductsByRow[i] = allProducts;
+
+            var visibleCount = 4;
+            var visibleText = allProducts.slice(0, visibleCount).join(', ');
+            var remaining = allProducts.length - visibleCount;
+
+            var productsCell = allProducts.length === 0
+                ? '—'
+                : visibleText + (remaining > 0
+                    ? ' <a href="javascript:;" onclick="openProductListModal(' + i + ')">&hellip; (+' + remaining + ' more)</a>'
+                    : '');
+
+            var statusPill = h.Status === 'Active'
+                ? '<span class="pill-soft info"><span class="dot-b"></span>Active</span>'
+                : '<span class="pill-soft ok"><span class="dot-b"></span>' + (h.Status || 'Renewed') + '</span>';
+
+            html += '<tr>' +
+                '<td>' + h.Term + '</td>' +
+                '<td>' + productsCell + '</td>' +
+                '<td>' + (h.Users != null ? h.Users : '—') + '</td>' +
+                '<td>—</td>' +
+                '<td>' + statusPill + '</td>' +
+                '</tr>';
+        });
+        $('#subHistoryTableBody').html(html || '<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">No subscription history found</td></tr>');
+    }
+
+    function openProductListModal(rowIndex) {
+        var products = subHistoryProductsByRow[rowIndex] || [];
+        var html;
+
+        if (products.length === 0) {
+            html = '<div class="text-muted-sm">No products found.</div>';
+        } else {
+            html = '<div style="color:#1a1a1a">';
+            $(products).each(function (i, p) {
+                html += '<div style="padding:7px 0; border-bottom:1px solid #f0f0f0; color:#1a1a1a;">' + p + '</div>';
+            });
+            html += '</div>';
+        }
+
+        $('#productListModalBody').html(html);
+        $('#productListModal').css('display', 'block');
+    }
+
+    function closeProductListModal() {
+        $('#productListModal').css('display', 'none');
+    }
+
+    /* ---------- tickets tab ---------- */
+    var ticketsCurrentPage = 1;
+    var ticketsCurrentSearch = '';
+    var ticketsSearchDebounce = null;
+    var ticketsIsLoading = false;
+
+    $(document).on('keyup', '#ticketSearchBox', function () {
+        var val = $(this).val();
+        clearTimeout(ticketsSearchDebounce);
+        ticketsSearchDebounce = setTimeout(function () {
+            ticketsCurrentSearch = val;
+            ticketsCurrentPage = 1;
+            loadTickets();
+        }, 400);
+    });
+
+    function loadTickets() {
+        if (!currentCompanyId) return;
+        if (ticketsIsLoading) return;
+
+        ticketsIsLoading = true;
+        $('#ticketsLoadingOverlay').css('display', 'block');
+        $('#ticketsPagingControls a').css({ 'pointer-events': 'none', opacity: 0.5 });
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTicketsByCompany",
+            data: {
+                Id: currentCompanyId,
+                searchKeyword: ticketsCurrentSearch,
+                PageNumber: ticketsCurrentPage
+            },
+            success: function (response) {
+                console.log('DEBUG tickets response:', response);
+                if (response && response.error) {
+                    $('#ticketsTableBody').html('<tr><td colspan="4" class="text-center text-danger" style="padding:20px">Error: ' + response.message + '</td></tr>');
+                    return;
+                }
+                renderTicketsTable(response.DateList);
+                renderTicketsPaging(response);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#ticketsTableBody').html('<tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">Failed to load tickets (network/server error).</td></tr>');
+            },
+            complete: function () {
+                ticketsIsLoading = false;
+                $('#ticketsLoadingOverlay').css('display', 'none');
+                $('#ticketsPagingControls a').css({ 'pointer-events': 'auto', opacity: 1 });
+            }
+        });
+    }
+
+    function goToTicketsPage(page) {
+        if (ticketsIsLoading) return;
+        ticketsCurrentPage = page;
+        loadTickets();
+    }
+
+    function ticketStatusPill(status) {
+        var s = (status || '').toLowerCase();
+        if (s === 'open') return '<span class="pill-soft warn"><span class="dot-b"></span>Open</span>';
+        if (s === 'resolved' || s === 'closed') return '<span class="pill-soft ok"><span class="dot-b"></span>' + status + '</span>';
+        return '<span class="pill-soft gray"><span class="dot-b"></span>' + (status || 'Unknown') + '</span>';
+    }
+
+    function renderTicketsTable(rows) {
+        var html = '';
+        $(rows || []).each(function (i, t) {
+            html += '<tr onclick="openTicketHistory(' + t.ID + ')" style="cursor:pointer">' +
+                '<td>#TK-' + t.ID + '</td>' +
+                '<td>' + (t.Subject || '') + '</td>' +
+                '<td>' + (t.RoleName || '') + '</td>' +
+                '<td>' + ticketStatusPill(t.Status) + '</td>' +
+                '<td class="text-muted">' + (t.UpdatedDate || t.CreatedDate || '') + '</td>' +
+                '</tr>';
+        });
+        $('#ticketsTableBody').html(html || '<tr><td colspan="4" class="text-center text-muted-sm" style="padding:20px">No tickets found</td></tr>');
+    }
+
+    function renderTicketsPaging(response) {
+        var from = response.ShowingFrom;
+        var to = response.ShowingTo;
+        var total = response.RecordsCount;
+        var active = response.ActivePage;
+        var totalPages = response.NumberOfPages;
+
+        $('#ticketsPagingInfo').text(total > 0 ? ('Showing ' + from + ' to ' + to + ' of ' + total + ' records') : 'No records');
+        $('#ticketsCountLabel').text(total + ' ticket(s)');
+
+        var html = '';
+        html += '<li class="' + (active <= 1 ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + (active - 1) + ')">&laquo;</a></li>';
+
+        var windowSize = 10;
+        var startPage = Math.max(1, active - Math.floor(windowSize / 2));
+        var endPage = Math.min(totalPages, startPage + windowSize - 1);
+        startPage = Math.max(1, endPage - windowSize + 1);
+
+        for (var p = startPage; p <= endPage; p++) {
+            html += '<li class="' + (p === active ? 'active' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + p + ')">' + p + '</a></li>';
+        }
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + (active + 1) + ')">&raquo;</a></li>';
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToTicketsPage(' + (active + 1) + ')" style="font-size:16px">&#8594;</a></li>';
+
+        $('#ticketsPagingControls').html(html);
+    }
+
+    function openTicketHistory(ticketId) {
+        var modal = document.getElementById('ticketHistoryModal');
+        if (!modal) {
+            var html =
+                '<div id="ticketHistoryModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999999; background:rgba(0,0,0,0.6);">' +
+                '<div style="background:#ffffff; max-width:560px; margin:40px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.5); font-family:Arial, sans-serif; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;">' +
+                '<div style="padding:16px 20px; border-bottom:1px solid #e5e5e5; display:flex; align-items:center; background:#ffffff;">' +
+                '<h4 id="ticketHistoryTitle" style="margin:0; color:#1a1a1a; font-size:16px; font-weight:bold;">Ticket history</h4>' +
+                '<span onclick="closeTicketHistory()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>' +
+                '</div>' +
+                '<div id="ticketHistoryBody" style="padding:20px; background:#fafafa; overflow-y:auto; flex:1;"></div>' +
+                '</div>' +
+                '</div>';
+            $('body').append(html);
+            modal = document.getElementById('ticketHistoryModal');
+        }
+
+        $('#ticketHistoryTitle').text('Ticket #TK-' + ticketId + ' history');
+        $('#ticketHistoryBody').html('<div style="text-align:center;color:#8a978f;padding:20px;">Loading...</div>');
+        $('#ticketHistoryModal').css('display', 'block');
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTicketHistoryById",
+            data: { ticketId: ticketId },
+            success: function (rows) {
+                renderTicketHistory(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#ticketHistoryBody').html('<div style="text-align:center;color:#c0392b;padding:20px;">Failed to load ticket history.</div>');
+            }
+        });
+    }
+
+    function closeTicketHistory() {
+        $('#ticketHistoryModal').css('display', 'none');
+    }
+
+    function renderTicketHistory(rows) {
+        if (!rows || rows.length === 0) {
+            $('#ticketHistoryBody').html('<div style="text-align:center;color:#8a978f;padding:20px;">No comments on this ticket yet.</div>');
+            return;
+        }
+        var html = '';
+        $(rows).each(function (i, c) {
+            var isManager = c.IsManagerReply;
+            var bubbleBg = isManager ? '#eef4f0' : '#ffffff';
+            var align = isManager ? 'flex-start' : 'flex-end';
+            var label = isManager ? 'Support' : 'You';
+            var fileHtml = c.FileName ? '<div style="margin-top:6px;font-size:11px;color:#2a6190;">&#128206; ' + c.FileName + '</div>' : '';
+
+            html += '<div style="display:flex; justify-content:' + align + '; margin-bottom:12px;">' +
+                '<div style="max-width:75%; background:' + bubbleBg + '; border:1px solid #e4e9e6; border-radius:8px; padding:10px 14px;">' +
+                '<div style="font-size:11px; font-weight:bold; color:#1a4d2e; margin-bottom:4px;">' + label + '</div>' +
+                '<div style="font-size:13px; color:#1a1a1a;">' + (c.Comment || '') + '</div>' +
+                fileHtml +
+                '<div style="font-size:10.5px; color:#8a978f; margin-top:6px; text-align:right;">' + c.CreatedDate + '</div>' +
+                '</div>' +
+                '</div>';
+        });
+        $('#ticketHistoryBody').html(html);
+    }
+
+    /* ---------- usage tab ---------- */
+    /* ---------- shared chart tooltip (used by all graphs on this page) ---------- */
+    function showChartTooltip(evt, text) {
+        var tip = document.getElementById('sharedChartTooltip');
+        if (!tip) {
+            tip = document.createElement('div');
+            tip.id = 'sharedChartTooltip';
+            tip.style.cssText = 'position:fixed; z-index:999999; background:#1a1a1a; color:#fff; padding:6px 10px; border-radius:5px; font-size:12px; font-weight:600; pointer-events:none; white-space:nowrap; opacity:0; transition:opacity 0.15s ease; box-shadow:0 4px 12px rgba(0,0,0,.25);';
+            document.body.appendChild(tip);
+        }
+        tip.textContent = text;
+        tip.style.left = (evt.clientX + 14) + 'px';
+        tip.style.top = (evt.clientY + 14) + 'px';
+        tip.style.opacity = '1';
+    }
+    function moveChartTooltip(evt) {
+        var tip = document.getElementById('sharedChartTooltip');
+        if (tip) {
+            tip.style.left = (evt.clientX + 14) + 'px';
+            tip.style.top = (evt.clientY + 14) + 'px';
+        }
+    }
+    function hideChartTooltip() {
+        var tip = document.getElementById('sharedChartTooltip');
+        if (tip) tip.style.opacity = '0';
+    }
+
+    function loadUsage() {
+        if (!currentCompanyId) return;
+        loadUsageSummary();
+        loadUsageChart();
+        loadTopPricingProducts();
+        loadTopDisruptionProducts();
+        loadTopMarketAnalysisProducts();
+        loadTopCombinedProducts();
+        loadRecentLogins();
+    }
+
+    function loadUsageSummary() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetLoginUsageSummaryByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (r) {
+                console.log('DEBUG usage summary response:', r);
+                if (!r) return;
+                $('#usgMonthCount').text(r.LoginsThisMonth != null ? r.LoginsThisMonth : 0);
+                $('#usgQuarterCount').text(r.LoginsThisQuarter != null ? r.LoginsThisQuarter : 0);
+                $('#usgQuarterSub').text('avg ' + (r.ActiveUserCount > 0 ? (r.LoginsThisQuarter / r.ActiveUserCount).toFixed(1) : '0') + ' / user');
+                $('#usgYearCount').text(r.LoginsThisYear != null ? r.LoginsThisYear : 0);
+                $('#usgYearSub').text('across ' + (r.ActiveUserCount || 0) + ' users');
+            },
+            error: function (e) { console.log(e); }
+        });
+    }
+
+    function loadUsageChart() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetLoginsByMonthByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (rows) {
+                renderUsageChart(rows || []);
+            },
+            error: function (e) { console.log(e); }
+        });
+    }
+
+    // rounds a max value up to a "nice" number (1, 2, 2.5, 5, 10 x 10^n) so axis labels look clean
+    function niceAxisMax(value) {
+        if (value <= 0) return 5;
+        var exponent = Math.floor(Math.log(value) / Math.LN10);
+        var fraction = value / Math.pow(10, exponent);
+        var niceFraction;
+        if (fraction <= 1) niceFraction = 1;
+        else if (fraction <= 2) niceFraction = 2;
+        else if (fraction <= 5) niceFraction = 5;
+        else niceFraction = 10;
+        return niceFraction * Math.pow(10, exponent);
+    }
+
+    function renderUsageChart(rows) {
+        var rawMax = 1;
+        $(rows).each(function (i, r) { if (r.LoginCount > rawMax) rawMax = r.LoginCount; });
+        var max = niceAxisMax(rawMax);
+
+        var CHART_HEIGHT = 190;
+        var BAR_AREA_HEIGHT = 168;
+        var TICKS = 5; // number of intervals (6 labels: max down to 0)
+
+        // y-axis labels, max down to 0, evenly spaced round numbers
+        var axisHtml = '<div style="display:flex; flex-direction:column; justify-content:space-between; height:' + CHART_HEIGHT + 'px; padding-bottom:22px; font-size:10px; color:var(--text-soft) !important; text-align:right; flex-shrink:0; margin-right:10px;">';
+        for (var i = TICKS; i >= 0; i--) {
+            axisHtml += '<div style="line-height:1; color:var(--text-soft) !important;">' + Math.round(max * i / TICKS) + '</div>';
+        }
+        axisHtml += '</div>';
+
+        // gridlines — thin horizontal lines at each tick, spanning the full plot width
+        var gridHtml = '<div style="position:absolute; top:0; left:0; right:0; height:' + BAR_AREA_HEIGHT + 'px;">';
+        for (var g = 0; g <= TICKS; g++) {
+            var topPos = Math.round(BAR_AREA_HEIGHT * g / TICKS);
+            gridHtml += '<div style="position:absolute; left:0; right:0; top:' + topPos + 'px; height:1px; background:var(--border);"></div>';
+        }
+        gridHtml += '</div>';
+
+        // bars
+        var barsHtml = '<div style="position:relative; flex:1; display:flex; align-items:flex-end; gap:14px; height:' + CHART_HEIGHT + 'px; border-left:1px solid var(--border); border-bottom:1px solid var(--border); padding:0 4px;">' + gridHtml;
+        $(rows).each(function (i, r) {
+            var barHeight = max > 0 ? Math.round(r.LoginCount / max * BAR_AREA_HEIGHT) : 0;
+            barsHtml += '<div style="position:relative; z-index:1; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">' +
+                '<div ' +
+                'onmousemove="moveChartTooltip(event)" ' +
+                'onmouseover="showChartTooltip(event, \'' + r.MonthLabel + ': ' + r.LoginCount + ' login(s)\'); this.style.background=\'#f58220\'" ' +
+                'onmouseout="hideChartTooltip(); this.style.background=\'#1a4d2e\'" ' +
+                'style="width:70%; max-width:46px; height:0px; background:#1a4d2e; border-radius:2px 2px 0 0; cursor:pointer; transition:height 0.5s ease, background 0.2s ease;" ' +
+                'data-target-height="' + barHeight + '">' +
+                '</div>' +
+                '<div style="font-size:10.5px; color:var(--text-soft) !important; margin-top:6px;">' + r.MonthLabel + '</div>' +
+                '</div>';
+        });
+        barsHtml += '</div>';
+
+        $('#usgChartRoot').html('<div style="display:flex;">' + axisHtml + barsHtml + '</div>');
+
+        // animate bars growing in on load (smooth transition, not instant jump)
+        setTimeout(function () {
+            $('#usgChartRoot [data-target-height]').each(function () {
+                var h = $(this).attr('data-target-height');
+                $(this).css('height', h + 'px');
+            });
+        }, 30);
+    }
+
+    function renderProductBars(rows, containerId, color) {
+        if (!rows || rows.length === 0) {
+            $('#' + containerId).html('<div class="text-center text-muted-sm" style="padding:20px">No views recorded in the last 90 days.</div>');
+            return;
+        }
+        var max = 0;
+        $(rows).each(function (i, r) { if (r.ViewCount > max) max = r.ViewCount; });
+
+        var html = '';
+        $(rows).each(function (i, r) {
+            var pct = max > 0 ? (r.ViewCount / max * 100) : 0;
+            html += '<div class="d-flex align-center gap-2 mb-2" style="font-size:13px">' +
+                '<div style="width:150px" class="text-muted">' + r.ProductName + '</div>' +
+                '<div style="flex:1; background:var(--border); border-radius:4px; height:14px; overflow:hidden;">' +
+                '<div ' +
+                'onmousemove="moveChartTooltip(event)" ' +
+                'onmouseover="showChartTooltip(event, \'' + r.ProductName + ': ' + r.ViewCount + ' view(s)\'); this.style.filter=\'brightness(1.25)\'" ' +
+                'onmouseout="hideChartTooltip(); this.style.filter=\'none\'" ' +
+                'style="width:0%; height:100%; background:' + color + '; border-radius:4px; cursor:pointer; transition:width 0.6s ease, filter 0.15s ease;" ' +
+                'data-target-pct="' + pct + '">' +
+                '</div>' +
+                '</div>' +
+                '<div style="width:30px; text-align:right" class="text-muted">' + r.ViewCount + '</div>' +
+                '</div>';
+        });
+        $('#' + containerId).html(html);
+
+        // animate bars growing in on load
+        setTimeout(function () {
+            $('#' + containerId + ' [data-target-pct]').each(function () {
+                var p = $(this).attr('data-target-pct');
+                $(this).css('width', p + '%');
+            });
+        }, 30);
+    }
+
+    function loadTopPricingProducts() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTopPricingProductsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (rows) {
+                renderProductBars(rows, 'usgPricingProducts', 'var(--green)');
+            },
+            error: function (e) {
+                console.log(e);
+                $('#usgPricingProducts').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    function loadTopDisruptionProducts() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTopDisruptionProductsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (rows) {
+                renderProductBars(rows, 'usgDisruptionProducts', 'var(--orange)');
+            },
+            error: function (e) {
+                console.log(e);
+                $('#usgDisruptionProducts').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    function loadTopMarketAnalysisProducts() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTopMarketAnalysisProductsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (rows) {
+                renderProductBars(rows, 'usgMarketAnalysisProducts', 'var(--blue)');
+            },
+            error: function (e) {
+                console.log(e);
+                $('#usgMarketAnalysisProducts').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    function loadTopCombinedProducts() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetTopCombinedProductsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (rows) {
+                renderCombinedTopProducts(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#usgCombinedTopProducts').html('<div class="text-center text-muted-sm" style="padding:20px">Failed to load.</div>');
+            }
+        });
+    }
+
+    // stacked horizontal bars: green = pricing, orange = disruption, blue = market analysis
+    function renderCombinedTopProducts(rows) {
+        if (!rows || rows.length === 0) {
+            $('#usgCombinedTopProducts').html('<div class="text-center text-muted-sm" style="padding:20px">No views recorded in the last 90 days.</div>');
+            return;
+        }
+        var max = 0;
+        $(rows).each(function (i, r) { if (r.TotalViews > max) max = r.TotalViews; });
+
+        var html = '';
+        $(rows).each(function (i, r) {
+            var pricingPct = max > 0 ? (r.PricingViews / max * 100) : 0;
+            var disruptionPct = max > 0 ? (r.DisruptionViews / max * 100) : 0;
+            var marketPct = max > 0 ? (r.MarketAnalysisViews / max * 100) : 0;
+
+            html += '<div class="d-flex align-center gap-2 mb-2" style="font-size:13px">' +
+                '<div style="width:150px" class="text-muted">' + r.ProductName + '</div>' +
+                '<div style="flex:1; background:var(--border); border-radius:4px; height:14px; overflow:hidden; display:flex;">' +
+                '<div title="Pricing: ' + r.PricingViews + '" style="width:' + pricingPct + '%; height:100%; background:var(--green);"></div>' +
+                '<div title="Disruption: ' + r.DisruptionViews + '" style="width:' + disruptionPct + '%; height:100%; background:var(--orange);"></div>' +
+                '<div title="Market Analysis: ' + r.MarketAnalysisViews + '" style="width:' + marketPct + '%; height:100%; background:var(--blue);"></div>' +
+                '</div>' +
+                '<div style="width:30px; text-align:right" class="text-muted">' + r.TotalViews + '</div>' +
+                '</div>';
+        });
+        html += '<div class="chart-legend" style="margin-top:8px">' +
+            '<span><span class="dot" style="background:var(--green)"></span>Pricing</span>' +
+            '<span><span class="dot" style="background:var(--orange)"></span>Disruption</span>' +
+            '<span><span class="dot" style="background:var(--blue)"></span>Market Analysis</span>' +
+            '</div>';
+        $('#usgCombinedTopProducts').html(html);
+    }
+
+    function loadRecentLogins() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetRecentLoginsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (rows) {
+                renderRecentLogins(rows || []);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#usgRecentLoginsBody').html('<tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">Failed to load.</td></tr>');
+            }
+        });
+    }
+
+    function renderRecentLogins(rows) {
+        var html = '';
+        $(rows).each(function (i, r) {
+            html += '<tr>' +
+                '<td>' + r.CreatedTime + '</td>' +
+                '<td>' + (r.UserName || '') + '</td>' +
+                '<td>' + (r.DeviceType || '') + '</td>' +
+                '</tr>';
+        });
+        $('#usgRecentLoginsBody').html(html || '<tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">No recent logins</td></tr>');
+    }
+
+    /* ---------- login history popup (full history, paged + search) ---------- */
+    var loginHistoryPage = 1;
+    var loginHistorySearchVal = '';
+    var loginHistoryDebounce = null;
+
+    function openLoginHistoryModal() {
+        loginHistoryPage = 1;
+        loginHistorySearchVal = '';
+        $('#loginHistorySearch').val('');
+        $('#loginHistoryModal').css('display', 'block');
+        loadLoginHistory();
+    }
+    function closeLoginHistoryModal() {
+        $('#loginHistoryModal').css('display', 'none');
+    }
+
+    $(document).on('keyup', '#loginHistorySearch', function () {
+        var val = $(this).val();
+        clearTimeout(loginHistoryDebounce);
+        loginHistoryDebounce = setTimeout(function () {
+            loginHistorySearchVal = val;
+            loginHistoryPage = 1;
+            loadLoginHistory();
+        }, 300);
+    });
+
+    function loadLoginHistory() {
+        $('#loginHistoryBody').html('<tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>');
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetLoginHistoryByCompany",
+            data: { Id: currentCompanyId, searchKeyword: loginHistorySearchVal, PageNumber: loginHistoryPage },
+            success: function (resp) {
+                var rows = (resp && resp.DateList) || [];
+                var html = '';
+                $(rows).each(function (i, r) {
+                    html += '<tr>' +
+                        '<td>' + (r.Login || '') + '</td>' +
+                        '<td>' + $('<div>').text(r.UserName || '').html() + '</td>' +
+                        '<td>' + $('<div>').text(r.DeviceType || '').html() + '</td>' +
+                        '</tr>';
+                });
+                $('#loginHistoryBody').html(html || '<tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">No logins found.</td></tr>');
+                renderLoginHistoryPager((resp && resp.ActivePage) || 1, (resp && resp.NumberOfPages) || 0);
+            },
+            error: function () {
+                $('#loginHistoryBody').html('<tr><td colspan="3" class="text-center text-muted-sm" style="padding:20px">Failed to load.</td></tr>');
+                $('#loginHistoryPager').html('');
+            }
+        });
+    }
+
+    function renderLoginHistoryPager(activePage, numberOfPages) {
+        if (!numberOfPages || numberOfPages <= 1) { $('#loginHistoryPager').html(''); return; }
+        var btn = function (label, page, disabled, active) {
+            var style = 'border:1px solid #e2e4e8; background:' + (active ? '#1f5a37' : '#fff') + '; color:' + (active ? '#fff' : '#33383f') + '; border-radius:5px; min-width:26px; height:26px; padding:0 6px; font-size:12px; cursor:' + (disabled ? 'not-allowed' : 'pointer') + '; opacity:' + (disabled ? '.4' : '1') + ';';
+            return '<button type="button" ' + (disabled ? 'disabled' : 'onclick="goToLoginHistoryPage(' + page + ')"') + ' style="' + style + '">' + label + '</button>';
+        };
+        var html = btn('&laquo;', activePage - 1, activePage <= 1, false);
+        var start = Math.max(1, activePage - 2), end = Math.min(numberOfPages, activePage + 2);
+        for (var p = start; p <= end; p++) html += btn(p, p, false, p === activePage);
+        html += btn('&raquo;', activePage + 1, activePage >= numberOfPages, false);
+        $('#loginHistoryPager').html(html);
+    }
+
+    function goToLoginHistoryPage(page) {
+        loginHistoryPage = page;
+        loadLoginHistory();
+    }
+
+    /* ---------- subscriptions (Subscriptions & modules tab) ---------- */
+    var subsCurrentPage = 1;
+    var subsCurrentSearch = '';
+    var subsSearchDebounce = null;
+    var subsIsLoading = false;
+
+    $(document).on('keyup', '#subsSearchBox', function () {
+        var val = $(this).val();
+        clearTimeout(subsSearchDebounce);
+        subsSearchDebounce = setTimeout(function () {
+            subsCurrentSearch = val;
+            subsCurrentPage = 1;
+            loadSubscriptions();
+        }, 400);
+    });
+
+    function loadSubscriptions() {
+        if (!currentCompanyId) return;
+        if (subsIsLoading) return; // ignore if a request is already in flight
+
+        subsIsLoading = true;
+        $('#subsLoadingOverlay').css('display', 'block');
+        $('#subsPagingControls a').css({ 'pointer-events': 'none', opacity: 0.5 });
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetSubscriptionsByCompany",
+            data: {
+                Id: currentCompanyId,
+                searchKeyword: subsCurrentSearch,
+                PageNumber: subsCurrentPage
+            },
+            success: function (response) {
+                renderSubscriptionsTable(response.DateList);
+                renderSubscriptionsPaging(response);
+            },
+            error: function (response) {
+                console.log(response);
+                $('#subsTableBody').html('<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Failed to load subscriptions.</td></tr>');
+            },
+            complete: function () {
+                subsIsLoading = false;
+                $('#subsLoadingOverlay').css('display', 'none');
+                $('#subsPagingControls a').css({ 'pointer-events': 'auto', opacity: 1 });
+            }
+        });
+    }
+
+    function goToSubsPage(page) {
+        if (subsIsLoading) return; // ignore clicks while a request is in flight
+        subsCurrentPage = page;
+        loadSubscriptions();
+    }
+
+    function renderSubscriptionsTable(rows) {
+        var html = '';
+        $(rows || []).each(function (i, s) {
+            var rolePill = (s.Role === 'Primary')
+                ? '<span class="pill-soft info"><span class="dot-b"></span>Primary</span>'
+                : '<span class="pill-soft gray"><span class="dot-b"></span>Secondary</span>';
+            var statusHtml = ((s.Status || '').toLowerCase() === 'active')
+                ? '<span class="pill-soft ok"><span class="dot-b"></span>Active</span>'
+                : '<span class="pill-soft warn"><span class="dot-b"></span>Inactive</span>';
+            html += '<tr>' +
+                '<td><b>' + (s.ModuleName || '') + '</b></td>' +
+                '<td>' + (s.ProductName || '') + '</td>' +
+                '<td class="text-muted">' + (s.Email || '') + '</td>' +
+                '<td>' + rolePill + '</td>' +
+                '<td>' + statusHtml + '</td>' +
+                '</tr>';
+        });
+        $('#subsTableBody').html(html || '<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">No subscriptions found</td></tr>');
+    }
+
+    function renderSubscriptionsPaging(response) {
+        var from = response.ShowingFrom;
+        var to = response.ShowingTo;
+        var total = response.RecordsCount;
+        var active = response.ActivePage;
+        var totalPages = response.NumberOfPages;
+
+        $('#subsPagingInfo').text(total > 0 ? ('Showing ' + from + ' to ' + to + ' of ' + total + ' records') : 'No records');
+        $('#subsCountLabel').text(total + ' product(s)');
+
+        var html = '';
+        html += '<li class="' + (active <= 1 ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToSubsPage(' + (active - 1) + ')">&laquo;</a></li>';
+
+        // show up to 10 page numbers around the active page
+        var windowSize = 10;
+        var startPage = Math.max(1, active - Math.floor(windowSize / 2));
+        var endPage = Math.min(totalPages, startPage + windowSize - 1);
+        startPage = Math.max(1, endPage - windowSize + 1);
+
+        for (var p = startPage; p <= endPage; p++) {
+            html += '<li class="' + (p === active ? 'active' : '') + '"><a href="javascript:;" onclick="goToSubsPage(' + p + ')">' + p + '</a></li>';
+        }
+
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToSubsPage(' + (active + 1) + ')">&raquo;</a></li>';
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToSubsPage(' + (active + 1) + ')" style="font-size:16px">&#8594;</a></li>';
+
+        $('#subsPagingControls').html(html);
+    }
+
+    /* ---------- contacts (Users & contacts tab) ---------- */
+    var contactsCurrentPage = 1;
+    var contactsCurrentSearch = '';
+    var contactsSearchDebounce = null;
+    var contactsIsLoading = false;
+
+    $(document).on('keyup', '#contactSearchBox', function () {
+        var val = $(this).val();
+        clearTimeout(contactsSearchDebounce);
+        contactsSearchDebounce = setTimeout(function () {
+            contactsCurrentSearch = val;
+            contactsCurrentPage = 1;
+            loadContacts();
+        }, 400);
+    });
+
+    function loadContacts() {
+        if (!currentCompanyId) return;
+        if (contactsIsLoading) return; // ignore if a request is already in flight
+
+        contactsIsLoading = true;
+        $('#contactsLoadingOverlay').css('display', 'block');
+        $('#contactsPagingControls a').css({ 'pointer-events': 'none', opacity: 0.5 });
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetContactsByCompany",
+            data: {
+                Id: currentCompanyId,
+                searchKeyword: contactsCurrentSearch,
+                PageNumber: contactsCurrentPage
+            },
+            success: function (response) {
+                renderContactsTable(response.DateList);
+                renderContactsPaging(response);
+            },
+            error: function (response) {
+                console.log(response);
+                $('#contactsTableBody').html('<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Failed to load contacts.</td></tr>');
+            },
+            complete: function () {
+                contactsIsLoading = false;
+                $('#contactsLoadingOverlay').css('display', 'none');
+                $('#contactsPagingControls a').css({ 'pointer-events': 'auto', opacity: 1 });
+            }
+        });
+    }
+
+    function goToContactsPage(page) {
+        if (contactsIsLoading) return; // ignore clicks while a request is in flight
+        contactsCurrentPage = page;
+        loadContacts();
+    }
+
+    function renderContactsTable(rows) {
+        var html = '';
+        $(rows || []).each(function (i, c) {
+            var fullName = (c.Fname || '') + (c.Lname ? (' ' + c.Lname) : '');
+            var rolePill = (c.Role === 'Primary')
+                ? '<span class="pill-soft info"><span class="dot-b"></span>Primary</span>'
+                : '<span class="pill-soft gray"><span class="dot-b"></span>Secondary</span>';
+            var statusHtml = (c.Status === 'Active')
+                ? '<span class="pill-soft ok"><span class="dot-b"></span>Active</span>'
+                : '<span class="pill-soft warn"><span class="dot-b"></span>Inactive</span>';
+            html += '<tr>' +
+                '<td><b>' + fullName + '</b></td>' +
+                '<td class="text-muted">' + (c.Email || '') + '</td>' +
+                '<td>' + rolePill + '</td>' +
+                '<td>' + statusHtml + '</td>' +
+                '<td class="text-muted">' + (c.LastLogin || '—') + '</td>' +
+                '</tr>';
+        });
+        $('#contactsTableBody').html(html || '<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">No contacts found</td></tr>');
+    }
+
+    function renderContactsPaging(response) {
+        var from = response.ShowingFrom;
+        var to = response.ShowingTo;
+        var total = response.RecordsCount;
+        var active = response.ActivePage;
+        var totalPages = response.NumberOfPages;
+
+        $('#contactsPagingInfo').text(total > 0 ? ('Showing ' + from + ' to ' + to + ' of ' + total + ' records') : 'No records');
+        $('#contactsCountLabel').text(total + ' contact(s)');
+
+        var html = '';
+        html += '<li class="' + (active <= 1 ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToContactsPage(' + (active - 1) + ')">&laquo;</a></li>';
+
+        var windowSize = 10;
+        var startPage = Math.max(1, active - Math.floor(windowSize / 2));
+        var endPage = Math.min(totalPages, startPage + windowSize - 1);
+        startPage = Math.max(1, endPage - windowSize + 1);
+
+        for (var p = startPage; p <= endPage; p++) {
+            html += '<li class="' + (p === active ? 'active' : '') + '"><a href="javascript:;" onclick="goToContactsPage(' + p + ')">' + p + '</a></li>';
+        }
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToContactsPage(' + (active + 1) + ')">&raquo;</a></li>';
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '"><a href="javascript:;" onclick="goToContactsPage(' + (active + 1) + ')" style="font-size:16px">&#8594;</a></li>';
+
+        $('#contactsPagingControls').html(html);
+    }
+
+    /* ---------- reminders ---------- */
+    var currentCompanyId = null;
+    var currentCompanyHealth = null;
+    var currentCompanyRenewsDate = null;
+    var currentCompanyName = null;
+    var selectedReminderType = 'Call';
+
+    /* ---------- recommendations tab ---------- */
+    function loadRecommendations() {
+        if (!currentCompanyId) return;
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetRecommendationSignalsByCompany",
+            data: { companyId: currentCompanyId },
+            success: function (s) {
+                console.log('DEBUG recommendation signals:', s);
+                if (!s || s.error) {
+                    $('#recsBody').html('<div class="text-center text-muted-sm" style="padding:40px">Could not load recommendations.</div>');
+                    return;
+                }
+                renderRecommendations(s);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#recsBody').html('<div class="text-center text-muted-sm" style="padding:40px">Failed to load recommendations.</div>');
+            }
+        });
+    }
+
+    function daysUntil(dateStr) {
+        if (!dateStr) return null;
+        var target = new Date(String(dateStr).split(' ')[0] + 'T00:00:00');
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return Math.round((target - today) / 86400000);
+    }
+
+    function renderRecommendations(s) {
+        var cards = [];
+
+        // 1) Cross-sell — top-viewed disruption product not yet subscribed as a priced product
+        if (s.TopDisruptionProduct && !s.AlreadySubscribed) {
+            cards.push({
+                cls: '', icon: '&#8593;', badge: 'ok', badgeText: 'Cross-sell opportunity',
+                title: 'Add ' + s.TopDisruptionProduct + ' pricing to their plan',
+                body: 'They view the <b>' + s.TopDisruptionProduct + '</b> disruption tracker heavily (' + s.TopDisruptionViews + ' views, last 90 days), but don\'t subscribe to pricing for it. Clear intent — low-friction expansion.',
+                actionLabel: 'Propose add-on',
+                impact: 'Potential upsell'
+            });
+        }
+
+        // 2) Adoption risk — unused seats / inactive users
+        var unusedSeats = (s.TotalSeats || 0) - (s.ActiveSeats || 0);
+        if (unusedSeats > 0 || (s.InactiveDays && s.InactiveDays > 30)) {
+            var body = '';
+            if (unusedSeats > 0) {
+                body += 'Only <b>' + s.ActiveSeats + '</b> of <b>' + s.TotalSeats + '</b> seats are active. ';
+            }
+            if (s.InactiveUserName && s.InactiveDays != null) {
+                body += '<b>' + s.InactiveUserName + '</b> hasn\'t logged in for <b>' + s.InactiveDays + ' days</b>. ';
+            }
+            body += 'Low adoption is the #1 predictor of non-renewal.';
+            cards.push({
+                cls: 'warn', icon: '&#9201;', badge: 'warn', badgeText: 'Adoption risk',
+                title: unusedSeats + ' of ' + s.TotalSeats + ' seats unused — drive activation',
+                body: body,
+                actionLabel: 'Re-engage unused users',
+                impact: 'Protects renewal'
+            });
+        }
+
+        // 3) Renewal timing — reuses already-loaded company health/renewal date, no ₹ value
+        var daysToRenewal = daysUntil(currentCompanyRenewsDate);
+        if (currentCompanyHealth === 'renewal_due' || (daysToRenewal !== null && daysToRenewal >= 0 && daysToRenewal <= 100)) {
+            cards.push({
+                cls: 'bad', icon: '&#8635;', badge: 'bad', badgeText: 'Renewal timing',
+                title: 'Start the renewal conversation now' + (daysToRenewal !== null ? ' (' + daysToRenewal + ' days out)' : ''),
+                body: 'This account renews on <b>' + formatDate(currentCompanyRenewsDate) + '</b>. Accounts engaged ~90 days early renew on time far more often than last-minute ones.',
+                actionLabel: 'Set renewal reminder',
+                impact: 'On-time renewal'
+            });
+        }
+
+        // 4) Open tickets backlog
+        if (s.OpenTicketCount > 0) {
+            cards.push({
+                cls: 'info', icon: '&#9993;', badge: 'info', badgeText: 'Support backlog',
+                title: s.OpenTicketCount + ' ticket(s) open' + (s.OldestOpenTicketDays ? ', oldest waiting ' + s.OldestOpenTicketDays + ' day(s)' : ''),
+                body: 'Unresolved tickets left open too long are a common churn signal. Worth a quick check-in with the support team.',
+                actionLabel: 'View tickets',
+                impact: 'Reduces churn risk'
+            });
+        }
+
+        // 5) No recent deliverables sent
+        if (s.DaysSinceLastDeliverable == null || s.DaysSinceLastDeliverable > 60) {
+            cards.push({
+                cls: 'warn', icon: '&#128203;', badge: 'warn', badgeText: 'Engagement gap',
+                title: s.DaysSinceLastDeliverable == null ? 'No reports sent yet' : 'No report sent in ' + s.DaysSinceLastDeliverable + '+ days',
+                body: 'Regular deliverables keep the value of the subscription visible. It may be time to send a fresh report or market update.',
+                actionLabel: 'Upload report',
+                impact: 'Keeps value visible'
+            });
+        }
+
+        // 6) Login trend declining
+        if (s.LoginsThisMonth != null && s.LoginsLastMonth != null && s.LoginsLastMonth > 0 && s.LoginsThisMonth < s.LoginsLastMonth * 0.7) {
+            var pctDrop = Math.round((1 - (s.LoginsThisMonth / s.LoginsLastMonth)) * 100);
+            cards.push({
+                cls: 'bad', icon: '&#8595;', badge: 'bad', badgeText: 'Usage decline',
+                title: 'Logins down ' + pctDrop + '% vs the previous 30 days',
+                body: '<b>' + s.LoginsThisMonth + '</b> logins in the last 30 days, down from <b>' + s.LoginsLastMonth + '</b> before that. Worth checking in before it becomes a renewal risk.',
+                actionLabel: 'Set reminder',
+                impact: 'Early warning'
+            });
+        }
+
+        // 7) Stale reminders
+        if (s.StaleReminderCount > 0) {
+            cards.push({
+                cls: 'gray', icon: '&#9200;', badge: 'gray', badgeText: 'Follow-up overdue',
+                title: s.StaleReminderCount + ' reminder(s) overdue on this account',
+                body: 'There are reminders set for this account whose date has passed without being marked done — worth a quick review.',
+                actionLabel: 'View reminders',
+                impact: 'Nothing falls through'
+            });
+        }
+
+        if (cards.length === 0) {
+            $('#recsBody').html('<div class="text-center text-muted-sm" style="padding:40px">No active recommendations for this account right now.</div>');
+            return;
+        }
+
+        var html = '';
+        $(cards).each(function (i, c) {
+            html += '<div class="rec-card ' + c.cls + '">' +
+                '<div class="d-flex align-center gap-2 mb-2">' +
+                '<span style="font-size:18px">' + c.icon + '</span>' +
+                '<h6 style="margin:0;font-weight:bold">' + c.title + '</h6>' +
+                '<span class="pill-soft ' + c.badge + ' ml-auto"><span class="dot-b"></span>' + c.badgeText + '</span>' +
+                '</div>' +
+                '<div class="text-muted-sm" style="font-size:13px">' + c.body + '</div>' +
+                '<div class="d-flex align-center gap-3 mt-3">' +
+                '<button class="btn btn-sm" style="background:var(--green);color:#fff">' + c.actionLabel + '</button>' +
+                '<span class="text-muted-sm" style="cursor:pointer">Dismiss</span>' +
+                '<span class="text-muted-sm ml-auto">Impact &middot; ' + c.impact + '</span>' +
+                '</div>' +
+                '</div>';
+        });
+        $('#recsBody').html(html);
+    }
+
+    function openReminderModal() {
+        console.log('DEBUG: openReminderModal() was called');
+
+        $('#reminderNote').val('');
+        $('#reminderDate').val('');
+        $('#reminderTime').val('');
+        $('#reminderShowMyDay').prop('checked', true);
+        selectReminderType('Call');
+
+        $('#reminderModal').css('display', 'block');
+    }
+
+    function closeReminderModal() {
+        $('#reminderModal').css('display', 'none');
+    }
+
+    /* ---------- "+ Add user" popup (Contacts tab) — Add Secondary Customer ---------- */
+    function openAddSecondaryCustomerModal() {
+        $('#Name').val('');
+        $('#Email').val('');
+        $('#Phone').val('');
+        $('#Designation').val('');
+        $('#chkprimary').prop('checked', false);
+        $('#Alert').html('');
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCompany",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var innerHTML = "<option value=''>Select Company</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.CompanyName != null && value.CompanyName != "") {
+                        innerHTML += "<option value='" + value.CompanyId + "'>" + value.CompanyName + "</option>";
+                    }
+                });
+                $('#ClientCompany').html(innerHTML);
+                // default to the company being viewed on this page, since that's
+                // almost always who a secondary contact is being added for
+                if (currentCompanyId) {
+                    $('#ClientCompany').val(currentCompanyId);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        $('#addSecondaryCustomerModal').css('display', 'block');
+    }
+
+    function closeAddSecondaryCustomerModal() {
+        $('#addSecondaryCustomerModal').css('display', 'none');
+    }
+
+    function SaveCustomer() {
+        var chkbox = $("#chkprimary").prop('checked') ? 1 : 0;
+        var Name = $("#Name").val();
+        var Email = $("#Email").val();
+        var Phone = $("#Phone").val();
+        var ClientCompanyId = $("#ClientCompany").val();
+        var Designation = $("#Designation").val();
+
+        if (Name == "") {
+            $("#Alert").html("Fill Name!");
+        } else if (Email == "") {
+            $("#Alert").html("Fill Email!");
+        } else if (Phone == "") {
+            $("#Alert").html("Fill Phone!");
+        } else if (ClientCompanyId == "") {
+            $("#Alert").html("Select Company!");
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/InsertrecordinSAcustomer",
+                data: {
+                    Name: Name,
+                    Email: Email,
+                    Phone: Phone,
+                    ClientCompanyId: ClientCompanyId,
+                    chkboxPrimary: chkbox,
+                    Designation: Designation
+                },
+                success: function (response) {
+                    if (response == "Success") {
+                        $("#Name").val('');
+                        $("#Email").val('');
+                        $("#Phone").val('');
+                        $("#Designation").val('');
+                        $("#chkprimary").prop('checked', false);
+                        $("#Alert").html("Created!");
+                        loadContacts(); // refresh the Contacts tab table on this page
+                    } else {
+                        $("#Alert").html(response);
+                    }
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+    }
+
+    function selectReminderType(type) {
+        selectedReminderType = type;
+        if (type === 'Call') {
+            $('#btnTypeCall').css({ background: '#1a4d2e', color: '#fff', 'border-color': '#1a4d2e' });
+            $('#btnTypeEmail').css({ background: '#f5f5f5', color: '#333', 'border-color': '#ccc' });
+        } else {
+            $('#btnTypeEmail').css({ background: '#1a4d2e', color: '#fff', 'border-color': '#1a4d2e' });
+            $('#btnTypeCall').css({ background: '#f5f5f5', color: '#333', 'border-color': '#ccc' });
+        }
+    }
+
+    var reminderSaving = false;
+    function saveReminder() {
+        if (reminderSaving) return;          // double-submit guard
+        var note = $('#reminderNote').val();
+        var date = $('#reminderDate').val();
+        var time = $('#reminderTime').val();
+        var showMyDay = $('#reminderShowMyDay').is(':checked');
+
+        if (!note || !date) {
+            alert('Please fill in what the reminder is for, and pick a date.');
+            return;
+        }
+
+        reminderSaving = true;
+        var $saveBtn = $('#reminderSaveBtn').prop('disabled', true);
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SaveReminder",
+            data: {
+                CompanyId: currentCompanyId,
+                ReminderType: selectedReminderType,
+                Note: note,
+                ReminderDate: date,
+                ReminderTime: time,
+                ShowOnMyDay: showMyDay
+            },
+            success: function (response) {
+                if (response.success) {
+                    closeReminderModal();
+                    loadReminders(currentCompanyId);
+                } else {
+                    alert('Could not save reminder: ' + response.message);
+                }
+            },
+            error: function (response) {
+                console.log(response);
+                alert('Something went wrong saving the reminder.');
+            },
+            complete: function () {
+                reminderSaving = false;
+                $saveBtn.prop('disabled', false);
+            }
+        });
+    }
+
+    function loadReminders(companyId) {
+        if (!companyId) return;
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetRemindersByCompany",
+            data: { companyId: companyId },
+            success: function (response) {
+                renderReminders(response);
+            },
+            error: function (response) {
+                console.log(response);
+                $('#remindersListBody').html('<div class="text-center text-muted-sm" style="padding:30px">Failed to load reminders.</div>');
+            }
+        });
+    }
+
+    function relativeDayLabel(dateStr) {
+        var d = new Date(String(dateStr).split('T')[0] + 'T00:00:00');
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        var diffDays = Math.round((d - today) / 86400000);
+
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Tomorrow';
+        if (diffDays < 0) return 'Overdue';
+        return formatDate(dateStr);
+    }
+
+    function renderReminders(rows) {
+        if (!rows || rows.length === 0) {
+            $('#remindersListBody').html('<div class="text-center text-muted-sm" style="padding:30px">No reminders set for this account yet.</div>');
+            return;
+        }
+
+        var html = '<div class="table-responsive"><table class="table" style="margin-bottom:0">';
+        $(rows).each(function (i, r) {
+            var icon = (r.ReminderType === 'Call') ? '&#128222;' : '&#9993;';
+            var timeStr = r.ReminderTime ? (' &middot; ' + r.ReminderTime) : '';
+            html += '<tr>' +
+                '<td style="width:34px">' + icon + '</td>' +
+                '<td><div><b>' + r.Note + '</b></div><div class="text-muted-sm">' + formatDate(r.ReminderDate) + timeStr + '</div></td>' +
+                '<td class="text-right"><span class="pill-soft gray">' + relativeDayLabel(r.ReminderDate) + '</span></td>' +
+                '</tr>';
+        });
+        html += '</table></div>';
+        $('#remindersListBody').html(html);
+    }
+</script>
+<!--Start Invoice Popup code (reused verbatim from ChemAnalystProformaInvoiceList) -->
+<div class="position-relative Ipopup-open">
+    <div class="Ichild">
+        <div class="text-right">
+            <button class="btn btn-primary btn-sm" id="downloadPdfBtn"><i class="fa fa-file-pdf-o"></i></button>
+            <button class="btn btn-danger btn-sm ms-2" id="CancelButton"><i class="fa fa-times"></i></button>
+            <hr />
+        </div>
+        <div class='container-section' id="invoiceContent">
+            <div class='row-sec'>
+                <div class='w-60' id="pdfLogo">
+                    <img src='../images/logo1.png' width='200'>
+                </div>
+                <div class='w-40 border-left'>
+                    <div class='d-flex align-items-center' style='margin-top:6px'>
+                        <span><img src='../images/globe.png' width='10'></span>
+                        <span class='ps-5' style='font-size: 10px;' id="pdfwebsite">www.chemanalyst.com</span>
+                    </div>
+                    <div class='d-flex'>
+                        <span><img src='../images/envelope.png' width='10'></span>
+                        <span class='ps-5' style='font-size: 10px;' id="pdfComMail">info chemanalyst.com</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h6 class='text-center strong' style="font-size:12px;"> Invoice</h6>
+                <div class='d-flex justify-content-between'>
+                    <div class='w-50'></div>
+                    <div class='w-50 mb-4'>
+                        <div class='d-flex'>
+                            <span class='strong'>Invoice No:-</span>
+                            <span class='ps-5' style='margin-left:45px;' id="pdfInvoiceNo"></span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>Date:-</span>
+                            <span class='ps-5' style='margin-left:76px;' id="pdfInvoiceDate"></span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>Reverse Charge(Y/N):-</span>
+                            <span style='margin-left:13px;' id="pdfReverseCharge">  </span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>PO:-</span>
+                            <span class='ps-5' style='margin-left:85px;' id="pdfPO"></span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>PO DATE:-</span>
+                            <span class='ps-5' style='margin-left:55px;' id="pdfPODATE">N.A</span>
+                        </div>
+                    </div>
+                </div>
+                <div class='row-sec'>
+                    <div class='col-left'>
+                        <div class='border min-height' style='margin-right: 30px;'>
+                            <div class='mb-4 strong'>Supplier(Bill From)</div>
+                            <div class="PdfComName"></div>
+                            <div class='d-flex'>
+                                <span class='strong'>Address:-</span>
+                                <span class="PdfAddress" style='margin-left:26px'></span>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Ph:-</span>
+                                <span style='margin-left: 54px' id="pdfnumber">  </span>
+                            </div>
+                            <div id="pdfBillGST">
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>CIN NO:-</span>
+                                    <span style='margin-left: 28px'> U74110UP2018PTC109822 </span>
+                                </div>
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>GSTIN NO:-</span>
+                                    <span style='margin-left: 15px'> 09AAMCM1992J2ZT</span>
+                                </div>
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>PAN NO:-</span>
+                                    <span class='ps-5' style='margin-left: 5px'>AAMCM1992J</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-right'>
+                        <div class='border  min-height' style='margin-left: 30px;'>
+                            <div class='strong'>Recipient(Bill To)</div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Kind Attn:-</span>
+                                <span style='margin-left: 19px' id="pdfKindAttn"></span>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Name:-</span>
+                                <span class='ps-5' style='margin-left: 18px' id="pdfName"></span>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Address:-</span>
+                                <span class='ps-5' style='margin-left: 7px' id="pdfAddress"></span>
+                            </div>
+                            <div id="pdfGSTBOX">
+                                <div class='d-flex mt-6'>
+                                    <span class='strong'>GSTIN:-</span>
+                                    <span class='ps-5' style='margin-left: 17px' id="pdfGSTIN"></span>
+                                </div>
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>PAN:-</span>
+                                    <span class='ps-5' style='margin-left: 27px' id="pdfPAN"></span>
+                                </div>
+                                <div class='d-flex py-1' id="StateDiv">
+                                    <span class='strong'>State:-</span>
+                                    <span class='ps-5' style='margin-left: 23px' id="pdfState"></span>
+                                </div>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Tel:-</span>
+                                <span class='ps-5' style='margin-left: 35px' id="pdfTelephone"></span>
+                            </div>
+                            <div class='d-flex'>
+                                <span class='strong'>Email:-</span>
+                                <span class='ps-5' style='margin-left: 21px' id="pdfEmail"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='row-sec mt-6'>
+                    <div class='border w-100'>
+                        <div class='d-flex w-100 justify-content-between'>
+                            <span class='strong w-40' id="pdfDes">Description</span>
+                            <span class='strong w-29 text-center'><span id="SACCODEBOX">SAC CODE</span></span>
+                            <span class='strong w-29 text-right' id="AmountType"></span>
+                        </div>
+                        <div class='d-flex w-100'>
+                            <span class='w-40' id="pdfDescription"></span>
+                            <span class='w-29 text-center'><span id="pdfSacCode"></span></span>
+                            <span class='w-29 text-right' id="pdfAmount"></span>
+                        </div>
+                        <div class='d-flex justify-content-between mt-20'>
+                            <div class='w-50'></div>
+                            <div class='w-50'>
+                                <div class='d-flex justify-content-between' id="DiscountBox">
+                                    <span class="ps-5 w-50">Discount</span>
+                                    <span class="w-25 text-right" id="pdfDiscountPercent"></span>
+                                    <span class='w-25 text-right' id="pdfDiscount"></span>
+                                </div>
+                                <div class='d-flex justify-content-between'>
+                                    <span class="ps-5">Subtotal</span>
+                                    <span class='border-bottom' id="pdfSubtotal"></span>
+                                </div>
+                                <div id="taxBox">
+                                    <div class='d-flex justify-content-between w-100'>
+                                        <span class="ps-5 w-50">Add:- CGST</span>
+                                        <span class="w-25 text-right" id="CGSTPercent"></span>
+                                        <span class="w-25 text-right" id="pdfCGST"></span>
+                                    </div>
+                                    <div class='d-flex justify-content-between w-100'>
+                                        <span class="ps-5 w-50">Add:- SGST</span>
+                                        <span class="w-25 text-right" id="SGSTPercent"></span>
+                                        <span class="w-25 text-right" id="pdfSGST"></span>
+                                    </div>
+                                    <div class='d-flex justify-content-between w-100'>
+                                        <span class="ps-5 w-50">Add:- IGST <br /> (LUT No:AD090424001791A)</span>
+                                        <span class="w-25 text-right" id="IGSTPercent"></span>
+                                        <span class="w-25 text-right" id="pdfIGST"></span>
+                                    </div>
+                                    <div class='d-flex justify-content-between'>
+                                        <span class="ps-5">Total Tax Amount</span>
+                                        <span id="TotalTaxAmount"></span>
+                                    </div>
+                                </div>
+                                <div class='d-flex justify-content-between'>
+                                    <span class="ps-5">Total Amount</span>
+                                    <span id="pdfTotalAmount"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin: 8px 0px;">
+                    <table class='table-border' style='width:75%'>
+                        <tr><td>Amount In Words</td><td id="pdfAmountInWords"></td></tr>
+                        <tr><td>Payments Terms</td><td id="pdfPaymentTerms"></td></tr>
+                    </table>
+                    <p class='' style="color:black; font-size:10.5px; margin-top: 10px; line-height:1.5" id="DivMessage" hidden="hidden">
+                        <i>
+                            Note:- SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS
+                            UNDER BOND OR LETTER OF UNDERTAKING WITH OUT PAYMENT OF INTEGRATED TAX
+                        </i>
+                    </p>
+                    <div class=''>
+                        <table class='table-border' style='width:60%;margin-top: 10px;'>
+                            <tr><th colspan='2' style='padding: 3px 0px; text-align:center'>Banking Details</th></tr>
+                            <tr><td style='width: 30%;'> Account Name</td><td id="pdfAccountName"></td></tr>
+                            <tr><td>Bank Name</td><td id="pdfBankName"></td></tr>
+                            <tr><td>Bank Add</td><td id="pdfBankAdd"></td></tr>
+                            <tr><td>Account No.</td><td id="pdfAccountNo"></td></tr>
+                            <tr><td>SWIFT Code</td><td id="pdfSWIFTCode"></td></tr>
+                            <tr id="pdfRTGSIFSCCode"><td>RTGS/IFSC Code</td><td>HDFC0001592</td></tr>
+                            <tr id="pdfABARoutingNumber"><td>ABA Routing Number</td><td>021000322</td></tr>
+                        </table>
+                        <div class="mt-2">
+                            <span style="color:black; font-size:11px">Thank you for doing business with <span id="Pdfhankyou"></span> </span>
+                        </div>
+                    </div>
+                    <div style="float:right; padding-right:20px; padding-bottom:50px;" id="pdfsig"> </div>
+                    <div class='text-center mt-6' style="padding-top:10px">
+                        <div class="PdfComName"></div>
+                        <div class="PdfAddress"></div>
+                        <div id="pdfAddtell"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--END Invoice Popup code-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script>
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.toLocaleString('default', { month: 'long' });
+        var year = dateObject.getFullYear();
+        return day + " " + month + " " + year;
+    };
+
+    function PopupInvoice(InvoiceID) {
+        $.ajax({
+            type: "POST",
+            url: "/Invoice/BindProformaInvoiceDetailsByid",
+            data: { InvoiceId: InvoiceID },
+            success: function (response) {
+                $(response).each(function (index, value) {
+                    $("#pdfAccountNo").text('');
+                    $("#pdfSWIFTCode").text('');
+                    $("#pdfAccountName").text('');
+                    $("#pdfBankName").text('');
+                    $("#pdfBankAdd").text('');
+                    var date = value.InvoiceDate;
+                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+
+                    $("#pdfCountry").text(value.Country);
+                    $("#pdfInvoiceDate").text(formattedDate);
+                    $("#pdfReverseCharge").text(value.ReverseCharge);
+                    $("#pdfPO").text(value.PO);
+                    $("#pdfKindAttn").text(value.KindAttn);
+                    $("#pdfName").text(value.Name);
+                    $("#pdfAddress").text(value.Address);
+                    $("#pdfPAN").text(value.PAN);
+                    $("#pdfTelephone").text(value.Telephone);
+                    $("#pdfEmail").text(value.Email);
+                    $("#pdfSacCode").text(value.SacCode);
+                    $("#pdfAmount").text(value.Amount);
+                    var currencytype = 'AMOUNT(' + value.Currency + ')';
+                    $("#AmountType").text(currencytype);
+                    var amount = parseFloat(value.Amount);
+                    var Discount = parseFloat(value.Discount);
+                    let discountAmount = (amount * Discount) / 100;
+                    if (Discount == 0 || Discount == '') { $("#DiscountBox").hide(); } else { $("#DiscountBox").show(); }
+
+                    if (value.Country == 'India') {
+                        $("#pdfRTGSIFSCCode").show(); $("#pdfABARoutingNumber").hide();
+                        $("#SACCODEBOX").css("display", "block"); $("#pdfSacCode").css("display", "block");
+                        $("#taxBox").show(); $("#pdfGSTBOX").show(); $("#pdfBillGST").show();
+                    } else if (value.Country == 'TechSci Research LLC(USA)') {
+                        $("#pdfABARoutingNumber").show(); $("#pdfRTGSIFSCCode").hide();
+                        $("#SACCODEBOX").css("display", "none"); $("#pdfSacCode").css("display", "none");
+                        $("#taxBox").hide(); $("#pdfGSTBOX").hide(); $("#pdfBillGST").hide();
+                    } else {
+                        $("#pdfRTGSIFSCCode").show(); $("#pdfABARoutingNumber").hide();
+                        $("#SACCODEBOX").css("display", "block"); $("#pdfSacCode").css("display", "block");
+                        $("#taxBox").show(); $("#pdfGSTBOX").show(); $("#pdfBillGST").show();
+                    }
+
+                    if (value.Country == "India") {
+                        $("#DivMessage").hide();
+                        $("#pdfAccountNo").text('50200035285590');
+                        $("#pdfSWIFTCode").text('HDFCINBBXXX');
+                        $("#pdfAccountName").text('Chemanalyst Data Private Limited');
+                        $("#pdfBankName").text('HDFC BANK LTD');
+                        $("#pdfBankAdd").text('G- 28/29, First Floor, Sector- 18, Noida- 201301 Uttar Pradesh India');
+                        $("#Pdfhankyou").text('Chemanalyst!!');
+                        $(".PdfComName").text('Chemanalyst Data Private Limited');
+                        $(".PdfAddress").text('4TH FLOOR, 4F-1, B-44, BLOCK-B,, SECTOR 57, NOIDA, GAUTAM BUDDHA NAGAR, NOIDA, Uttar Pradesh, India, 201301');
+                        $("#pdfnumber").text('+91-120-4523900');
+                        $("#pdfAddtell").text('T: +91-120-4523900 CIN – U74110UP2018PTC109822');
+                        $("#pdfwebsite").text('www.chemanalyst.com');
+                        $("#pdfComMail").text('info@chemanalyst.com');
+                        $("#pdfDes").text('Description');
+                        $("#pdfLogo").html("<img src='../images/logo1.png' width='200'>");
+                        $("#pdfsig").html("<img src='../images/signature.png' width='220'>");
+                        var InvoiceNo = "CHEM-PI-" + value.InvoiceNo;
+                    } else if (value.Country == "TechSci Research LLC(USA)") {
+                        $("#DivMessage").hide();
+                        $("#pdfAccountNo").text('4830 5889 9741');
+                        $("#pdfSWIFTCode").text('BOFAUS3N');
+                        $("#pdfAccountName").text('TechSci Research LLC');
+                        $("#pdfBankName").text('Bank of America');
+                        $("#pdfBankAdd").text('56 E 42nd Street, New York, NY 10017');
+                        $("#Pdfhankyou").text('TechSci Research!!');
+                        $(".PdfComName").text('TechSci Research LLC');
+                        $(".PdfAddress").text('420 Lexington Avenue, Suite 300, New York, NY, United States, 10170');
+                        $("#pdfnumber").text('+1 646 360 1656');
+                        $("#pdfAddtell").text('Tel: +1 646 360 1656 | Email: accounts@techsciresearch.com');
+                        $("#pdfwebsite").text('www.techsciresearch.com');
+                        $("#pdfComMail").text('info@techsciresearch.com');
+                        $("#pdfDes").text('Project/Report');
+                        $("#pdfLogo").html("<img src='../images/techsci-logo.png' width='200'>");
+                        $("#pdfsig").html("<img src='../images/stamp us llc.png' width='100'>");
+                        var InvoiceNo = value.InvoiceNo + "SR";
+                    } else {
+                        $("#DivMessage").show();
+                        $("#pdfAccountNo").text('50200078519827');
+                        $("#pdfSWIFTCode").text('HDFCINBBXXX');
+                        $("#pdfAccountName").text('Chemanalyst Data Private Limited');
+                        $("#pdfBankName").text('HDFC BANK LTD');
+                        $("#pdfBankAdd").text('G- 28/29, First Floor, Sector- 18, Noida- 201301 Uttar Pradesh India');
+                        $("#Pdfhankyou").text('Chemanalyst!!');
+                        $(".PdfComName").text('Chemanalyst Data Private Limited');
+                        $(".PdfAddress").text('4TH FLOOR, 4F-1, B-44, BLOCK-B,, SECTOR 57, NOIDA, GAUTAM BUDDHA NAGAR, NOIDA, Uttar Pradesh, India, 201301');
+                        $("#pdfnumber").text('+91-120-4523900');
+                        $("#pdfAddtell").text('T: +91-120-4523900 CIN – U74110UP2018PTC109822');
+                        $("#pdfwebsite").text('www.chemanalyst.com');
+                        $("#pdfComMail").text('info@chemanalyst.com');
+                        $("#pdfDes").text('Description');
+                        $("#pdfLogo").html("<img src='../images/logo1.png' width='200'>");
+                        $("#pdfsig").html("<img src='../images/signature.png' width='220'>");
+                        var InvoiceNo = "CHEM-PI-" + value.InvoiceNo;
+                    }
+                    $('#pdfInvoiceNo').text(InvoiceNo);
+
+                    if (value.PODATE == null || value.PODATE == "") { $("#pdfPODATE").text("-"); }
+                    else { $("#pdfPODATE").text(value.PODATE); }
+
+                    if (value.State == null || value.State == "") { $("#pdfState").text("-"); }
+                    else { $("#pdfState").text(value.State); }
+
+                    if (value.Subtotal == null || value.Subtotal == "") { $("#pdfSubtotal").text("-"); }
+                    else { $("#pdfSubtotal").text(value.Subtotal); }
+
+                    if (value.Discount == null || value.Discount == "") {
+                        $("#pdfDiscountPercent").text(""); $("#pdfDiscount").text("-");
+                    } else {
+                        $("#pdfDiscountPercent").text(value.Discount + '%'); $("#pdfDiscount").text(discountAmount);
+                    }
+
+                    if (value.CGST == null || value.CGST == "") { $("#pdfCGST").text("-"); $("#CGSTPercent").text(""); }
+                    else { $("#CGSTPercent").text("9%"); $("#pdfCGST").text(value.CGST); }
+
+                    if (value.SGST == null || value.SGST == "") { $("#pdfSGST").text("-"); $("#SGSTPercent").text(""); }
+                    else { $("#pdfSGST").text(value.SGST); $("#SGSTPercent").text("9%"); }
+
+                    if (value.IGST == null || value.IGST == "") { $("#pdfIGST").text("-"); $("#IGSTPercent").text(""); }
+                    else { $("#pdfIGST").text(value.IGST); $("#IGSTPercent").text("18%"); }
+
+                    if (value.TotalTaxAmount == null || value.TotalTaxAmount == "") { $("#pdfTotalTaxAmount").text("-"); }
+                    else { $("#pdfTotalTaxAmount").text(value.TotalTaxAmount); }
+
+                    $("#pdfTotalAmount").text(value.TotalAmount);
+                    $("#pdfAmountInWords").text(value.AmountInWords);
+                    $("#pdfPaymentTerms").text(value.PaymentTerms);
+                    $("#pdfDescription").text(value.Discription);
+                    $("#pdfSupplyState").text(value.SupplyState);
+                    $("#pdfGSTIN").text(value.GSTIN == null || value.GSTIN == "" ? "-" : value.GSTIN);
+                });
+            },
+            error: function (response) { console.log(response); }
+        });
+        $(".Ipopup-open").css("display", "block");
+        $("#CancelButton").off('click').on('click', function () {
+            $(".Ipopup-open").css("display", "none");
+        });
+    }
+
+    $(document).ready(function () {
+        $('#downloadPdfBtn').click(function () {
+            var element = document.getElementById('invoiceContent');
+            var opt = {
+                filename: 'invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        });
+    });
+
+    /* ==============================================================
+       Deliverables tab — backed by USP_GetDeliverablesByCompany via
+       /LeadManagementSubscription/GetDeliverablesByCompany
+       ============================================================== */
+
+    var delivCurrentPage = 1;
+    var delivIsLoading = false;
+
+    function loadDeliverables() {
+        if (!currentCompanyId) return;
+        if (delivIsLoading) return;
+
+        delivIsLoading = true;
+        $('#delivLoadingOverlay').css('display', 'block');
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetDeliverablesByCompany",
+            data: {
+                Id: currentCompanyId,
+                PageNumber: delivCurrentPage
+            },
+            success: function (response) {
+                console.log('DEBUG deliverables response:', response);
+                if (response && response.error) {
+                    $('#delivTableBody').html('<tr><td colspan="5" class="text-center text-danger" style="padding:20px">Error: ' + response.message + '</td></tr>');
+                    return;
+                }
+                renderDeliverablesTable(response.DateList);
+                renderDeliverablesPaging(response);
+            },
+            error: function (e) {
+                console.log(e);
+                $('#delivTableBody').html('<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">Failed to load deliverables.</td></tr>');
+            },
+            complete: function () {
+                delivIsLoading = false;
+                $('#delivLoadingOverlay').css('display', 'none');
+            }
+        });
+    }
+
+    function renderDeliverablesTable(rows) {
+        var path = "/WorkSpaceFile/";
+        var tbodyHTML = '';
+        $(rows || []).each(function (idx, elm) {
+            tbodyHTML += "<tr>";
+            tbodyHTML += "<td>" + elm.Email + "</td>";
+            tbodyHTML += "<td>" + elm.Name + "</td>";
+            tbodyHTML += "<td>" + "<a target='_blank' href='/AdminChemicalPricing/DownloadFile?filePath=" + path + "/" + elm.FileName + "&fileName=" + elm.FileName + "'>" + elm.FileName + "</a>" + "</td>";
+            tbodyHTML += "<td>" + (elm.CreatedDate || '') + "</td>";
+            tbodyHTML += "<td>" + (elm.CreatedBy || '') + "</td>";
+            tbodyHTML += "</tr>";
+        });
+        $('#delivTableBody').html(tbodyHTML || '<tr><td colspan="5" class="text-center text-muted-sm" style="padding:20px">No deliverables found</td></tr>');
+    }
+
+    function renderDeliverablesPaging(response) {
+        $('#delivCountLabel').text((response.RecordsCount || 0) + ' file(s)');
+        $('#delivPagingInfo').html(GetPaginationHTML(response));
+    }
+
+    // GetPagination() hardcodes calling a function named "PaggingButton" in its
+    // generated onclick — this drives our SP-backed page reload.
+    function PaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        delivCurrentPage = parseInt(pageNumber, 10);
+        loadDeliverables();
+    }
+
+    function GetPaginationHTML(json) {
+        var pagingInnerHTML = "<span style='color:var(--text-soft);font-size:12px'>Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records</span>";
+        // note: controller returns "PageSize" (not "PagerSize")
+        var getPaginationButton = GetPagination(json.ActivePage, json.PageSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+        return pagingInnerHTML;
+    }
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            } else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right' style='margin:0'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'><a href='javascript:void(0);'>&laquo;</a></li>";
+            } else {
+                innerHTML += "<li class='paginate_button previous'><a href='javascript:void(0);' url='" + URL + (activePage - 1) + "' onclick='PaggingButton($(this));'>&laquo;</a></li>";
+            }
+        } else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled'><a href='javascript:void(0);'>&laquo;</a></li>";
+        } else {
+            innerHTML += "<li class='paginate_button previous'><a href='javascript:void(0);' url='" + URL + (previous) + "' onclick='PaggingButton($(this));'>&laquo;</a></li>";
+            innerHTML += "<li class='paginate_button previous'><a href='javascript:void(0);' url='" + URL + (activePage - 1) + "' onclick='PaggingButton($(this));'>&laquo;</a></li>";
+        }
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li><a style='background-color:var(--green);color:#fff;' href='javascript:void(0);'>" + i + "</a></li>";
+            } else {
+                innerHTML += "<li class='paginate_button'><a onclick='PaggingButton($(this));' href='javascript:void(0);' url='" + URL + i + "'>" + i + "</a></li>";
+            }
+        }
+
+        if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'><a href='javascript:void(0);'>&raquo;</a></li>";
+        } else {
+            innerHTML += "<li class='paginate_button next'><a href='javascript:void(0);' url='" + URL + (activePage + 1) + "' onclick='PaggingButton($(this));'>&raquo;</a></li>";
+        }
+
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+</script>
+
+

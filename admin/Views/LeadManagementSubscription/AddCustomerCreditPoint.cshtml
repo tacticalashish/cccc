@@ -1,0 +1,190 @@
+﻿
+@{
+    ViewBag.Title = "AddCustomerCreditPoint";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper">
+        <div class="col-md-5 col-lg-8 col-md-offset-2">
+            <div class="eq-form">
+
+                <div class="">
+                    <div class="col-md-12"><center><h2 class="addUser" style="color:#fff;text-align:center!important;font-size:24px;">Add Customer Credit Point</h2></center></div>
+                    <div class="col-md-12 form-group">
+                        <select class="form-control" id="Organisation" name="Organisation" onchange="GetAllEmailbasedonOrganisation()" data-live-search="true" required>
+                            <option value="">Select Organisation *</option>
+                        </select>
+                    </div>
+                 
+                    <div class="col-md-12 form-group">
+                        <select class="form-control" id="Email" name="Email" onchange="GetCreditBasedonEmail()" data-live-search="true" required>
+                            <option value="">Select Email *</option>
+                        </select>
+                    </div>
+                  
+                    <div class="col-md-4 form-group">
+                        <input type="text" class="form-control mb-1" placeholder="credit" id="Credit" name="Credit" autocomplete="off" />
+                    </div>
+                   
+                    <div class="text-right">
+                        <input type="submit" class="btn btn-success" style="padding:3px 12px;margin-top: 10px;margin-right: 25px;" value="Submit" onclick="SubmitData()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<script type="text/javascript">
+   
+    $(document).ready(function () {
+        GetAllOrganisation();
+
+    });
+
+
+
+    function SubmitData(){
+        debugger;
+       
+        var Organisation = $("#Organisation option:selected").text();
+        var CorpEmail = $("#Email option:selected").text();
+        var Credit = $("#Credit").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/InsertCustomerCreditScore",
+            data: { Organisation: Organisation, CorpEmail: CorpEmail, Credit: Credit},
+            async: false,
+
+            success: function (response) {
+                debugger;
+                $(response).each(function (idx, elm) {
+                    responseData = elm.ValidationMessage;
+                });
+                if (responseData != "" || responseData != null || responseData != undefined) {
+
+                    swal({
+                        title: responseData,
+
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "../../LeadManagementSubscription/AddCustomerCreditPoint";
+                    });
+                }
+                else {
+                    swal({
+                        title: 'Failed',
+
+                        type: "success"
+                    }).then(function () {
+                        window.location.href = "../../LeadManagementSubscription/AddCustomerCreditPoint";
+                    });
+                }
+               
+            },
+        });
+    }
+
+
+    function GetCreditBasedonEmail() {
+        debugger;
+        $('#Credit').val('');
+        var innerHTML = "";
+        innerHTML += "<option  value = ''>" + "Select Email *" + "</option>";
+        var Organisation = $("#Organisation option:selected").text();
+        var CorpEmail = $("#Email option:selected").text();
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCreditBasedonEmail",
+            data: { Organisation: Organisation, CorpEmail: CorpEmail},
+            async: false,
+
+            success: function (response) {
+                debugger;
+                if (response.length != 0)
+                {
+                    $(response).each(function (idx, elm) {
+                        responseData = elm.Credit;
+                    });
+
+                    if (responseData == "" || responseData == null || responseData == undefined) {
+
+                        $('#Credit').val('');
+
+                    }
+
+                    else {
+                        $('#Credit').val(responseData);
+                  
+                    }
+                }
+
+            },
+        });
+
+
+    }
+
+
+
+
+    function GetAllEmailbasedonOrganisation() {
+        debugger;
+        var innerHTML = "";
+        innerHTML += "<option  value = ''>" + "Select Email *" + "</option>";
+        var Organisation = $("#Organisation option:selected").text();
+       
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetAllEmailbasedonOrganisation",
+            data: { Organisation: Organisation},
+            async: false,
+
+            success: function (response) {
+                debugger;
+                $(response).each(function (idx, elm) {
+                    innerHTML += "<option value=" + elm.CorpEmail + ">" + elm.CorpEmail + "</option>"
+                });
+                $('#Email').html(innerHTML);
+                $('#Credit').val('');
+
+            },
+        });
+
+
+    }
+
+
+
+    function GetAllOrganisation() {
+        debugger;
+
+        var innerHTML = "";
+        innerHTML += "<option  value = ''>" + "Select Organisation *" + "</option>";
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetAllOrganisation",
+            async: false,
+
+            success: function (response) {
+                debugger;
+                $(response).each(function (idx, elm) {
+                    innerHTML += "<option value=" + elm.Organisation + ">" + elm.Organisation + "</option>"
+                });
+                $('#Organisation').html(innerHTML);
+                $('#Credit').val('');
+
+            },
+        });
+
+
+    }
+</script>

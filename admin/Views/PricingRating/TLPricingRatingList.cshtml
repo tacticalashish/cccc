@@ -1,0 +1,395 @@
+﻿
+@{
+    ViewBag.Title = "TLPricingRatingList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper  container-fluid mt-0 pt-0">
+        <div class="row">
+            <div class="col-md-12"><h3 class="text-white">TL Rating List</h3></div>
+            <div class="col-md-4">
+                <label><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="TLRatingsearch" aria-controls="Userlist"></label>
+                <input type="button" class="btn btn-success" value="Search" onclick="GetTLRatingsearchValues()" />
+                <input type="hidden" id="TLRatingPageNumber" name="TLRatingPageNumber" value="1" />
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <select id="selectmonth"  class="form-control" onchange="GetTLRatingViewBasedOnSearchFilter()">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+
+            <div class="col-sm-12 col-md-3">
+                <select id="selectYear" class="form-control" onchange="GetTLRatingViewBasedOnSearchFilter()">
+                    <option></option>
+                </select>
+            </div>           
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01 mt-2">
+            <table id="ATLRatinglist" class="table table-sm table-bordered mb-0">
+                <thead class="bg-dark text-nowrap">
+                    <tr>
+                        <th hidden="hidden">Id</th>
+                        <th>TL Name</th>
+                        <th>Avg Of Associate</th>
+                        <th id="SaveRating">Save Rating </th>                       
+                        <th>Total Rating </th>
+                    </tr>
+                </thead>
+                <tbody class="TLRatingbodydata" id="TLRatingbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="TLRatingdivPagging"></div>
+</div>
+
+<script>
+
+   
+
+    
+
+    $(document).ready(function () {
+
+        populateYearDropdown();
+
+        $('#selectmonth').val(new Date().toLocaleString('default', { month: 'long' }));
+        GetTLRatingViewBasedOnSearchFilter();
+    });
+
+
+    function populateYearDropdown() {
+        const currentYear = new Date().getFullYear();
+        const $yearDropdown = $('#selectYear');
+
+        $yearDropdown.empty();
+        $yearDropdown.append(`<option value="">--Select Year--</option>`);
+
+
+        for (let i = 5; i >= 0; i--) {
+            const year = currentYear - i;
+            const isSelected = year === currentYear ? 'selected' : '';
+            $yearDropdown.append(`<option value="${year}" ${isSelected}>${year}</option>`);
+        }
+    }
+
+
+    function GetTLRatingsearchValues() {
+        Search = $('#TLRatingsearch').val();
+        $('#TLRatingsearch').html(GetPaginationHTML(Search));
+        GetTLRatingViewBasedOnSearchFilter();
+    }
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left py-5' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#TLRatingPageNumber').val(pageNumber);
+
+        GetTLRatingViewBasedOnSearchFilter();
+
+    }
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+
+
+    function GetTLRatingViewBasedOnSearchFilter() {
+        var pageNumber = $('#TLRatingPageNumber').val();
+        var Type = 'Pricing';        
+        var Search = $('#TLRatingsearch').val();
+        var Month = $('#selectmonth').val();
+        var Year = $('#selectYear').val();
+        var URL = "/PricingRating/GetTLRatingViewRatingList?searchKeyword='" + Search + "'";
+        URL += '&Year=' + Year;
+        URL += '&Month=' + Month;
+        URL += '&PageNumber=' + pageNumber;
+        URL += '&Type=' + Type;
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        tbodyHTML += "<tr>";                       
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.AVGRating + "</td>";                       
+                        tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-info' value='Submit' onclick=\"SubmitRating('" + elm.Name + "', '" + elm.AVGRating + "', '" + elm.Id + "')\">" +  "</td>";                       
+                        tbodyHTML += "<td>" + elm.TotalRating + "</td>";
+                        tbodyHTML += "</tr>"
+                    });
+
+                    $('#TLRatingdivPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.TLRatingbodydata').html(tbodyHTML);
+            }
+        });
+    }
+
+
+    function SubmitRating(name,Rating,ID) {      
+        var Month = $('#selectmonth').val();
+        var Year = $('#selectYear').val();        
+        var ProductivityRating ='';      
+        var Type = 'Pricing';   
+        var Desc = {
+            Id: ID,
+            Name: name,
+            TotalRating: Rating,
+            Type: Type,
+            Month: Month,
+            Year: Year,
+            Productivity: ProductivityRating
+        };
+        if (Rating == "") {
+            Swal.fire({
+                title: "Please select Rating!",
+                type: "success",
+                customClass: {
+                    popup: 'small-popup'
+                }
+            }).then(function () {
+            });
+        }
+
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/PricingRating/InsertTLRating",
+                data: '{Desc: ' + JSON.stringify(Desc) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    debugger;
+                    var responseMessage = response;
+                    if (responseMessage == "Success") {
+                        Swal.fire({
+                            title: "Thank you!",
+                            text: "Insert Sucessfully.",
+                            icon: "success"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/TLPricingRatingList";
+                        });
+                    }
+                    else if (responseMessage == "Already Exist") {
+                        Swal.fire({
+                            title: "Failed!",
+                            text: "Already Exist.",
+                            icon: "error"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/TLPricingRatingList";
+                        });
+                    }
+                    else if (responseMessage == "All Associate TotalRating not Inserted OR All QC not Inserted") {
+                        Swal.fire({
+                            title: "Failed!",
+                            text: "All Associate TotalRating not Inserted OR All QC not Inserted.",
+                            icon: "error"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/TLPricingRatingList";
+                        });
+                    }
+
+                    else {
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "success"
+                        }).then(function () {
+                            window.location.href = "../../PricingRating/TLPricingRatingList";
+                        });
+                    }
+                },
+                Error: function (ErrMsg) {
+                    window.location.href = "../../PricingRating/TLPricingRatingList";
+                }
+            });
+
+
+
+        }
+
+    }
+
+</script>
+
+

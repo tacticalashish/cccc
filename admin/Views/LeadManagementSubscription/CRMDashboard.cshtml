@@ -1,0 +1,444 @@
+﻿
+@{
+    ViewBag.Title = "CRMDashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<style>
+    .tableStyle {
+        border: 1px solid #808080;
+        margin-top: 10px;
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+    
+
+    .popup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .child {
+        z-index: 999;
+        background: #000;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        padding: 20px 10px;
+        color: #fff;
+        border-radius: 2px;
+        box-shadow: 2px 3px 5px #000;
+        max-height: 80vh;
+        min-height: 30vh;
+        max-width: 80vw;
+        min-width: 30vw;
+        overflow: auto;
+    }
+
+    .bttn-danger {
+        background-color: #dc3545;
+        border: 1px solid #b14643;
+    }
+
+    .bttn-success {
+        background-color: #95c23d;
+        border: 1px solid #85ab3a;
+    }
+    /*end popup css*/
+    .card-title {
+        margin-top: 5px;
+    }
+</style>
+<!---------------discription remark---------------->
+<div class="position-relative popup-open">
+    <div class="child">
+        <h4 class="card-title" style="color:#02ff36;font-family: serif;" id="Title"></h4>
+        <hr />
+        <span id="DisRemark" class="DisRemark"></span><br />
+        <button class="bttn bttn-danger" id="CancelDisRemark">Cancel</button>
+    </div>
+</div>
+<!---------------discription remark End---------------->
+<div class="update-profile-wrapper">
+    <div class="container-fluid" style="padding-top:10px;margin-top:0px!important" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-6"><h3 style="color:white;margin-bottom:10px!important;line-height: inherit;">CRM Leads Management</h3></div>
+            <div class="col-md-6">
+                <input style="float:right" type="button" class="btn btn-success" value="Search" onclick="GetsearchValues()" />
+                <label style="float:right;margin-right:10px"><input type="text"  name="search" class="form-control form-control-sm" placeholder="Search Follow Up" id="search" aria-controls="Userlist"></label>
+
+
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+            <div class="col-md-3 col-md-offset-5"><p class=" " style="float:right;letter-spacing:1.5px;font-weight:!important"><span class="label label-danger" style="font-weight:500!important;font-size:14px!important" id="CountAssignProduct"></span></p></div>
+
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01" style="overflow:auto">
+            <table id="Leadlist" class="table tableStyle">
+                <thead>
+                    <tr>
+                        <th hidden>ID</th>
+                        <th>Name</th>
+                        @*<th>Phone</th>*@
+                        <th>Email</th>
+                        <th>Organization</th>
+                        <th>Assign To</th>
+                        <th>Created By</th>
+                        <th>Country Name</th>
+                        @*<th>IP Address</th>*@
+                        <th>Created Date</th>
+                        @*<th>Disapproved Remark</th>*@
+                        <th>Payment Mode</th>
+                        @*<th>Source Files</th>*@
+                        <th>Details</th>
+                        <th>Status</th>
+                        <th>Trader</th>
+                        <th>Credit</th>
+                        <th>Renew</th>
+                        @*<th>Action</th>*@
+                        @*<th>Package</th>*@
+                        @*<th>Api Package</th>*@
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="divPagging"></div>
+</div>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script type="text/javascript">
+    var Search = "";
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1;
+        var year = dateObject.getFullYear();
+        day = day < 10 ? "0" + day : day;
+        month = month < 10 ? "0" + month : month;
+        var formattedDate = day + "/" + month + "/" + year;
+        return formattedDate;
+    };
+
+    $(document).ready(function () {
+        GetLeadsOnSearchFilter();
+
+    });
+
+    function GetsearchValues() {
+        Search = $('#search').val();
+        $('#search').html(GetPaginationHTML(Search));
+        GetLeadsOnSearchFilter();
+    }
+
+    function GetLeadsOnSearchFilter() {
+        var path = "/ChemPricingImportfile/SalesDocument";
+        var pageNumber = $('#PageNumber').val();
+        var Search = $('#search').val();
+        var URL = "/LeadManagementSubscription/GetLeadsForCRM?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        var date = elm.CreatedDate
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.ID + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        //tbodyHTML += "<td>" + elm.Phone + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.Organisation + "</td>";
+                        tbodyHTML += "<td>" + elm.AssignTo + "</td>";
+                        tbodyHTML += "<td>" + elm.createdby + "</td>";
+                        //tbodyHTML += "<td>" + elm.IPAddress + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyHTML += "<td>" + formattedDate + "</td>";
+                        //tbodyHTML += "<td style='text-align:left'>" + "<a  onclick=PopupSourceSubsRemark('" + encodeURIComponent(elm.DisapprovedRemark) + "')>" + "Read More" + "</a>" + "</td>"
+                        tbodyHTML += "<td>" + elm.PaymentMode + "</td>";
+                        //tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/DownloadFile?filePath=" + path + "/" + elm.files + "&fileName=" + elm.files + "'>" + elm.files + "</a>" + "</td>";
+                        var Status = elm.Status;
+                        tbodyHTML += "<td>" + "<a class='label label-info' href='../LeadManagementSubscription/LeadDetailsById?LeadId=" + elm.Id + "&StatusType=" + elm.Status + "'>" + 'VIEW DETAILS' + "</a>" + "</td>";
+                        @*if (Status == "New") {
+                            tbodyHTML += "<td>" + "<a class='label label-info' href='../SubsManagement/ViewDetails/" + elm.Id + "'>" + 'VIEW DETAILS' + "</a>" +
+                           @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"])) { <text> ' &nbsp;&nbsp  <a style="cursor: pointer;" href="#" onclick="DeleteLead(' + elm.Id + ')" class="label label-danger"><i style="cursor: pointer;" class="fa fa-plus"></i> Delete  </a> ' </text> } else { <text>'' </text> }; "</td>";
+                        }
+                        else {
+                            tbodyHTML += "<td>" + "<a class='label label-info' href='../SubsManagement/ViewDetails/" + elm.Id + "'>" + 'VIEW DETAILS' + "</a>" + "</td>";
+                            if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"])) { <text> ' &nbsp;&nbsp  <a style="cursor: pointer;background: #ccc;" href="#" class="label label-secondary"><i style="cursor: pointer;" class="fa fa-plus"></i> Delete </a> ' </text> } else { <text>'' </text> }; "</td>";
+                        }*@
+                        tbodyHTML += "<td>" + elm.Trader + "</td>";
+                        tbodyHTML += "<td>" + elm.Credit + "</td>";
+                        tbodyHTML += "<td>" + elm.Renew + "</td>";
+
+                        var StepCounter = elm.StepCounter;
+                        if (StepCounter == "20") {
+
+                            tbodyHTML += "<td style='color:red;'>" + "Disapproved from Operation" + "</td>";
+                        }
+                        else if (StepCounter == "30") {
+
+                            tbodyHTML += "<td style='color:red;'>" + "Disapproved from Accounts" + "</td>";
+                        }
+                        else if (StepCounter == "40") {
+
+                            tbodyHTML += "<td style='color:red;'>" + "Disapproved from Sales Manager" + "</td>";
+                        }
+                        else if (StepCounter == "1") {
+
+                            tbodyHTML += "<td style='color:#7fff00;'>" + "Pending from Operation" + "</td>";
+                        }
+                        else if (StepCounter == "2") {
+                            tbodyHTML += "<td style='color:#00ffcc;'>" + "Pending From Account" + "</td>";
+                        }
+                        else if (StepCounter == "3") {
+                            tbodyHTML += "<td style='color:#F0FFFF;'>" + "Pending From Sales Manager" + "</td>";
+                        }
+                        else if (StepCounter == "4") {
+                            tbodyHTML += "<td style='color:yellow;'>" + "Pending From Data Analyst" + "</td>";
+                        }
+                        else if (StepCounter == "5") {
+                            tbodyHTML += "<td style='color:Green;'>" + "Subscription Created" + "</td>";
+                        }
+                        else {
+                            tbodyHTML += "<td>" + "Null" + "</td>";
+                        }
+
+                        //tbodyHTML += "<td>" + "<a class='label label-info' href='../LeadManagementSubscription/EditCustomerLead/" + elm.Id + "'>" + 'Update' + "</a>" + "</td>";
+
+                        tbodyHTML += "</tr>"
+                    });
+
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.tbodydata').html(tbodyHTML);
+            }
+        });
+    }
+
+    function PopupSource(Source) {
+
+        var PopupSource = decodeURIComponent(Source);
+        $("#TitleShow").css("display", "block");
+        $("#Discription").html(PopupSource)
+        $("#Title").html("Discription");
+    }
+
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        GetLeadsOnSearchFilter();
+
+    }
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+    function PopupSourceSubsRemark(Source) {
+
+        var PopupSource = decodeURIComponent(Source);
+        $("#DisRemark").html(PopupSource);
+        $(".popup-open").css("display", "block");
+    }
+   
+    $("#CancelDisRemark").click(function () {
+        $(".popup-open").css("display", "none");
+    });
+</script>
+
+
+

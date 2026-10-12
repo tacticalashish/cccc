@@ -1,0 +1,20 @@
+.login_Container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;
+  margin: 0 auto;
+}
+.login_Container .chemAnalystlogo img {
+  margin: 0 3%;
+}
+.login_Container .userinputWidth {
+  width: 266px;
+}
+.login_Container .userinputPass {
+  width: 266px;
+}
+.login_Container .pl-10 {
+  padding-left: 10px;
+}

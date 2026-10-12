@@ -1,0 +1,596 @@
+﻿
+@{
+    ViewBag.Title = "DownloadDataExcel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="color:white">DownloadDataExcel</h2>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+
+<script>
+
+    function RangeFunction(){
+        $("#Range1").hide();
+        $("#Range2").hide();
+        $("#fromdate").hide();
+        $("#Todate").hide();
+
+        var type = $("#Type").val();
+        if ((type == 'Commentary') || (type == 'Pricing Approval'))
+        {
+            $("#Range2").show();
+        }
+        if(type == 'Pricing')
+        {
+           $("#Range1").show();
+        }
+
+        if (type == 'Daily Performance') {
+            $("#fromdate").show();
+            $("#Todate").show();
+            
+        }
+        if (type == 'Daily Performance Update') {
+            $("#fromdate").show();
+            $("#Todate").show();
+
+        }
+
+        if ((type == 'Disruption 1') || (type == 'Disruption 2')) {
+            $("#fromdate").show();
+
+        }
+    }
+</script>
+
+<link href="~/css/adminPricing.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+
+<div class="update-profile-wrapper">
+    <form id="frmChemicalPrice">
+        <div class="white-wrapper">
+            <div class="col-md-3 ">
+                <div class="import-form ">
+                    <div class="change-pass-box">
+                        <div class="col-sm-12 col-lg-12 padding-0">
+
+                            <select class="form-control" id="Type" name="Type" onchange="RangeFunction()" required>
+                                <option value="">Select Option *</option>
+                                <option value="Commentary">Commentary </option>
+                                <option value="Pricing">Pricing </option>
+                                <option value="Daily Performance">Daily Performance </option>
+                                <option value="Daily Performance Update">Daily Performance Update </option>
+                                <option value="Pricing Approval">Pricing Approval </option>
+                                <option value="Daily Retail">Daily Retail </option>
+                                <option value="Daily Bulk">Daily Bulk </option>
+                                <option value="News">News</option>
+                                <option value="Disruption 1">Disruption New</option>
+                                <option value="Disruption 2">Disruption Updated</option>
+                                <option value="Commentary Approval Pending">Commentary Approval Pending</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="col-sm-12 col-lg-12 padding-0">
+                            <select class="form-control" id="Range2" name="Range" style="display:none" required>
+                                <option value="">Select Range *</option>
+                                <option value="Monthly">Monthly</option>
+                                <option value="Weekly">Weekly</option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <select class="form-control" id="Range1" name="Range" style="display:none" required>
+                                <option value="">Select Range *</option>
+                                <option value="Yearly">Yearly</option>
+                                <option value="Monthly">Monthly</option>
+                                <option value="Weekly">Weekly</option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-12 col-lg-12 padding-0">
+                           <input type="text" id="fromdate" class="form-control"  placeholder="FromDate"  name="CreatedTime" autocomplete="off"  style="display:none"/>
+
+                        </div>
+
+                        <div class="col-md-12 col-lg-12 padding-0">
+                            <input type="text"  id="Todate" class="form-control" placeholder="ToDate"  name="CreatedTime" autocomplete="off" style="display:none" />
+
+                        </div>
+
+                        <div class="col-sm-12 col-lg-12 mb-2">
+                            <center>
+                                <input id="btnSubmit" name="btnSubmit" type="button" style="background-color:#7db11a;color:#fff;width:100%!important;" class="btn blue-btn btn-block" value="Submit" onclick="DownloadExcelData()">
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="col-md-12" id="Exceltabel" style="color:white;  margin-top:20px;" >
+    <div id="">
+        <div class="data-detail-wrapper table-responsive">
+            <table id="tabledata" class="table border">
+                @*<thead>
+                    <tr>
+                        <th id="tableheading"></th>
+                        <th id="tableDate"></th>
+                       
+                       
+                    </tr>
+                </thead>*@
+                <tbody class="Exceltbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+        
+        jQuery('#fromdate').datetimepicker();
+        jQuery('#Todate').datetimepicker();
+    });
+
+    $.formattedDate = function (dateToFormat) {
+
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1;
+        var year = dateObject.getFullYear();
+        //var hour = dateObject.getHours();
+        //var minutes = dateObject.getMinutes();
+        //day = day < 10 ? "0" + day : day;
+        //month = month < 10 ? "0" + month : month;
+        //minutes = minutes < 10 ? "0" + minutes : minutes;
+        var formattedDate = year + "-" + month + "-" + day /*+ "-" + hour + ":" + minutes*/;
+        return formattedDate;
+    };
+
+
+    function DownloadExcelData() {
+        debugger;
+        //$("#Exceltabel").hide();
+        var feeddata = {};
+        feeddata.RangeName = '';
+        feeddata.FromDate = '';
+        feeddata.ToDate = '';
+        
+        feeddata.Type = $("#Type").val();
+        if (feeddata.Type == 'Commentary' || feeddata.Type == 'Pricing Approval')
+        {
+            feeddata.RangeName = $("#Range2").val();
+        }
+        if (feeddata.Type == 'Pricing')
+        {
+            feeddata.RangeName = $("#Range1").val();
+        }
+
+        if (feeddata.Type == 'Daily Performance') {
+            feeddata.FromDate = $("#fromdate").val();
+            feeddata.ToDate = $("#Todate").val();
+        }
+
+        if (feeddata.Type == 'Daily Performance Update') {
+            feeddata.FromDate = $("#fromdate").val();
+            feeddata.ToDate = $("#Todate").val();
+        }
+
+        if (feeddata.Type == 'Disruption 1' || feeddata.Type == 'Disruption 2') {
+            feeddata.FromDate = $("#fromdate").val();
+
+        }
+
+
+        if (feeddata.Type !== '' || feeddata.Type !== null || feeddata.Type !== undefined) {
+
+
+            $.ajax({
+                url: "/DownloadFiles/DownloadCommentaryExcel",
+                type: "POST",
+                dataType: 'json',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                //data: { Type: Type, RangeName: RangeName,Fromdate:Fromdate,Todate: Todate},
+                data: feeddata,
+                success: function (Response) {
+                    debugger;
+                    var data = Response.DateList;
+                    var tbodyHTML = '';
+
+                    if (feeddata.Type == 'Commentary' && (feeddata.RangeName == 'Monthly' || feeddata.RangeName == 'Weekly')) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'FileName' + "</th>";
+                        tbodyHTML += "<th>" + 'CommentaryUpdatedDate' + "</th>";
+                        tbodyHTML += "</tr>";
+
+                    }
+                    if (feeddata.Type == 'Pricing' && feeddata.RangeName == 'Yearly') {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'FileName' + "</th>";
+                        tbodyHTML += "<th>" + 'ProductVariant' + "</th>";
+                        tbodyHTML += "<th>" + 'Year' + "</th>";
+                        tbodyHTML += "</tr>";
+                    }
+
+                    if (feeddata.Type == 'Pricing' && (feeddata.RangeName == 'Monthly' || feeddata.RangeName == 'Weekly')) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'FileName' + "</th>";
+                        tbodyHTML += "<th>" + 'ProductVariant' + "</th>";
+                        tbodyHTML += "<th>" + 'Date' + "</th>";
+                        tbodyHTML += "</tr>";
+
+                    }
+
+                    if (feeddata.Type == 'Pricing Approval' && (feeddata.RangeName == 'Monthly' || feeddata.RangeName == 'Weekly')) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'FileName' + "</th>";
+                        tbodyHTML += "<th>" + 'ProductVariant' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedDate' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedBy' + "</th>";
+                        tbodyHTML += "<th>" + 'Date' + "</th>";
+                        tbodyHTML += "</tr>";
+
+                    }
+
+                    if (feeddata.Type == 'Daily Performance') {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'Product' + "</th>";
+                        tbodyHTML += "<th>" + 'CountryFID' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedTime' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedBy' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedDate' + "</th>";
+                        tbodyHTML += "</tr>";
+                    }
+
+                    if (feeddata.Type == 'Daily Performance Update') {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'Product' + "</th>";
+                        tbodyHTML += "<th>" + 'CountryFID' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedTime' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedBy' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedDate' + "</th>";
+                        tbodyHTML += "</tr>";
+                    }
+
+                    if (feeddata.Type == 'News') {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'ProductName' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedTime' + "</th>";
+                        tbodyHTML += "</tr>";
+
+                    }
+
+                    if ((feeddata.Type == 'Daily Retail') || (feeddata.Type == 'Daily Bulk')) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'FileName' + "</th>";
+                        tbodyHTML += "<th>" + 'ProductVariant' + "</th>";
+                        tbodyHTML += "<th>" + 'Date' + "</th>";
+                        tbodyHTML += "</tr>";
+                    }
+
+                    if ((feeddata.Type == 'Disruption 1') || (feeddata.Type == 'Disruption 2')) {
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'FileName' + "</th>";
+                        tbodyHTML += "<th>" + 'Country' + "</th>";
+                        tbodyHTML += "<th>" + 'Company' + "</th>";
+                        tbodyHTML += "<th>" + 'Location' + "</th>";
+                        tbodyHTML += "<th>" + 'Duration' + "</th>";
+                        tbodyHTML += "<th>" + 'OutageStartDate' + "</th>";
+                        tbodyHTML += "<th>" + 'OutageEndDate' + "</th>";
+                        tbodyHTML += "<th>" + 'TypeOfShutdown' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedDate' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedBy' + "</th>";
+                        tbodyHTML += "<th>" + 'UpdateDate' + "</th>";
+                        tbodyHTML += "</tr>";
+
+                    }
+
+                    if (feeddata.Type == 'Commentary Approval Pending') {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<th>" + 'CreatedTime' + "</th>";
+                        tbodyHTML += "<th>" + 'Country' + "</th>";
+                        tbodyHTML += "<th>" + 'ProductName' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedBy' + "</th>";
+                        tbodyHTML += "<th>" + 'CreatedDate' + "</th>";
+                        tbodyHTML += "<th>" + 'Email' + "</th>";
+                        tbodyHTML += "</tr>";
+
+                    }
+
+                    if (data.length != 0) {
+                        $(data).each(function (idx, elm) {
+
+                            var dd = elm.ActionType;
+                            if (elm.ActionType == 'Commentary') {
+
+                                var date = elm.CommentaryupdatedDate;
+                                if (date != null) {
+                                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedDate = null;
+                                }
+
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.FileName + "</td>";
+                                tbodyHTML += "<td>" + formattedDate + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+                            if (elm.ActionType == 'Pricing') {
+
+                                var date = elm.CreatedDate;
+                                if (date != null) {
+                                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedDate = null;
+                                }
+
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.FileName + "</td>";
+                                tbodyHTML += "<td>" + elm.ProductVariant + "</td>";
+                                tbodyHTML += "<td>" + formattedDate + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+                            if (elm.ActionType == 'PricingYearly') {
+
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.FileName + "</td>";
+                                tbodyHTML += "<td>" + elm.ProductVariant + "</td>";
+                                tbodyHTML += "<td>" + elm.Year + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+                            if (elm.ActionType == 'Pricing Approval') {
+
+                                var date = elm.CreatedDate;
+                                if (date != null) {
+                                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedDate = null;
+                                }
+
+                                var date1 = elm.Pricedate;
+                                if (date1 != null) {
+                                    var formattedDate1 = ($.formattedDate(new Date(parseInt(date1.substr(6)))));
+                                }
+                                else {
+                                    formattedDate1 = null;
+                                }
+
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.FileName + "</td>";
+                                tbodyHTML += "<td>" + elm.ProductVariant + "</td>";
+                                tbodyHTML += "<td>" + formattedDate + "</td>";
+                                tbodyHTML += "<td>" + elm.CreatedBy + "</td>";
+                                tbodyHTML += "<td>" + formattedDate1 + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+                            if (elm.ActionType == 'Daily Performance' || elm.ActionType == 'Daily Performance Update') {
+
+                                var date = elm.CreatedTime;
+                                if (date != null) {
+                                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedDate = null;
+                                }
+
+                                var date1 = elm.CreatedDate;
+                                if (date1 != null) {
+                                    var formattedDate1 = ($.formattedDate(new Date(parseInt(date1.substr(6)))));
+                                }
+                                else {
+                                    formattedDate1 = null;
+                                }
+
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.Product + "</td>";
+                                tbodyHTML += "<td>" + elm.CountryFID + "</td>";
+                                tbodyHTML += "<td>" + formattedDate + "</td>";
+                                tbodyHTML += "<td>" + elm.CreatedBy + "</td>";
+                                tbodyHTML += "<td>" + formattedDate1 + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+
+                            if (elm.ActionType == 'News') {
+
+                                var date = elm.CreatedTime;
+                                if (date != null) {
+                                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedDate = null;
+                                }
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                                tbodyHTML += "<td>" + formattedDate + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+                            if ((elm.ActionType == 'Daily Retail') || (elm.ActionType == 'Daily Bulk')) {
+
+                                var date = elm.CreatedDate;
+                                if (date != null) {
+                                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedDate = null;
+                                }
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.FileName + "</td>";
+                                tbodyHTML += "<td>" + elm.ProductVariant + "</td>";
+                                tbodyHTML += "<td>" + formattedDate + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+                            if ((elm.ActionType == 'Disruption 1') || (elm.ActionType == 'Disruption 2')) {
+
+                                var date = elm.CreatedDate;
+                                if (date != null) {
+                                    var formattedCreatedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedCreatedDate = null;
+                                }
+
+                                var date = elm.OutageStartDate;
+                                if (date != null) {
+                                    var formattedOutageStartDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedOutageStartDate = null;
+                                }
+
+                                var date = elm.OutageEndDate;
+                                if (date != null) {
+                                    var formattedOutageEndDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedOutageEndDate = null;
+                                }
+                                var date = elm.UpdateDate;
+                                if (date != null) {
+                                    var formattedUpdateDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedUpdateDate = null;
+                                }
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + elm.FileName + "</td>";
+                                tbodyHTML += "<td>" + elm.Country + "</td>";
+                                tbodyHTML += "<td>" + elm.Company + "</td>";
+                                tbodyHTML += "<td>" + elm.Location + "</td>";
+                                tbodyHTML += "<td>" + elm.Duration + "</td>";
+                                tbodyHTML += "<td>" + formattedOutageStartDate + "</td>";
+                                tbodyHTML += "<td>" + formattedOutageEndDate + "</td>";
+                                tbodyHTML += "<td>" + elm.TypeOfShutdown + "</td>";
+                                tbodyHTML += "<td>" + formattedCreatedDate + "</td>";
+                                tbodyHTML += "<td>" + elm.CreatedBy + "</td>";
+                                tbodyHTML += "<td>" + formattedUpdateDate + "</td>";
+                                tbodyHTML += "</tr>";
+                            }
+
+
+                            if (elm.ActionType == 'Commentary Approval Pending') {
+
+                                var date = elm.CreatedDate;
+                                if (date != null) {
+                                    var formattedCreatedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedCreatedDate = null;
+                                }
+
+                                var date = elm.CreatedTime;
+                                if (date != null) {
+                                    var formattedCreatedTime = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                                }
+                                else {
+                                    formattedCreatedTime = null;
+                                }
+                                tbodyHTML += "<tr>";
+                                tbodyHTML += "<td>" + formattedCreatedTime + "</td>";
+                                tbodyHTML += "<td>" + elm.Country + "</td>";
+                                tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                                tbodyHTML += "<td>" + elm.CreatedBy + "</td>";
+                                tbodyHTML += "<td>" + formattedCreatedDate + "</td>";
+                                tbodyHTML += "<td>" + elm.Email + "</td>";
+
+                                tbodyHTML += "</tr>";
+                            }
+
+
+                        });
+                        $("#Exceltabel").show();
+                        $('.Exceltbodydata').html(tbodyHTML);
+                        ExportToExcel('xlsx');
+                        $("#Exceltabel").hide();
+
+                        $("#fromdate").val('');
+                        $("#Todate").val('');
+                        $("#Type").val('');
+                        $("#Range2").val('');
+                        $("#Range1").val('');
+
+                        swal("Download success .");
+                        //swal({
+                        //    title: +'Download',
+
+                        //    type: "success"
+                        //});
+
+                    }
+                    else {
+                        tbodyHTML = "<h1><span>No records found..!!</span> <h1>";
+                    }
+
+                },
+                Error: function (ErrMsg) {
+
+                }
+            });
+        }
+
+    }
+
+
+    function ExportToExcel(type, fn, dl) {
+        debugger;
+        var RangeName = '';
+        var FromDate = '';
+        var ToDate = '';
+        var Type = '';
+
+        var Type = $("#Type").val();
+        if (Type == 'Commentary' || Type == 'Pricing Approval') {
+            RangeName = $("#Range2").val();
+        }
+        if (Type == 'Pricing') {
+            RangeName = $("#Range1").val();
+        }
+
+        if (Type == 'Daily Performance' || Type == 'Daily Performance Update') {
+            FromDate = $("#fromdate").val();
+            ToDate = $("#Todate").val();
+        }
+
+        var filename = Type + "/" + RangeName + "/" + FromDate + "/" + ToDate + "." ;
+
+        var elt = document.getElementById('tabledata');
+        var headline = filename;
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || (filename + (type || 'xlsx')));
+        //XLSX.writeFile(wb, fn || ('MySheet.' + (type || 'xlsx')));  
+            
+    }
+
+   
+</script>
+
+

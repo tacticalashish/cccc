@@ -1,0 +1,78 @@
+﻿@model List<ChemAnalyst.ViewModel.SA_ProductAndFileTypeRelationViewModel>
+@{
+    ViewBag.Title = "Product Relation Records";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+
+    string countries = string.Empty;
+
+
+}
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#company').DataTable();
+    });
+
+
+</script>
+<div class="update-profile-wrapper">
+    @{
+        if (TempData["Message"] != null)
+        {
+            <span style="color: #d9534f;">@TempData["Message"]</span>
+        }
+    }
+    <a class="btn btn-success pull-right" style="margin-left:20px; margin-top:10px" href="@Url.Action("NewProductAndFileTypeRelation", "admin")"><i class="fa fa-plus"></i> New Product & File Type Relation</a>
+
+    <div class="white-wrapper" style="padding-top:10px; margin-top:10px;">
+
+        <div class="data-detail-wrapper table-responsive">
+
+            <table class="table table-bordered" id="company">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>File Types</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model.GroupBy(x => x.SA_Product.id).Select(y => y.First()))
+                    {
+                        countries = string.Empty;
+                        <tr>
+                            <td>@item.SA_Product.ProductName</td>
+                            <td>
+                                @foreach (var fileType in Model.FindAll(x => x.SA_Product.id== item.SA_Product.id))
+                                {
+                                    countries += string.Concat(fileType.SA_FileType.Name, ", ");
+                                }
+                                @countries
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "EditProductAndFileTypeRelation", "admin", new { id = item.SA_Product.id }, new { @class = "btn btn-warning btn-xs" })
+                            </td>
+                            <td>
+                                @Html.ActionLink("Delete", "DeleteProductAndFileTypeRelation", "admin", new { id = item.SA_Product.id }, new { @class = "btn btn-danger btn-xs" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+        </div>
+
+    </div>
+
+</div>

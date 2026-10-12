@@ -1,0 +1,392 @@
+﻿
+@{
+    ViewBag.Title = "TestView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title> Chemical Invoice for Chemanalys</title>
+    <style type='text/css'>
+        body {
+            background: #d2d2d2;
+            padding: 0px;
+            margin: 0px;
+            font-family: 'Open Sans',sans-serif;
+            font-weight: 500;
+            font-size: 10.5px;
+        }
+
+        .container {
+            width: 842px;
+            background: white;
+            height: auto;
+            padding: 60px;
+            margin: 20px auto;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .col-left,
+        .col-right {
+            width: 50%;
+        }
+
+        .border-left {
+            border-left: solid .5px #6e902b;
+            padding: 0px 15px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-4 {
+            margin-bottom: 25px;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .strong {
+            font-weight: 600;
+           
+        }
+
+        .ps-5 {
+            padding-left: 20px;
+        }
+
+        .mt-6 {
+            margin-top: 24px;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .border-right {
+            border-right: solid 1px black;
+            padding: 0px 5px;
+        }
+
+        .mt-20 {
+            margin-top: 40px;
+        }
+
+        .w-50 {
+            width: 50%;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .border-bottom {
+            border-bottom: solid 2px black;
+            width: 12%;
+            text-align: right;
+        }
+
+        .py-2 {
+            padding: 5px 0px;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .border {
+            border: solid 2px black;
+            padding: 4px;
+        }
+
+        .me-5 {
+            margin-right: 20px;
+        }
+
+        .ms-5 {
+            margin-right: 20px;
+        }
+
+        .min-height {
+            min-height: 220px;
+        }
+
+        .table-border {
+            border: solid 2px black;
+            border-collapse: collapse;
+        }
+
+            .table-border th {
+                background: #244061;
+                color: white;
+            }
+
+        .w-120 {
+            width: 120px;
+        }
+
+        th, td {
+            border: solid 2px black;
+            padding: 0px 4px;
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .w-34 {
+            width: 34%;
+        }
+
+        .w-33 {
+            width: 33%;
+        }
+
+        .w-60 {
+            width: 60%;
+        }
+
+        .w-40 {
+            width: 40%;
+        }
+
+        .py-1 {
+            padding: 2px 0px;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <button id="downloadPdfBtn">Download PDF</button>
+
+    <div class='container' id="invoiceContent">
+        <div class='row'>
+            <div class='w-60'>
+                <img src='../images/logo1.png' width='200'>
+            </div>
+            <div class='w-40 border-left'>
+                <div class='d-flex align-items-center' style='margin-top:6px'>
+                    <span><img src='../images/globe.png' width='20'></span>
+                    <span class='ps-5' style='font-size: 12px;'>www.chemanalyst.com</span>
+                </div>
+                <div class='d-flex'>
+                    <span><img src='../images/envelope.png' width='20'></span>
+                    <span class='ps-5' style='font-size: 12px;'>info chemanalyst.com</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h6 class='text-center' >Proforma Invoice</h6>
+            <div class='d-flex justify-content-between'>
+                <div class='w-50'></div>
+                <div class='w-50 mb-4'>
+                    <div class='d-flex'>
+                        <span class='strong'>Invoice No:-</span>
+                        <span class='ps-5' style='margin-left:65px;'>CHEM-PI-2425070</span>
+                    </div>
+                    <div class='d-flex'>
+                        <span class='strong'>Date:-</span>
+                        <span class='ps-5' style='margin-left:106px;'>28 November 2024</span>
+                    </div>
+                    <div class='d-flex'>
+                        <span class='strong'>Reverse Charge(Y/N):-</span>
+                        <span style='margin-left:16px;'> No </span>
+                    </div>
+                    <div class='d-flex'>
+                        <span class='strong'>PO:-</span>
+                        <span class='ps-5' style='margin-left:115px;'>N.A</span>
+                    </div>
+                    <div class='d-flex'>
+                        <span class='strong'>PO DATE:-</span>
+                        <span class='ps-5' style='margin-left:75px;'>N.A</span>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class='col-left'>
+                    <div class='border min-height' style='margin-right: 30px;'>
+                        <div class='mb-4 strong'>Supplier(Bill From)</div>
+                        <div>Chemanalyst Data Private Limited</div>
+                        <div class='d-flex'>
+                            <span class='strong w-50'>Address:-</span>
+                            <span style='margin-left: 10px'>
+                                4Th Floor, 4F-1, B-44, Block-B,, Sector
+                                57,Noida, Gautam Buddha
+                                Nagar,Noida, Uttar Pradesh, India,
+                                201301
+                            </span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>Ph:-</span>
+                            <span style='margin-left: 65px'> +91-120-4523900 </span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>CIN NO:-</span>
+                            <span style='margin-left: 35px'> U74110UP2018PTC109822 </span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>GSTIN NO:-</span>
+                            <span style='margin-left: 15px'> 09AAMCM1992J2ZT</span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>PAN NO:-</span>
+                            <span class='ps-5' style='margin-left: 10px'>AAMCM1992J</span>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-right'>
+                    <div class='border  min-height' style='margin-left: 30px;'>
+                        <div class='strong'>Recipient(Bill To)</div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>Kind Attn:-</span>
+                            <span style='margin-left: 20px'>Robin Kuo</span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>Name:-</span>
+                            <span class='ps-5' style='margin-left: 25px'>Chunghwa Chemical Synthesis & Biotech Co., LTD.</span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>Address:-</span>
+                            <span class='ps-5' style='margin-left: 6px'>1 Tung-Hsing St., Shu-Lin Dist., 23850, New Taipei City, Taiwan, ROC</span>
+                        </div>
+                        <div class='d-flex mt-6'>
+                            <span class='strong'>VAT:-</span>
+                            <span class='ps-5' style='margin-left: 40px'>NA</span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>PAN:-</span>
+                            <span class='ps-5' style='margin-left: 36px'>NA</span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>State:-</span>
+                            <span class='ps-5' style='margin-left: 30px'>NA</span>
+                        </div>
+                        <div class='d-flex py-1'>
+                            <span class='strong'>Tel:-</span>
+                            <span class='ps-5' style='margin-left: 45px'>T +886 2 8684 3318 #854 <br /> F +886 2 8684 3202</span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>Email:-</span>
+                            <span class='ps-5' style='margin-left: 28px'>robin.kuo ccsb.com.tw</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row mt-6'>
+                <div class='border w-100'>
+                    <div class='d-flex w-100 justify-content-between'>
+                        <span class='strong w-34'>Description</span>
+                        <span class='strong w-33 text-center'>SAC CODE</span>
+                        <span class='strong w-33 text-right'>AMOUNT(USD)</span>
+                    </div>
+                    <div class='d-flex w-100'>
+                        <span class='w-34'>ChemAnalyst Subscription Renewal: Chemical Pricing-Acetonitrile–China</span>
+                        <span class='w-33 text-center'>998371</span>
+                        <span class='w-33 text-right'>660</span>
+                    </div>
+                    <div class='d-flex mt-6'>
+                        <div><span class='border-right'>3 User License</span> <span class='border-right'>12 Months Subscription</span><span>Global News</span></div>
+                    </div>
+
+                    <div class='d-flex justify-content-between mt-20'>
+                        <div class='w-50'></div>
+                        <div class='w-50'>
+                            <div class='d-flex justify-content-between'>
+                                <span>Subtotal</span>
+                                <span class='border-bottom'>660</span>
+                            </div>
+                            <div class='d-flex justify-content-between'>
+                                <span>Add:- CGST</span>
+                                <span>-</span>
+                            </div>
+                            <div class='d-flex justify-content-between'>
+                                <span>Add:- SGST</span>
+                                <span>-</span>
+                            </div>
+                            <div class='d-flex justify-content-between'>
+                                <span>Add:- IGST<br /> <span>(LUT No: AD090424001791A)</span></span>
+                                <span>-</span>
+                            </div>
+
+                            <div class='d-flex justify-content-between'>
+
+                                <span>Total Tax Amount</span>
+                                <span>-</span>
+                            </div>
+                            <div class='d-flex justify-content-between'>
+                                <span>Total Amount</span>
+                                <span>660</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin: 8px -15px;">
+                <table class='table-border' style='width:75%'>
+                    <tr><td>Amount In Words</td><td>Six Hundred Sixty Dollars and No Cents</td></tr>
+                    <tr><td>Payments Terms</td><td>100% Advance Payment</td></tr>
+                </table>
+                <p class='' style="color:black; font-size:10.5px; margin-top: 10px; line-height:1.5">
+                    <i>
+                        Note:- SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS
+                        UNDER BOND OR LETTER OF UNDERTAKING WITH OUT PAYMENT OF INTEGRATED TAX
+                    </i>
+                </p>
+
+                <div class=''>
+                    <table class='table-border' style='width:60%;margin-top: -10px;'>
+                        <tr><th colspan='2' style='padding: 3px 0px;'>Banking Details</th></tr>
+                        <tr><td style='width: 30%;'> Account Name</td><td>Chemanalyst Data Private Limited</td></tr>
+                        <tr><td>Bank Name</td><td>HDFC BANK LTD</td></tr>
+                        <tr><td>Bank Add</td><td>G- 28/29, First Floor, Sector- 18, Noida- 201301 Uttar Pradesh India</td></tr>
+                        <tr><td>Account No.</td><td>50200078519827</td></tr>
+                        <tr><td>SWIFT Code</td><td>HDFCINBBXXX</td></tr>
+                        <tr><td>RTGS/IFSC Code</td><td>HDFC0001592</td></tr>
+                    </table>
+                    <div class='mt-6'>
+                        <p class='strong'>Thank you for doing business with Chemanalyst!!</p>
+                    </div>
+                </div>
+                <div class='text-right'>
+                    <img src='../images/signature.png' width='260'>
+                </div>
+                <div class='mt-20 text-center'>
+                    <div>Chemanalyst Data Private Limited</div>
+                    <div>
+                        4TH FLOOR, 4F-1, B-44, BLOCK-B,, SECTOR 57, NOIDA, <br />
+                        GAUTAM BUDDHA NAGAR, NOIDA, Uttar Pradesh, India, 201301
+                    </div>
+                    <div>T: +91-120-4523900 CIN – U74110UP2018PTC109822</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script>
+     $(document).ready(function () {
+         // Handle the button click to download the PDF
+         $('#downloadPdfBtn').click(function () {
+             var element = document.getElementById('invoiceContent');
+
+             // Use html2pdf.js to generate and download the PDF
+             html2pdf()
+                 .from(element)  // Specify the HTML content to convert to PDF
+                 .save('invoice.pdf');  // Filename of the generated PDF
+         });
+     });
+</script>

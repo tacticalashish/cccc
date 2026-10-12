@@ -1,0 +1,520 @@
+﻿@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    :root {
+        --bg-page: #f4f6f5;
+        --bg-panel: #ffffff;
+        --bg-panel-head: #ffffff;
+        --border: #eef1ef;
+        --text: #1a1a1a;
+        --text-soft: #8a978f;
+        --green: #1a4d2e;
+        --green-tint: #eef4f0;
+        --orange: #f58220;
+        --orange-tint: #fff1e3;
+        --red: #c0392b;
+        --red-tint: #fbeae8;
+        --blue: #2a6190;
+        --blue-tint: #e8f0f7;
+        --gray: #697570;
+        --gray-tint: #eef1ef;
+    }
+
+    .d-flex {
+        display: flex
+    }
+
+    .align-center {
+        align-items: center
+    }
+
+    .flex-wrap {
+        flex-wrap: wrap
+    }
+
+    .flex-fill {
+        flex: 1
+    }
+
+    .gap-2 {
+        gap: 8px
+    }
+
+    .mb-2 {
+        margin-bottom: 8px
+    }
+
+    .ml-auto {
+        margin-left: auto
+    }
+
+    .panel {
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        border-radius: 8px;
+        transition: box-shadow .2s ease;
+    }
+
+        .panel:hover {
+            box-shadow: 0 4px 14px rgba(0,0,0,.08);
+        }
+
+    .text-muted-sm {
+        color: var(--text-soft);
+        font-size: 12px
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--green-tint);
+        color: var(--green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        flex-shrink: 0
+    }
+
+    .pill-soft {
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 11px;
+        padding: 4px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px
+    }
+
+        .pill-soft .dot-b {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0
+        }
+
+        .pill-soft.ok {
+            background: var(--green-tint);
+            color: var(--green)
+        }
+
+        .pill-soft.warn {
+            background: var(--orange-tint);
+            color: var(--orange)
+        }
+
+        .pill-soft.bad {
+            background: var(--red-tint);
+            color: var(--red)
+        }
+
+        .pill-soft.info {
+            background: var(--blue-tint);
+            color: var(--blue)
+        }
+
+        .pill-soft.gray {
+            background: var(--gray-tint);
+            color: var(--gray)
+        }
+
+    .cust-table thead th {
+        text-transform: uppercase;
+        font-size: 10.5px;
+        color: var(--text-soft);
+        border-bottom: 2px solid var(--border) !important;
+        font-weight: 700;
+        padding: 6px 10px;
+    }
+
+    .cust-table td {
+        vertical-align: middle !important;
+        border-top: 1px solid var(--border) !important;
+        color: var(--text);
+        transition: background .15s ease;
+        font-size: 12.5px;
+        padding: 6px 10px;
+        white-space: nowrap;
+    }
+
+        .cust-table td .text-muted-sm {
+            white-space: normal;
+        }
+
+    .cust-table tr:hover td {
+        background: var(--green-tint);
+        cursor: pointer
+    }
+
+    .btn-filter.active {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+        font-weight: 600
+    }
+
+    #pagingControls.pagination > li > a {
+        background: var(--bg-panel-head);
+        border-color: var(--border);
+        color: var(--green)
+    }
+
+    #pagingControls.pagination > li.active > a {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff
+    }
+
+    #pagingControls.pagination > li.disabled > a {
+        background: var(--bg-panel-head);
+        border-color: var(--border);
+        color: var(--text-soft);
+        cursor: default
+    }
+
+    /* ---------------- dark theme + polish ---------------- */
+    .bg-light {
+        background: var(--bg-page) !important;
+    }
+
+        .bg-light .panel.panel-default {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .bg-light .panel-heading,
+        .bg-light .panel-footer {
+            background: var(--bg-panel-head) !important;
+            border-color: var(--border) !important;
+            color: var(--text);
+        }
+
+        .bg-light .table {
+            color: var(--text);
+            background: transparent;
+        }
+
+        .bg-light .text-muted {
+            color: var(--text-soft) !important;
+        }
+
+        .bg-light .btn-default {
+            background: var(--bg-panel-head);
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+            .bg-light .btn-default:hover, .bg-light .btn-default:focus {
+                background: #f5f7f6;
+                color: var(--text);
+            }
+
+        .bg-light .form-control {
+            background: var(--bg-panel-head);
+            border-color: var(--border);
+            color: var(--text);
+            box-shadow: none;
+        }
+
+            .bg-light .form-control:focus {
+                background: var(--bg-panel-head);
+                border-color: var(--green);
+                color: var(--text);
+                box-shadow: none;
+            }
+
+            .bg-light .form-control::placeholder {
+                color: var(--text-soft);
+            }
+
+        .bg-light select.form-control option {
+            background: var(--bg-panel-head);
+            color: var(--text);
+        }
+
+    .table-responsive {
+        border: 0;
+    }
+
+    /* ---------------- responsive tweaks ---------------- */
+    @@media (max-width: 767px) {
+        #customerSearchBox, .panel-heading select.form-control {
+            max-width: 100% !important;
+            width: 100%;
+            flex: 1 1 100%;
+        }
+
+        .btn-group.btn-group-sm {
+            flex: 1 1 100%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+            .btn-group.btn-group-sm .btn-filter {
+                flex: 1 1 auto;
+            }
+
+        .panel-heading .ml-auto {
+            margin-left: 0;
+        }
+
+        .panel-heading.d-flex > * {
+            margin-bottom: 8px;
+        }
+
+        .panel-footer.d-flex {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+            .panel-footer.d-flex #pagingControls {
+                margin: 8px 0 0 0 !important;
+            }
+    }
+</style>
+<div class="bg-light p-3">
+    <div class="panel panel-default">
+        <div class="panel-heading d-flex align-center gap-2 flex-wrap">
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-default btn-filter active" data-filter="All">All</button>
+                <button class="btn btn-default btn-filter" data-filter="Active">Active</button>
+                <button class="btn btn-default btn-filter" data-filter="RenewalDue">Renewal due</button>
+                <button class="btn btn-default btn-filter" data-filter="Expired">Expired</button>
+            </div>
+            <input type="text" id="customerSearchBox" class="form-control" style="max-width:260px" placeholder="Filter by company or email...">
+            @*<select class="form-control" style="max-width:160px">
+                <option>All countries</option>
+                <option>India</option>
+                <option>Germany</option>
+                <option>Spain</option>
+            </select>*@
+            @*<button type="button"
+                    class="btn btn-sm ml-auto"
+                    style="background:var(--green);color:#fff"
+                    onclick="openNewCustomerModal()">
+                + New Customer
+            </button>*@
+            @*<button class="btn btn-default btn-sm">&#8681; Export</button>*@
+        </div>
+        <div class="table-responsive">
+            <table class="table cust-table" style="margin-bottom:0">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Primary contact</th>
+                        <th>Status</th>
+                        <th>Plan</th>
+                        <th>API</th>
+                        <th>Last login</th>
+                        <th>Renews</th>
+                        <th>Health</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    <!-- populated by GetCustomersDetailsByCompany() -->
+                    <tr><td colspan="8" class="text-center text-muted-sm" style="padding:20px">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer d-flex align-center flex-wrap">
+            <span class="text-muted-sm" id="pagingInfo">Showing 0 of 0</span>
+            <ul class="pagination pagination-sm" id="pagingControls" style="margin:0 0 0 auto"></ul>
+        </div>
+    </div>
+</div>
+<!-- "+ New Customer" popup — loads the CompanyMaster view (Layout is skipped
+     for AJAX requests, see CompanyMaster.cshtml) so the same form used on its
+     full page opens here without duplicating the site header/nav. -->
+<div id="newCustomerModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:999; background:rgba(0,0,0,0.5);">
+    <div style="background:#ffffff; max-width:820px; margin:40px auto; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,0.35); overflow:hidden; max-height:85vh; display:flex; flex-direction:column;">
+        <div style="padding:16px 20px; border-bottom:1px solid #eef1ef; display:flex; align-items:center; background:#ffffff; flex:0 0 auto;">
+            <h4 style="margin:0; color:#1a1a1a; font-size:18px; font-weight:bold;">New customer</h4>
+            <span onclick="closeNewCustomerModal()" style="margin-left:auto; cursor:pointer; font-size:22px; color:#999; line-height:1;">&times;</span>
+        </div>
+        <div id="newCustomerModalBody" style="overflow-y:auto; flex:1 1 auto;">
+            <div class="text-center text-muted-sm" style="padding:40px">Loading...</div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<style>
+    /* Force the SweetAlert popup to sit centered on top of the New-customer
+       modal instead of dropping to the bottom of the page. Covers both the
+       v1 (.sweet-*) and v2 (.swal-*) class names. */
+    .swal-overlay, .sweet-overlay { position: fixed !important; inset: 0 !important; background: rgba(0,0,0,.45) !important; z-index: 100000 !important; }
+    .swal-modal, .sweet-alert { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; z-index: 100001 !important; margin: 0 !important; background: #fff !important; border-radius: 10px !important; padding: 24px !important; max-width: 90vw !important; width: 400px !important; box-shadow: 0 12px 40px rgba(0,0,0,.25) !important; text-align: center !important; }
+</style>
+<script>
+    var currentPage = 1;
+    var currentSearch = '';
+    var currentFilter = 'All';
+    var searchDebounce = null;
+
+    $(document).ready(function () {
+        GetCustomersDetailsByCompany();
+
+        $('#customerSearchBox').on('keyup', function () {
+            var val = $(this).val();
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(function () {
+                currentSearch = val;
+                currentPage = 1; // reset to first page on new search
+                GetCustomersDetailsByCompany();
+            }, 400); // debounce so it doesn't fire on every keystroke
+        });
+
+        $('.btn-filter').on('click', function () {
+            $('.btn-filter').removeClass('active');
+            $(this).addClass('active');
+            currentFilter = $(this).data('filter');
+            currentPage = 1; // reset to first page on filter change
+            GetCustomersDetailsByCompany();
+        });
+
+        // close the "+ New Customer" popup when clicking the dark backdrop
+        $('#newCustomerModal').on('click', function (e) {
+            if (e.target === this) closeNewCustomerModal();
+        });
+    });
+
+    /* ---------- "+ New Customer" popup (loads CompanyMaster view) ---------- */
+    function openNewCustomerModal() {
+        $('#newCustomerModal').css('display', 'block');
+        $('#newCustomerModalBody').html('<div class="text-center text-muted-sm" style="padding:40px">Loading...</div>');
+        $('#newCustomerModalBody').load('/LeadManagementSubscription/CompanyMaster', function (response, status) {
+            if (status === 'error') {
+                $('#newCustomerModalBody').html('<div class="text-center text-muted-sm" style="padding:40px">Failed to load the form. Please try again.</div>');
+            }
+        });
+    }
+
+    function closeNewCustomerModal() {
+        $('#newCustomerModal').css('display', 'none');
+        $('#newCustomerModalBody').empty();
+    }
+
+    // CompanyMaster.cshtml (loaded into the popup above) calls this after a
+    // successful save instead of redirecting to CreateLead — we stay on this
+    // page, close the popup, and refresh the customer list so the new row shows up.
+    window.onCompanyMasterSaved = function () {
+        closeNewCustomerModal();
+        currentPage = 1;
+        GetCustomersDetailsByCompany();
+    };
+
+    function GetCustomersDetailsByCompany() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetCustomersDetailsByCompany",
+            data: {
+                searchKeyword: currentSearch,
+                PageNumber: currentPage,
+                FilterType: currentFilter
+            },
+            success: function (response) {
+                renderCustomerTable(response.DateList);
+                renderPaging(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        GetCustomersDetailsByCompany();
+    }
+
+    /* ---------- rendering helpers ---------- */
+
+    function initials(name) {
+        return (name || '').replace(/[^A-Za-z ]/g, '')
+            .split(' ').filter(Boolean).slice(0, 2)
+            .map(function (w) { return w[0]; }).join('').toUpperCase();
+    }
+
+    function formatDate(d) {
+        if (!d) return '—';
+        // "2026-06-30 23:00:00.000" -> "2026-06-30"
+        return String(d).split(' ')[0];
+    }
+
+    function statusPill(status) {
+        if ((status || '').toLowerCase() === 'active') {
+            return '<span class="pill-soft ok"><span class="dot-b"></span>Active</span>';
+        }
+        return '<span class="pill-soft bad"><span class="dot-b"></span>Inactive</span>';
+    }
+
+    function apiPill(api, apiStatus) {
+        if (api !== 'API') return '<span class="text-muted">&mdash;</span>';
+        var cls = (apiStatus === 'active') ? 'info' : 'gray';
+        return '<span class="pill-soft ' + cls + '"><span class="dot-b"></span>API</span>';
+    }
+
+    function healthPill(health) {
+        if (health === 'at_risk') {
+            return '<span class="pill-soft bad"><span class="dot-b"></span>At risk</span>';
+        }
+        if (health === 'renewal_due') {
+            return '<span class="pill-soft warn"><span class="dot-b"></span>Renewal due</span>';
+        }
+        return '<span class="pill-soft ok"><span class="dot-b"></span>Healthy</span>';
+    }
+
+    function renderCustomerTable(rows) {
+        debugger
+        var html = '';
+        $(rows || []).each(function (index, r) {
+            html += '<tr onclick="location.href=\'/LeadManagementSubscription/CustomerDetail?id=' + r.Id + '\'">' +
+                '<td><div class="d-flex align-center gap-2"><span class="avatar">' + initials(r.CompanyName) + '</span><b>' + r.CompanyName + '</b></div></td>' +
+                '<td>' + (r.PrimaryContact || '') + '<div class="text-muted-sm">' + (r.FirstContactEmail || '') + '</div></td>' +
+                '<td>' + statusPill(r.Status) + '</td>' +
+                '<td>' + (r.ModuleName || '') + '</td>' +
+                '<td>' + apiPill(r.api, r.ApiStatus) + '</td>' +
+                '<td class="text-muted">' + (r.LastLogin || '&mdash;') + '</td>' +
+                '<td class="text-muted">' + formatDate(r.RenewsDate) + '</td>' +
+                '<td>' + healthPill(r.Health) + '</td>' 
+                '</tr>';
+        });
+        $('#customerTableBody').html(html || '<tr><td colspan="8" class="text-center text-muted-sm" style="padding:20px">No customers found</td></tr>');
+    }
+    function renderPaging(response) {
+        var from = response.ShowingFrom;
+        var to = response.ShowingTo;
+        var total = response.RecordsCount;
+        var active = response.ActivePage;
+        var totalPages = response.NumberOfPages;
+
+        $('#pagingInfo').text(
+            total > 0 ? ('Showing ' + from + '–' + to + ' of ' + total) : 'No records'
+        );
+
+        var html = '';
+
+        html += '<li class="' + (active <= 1 ? 'disabled' : '') + '">' +
+            '<a href="javascript:;" onclick="goToPage(' + (active - 1) + ')">&laquo;</a></li>';
+
+        // window of page numbers around the active page (max 5 shown)
+        var startPage = Math.max(1, active - 2);
+        var endPage = Math.min(totalPages, startPage + 4);
+        startPage = Math.max(1, endPage - 4);
+
+        for (var p = startPage; p <= endPage; p++) {
+            html += '<li class="' + (p === active ? 'active' : '') + '">' +
+                '<a href="javascript:;" onclick="goToPage(' + p + ')">' + p + '</a></li>';
+        }
+
+        html += '<li class="' + (active >= totalPages ? 'disabled' : '') + '">' +
+            '<a href="javascript:;" onclick="goToPage(' + (active + 1) + ')">&raquo;</a></li>';
+
+        $('#pagingControls').html(html);
+    }
+</script>

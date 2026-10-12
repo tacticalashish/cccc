@@ -1,0 +1,308 @@
+﻿@model ChemAnalyst.ViewModel.IndustryViewModel1 
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToUpper() == "CUSTOMER")
+    {
+
+        Layout = "~/Views/Shared/_LayoutCustomer_Industry.cshtml";
+    }
+}
+
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <title>Chem Analyst</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/bootstrap-admin.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/style2.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/build.css" type="text/css" />
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+
+</head>
+
+<body oncontextmenu="return false;">
+
+
+    <div class="page-content">
+        <div class="static-page" style="background-color:white">
+            <div class="">
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-4 mb-30 scrolla">
+                        <div style="box-shadow:2px 2px 2px #ccc;box-shadow: 0px 0px 12px 1px #ccc; padding: 15px;">
+                            @using (Html.BeginForm("Reportsection", "Login", null, FormMethod.Post, new { @id = "myForm", enctype = "multipart/form-data" }))
+                            {
+                                <input type="hidden" id="categoryname" name="categoryname" value="@ViewBag.Cat" />
+                                <input type="hidden" id="countryname" name="countryname" value="@ViewBag.Cou" />
+                                <h2 class="box-title" style="color: #3368c6;font-weight: 300;">
+                                    Categories
+                                </h2>
+                                <script>
+                                    function setcategory(id, el) {
+                                        if ($(el).prop("checked") == true) {
+                                            $("#categoryname").val($("#categoryname").val() + (id + ","));
+                                        } else {
+                                            var nval = $("#categoryname").val().replace(id + ",", "");
+                                            $("#categoryname").val(nval);
+                                        }
+                                        $("#myForm").submit();
+                                    }
+                                    function setcountry(id, el) {
+                                        if ($(el).prop("checked") == true) {
+                                            $("#countryname").val($("#countryname").val() + (id + ","));
+                                        } else {
+                                            var nval = $("#countryname").val().replace(id + ",", "");
+                                            $("#countryname").val(nval);
+                                        }
+                                        $("#myForm").submit();
+                                    }
+
+/**/</script>
+                                <div style="max-height: 300px; overflow-y: scroll; margin-bottom: 20px ">
+                                    <div class="checkbox11">
+                                        <label>
+                                            @foreach (var cat in Model.lstCategory)
+                                            {
+                                                <div id="accordion-first" class="clearfix">
+                                                    <div class="accordion" id="accordion1">
+                                                        <div class="accordion-group">
+                                                            <div class="accordion-heading">
+                                                                <span type="checkbox">
+                                                                    <input @(((string)ViewBag.Cat).Contains(cat.Value + ",") ? "checked='checked'" : "") type="checkbox" onclick="setcategory(@cat.Value,this)">
+                                                                </span>
+                                                                <label class="checkbox-inline mt-3">
+                                                                    @cat.Text
+                                                                </label>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <h2 class="box-title" style="color: #3368c6;font-weight: 300;">
+                                    Countries
+                                </h2>
+                                <div>
+                                    <div class="checkbox11 sm_chk_be" id="sm_chk">
+                                        <label>
+                                            <table border="0">
+                                                <tbody>
+                                                    @foreach (var item in Model.lstCountry)
+                                                    {
+                                                        <tr>
+                                                            <td>
+
+                                                                <input @(((string)ViewBag.Cou).Contains(item.Value + ",") ? "checked='checked'" : "") onclick="setcountry(@item.Value,this)" value="@item.Value" type="checkbox"><label>@item.Text</label>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </label>
+                                    </div>
+                                    <div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="cat-box">
+                        </div>
+                        <div class="cat-box">
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-8">
+                        @using (Html.BeginForm("SearchIndustry", "Login", null, FormMethod.Post, new { @class = "row", enctype = "multipart/form-data" }))
+                        {
+                            <h1 id="ctl00_ContentPlaceHolder1_cat_type" class="r-title mb-20">
+                                All Report
+                                <input class="btn btn-primary" id="keyword" name="keyword" placeholder="Keyword" type="text" value="" style="margin-left: 330px; background:#fff; color:#000" />
+                                <button type="submit" class="btn btn-green" style="margin-left: 15px;">
+                                    <i class="fa fa-filter"></i>Filter
+                                </button>
+                                <button type="submit" class="btn btn-green" onclick="ClearSearch()" style="margin-left: 15px;">
+                                    <i class="fa fa-filter"></i>Clear
+                                </button>
+                            </h1>
+                        }
+                        <div class="table-responsive mt-10">
+                            <div class="table">
+                                <div id="ctl00_ContentPlaceHolder1_sec_data"></div><table class="table table-hover ">
+                                    <tbody>
+
+                                        @foreach (var item in Model.Industry)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <h4 class="sm_heading_rs" style="">
+                                                        <a style=" font-size:16px" href="@Url.Action("IndustryReports", "Industry", new { id= item.GenerateItemNameAsParam()})">@item.Title</a>
+                                                    </h4>
+                                                    <p class="text-justify">
+                                                        @{
+                                                            if (item.RelatedRep.Length > 150)
+                                                            {
+                                                            <p>@Html.Raw(WebUtility.HtmlDecode(item.RelatedRep.Substring(0, 150))) </p>
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.Raw(WebUtility.HtmlDecode(item.RelatedRep))
+                                                        }
+                                                        }
+                                                        </p>
+                                                        <span style="white-space:nowrap"><a style="text-transform: uppercase;color: #2257b5;    font-size: 14px;" href="@Url.Action("IndustryReports", "Industry", new { id= item.GenerateItemNameAsParam()})" class="read-more-l">Read More</a></span>
+
+                                                        <ul class="r_ul">
+                                                            <li style="font: 100% 'Roboto', sans-serif;    font-size: 14px; display:none;">
+                                                                <span style="font-weight:bold;   font: 100% 'Roboto', sans-serif; ">Industry :</span>
+                                                                <a target="_blank" style="color:#107693!important;" href="#">@item.Industry</a>
+                                                            </li>
+                                                            <li style="font: 100% 'Roboto', sans-serif;    font-size: 14px;"><span style="font-weight:bold ;font: 100% Work Sans, sans-serif;">Format :</span> @item.format</li>
+                                                            <li style="font: 100% 'Roboto', sans-serif;    font-size: 14px;"><span style="font-weight:bold ;font: 100% Work Sans, sans-serif;">Pages :</span> @item.Pages</li>
+                                                            <li style="font: 100% 'Roboto', sans-serif;    font-size: 14px;"><span style="font-weight:bold ;font: 100% Work Sans, sans-serif;">Published Date :</span>@item.CreatedTime.Value.ToString("MMMM yyyy")</li>
+                                                            <li><span style="font: 100% 'Roboto', sans-serif;    font-size: 14px;"><span style="font-weight:bold ;font: 100% Work Sans, sans-serif;"><a href="@Url.Action("FreeTrail", "ChemAnalyst")"><i class="fa fa-download"></i> Download Sample </a></span> </li>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            }
+                                    </tbody>
+                                </table>
+                            </div>
+                            @Html.PagedListPager(Model.Industry, page => Url.Action("Reportsection", new { page }))
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/jquery-3.3.1.slim.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    @*<script src="http://cdnjs.cloudflare.com/ajax/libs/simplelightbox/1.17.1/simple-lightbox.js"></script>*@
+    <script src="~/js/owl.carousel.js"></script>
+    <script src="~/js/wow.min.js"></script>
+    <script src="~/js/honey-custom.js"></script>
+
+
+    <style>
+        .scrolla {
+            position: sticky;
+            top: 5px;
+        }
+
+        .box-title {
+            border-top: 2px solid #107693;
+            text-align: center;
+            font-size: 16px;
+            line-height: 40px;
+            text-align: center;
+            margin-bottom: 0;
+            padding: 5px 15px 5px 15px;
+            -moz-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+            margin-top: 0px !important;
+        }
+
+
+
+
+
+        .checkbox11 {
+            position: relative;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: bold important;
+        }
+
+            .checkbox11 label {
+                padding-left: 20px;
+                color: #404040 !important;
+            }
+
+            .checkbox11 label {
+                min-height: 40px;
+                padding-left: 20px;
+                margin-bottom: 0;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+        .sm_chk_be {
+            max-height: 200px;
+            overflow-y: scroll;
+        }
+
+        .r-title {
+            color: #fff;
+            background-color: #107693;
+            padding: 7px 10px;
+            font-size: 20px;
+            font-weight: normal;
+            margin-top: 0px;
+            line-height: 28px;
+        }
+
+        .sm_heading_rs {
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #2D60AD !important;
+            font-weight: 700;
+            line-height: 20px;
+            text-align: justify;
+            margin-top: 0;
+        }
+
+
+
+        p {
+            font: 100% "Roboto", sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            margin: 0 0 8px;
+            letter-spacing: 0.2px;
+            color: #2a2a2a;
+            font-weight: 300;
+        }
+
+        .r_ul {
+            padding-left: 0;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        .r_ul li {
+            list-style: none;
+            display: inline;
+            margin-right: 30px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+    </style>
+
+    <script src="~/js/active.js"></script>
+    <script src="~/js/customer_responsive.js"></script>
+</body>
+</html>

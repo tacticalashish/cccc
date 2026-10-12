@@ -1,0 +1,343 @@
+﻿
+@{
+    ViewBag.Title = "CustomerLoginDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+<style>
+    .mx-2 {
+        margin:0px 4px
+    }
+    .mx-4 {
+        margin: 0px 16px
+    }
+</style>
+<div class="section">
+    <div class="white-wrapper text-left text-white">
+        <div class="container-fluid">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-md-3">
+                    <h4>CustomerLoginDetail</h4>
+                </div>
+                <div class="col-md-9  d-flex">
+                    <input type="button" class ="btn btn-danger mx-2" value="Download Excel" onclick="DownloadExcelCustomerLoginDetails()"/>
+                    <div class="d-flex">
+                        <div class="form-group mb-0">
+                           
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="From date" id="FromDate" onchange="Getdata()" autocomplete="off" />
+                                <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                          
+                            <div class="input-group">
+                                <input type="text" class="form-control ms-2" placeholder="To date" id="Todate" onchange="Getdata()" autocomplete="off" />
+                                <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" id="Search" class="form-control w-auto ms-2" placeholder="Search Keyword" value="" style="width:50%"/>
+                    <input type="button" class="btn btn-success btn-sm mx-2 " onclick="Getdata()" value="Submit" />
+                    <input type="button" class="btn btn-info btn-sm mx-2" onclick="Getreset()" value="Reset" />
+                </div>
+            </div>
+            <div class="data-detail-wrapper table-responsive pt15">
+                <table id="Customerlist" class="table">
+                    <thead>
+                        <tr>
+                            <th hidden="hidden">
+                                Id
+                            </th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Company Name</th>
+                            <th>Login Time</th>
+                            <th>Logout Time</th> 
+                            <th>Device Type</th> 
+                        </tr>
+                    </thead>
+                    <tbody class="tbodydata" id="tbodydata"></tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+                <span class="d-flex justify-content-between mt-2" id="divPagging"> </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#Todate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#FromDate").datepicker({ dateFormat: "dd/MM/yy" });
+        GetCustomerLoginDetailBasedonSearch();
+    });
+    
+
+    $.formattedDate = function (dateToFormat) {        
+         var dateObject = new Date(dateToFormat);
+         var day = dateObject.getDate();
+         var month = dateObject.getMonth() + 1;
+         var year = dateObject.getFullYear();
+         var hour = dateObject.getHours();
+         var minutes = dateObject.getMinutes();
+         var seconds = dateObject.getSeconds();
+         day = day < 10 ? "0" + day : day;
+         month = month < 10 ? "0" + month : month;
+         var formattedDate = day + "/" + month + "/" + year + " " + hour + ":" + minutes + ":" + seconds;
+         return formattedDate;
+     };
+     function GetCustomerLoginDetailBasedonSearch() {         
+         var feed = {};
+         feed.searchKeyword = $('#Search').val();
+         feed.PageNumber = $('#PageNumber').val();
+         feed.FromDate= $('#FromDate').val();
+          feed.ToDate=$('#Todate').val();
+
+         $.ajax({
+             type: "GET",
+             url: "/AdminChemicalPricing/GetCustomerLoginDetailBasedonSearch",
+             contentType: "application/json; charset=utf-8",
+             dataType: "json",
+             data: feed,
+             success: function (json) {               
+                 var data = json.ListGetCustomerLoginDetailBasedonSearch ;
+                 var tbodyHTML = '';
+                 if (data.length != 0) {
+
+                     $(data).each(function (idx, elm) {
+
+                         if ((elm.LoginTime == null) || (elm.LoginTime === '') || (elm.LoginTime === 'NULL'))
+                         {
+                             formattedLoginTime = 'NULL';
+                         }
+                         else {
+                             var date = elm.LoginTime;
+                             var formattedLoginTime = ($.formattedDate(new Date(parseInt(date.substr(6)))));      
+                         }
+                         if ((elm.LogoutTime == null) || (elm.LogoutTime === '') || (elm.LogoutTime === 'NULL'))
+                         {
+                             formattedLogoutTime = 'NULL';
+                         }
+                         else {
+                             var date = elm.LogoutTime;
+                             var formattedLogoutTime = ($.formattedDate(new Date(parseInt(date.substr(6)))));      
+                         }
+                         tbodyHTML += "<tr>";
+                         tbodyHTML += "<td hidden>" + elm.ID + "</td>";
+                         tbodyHTML += "<td>" + elm.Name + "</td>";
+                         tbodyHTML += "<td>" + elm.Email + "</td>";
+                         tbodyHTML += "<td>" + elm.Company + "</td>";
+                         tbodyHTML += "<td>" + formattedLoginTime + "</td>";
+                         tbodyHTML += "<td>" + formattedLogoutTime + "</td>";
+                         tbodyHTML += "<td>" + elm.Devicetype + "</td>";
+                         tbodyHTML += "</tr>";
+                     });
+                 }
+                 else {
+                     tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                 }
+                 $("#Customerlist").show();
+                 $('.tbodydata').html(tbodyHTML);
+                 $('#divPagging').show();
+                 $('#divPagging').html(GetPaginationHTML(json));
+                 $('#pageSize').val(json.PageSize);
+             },
+             failure: function (response) {
+                 console.log(response)
+             },
+             error: function (response) {
+                 console.log(response)
+             }
+         });
+     }
+     function GetPaginationHTML(json) {
+         var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+         var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+         pagingInnerHTML += getPaginationButton;
+         return pagingInnerHTML;
+     }
+     function PaggingButton(elm) {       
+         var pageNumber = elm.attr('url');
+         $('#PageNumber').val(pageNumber);
+         GetCustomerLoginDetailBasedonSearch();
+     }
+     function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+         var innerHTML = '';
+         var startLi = pagerSize / pagerSize;
+         var endLi = pagerSize;
+         var multiplier = activePage / pagerSize;
+         var modulo = activePage % pagerSize;
+         var virtualLi = pagerSize - pagerSize;
+         var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+         var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+         if (modulo == 0) {
+             next = next - pagerSize;
+             previous = previous - pagerSize;
+         }
+
+         if (activePage > pagerSize) {
+             for (var i = 1; i <= multiplier; i++) {
+                 virtualLi += pagerSize;
+             }
+
+             if (modulo > 0) {
+                 startLi = virtualLi + 1;
+             }
+             else {
+                 startLi = virtualLi - pagerSize + 1;
+             }
+             endLi = startLi + pagerSize - 1;
+         }
+
+         innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+         if (activePage > 1 && activePage < pagerSize + 1) {
+             innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+             innerHTML += "<a href='javascript:void(0);"
+
+             innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+             innerHTML += "</li>";
+
+             if (activePage == 1) {
+                 innerHTML += "<li class='paginate_button previous disabled'>";
+                 innerHTML += "<a href='javascript:void(0);";
+                 innerHTML += "'>&laquo;</a>";
+                 innerHTML += "</li>";
+             }
+             else {
+                 innerHTML += "<li class='paginate_button previous'>";
+                 innerHTML += "<a href='javascript:void(0);'  url='";
+                 //innerHTML += URL + "&id=" + (activePage - 1);
+                 innerHTML += URL + (activePage - 1);
+                 innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                 innerHTML += "</li>";
+             }
+         }
+         else if (activePage == 1) {
+             innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+             innerHTML += "<a href='javascript:void(0);";
+             innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+             innerHTML += "</li>";
+             innerHTML += "<li class='paginate_button previous disabled'>";
+             innerHTML += "<a href='javascript:void(0);";
+             innerHTML += "'>&laquo;</a>";
+             innerHTML += "</li>";
+         }
+         else {
+             innerHTML += "<li class='paginate_button previous'>";
+             innerHTML += "<a href='javascript:void(0);'  url='";
+             //innerHTML += URL + "&id=" + (previous);
+             innerHTML += URL + (previous);
+             innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+             innerHTML += "</li>";
+             innerHTML += "<li class='paginate_button previous'>";
+             innerHTML += "<a href='javascript:void(0);'  url='";
+             //innerHTML += URL + "&id=" + (activePage - 1);
+             innerHTML += URL + (activePage - 1);
+             innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+             innerHTML += "</li>";
+         }
+         for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+             if (i == activePage) {
+                 innerHTML += "<li>";
+                 innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+             }
+             else {
+                 innerHTML += "<li class='paginate_button'>";
+                 innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                 //innerHTML += URL + "&id=" + i;
+                 innerHTML += URL + i;
+             }
+
+             innerHTML += "' >";
+             innerHTML += i;
+             innerHTML += "</a>";
+             innerHTML += "</li>";
+         }
+
+         if (activePage + pagerSize > numberOfPages) {
+             if (activePage == numberOfPages) {
+                 innerHTML += "<li class='paginate_button next disabled'>";
+                 innerHTML += "<a href='javascript:void(0);";
+                 innerHTML += "'>&raquo;</a>";
+                 innerHTML += "</li>";
+             }
+             else {
+                 innerHTML += "<li class='paginate_button next'>";
+                 innerHTML += "<a href='javascript:void(0);'  url='";
+                 //innerHTML += URL + "&id=" + (activePage + 1);
+                 innerHTML += URL + (activePage + 1);
+
+                 innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                 innerHTML += "</li>";
+             }
+
+             innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+             innerHTML += "<a href='javascript:void(0);";
+             innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+             innerHTML += "</li>";
+         }
+         else if (activePage == numberOfPages) {
+             innerHTML += "<li class='paginate_button next disabled'>";
+             innerHTML += "<a href='javascript:void(0);";
+             innerHTML += "'>&raquo;</a>";
+             innerHTML += "</li>";
+             innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+             innerHTML += "<a href='javascript:void(0);";
+             innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+             innerHTML += "</li>";
+         }
+         else {
+             innerHTML += "<li class='paginate_button next'>";
+             innerHTML += "<a href='javascript:void(0);'  url='";
+             //innerHTML += URL + "&id=" + (activePage + 1);
+             innerHTML += URL + (activePage + 1);
+
+             innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+             innerHTML += "</li>";
+
+             innerHTML += "<li class='paginate_button next'>";
+             innerHTML += "<a href='javascript:void(0);'  url='";
+             //innerHTML += URL + "&id=" + (next);
+             innerHTML += URL + (next);
+
+             innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+             innerHTML += "</li>";
+         }
+         innerHTML += "</ul>";
+
+         return innerHTML;
+     }
+     function Getreset() {
+         $('#PageNumber').val('1');
+         $('#Search').val('');
+         $("#Todate").val("")
+         $("#FromDate").val("") 
+         GetCustomerLoginDetailBasedonSearch();
+     }
+     function Getdata() {
+         $('#PageNumber').val('1');
+         GetCustomerLoginDetailBasedonSearch();
+     }
+     function DownloadExcelCustomerLoginDetails() {        
+         var searchKeyword = $('#Search').val();     
+         var fromDate = $('#FromDate').val();
+         var toDate = $('#Todate').val();
+         var url = '/AdminChemicalPricing/DownloadExcelCustomerLoginDetails'
+             + '?searchKeyword=' + encodeURIComponent(searchKeyword)
+             + '&FromDate=' + encodeURIComponent(fromDate)
+             + '&ToDate=' + encodeURIComponent(toDate);
+
+         window.location.href = url;
+     }
+</script>

@@ -1,0 +1,58 @@
+﻿@model ChemAnalyst.Models.SA_Country
+@using ChemAnalyst.DAL
+
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="update-profile-wrapper">
+    <h3 style="margin-bottom:25px;"><a href="@Url.Action("ShowCountryList","Admin")" class="btn btn-info"><i class="fa fa-list"></i> Country List</a></h3>
+    <div class="white-wrapper">
+        <div class="col-md-6 col-lg-7 col-md-offset-2">
+            <div class="eq-form">
+                <div class="change">
+                    <img src="~/images/change-img.jpg" alt="" />
+                    <p>Add New Country</p>
+                </div>
+                <div class="eq-form-box">
+                    @using (Html.BeginForm("SaveCountry", "Admin", null, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete="off" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div style="visibility:hidden">
+                            @Html.TextBoxFor(model => model.id, new { @class = "form-control", @placeholder = "Title * " })
+                        </div>
+
+                        if (TempData["Message"] != null)
+                        {
+                            <div class="col-md-12 col-lg-12 form-group">
+                                <span style="color:red; font-size:12px">@TempData["Message"]</span>
+                            </div>
+                        }
+                        <div class="col-md-6 col-lg-6 form-group">
+                            @Html.TextBoxFor(model => model.CountryName, new { @class = "form-control", @placeholder = "Name * ", required = "required" })
+                        </div>
+                        <div class="col-md-6 col-lg-6 form-group">
+                            @Html.TextBoxFor(model => model.CountryCode, new { @class = "form-control", @placeholder = "Code * ", required = "required" })
+                        </div>
+                        <div class="btn-wrapper">
+                            <a class="gray-btn" href="@Url.Action("UserCountry","Admin")">Cancel</a>
+                            <input type="submit" class="blue-btn" value="Save">
+                        </div>
+                    }
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+

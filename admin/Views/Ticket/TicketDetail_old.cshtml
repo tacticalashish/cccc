@@ -1,0 +1,119 @@
+﻿@using ChemAnalyst.DAL
+@model EntityLayer.enTicket
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int loggedUserFID = Convert.ToInt32(Session["LoginUser"]);
+
+}
+
+<div class="update-profile-wrapper">
+    <div class="eq-form" style="margin-top: 1em;">
+        <form id="frmChangeStatus">
+            <h3 style="color:white;">Update Status of Ticket</h3><br /><br />
+            <input type="hidden" id="hdnTicketFID" name="TicketFID" value="@Model.ID" />
+            <select id="ddlStatus" name="ddlStatus">
+
+                @foreach (var item in new DALHelper().IEnumerableRole(null))
+                {
+                    <option value="@item.Text">@item.Text</option>
+                }
+            </select>
+            <input type="text" id="txtComment" name="txtComment" maxlength="450" />
+            <button type="button" id="btnSubmitStatus" name="btnSubmitStatus" onclick="SubmitStatus()">Submit</button>
+            <button type="button" id="btnCancelStatus" name="btnCancelStatus">Cancel</button>
+        </form>
+
+        <hr /><hr /><hr />
+        <form id="frmTicketComment" method="post" action="/ticket/TicketCommentCreate" enctype="multipart/form-data">
+            <h3 style="color:white;">Save Comment with attachment</h3><br /><br />
+            <input type="hidden" id="TicketFID" name="TicketFID" value="@Model.ID" />
+            <input type="hidden" id="ManagerFID" name="ManagerFID" value="@loggedUserFID" />
+            <input type="hidden" id="UserFID" name="UserFID" value="@Model.UserFID" />
+            <input id="Comment" name="Comment" type="text" />
+            <input type="file" name="file"  />
+            <button id="btnSubmit" name="btnSubmit" type="submit">Submit</button>
+            <button id="btnCancel" name="btnCancel">Cancel</button>
+        </form>
+        <hr /><hr /><hr />
+
+        <div class="row">
+            <h4 style="color:white">Ticket Detail</h4><br /><br />
+            <label>@Model.CustomerName</label><br />
+            <label>@Model.CustomerEmail</label><br />
+            <hr /><hr /><hr />
+        </div>
+
+
+        <div class="row">
+            @foreach (var item in Model.ListOfTicketComments)
+            {
+                <label>@item.ID</label><br />
+                if (item.IsFileNameExist)
+                {
+                    <label><a target="_blank" href="@string.Concat(Utility.ApplicationSettings.TicketVirtualPath,"/",item.TicketFID,"/",item.FileName)">@item.FileName</a></label><br />
+                }
+
+                if (item.UserFID.HasValue)
+                {
+                    <label><b>Customer Reply</b></label><br />
+                    <label>@item.CustomerName (@item.UserFID)</label><br />
+                }
+                else
+                {
+                    <label><b>Manager Reply</b></label><br />
+                    <label>@item.ManagerName (@item.ManagerFID)</label><br />
+                }
+
+                <label>@item.Comment</label><br />
+                <label>@item.CreatedDateView</label>
+                <hr />
+            }
+        </div>
+
+    </div>
+
+
+    <div>&nbsp;</div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#ddlStatus').val('@Model.Status');
+    });
+
+    function SubmitStatus() {
+        var hdnTicketFID = $('#hdnTicketFID').val();
+        var ddlStatus = $('#ddlStatus').val();
+        var txtComment = $('#txtComment').val();
+
+        if (ddlStatus == '' || txtComment == '')
+        {
+            alert('Please complete required feild value');
+            return true;
+        }
+
+        var urlWithParam = '/ticket/ChangeTicketType?ID=' + hdnTicketFID + '&Query=' + txtComment + '&Status=' + ddlStatus;
+
+        $.ajax({
+            //type: "POST",
+            url: urlWithParam,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                if (json == 's') {
+                    window.location.href = "/ticket/list";
+                }
+                else
+                {
+                    alert("something went wrong.! Please try after some time.");
+                }
+            }
+        });
+    }
+
+</script>

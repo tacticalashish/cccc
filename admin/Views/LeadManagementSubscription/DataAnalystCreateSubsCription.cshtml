@@ -1,0 +1,522 @@
+﻿
+@{
+    ViewBag.Title = "DataAnalystCreateSubsCription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="~/css/leadStyle.css" />
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script>
+    var Search = "";
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1;
+        var year = dateObject.getFullYear();
+        day = day < 10 ? "0" + day : day;
+        month = month < 10 ? "0" + month : month;
+        var formattedDate = day + "/" + month + "/" + year;
+        return formattedDate;
+    };
+    $(document).ready(function () {
+        GetLeadDataForDataAnalyst();
+
+    });
+    function GetsearchValues() {
+        Search = $('#search').val();
+        $('#search').html(GetPaginationHTML(Search));
+        GetLeadDataForDataAnalyst();
+    }
+    function GetLeadDataForDataAnalyst() {
+        
+        var pageNumber = $('#PageNumber').val();
+        var Search = $('#search').val();
+        var URL = "/LeadManagementSubscription/GetLeadDataForDataAnalyst?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        
+                        var date = elm.CreatedDate
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        var updatedProductName = elm.UpdateProductsName;
+                        var ChkStatus = elm.Status;
+                        var ProductName = elm.ProductName;
+                        var ModuleName = elm.ModuleName;
+                        if (ProductName == "" || ProductName == null || ProductName == undefined) {
+                            ProductName = elm.UpdateProductsName;
+                        }
+                        else {
+                            ProductName = elm.ProductName;
+                        }
+                        if (ModuleName == "" || ModuleName == null || ModuleName == undefined) {
+                            ModuleName = elm.UpdatedModulesName;
+                        }
+                        else {
+                            ModuleName = elm.ModuleName;
+                        }
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.Organisation + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyHTML += "<td>" + elm.RegionName + "</td>";
+                        //tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                        tbodyHTML += "<td style='text-align:left'>" + "<a  onclick=PopupSource(`" + encodeURIComponent(ProductName) + "`,`" + encodeURIComponent(updatedProductName)+"`)>" + "Read More" + "</a>" + "</td>"
+                        tbodyHTML += "<td>" + ModuleName + "</td>";
+                        tbodyHTML += "<td>" + elm.createdby + "</td>";
+                        tbodyHTML += "<td>" + formattedDate + "</td>";
+                        tbodyHTML += "<td>" + elm.Status + "</td>";
+                        tbodyHTML += "<td>" + elm.Trader + "</td>";
+                        tbodyHTML += "<td>" + elm.Credit + "</td>";
+                        tbodyHTML += "<td>" + elm.Renew + "</td>";
+                        tbodyHTML += "<td style='text-align:left'>" + "<a  onclick=PopupSourceSubsRemark(`" + encodeURIComponent(elm.SubSubscriptionRemark) + "`)>" + "Read More" + "</a>" + "</td>"
+                        tbodyHTML += "<td style='text-align:left'>" + "<a  onclick=PopupSourceSecEmails(`" + encodeURIComponent(elm.SecondaryClintEmail) + "`)>" + "Read More" + "</a>" + "</td>"
+                        tbodyHTML += "<td>" + "<a class='label label-info' href='../LeadManagementSubscription/LeadDetailsById?LeadId=" + elm.Id + "&StatusType=" + elm.Status + "'>" + 'VIEW DETAILS' + "</a>" + "</td>";
+
+                        if (ChkStatus == "New") {
+                            tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-danger' id='CreateSubscription' value='Add Subscription' onclick=CreateSubscription('" + elm.Id + "')>" + "</td>";
+                            }
+                            else {
+                                tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/CreateSubscriptionbyParantClint?LeadId=" + elm.Id + "'>" + 'Add Subscription' + "</a>" + "</td>"; 
+                               // tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-danger' id='CreateSubscription' value='Add Subscription' onclick=CreateSubscription('" + elm.Id + "')>" + "</td>";
+                            }   
+                        //if (ChkStatus == "Updated")
+                        //{
+                        //    tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/UpdateLeadByDataAnalyst?LeadId=" + elm.Id + "'>" + 'Update' + "</a>" + "</td>";
+                        //    //tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-info' value='Update' onclick=CreateSubscription('" + elm.Id + "')>" + "</td>";
+                        //}
+                        //else {
+                        //    if ((ChkStatus == "New") && ( updatedProductName != null)) {
+                        //        tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/UpdateLeadByDataAnalyst?LeadId=" + elm.Id + "'>" + '<i style="color:red" class="fa fa-thumbs-down" aria-hidden="true"></i>' +' Update' + "</a>" + "</td>";
+                        //    }
+                        //    else {
+                        //        tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/CreateSubscriptionbyParantClint?LeadId=" + elm.Id + "'>" + 'Add Subscription' + "</a>" + "</td>"; 
+                        //       // tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-danger' id='CreateSubscription' value='Add Subscription' onclick=CreateSubscription('" + elm.Id + "')>" + "</td>";
+                        //    }                         
+                        //}
+
+                        if (ChkStatus == "Existing") {
+                            tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-danger' id='UpdateStatusofLead' value='Update Status' onclick=UpdateStatusofLead('" + elm.Id + "')>" + "</td>";
+                        }
+                        else {
+                                tbodyHTML += "<td>"+""+"</td>";
+                            }
+                        
+                        tbodyHTML += "</tr>"
+                    });
+
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.tbodydata').html(tbodyHTML);
+            }
+        });
+    }
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        GetLeadDataForDataAnalyst();
+
+    }
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+    function PopupSource(Product, UpdatedProduct) {
+        
+        var Productold = decodeURIComponent(Product);
+        var ProductUpdated = decodeURIComponent(UpdatedProduct);
+        $("#Discription").html(Productold);
+        $("#UpdatedProduct").html(ProductUpdated);
+        $(".popup-open").css("display", "block");
+    }
+    function PopupSourceSubsRemark(Source) {
+
+        var PopupSource = decodeURIComponent(Source);
+        $("#SubsRemark").html(PopupSource);
+        $(".popup-open04").css("display", "block");
+    }
+    function PopupSourceSecEmails(Source) {
+
+        var PopupSource = decodeURIComponent(Source);
+        $("#SecEmails").html(PopupSource);
+        $(".popup-open05").css("display", "block");
+    }
+
+</script>
+
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'none';
+    });
+</script>
+<div class='container' id="loader">
+    <div class='loader'>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--text'></div>
+    </div>
+</div>
+<div class="position-relative popup-open">
+    <div class="child">
+        @*<h4 class="card-title" style="color:#b6ff00" id="Title">Products</h4>*@
+     
+        <p style="color:#b6ff00">Old Product</p>
+        <span id="Discription" class="Discription"></span><br />
+        <hr style="margin:5px 0px!important;height:1px;background-color:#fff;border:none!important" />
+        <p style="color:#b6ff00">New Product</p>
+        <span id="UpdatedProduct" class="UpdatedProduct"></span><br />
+        
+        <button class="bttn bttn-danger" id="CancelProducts" style="margin-top:10px">Cancel</button>
+    </div>
+</div>
+<!---------------subscription remark---------------->
+<div class="position-relative popup-open04">
+    <div class="child">
+        <h4 class="card-title" style="color:#02ff36;font-family: serif;" id="Title"></h4>
+        <hr />
+        <span id="SubsRemark" class="SubsRemark"></span><br />
+        <button class="bttn bttn-danger" id="CancelSubsRemark">Cancel</button>
+    </div>
+</div>
+<!---------------subscription remark End----------------> 
+<!---------------Secondary Emails---------------->
+<div class="position-relative popup-open05">
+    <div class="child">
+        <h4 class="card-title" style="color:#02ff36;font-family: serif;" id="Title"></h4>
+        <hr />
+        <span id="SecEmails" class="SecEmails"></span><br />
+        <button class="bttn bttn-danger" id="CancelSecEmails">Cancel</button>
+    </div>
+</div>
+<!---------------Secondary Emails End---------------->
+<div class="update-profile-wrapper">
+    <div class="container-fluid" style="padding-top:10px;margin-top:0px!important" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-6"><h3 style="color:white;margin-bottom:10px!important;line-height: inherit;">Data Analyst Subscription Management</h3></div>
+            <div class="col-md-6">
+                <input style="float:right;margin-left:10px" type="button" class="btn btn-success" value="Search" onclick="GetsearchValues()" />
+                <label style="float:right"><input type="text"  name="search" class="form-control form-control-sm" placeholder="Search..." id="search" aria-controls="Userlist"></label>
+
+                @*<input type="button" class="btn btn-success" value="Create Lead" style="float:right;" onclick="location.href='@Url.Action("CreateLead", "LeadManagementSubscription")'" />*@
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+            <div class="col-md-3 col-md-offset-5"><p class=" " style="float:right;letter-spacing:1.5px;font-weight:!important"><span class="label label-danger" style="font-weight:500!important;font-size:14px!important" id="CountAssignProduct"></span></p></div>
+
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01" style="overflow:auto">
+            <table id="Leadlist" class="table tableStyle">
+                <thead>
+                    <tr>
+                        <th hidden>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Company Name</th>
+                        <th>Country Name</th>
+                        <th>Region Name</th>
+                        <th>Product Name</th>
+                        <th>Module Name</th>
+                        <th>created by</th>
+                        <th>Created Date</th>
+                        <th>Status</th>
+                        <th>Trader</th>
+                        <th>Credit</th>
+                        <th>Renew </th>
+                        <th>Subscription Remarks</th>
+                        <th>Secondary Emails</th>   
+                        <th>Details</th>   
+                        <th>Action</th>
+                        <th>Update Status</th>
+                        @*<th>Api Package</th>*@
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="divPagging"></div>
+</div>
+
+<script>
+
+    function CreateSubscription(Leadid) {
+        $('#loader').show();
+        $("#CreateSubscription").css("display", "none");
+        if ((Leadid == "") || (Leadid == null) || (Leadid == undefined) || (Leadid == "null")) {
+
+            swal({
+                title: "Something Went Wrong!",
+                type: "success"
+            }).then(function () {
+            });
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/CreateSubscriptionByDataAnalyst",
+                data: { Leadid: Leadid},
+                success: function (response) {
+                    
+                    if (response == "Success") {
+                        $('#loader').hide();
+                        swal({
+                            title: "Subscription Success!",
+                            type: "success"
+                        }).then(function () {
+                           GetLeadDataForDataAnalyst();
+                        });
+                    }
+                    else {
+                        $('#loader').hide();
+                        swal({
+                            title: "Subscription Failed!",
+                            type: "success"
+                        }).then(function () {
+                        });
+                    }
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+    } 
+
+
+    function UpdateStatusofLead(Leadid) {
+        
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/UpdatestatusofLead",
+                data: { LeadId: Leadid },
+                success: function (response) {
+                    
+                    if (response== "Success") {
+                        $('#loader').hide();
+                        swal({
+                            title: "Status Updated!",
+                            type: "success"
+                        }).then(function () {
+                            GetLeadDataForDataAnalyst();
+                        });
+                    }
+                    else {
+                        $('#loader').hide();
+                        swal({
+                            title: "Faild!",
+                            type: "success"
+                        }).then(function () {
+                        });
+                    }
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+    
+
+    $("#CancelProducts").click(function () {
+        $('#Discription').val('');
+        $(".popup-open").css("display", "none");
+    });
+    $("#CancelSubsRemark").click(function () {
+        $(".popup-open04").css("display", "none");
+    });
+    $("#CancelSecEmails").click(function () {
+        $(".popup-open05").css("display", "none");
+    });
+    
+</script>
+

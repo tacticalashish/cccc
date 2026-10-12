@@ -1,0 +1,460 @@
+﻿
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Usertype = Convert.ToString(Session["UserRole"]);
+}
+
+@*@model IEnumerable<ChemAnalyst.Models.SA_Industry>*@
+<head>
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <link rel="stylesheet" href="~/css/bootstrap-select.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/bootstrap-select.js"></script>
+
+    <script src="~/js/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+
+    <script type="text/javascript">
+
+
+        @*$(document).ready(function () {
+            $('#Industrylist').DataTable({
+                "ajax": {
+                    "url": "../Admin/LoadIndustryData",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+
+                "columnDefs": [
+
+                    {
+                        "targets": [0],
+                        "visible": false
+                    }
+                ],
+                "columns": [
+
+
+                    //{
+
+                    //    "render": function (data, type, row, meta)
+                    //    { return '<input id="selectall" class="styled" type="checkbox">' }
+                    //},
+                    { "data": "id" },
+                    { "data": "Title", "autoWidth": true },
+                    { "data": "Product", "autoWidth": true },
+                    { "data": "CreateTime", "autoWidth": true },
+                    {
+
+                        "render": function (data, type, row, meta) { return '<a href="../Industry/AddIndustry/' + row.id + '"><i class="fa fa-pencil-square-o"></i></a>'; }
+                    },
+                     @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"]))
+                    {<text>
+
+                    {
+                        data: null, render: function (data, type, row) {
+                            return '<a href="../Industry/DeleteIndustry/' + row.id + '"><i class="fa fa-trash-o fa-lg"></i></a>';
+                        }
+                    },
+                   </text>
+                    }
+                ]
+            });
+        });*@
+
+
+        window.onload = function () {
+            $('#countdown,#fade').show();
+            $('#PageNumber').val('1');
+            ShowIndustryList();
+        };
+
+        $.formattedDate = function (dateToFormat) {
+
+            var dateObject = new Date(dateToFormat);
+            var day = dateObject.getDate();
+            var month = dateObject.getMonth() + 1;
+            var year = dateObject.getFullYear();
+            var hour = dateObject.getHours();
+            var minutes = dateObject.getMinutes();
+            day = day < 10 ? "0" + day : day;
+            month = month < 10 ? "0" + month : month;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            var formattedDate = day + "/" + month + "/" + year + "  " + hour + ":" + minutes;
+            return formattedDate;
+        };
+
+
+        function ShowIndustryList() {
+            debugger
+
+            var searchKeyword = $('#Searchtext').val();
+            var pageNumber = $('#PageNumber').val();
+
+            $.ajax({
+                type: "post",
+                url: "/AdminMarketAnalysis/ShowAllIndustryList",
+                data: "{'pageNumber':'" + pageNumber + "','searchKeyword':'" + searchKeyword + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                //async: false,
+                success: function (json) {
+                    debugger
+                    var tbodyHTML = '';
+                    if (json.ListofenAdminMarketAnalysis.length == 0) {
+                        var newsItem = $('<div class="col-md-12">' +
+                            '<h6>' + 'No Record Found ...' + '<h6>' +
+                            '</div>');
+                        $('#divPagging').hide();
+                        newsContainer.append(newsItem);
+                    }
+                    else {
+                        $.each(json.ListofenAdminMarketAnalysis, function (idx, elm) {
+                            var date = elm.CreatedTime;
+                            if (date != null) {
+                                var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                            }
+                            else {
+                                formattedDate = null;
+                            }
+                            tbodyHTML += "<tr>";
+                            tbodyHTML += "<td>" + elm.Title + "</td>";
+                            tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                            tbodyHTML += "<td>" + formattedDate + "</td>";
+                            tbodyHTML += "<td>" + '<a href="../Industry/AddIndustry/' + elm.ID + '"><i class="fa fa-pencil-square-o"></i></a>' + "</td> ";
+                            //tbodyHTML += "<td>" + '<a href="../Industry/DeleteIndustry/' + elm.ID + '"><i class="fa fa-trash-o fa-lg"></i></a>' + "</td> ";
+                            var User = 'Admin';
+                             if (User == '@Usertype') {
+                                 tbodyHTML += "<td>" + '<a href="../Industry/DeleteIndustry/' + elm.ID + '"><i class="fa fa-trash-o fa-lg"></i></a>' + "</td> ";
+                             }
+
+                            tbodyHTML += "</tr>";
+
+                        });
+
+                        //$('#countdown,#fade').hide();
+                        //$("#tblclass").show();
+                        $('.tbodydata').html(tbodyHTML);
+                        $('#divPagging').show();
+                        $('#divPagging').html(GetPaginationHTML(json));
+                        $('#pageSize').val(json.PageSize);
+                        //$('#Searchtext').val('');
+                    }
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+
+
+        function GetPaginationHTML(json) {
+            var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+            var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+            pagingInnerHTML += getPaginationButton;
+            return pagingInnerHTML;
+        }
+
+        function PaggingButton(elm) {
+            var pageNumber = elm.attr('url');
+            $('#PageNumber').val(pageNumber);
+            ShowIndustryList();
+        }
+
+        function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+            var innerHTML = '';
+            var startLi = pagerSize / pagerSize;
+            var endLi = pagerSize;
+            var multiplier = activePage / pagerSize;
+            var modulo = activePage % pagerSize;
+            var virtualLi = pagerSize - pagerSize;
+            var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+            var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+            if (modulo == 0) {
+                next = next - pagerSize;
+                previous = previous - pagerSize;
+            }
+
+            if (activePage > pagerSize) {
+                for (var i = 1; i <= multiplier; i++) {
+                    virtualLi += pagerSize;
+                }
+
+                if (modulo > 0) {
+                    startLi = virtualLi + 1;
+                }
+                else {
+                    startLi = virtualLi - pagerSize + 1;
+                }
+                endLi = startLi + pagerSize - 1;
+            }
+
+            innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+            if (activePage > 1 && activePage < pagerSize + 1) {
+                innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);"
+
+                innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+
+                if (activePage == 1) {
+                    innerHTML += "<li class='paginate_button previous disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button previous'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage - 1);
+                    innerHTML += URL + (activePage - 1);
+                    innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                    innerHTML += "</li>";
+                }
+            }
+            else if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (previous);
+                innerHTML += URL + (previous);
+                innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+                if (i == activePage) {
+                    innerHTML += "<li>";
+                    innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button'>";
+                    innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + i;
+                    innerHTML += URL + i;
+                }
+
+                innerHTML += "' >";
+                innerHTML += i;
+                innerHTML += "</a>";
+                innerHTML += "</li>";
+            }
+
+            if (activePage + pagerSize > numberOfPages) {
+                if (activePage == numberOfPages) {
+                    innerHTML += "<li class='paginate_button next disabled'>";
+                    innerHTML += "<a href='javascript:void(0);";
+                    innerHTML += "'>&raquo;</a>";
+                    innerHTML += "</li>";
+                }
+                else {
+                    innerHTML += "<li class='paginate_button next'>";
+                    innerHTML += "<a href='javascript:void(0);'  url='";
+                    //innerHTML += URL + "&id=" + (activePage + 1);
+                    innerHTML += URL + (activePage + 1);
+
+                    innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                    innerHTML += "</li>";
+                }
+
+                innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            else if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+                innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (next);
+                innerHTML += URL + (next);
+
+                innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+                innerHTML += "</li>";
+            }
+            innerHTML += "</ul>";
+
+            return innerHTML;
+        }
+
+        function Reset() {
+
+            $('#PageNumber').val('1');
+            $('#Searchtext').val('');
+            ShowIndustryList();
+        }
+
+
+    </script>
+
+    <style>
+        .d-flex {
+            display: flex;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .me-2 {
+            margin-right: 1rem;
+        }
+    </style>
+
+</head>
+
+
+
+
+@*<div class="update-profile-wrapper">
+
+    <h3 class="row" style="padding-bottom:24px;">
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("AddIndustry", "Industry")"><i class="fa fa-plus"></i> Add New Industry Report</a>
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("ShowStateList", "Admin")"><i class="fa fa-plus"></i> State Management</a>
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("ShowCountryList", "Admin")"><i class="fa fa-plus"></i> Country Management</a>
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("RegionList", "Admin")"><i class="fa fa-plus"></i> Region Management</a>
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("ListRegionAndCountryRelation", "Admin")"><i class="fa fa-plus"></i> Region and Country Relation</a>
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("ProductAndFileTypeRelation", "Admin")"><i class="fa fa-plus"></i> Product and Chemical Range Relation</a>
+        <a class="btn btn-success col-xs-3" style="margin-top:4px; margin-right:15px;" href="@Url.Action("ProductAndMarketRangeRelation", "Admin")"><i class="fa fa-plus"></i> Product and Market Range Relation</a>
+    </h3>
+    
+
+    <div class="white-wrapper" style="padding-top:10px">
+
+        <div class="data-detail-wrapper table-responsive">
+
+            <table id="Industrylist" class="table">
+                <thead>
+                    <tr>
+                        <th style="display:none">
+                            Id
+                        </th>
+                        <th>Title</th>
+                        <th>Product</th>
+                        <th>Created</th>
+                        <th>Edit</th>
+                        @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"]))
+                        {
+
+                            <th>Delete</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>*@
+<div class="update-profile-wrapper">
+    <div class="row">
+        <div class="col-md-12">
+            <a class="btn btn-success mt10" href="@Url.Action("AddIndustry", "Industry")"><i class="fa fa-plus"></i> Add New Industry Report</a>
+            <a class="btn btn-success mt10" href="@Url.Action("ShowStateList", "Admin")"><i class="fa fa-plus"></i> State Management</a>
+            <a class="btn btn-success mt10" href="@Url.Action("ShowCountryList", "Admin")"><i class="fa fa-plus"></i> Country Management</a>
+            <a class="btn btn-success mt10" href="@Url.Action("RegionList", "Admin")"><i class="fa fa-plus"></i> Region Management</a>
+            <a class="btn btn-success mt10" href="@Url.Action("ListRegionAndCountryRelation", "Admin")"><i class="fa fa-plus"></i> Region and Country Relation</a>
+            <a class="btn btn-success mt10" href="@Url.Action("ProductAndFileTypeRelation", "Admin")"><i class="fa fa-plus"></i> Product and Chemical Range Relation</a>
+            <a class="btn btn-success mt10" href="@Url.Action("ProductAndMarketRangeRelation", "Admin")"><i class="fa fa-plus"></i> Product and Market Range Relation</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-7"></div>
+        <div class="col-md-5">
+            <div class="d-flex align-items-center justify-content-between mt30">
+                <label class="me-2">Search:</label>
+                <input type="text" class="form-control me-2" id="Searchtext" placeholder="Enter Search" />
+                <button type="button" class="btn btn-success me-2" onclick="ShowIndustryList()">Submit</button>
+                <button type="button" class="btn btn-warning" onclick="Reset()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="white-wrapper" style="padding-top:10px">
+        <div class="data-detail-wrapper table-responsive">
+            <table id="role" class="table">
+                <thead>
+                    <tr>
+                        <th width="55%">Title</th>
+                        <th width="10%">Product</th>
+                        <th width="15%">Created</th>
+                        <th width="5%">EDIT</th>
+                       @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"]))
+                       {
+                        <th width="5%">DELETE</th>
+                       }
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+        <div style="margin:20px 0px 0px 0px;">
+            <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            <div class="box-footer clearfix" id="divPagging" style="border-top:0.5px solid #fff">
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+

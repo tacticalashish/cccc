@@ -1,0 +1,693 @@
+﻿
+@model ChemAnalyst.ViewModel.CustCompanyVM
+
+@{
+    if (Session["UserRole"] != null && Session["UserRole"].ToString().ToUpper() == "CUSTOMER")
+    {
+        Layout = "~/Views/Shared/_LayoutCustomer_company.cshtml";
+        
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutUser5.cshtml";
+    }
+    int i = 0;
+}
+<style>
+    /*------------------Start custome css for industry-tabs---------------------*/
+  /*  .industry-text {
+        margin-bottom: 30px;
+    }
+
+        .industry-text h3 {
+            font-size: 24px;
+            color: #3368c6;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+            .industry-text h3:after {
+                position: absolute;
+                content: "";
+                bottom: 0;
+                left: 0;
+                background: #3368c6;
+                width: 40px;
+                height: 2px;
+            }
+
+        .industry-text p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+    .mains-indus-tabs .tab-content p {
+        line-height: 20px;
+    }
+
+    ul.nav-tabs li.nav-item {
+        background: #7db11a;
+        border-radius: 0;
+        border-right: 1px solid #fff;
+    }
+
+        ul.nav-tabs li.nav-item .nav-link.active {
+            background: #3368c6;
+            color: #fff;
+        }
+
+    .mains-indus-tabs .nav-tabs {
+        border: 0;
+    }
+
+    ul.nav-tabs li.nav-item a {
+        color: #fff;
+    }
+
+    .mains-indus-tabs .tab-pane.active {
+        background: #fbffeb;
+    }
+
+    .mains-indus-tabs .tab-pane {
+        float: left;
+    }
+
+    aside .subscription-btn {
+        text-align: center;
+    }
+
+        aside .subscription-btn a {
+            background: #3368c6;
+            display: block;
+            border-radius: 5px;
+            color: #fff;
+            padding: 15px 10px;
+            margin-bottom: 30px;
+        }
+
+    .side-news-feed {
+        background: #f5f5f5;
+    }
+
+        .side-news-feed h3 {
+            background: #3368c6;
+            color: #fff;
+            font-size: 20px;
+            padding: 10px 15px;
+            margin-bottom: 0px;
+        }
+
+        .side-news-feed .left-news-pic {
+            width: 20%;
+            margin-right: 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .side-news-feed .right-news-desc {
+            width: 70%;
+            display: inline-block;
+        }
+
+            .side-news-feed .right-news-desc p {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+
+                .side-news-feed .right-news-desc p:last-child {
+                    margin-bottom: 0;
+                }
+
+    .news-feed-col {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 3px;
+    }
+
+        .news-feed-col:hover {
+            background: #fff;
+        }
+
+    .static-desc {
+        background: #fbffeb;
+        padding: 30px;
+    }
+
+        .static-desc p {
+            line-height: 20px;
+        }
+
+    .filter-category {
+        margin-bottom: 15px;
+    }
+
+        .filter-category .filter-btn a {
+            background: #3368c6;
+            padding-right: 10px;
+            color: #fff;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+            .filter-category .filter-btn a i {
+                background: #7db11a;
+                padding: 10px;
+                font-size: 19px;
+                margin-right: 10px;
+            }
+
+    .common-desc {
+        margin-bottom: 20px;
+    }
+
+        .common-desc p {
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+    .tab-content > .active {
+        display: block !important;
+    }
+
+    .fade {
+        transition: opacity .15s linear !important;
+        opacity: 1;
+    }
+
+    .page-content {
+        margin: 30px 0;
+    }*/
+    /*------------------End custome css for industry report--------------*/
+
+
+    /* Css related to map */
+    /* For all zoom buttons */
+    .mapael .zoomButton {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        color: #000;
+        width: 15px;
+        height: 15px;
+        line-height: 15px;
+        text-align: center;
+        border-radius: 3px;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        font-weight: bold;
+        left: 10px;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+    }
+
+    /* Reset Zoom button first */
+    .mapael .zoomReset {
+        top: 50px;
+    }
+
+    /* Then Zoom In button */
+    .mapael .zoomIn {
+        top: 70px;
+    }
+
+    /* Then Zoom Out button */
+    .mapael .zoomOut {
+        top: 90px;
+    }
+
+    .mapael .mapTooltip {
+        position: absolute;
+        background-color: #474c4b;
+        moz-opacity: 0.70;
+        opacity: 0.70;
+        filter: alpha(opacity=80);
+        padding: 10px;
+        z-index: 1000;
+        max-width: 200px;
+        display: none;
+        color: #fff;
+    }
+    /* End of css related to map */
+</style>
+
+<body oncontextmenu="return false;">
+    <div style="overflow-y:scroll; max-height:650px">
+        <div class="page-content">
+            <div class="update-profile-wrapper static-page">
+                <div class="white-wrapper padbox">
+
+                    <div class="data-detail-wrapper">
+
+                        <div class="company-profile">
+
+                            <div class="com-top-3col">
+                                <div class="row">
+
+                                    <div class="col-md-3 col-lg-3">
+                                        <div class="ind-map-col">
+                                            <img src="~/images/@Model.Logo" class="img-responsive" style="width:201px; height:201px">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-9 col-lg-9">
+                                        <div class="info-text-col">
+                                            <h4>@Model.Name</h4>
+                                            <p>@Model.Description</p>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix" style="height: 30px;clear: both;"></div>
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="cm-detail-table">
+
+                                            <h3>Basic Details</h3>
+                                            <table class="table-responsive-lg" style="text-justify:auto">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Name of the Company</td>
+                                                        <td><p>@Model.Name</p></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Registration Date</td>
+                                                        <td><p>@Model.RegDate.ToString()</p></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>CIN</td>
+                                                        <td><p>@Model.CIN</p></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Company Category/SubCategory</td>
+                                                        <td><p>@Model.Category</p></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Address</td>
+                                                        <td><p>@Model.Address</p></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Contact Details</td>
+                                                        <td>
+                                                            <p><strong>Website:</strong>@Model.website</p>
+                                                            <p><strong>Email:</strong><Span>@Model.EmailId</Span></p>
+                                                            <p><strong>Fax:</strong><Span>@Model.fax</Span></p>
+                                                            <p><strong>Phone No:</strong><Span>+@Model.phoneNo</Span></p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Number of Employees</td>
+                                                        <td><p>@Model.NOE</p></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Managing Director/CEO</td>
+                                                        <td><p>@Model.CEO</p></td>
+                                                    </tr>
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        @if (ViewBag.P != null)
+                                        {
+                                            @Html.DropDownList("product", new SelectList(ViewBag.P, "Value", "Text"), new { @id = "product", @class = "btn btn-primary width100", @onchange = "productSelected()" })
+                                        }
+                                        else
+                                        {
+                                            <select name="product" id="product" class="btn btn-primary width100"><option>Please select product</option></select>
+                                        }
+                                        <div class="mapContainer">
+                                            <div class="map"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="cm-detail-table cm-detail-table2">
+                                            <div class="panel-group" id="accordion">
+                                                @foreach (var item1 in Model.lstFinacialData)
+                                                {
+
+                                                    <div class="panel panel-default" style="margin-bottom: 5px;">
+                                                        <div>
+                                                            <h3 data-toggle="collapse" data-parent="#accordion" href="#collapse1_@item1.FinacialYear" style="cursor:pointer; margin-bottom: 5px;">
+                                                                Financial @item1.FinacialYear
+                                                            </h3>
+                                                        </div>
+
+                                                        @{if (i == 0)
+                                                            {
+                                                                <div id="collapse1_@item1.FinacialYear" class="panel-collapse">
+                                                                    <div class="panel-body" style="padding:0px">
+                                                                        <table class="table table-bordered">
+                                                                            <tbody>
+                                                                                @foreach (var item in Model.lstFinacialData.Where(w => w.FinacialYear == item1.FinacialYear))
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>Revenue (INR Million)</td>
+                                                                                        <td>@item.Revenue</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Y-o-Y Revenue Growth</td>
+                                                                                        <td>@item.Growth %</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PBT (INR Million)</td>
+                                                                                        <td>@item.PBT</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PBT Margin</td>
+                                                                                        <td>@item.Margin %</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PAT (INR Million)</td>
+                                                                                        <td>@item.Pat</td>
+                                                                                    </tr>
+
+
+                                                                                    <tr>
+                                                                                        <td>PAT Margin</td>
+                                                                                        <td>@item.Margin1 %</td>
+                                                                                    </tr>
+
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div id="collapse1_@item1.FinacialYear" class="panel-collapse collapse in">
+                                                                    <div class="panel-body" style="padding:0px">
+                                                                        <table class="table table-bordered">
+                                                                            <tbody>
+                                                                                @foreach (var item in Model.lstFinacialData.Where(w => w.FinacialYear == item1.FinacialYear))
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>Revenue (INR Million)</td>
+                                                                                        <td>@item.Revenue</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Y-o-Y Revenue Growth</td>
+                                                                                        <td>@item.Growth %</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PBT (INR Million)</td>
+                                                                                        <td>@item.PBT</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PBT Margin</td>
+                                                                                        <td>@item.Margin %</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PAT (INR Million)</td>
+                                                                                        <td>@item.Pat</td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>PAT Margin</td>
+                                                                                        <td>@item.Margin1 %</td>
+                                                                                    </tr>
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    i++;
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table align="right">
+                                            <tr>
+                                                <td><img src="~/images/triangle.png" width="50" height="50" /></td>
+                                                <td></td>
+                                                <td align="right">Manufacturing Plant</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="~/images/square.png" width="35" height="35" /></td>
+                                                <td></td>
+                                                <td>Corporate Office</td>
+                                            </tr>
+                                            <tr>
+                                                <td><img src="~/images/circle.png" width="35" height="35" /></td>
+                                                <td></td>
+                                                <td align="left">Regional Office</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-12" style="    margin-bottom: 20px;">
+                                        <div class="mains-indus-tabs">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" data-toggle="tab" href="#home">Strengths</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#menu1">Weaknesses</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#menu2">Opportunities</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#menu3">Threats</a>
+                                                </li>
+                                            </ul>
+                                            <!-- Tab panes -->
+                                            @if (ViewBag.S != null)
+                                            {
+                                                <div class="tab-content">
+                                                    <div id="home" class="tab-pane active">
+                                                        <br /><p>@Html.Raw(ViewBag.S.Strength)</p>
+                                                    </div>
+                                                    <div id="menu1" class="container tab-pane fade">
+                                                        <br /><p>@Html.Raw(ViewBag.S.Weakness)</p>
+                                                    </div>
+                                                    <div id="menu2" class="container tab-pane fade">
+                                                        <br /><p>@Html.Raw(ViewBag.S.Opportunity)</p>
+                                                    </div>
+                                                    <div id="menu3" class="container tab-pane fade">
+                                                        <br /><p>@Html.Raw(ViewBag.S.Threat)</p>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="tab-content">
+                                                    <div id="home" class="tab-pane active">
+                                                        <br /><p></p>
+                                                    </div>
+                                                    <div id="menu1" class="container tab-pane fade">
+                                                        <br /><p></p>
+                                                    </div>
+                                                    <div id="menu2" class="container tab-pane fade">
+                                                        <br /><p></p>
+                                                    </div>
+                                                    <div id="menu3" class="container tab-pane fade">
+                                                        <br /><p></p>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mains-indus-tabs">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" data-toggle="tab" href="#pp">Company Expansion Plans</a>
+                                                </li>
+                                            </ul>
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                <div id="ceb" class="tab-pane active">
+                                                    <br /><p>
+                                                        @if (ViewBag.S != null)
+                                                        {
+                                                            @Html.Raw(ViewBag.S.CompanyExpansionBlock)
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mains-indus-tabs">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" data-toggle="tab" href="#pp">Perspectives</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#ss">Strategies</a>
+                                                </li>
+                                            </ul>
+                                            <!-- Tab panes -->
+                                            @if (ViewBag.S != null)
+                                            {
+                                                <div class="tab-content">
+                                                    <div id="pp" class="tab-pane active">
+                                                        <br /><p>@Html.Raw(ViewBag.S.Perspective)</p>
+                                                    </div>
+                                                    <div id="ss" class="container tab-pane fade">
+                                                        <br /><p>@Html.Raw(ViewBag.S.Strategy)</p>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="tab-content">
+                                                    <div id="pp" class="tab-pane active">
+                                                        <br /><p></p>
+                                                    </div>
+                                                    <div id="ss" class="container tab-pane fade">
+                                                        <br /><p></p>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/jquery-3.3.1.slim.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    @*<script src="http://cdnjs.cloudflare.com/ajax/libs/simplelightbox/1.17.1/simple-lightbox.js"></script>*@
+    <script src="~/js/owl.carousel.js"></script>
+    <script src="~/js/wow.min.js"></script>
+    <script src="~/js/honey-custom.js"></script>
+    <script src="~/js/responsive.js"></script>
+    <script>
+        var companyId = @Model.id;
+        var mapDataUrl = "@Url.Action("GetMapData", "Login")";
+    </script>
+
+    <!--Scripts for map-->
+    <script src="~/js/raphael.min.js"></script>
+    <script src="~/js/mapael.js"></script>
+    <script src="~/js/india_states.js"></script>
+    <script src="~/js/india_states_legends.js"></script>
+
+    <script type="text/javascript">
+            var image = ["square", "circle", "triangle"];
+            var plots = [];
+
+            function productSelected() {
+                var productId = $("#product").find("option:selected").val();
+                if (productId != undefined && productId != null && productId != "" && parseInt(productId) != NaN) {
+                    CallAjax(mapDataUrl, "{ companyId:" + companyId + ", productId:" + productId + "}", function (response) {
+                        if (response) {
+                            response = JSON.parse(response);
+                            if (response.mapData) {
+                                if (response.mapData != undefined && response.mapData != null && response.mapData.length > 0) {
+                                    var plots = GeneratePlots(response.mapData);
+                                    InitializeMap(plots);
+                                } else {
+                                    InitializeMap();
+                                }
+                            } else {
+                                InitializeMap();
+                            }
+                            if (response.swotData) {
+                                $("#home").html("<br /><p>" + response.swotData.Strength + "</p>");
+                                $("#menu1").html("<br /><p>" + response.swotData.Weakness + "</p>");
+                                $("#menu2").html("<br /><p>" + response.swotData.Opportunity + "</p>");
+                                $("#menu3").html("<br /><p>" + response.swotData.Threat + "</p>");
+                                $("#ceb").html("<br /><p>" + response.swotData.CompanyExpansionBlock + "</p>");
+                                $("#pp").html("<br /><p>" + response.swotData.Perspective + "</p>");
+                                $("#ss").html("<br /><p>" + response.swotData.Strategy + "</p>");
+                            }
+                        }
+                    });
+                }
+            }
+
+            function InitializeMap(plots) {
+                var options = {
+                    map: {
+                        zoom: {
+                            enabled: true,
+                            maxLevel: 10
+                        },
+                        name: "india_states",
+                        defaultArea: {
+                            attrs: {
+                                fill: "#f5f7f3"
+                            }
+                        }
+                    }
+                };
+                if (plots) {
+                    options["plots"] = plots;
+                }
+                $(".mapContainer").mapael(options);
+            }
+            //Call map
+            InitializeMap();
+
+            function GeneratePlots(data) {
+                var newPlots = {};
+                var locations = data.map(item => item.Location).filter((value, index, self) => self.indexOf(value) === index);
+                locations.map(function (l, i) {
+                    var tempData = data.filter(function (p) { return p.Location == l });
+                    var types = tempData.map(item => item.Type).filter((value, index, self) => self.indexOf(value) === index);
+                    types.map(function (t) {
+                        var typeTempData = tempData.filter(function (tp) { return tp.Type == t });
+                        var type = t == 'Corp Office' ? 0 : (t == 'Regional Office' ? 1 : (t == 'Plant' ? 2 : 0));
+                        var coords = legends[l][type].split(',');
+                        var toolTipContent = "";
+                        typeTempData.map(function (ttd) {
+                            if (t == "Plant") {
+                                toolTipContent += ttd.City + ":" + ttd.Capacity + " <br />";
+                            } else {
+                                toolTipContent += ttd.City + " <br />";
+                            }
+                        });
+                        coords[0] = parseFloat(coords[0]);
+                        coords[1] = parseFloat(coords[1]);
+                        newPlots["plot_" + i.toString() + type.toString()] = {
+                            type: "image",
+                            url: 'http://chemanalyst.com/images/' + image[type] + ".png",
+                            x: coords[0],
+                            y: coords[1],
+                            height: 64,
+                            width: 64,
+
+                            tooltip: { content: toolTipContent },
+                            attrsHover: {
+                                transform: "s2.5",
+                                opacity: 1
+                            }
+                        }
+                    });
+                });
+                return newPlots;
+            }
+            function CallAjax(url, params, callback) {
+                const http = new XMLHttpRequest();
+                http.open('POST', url);
+                http.setRequestHeader('Content-type', 'application/json');
+                http.send(params) // Make sure to stringify
+                http.onload = function () {
+                    // Do whatever with response
+                    callback(http.response, http);
+                }
+            }
+
+            $( document ).ready(function() {
+                console.log("ready!");
+                @*$("#product").val(@ViewBag.FP);*@
+                $('#product').val(@ViewBag.FP).trigger('change');
+});
+    </script>
+</body>

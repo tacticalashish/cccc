@@ -1,0 +1,4378 @@
+@{
+    ViewBag.Title = "New Subscription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+<style>
+    .ns-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    /* ---- Full-page loader - shown while a step's data is being fetched ---- */
+    .ns-loader-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, .8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 5000;
+    }
+
+    .ns-loader-overlay.active {
+        display: flex;
+    }
+
+    .ns-loader-spinner {
+        width: 38px;
+        height: 38px;
+        border: 4px solid #dde1e6;
+        border-top-color: #1e4a3c;
+        border-radius: 50%;
+        animation: ns-spin .8s linear infinite;
+    }
+
+    .ns-loader-text {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #444;
+    }
+
+    @@keyframes ns-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Determinate progress bar shown in the full-page loader instead of a
+       spinner - the fill width reflects how much of the step's data has
+       loaded (real per-product progress where we have it, a smooth trickle
+       otherwise). */
+    .ns-loader-bar {
+        width: 300px;
+        max-width: 60vw;
+        height: 8px;
+        background: #dde1e6;
+        border-radius: 999px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .ns-loader-bar-fill {
+        height: 100%;
+        width: 0;
+        background: #1e4a3c;
+        border-radius: 999px;
+        transition: width .25s ease;
+    }
+
+    .ns-loader-percent {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7178;
+    }
+
+    /* Small inline loader used inside the Range card while its dropdowns
+       are being refreshed (coverage changes) without blocking the page. */
+    .ns-range-loading {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #8a9099;
+    }
+
+    .ns-range-loading.active {
+        display: inline-flex;
+    }
+
+    /* Prominent blocking loader over the Range dropdowns — rehta hai jab tak
+       coverage change ke baad teeno Range dropdowns dobara bind nahi ho jaate. */
+    .ns-range-card { position: relative; }
+    .ns-range-overlay {
+        display: none;
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 5;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1e4a3c;
+        border-radius: inherit;
+    }
+    .ns-range-overlay.active { display: flex; }
+    .ns-range-overlay .ns-mini-spinner { width: 18px; height: 18px; border-width: 3px; }
+
+    .ns-mini-spinner {
+        width: 12px;
+        height: 12px;
+        border: 2px solid #dde1e6;
+        border-top-color: #1e4a3c;
+        border-radius: 50%;
+        animation: ns-spin .8s linear infinite;
+    }
+
+    .ns-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .ns-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .ns-breadcrumb {
+        color: #a4aab3;
+        font-weight: 400;
+        font-size: 14px;
+        margin-left: 6px;
+    }
+
+    .ns-header-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .ns-search {
+        position: relative;
+    }
+
+        .ns-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .ns-search input {
+            width: 280px;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fff;
+        }
+
+            .ns-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+            }
+
+    .ns-bell {
+        position: relative;
+        margin-left: 18px;
+        color: #7c828a;
+        font-size: 17px;
+    }
+
+        .ns-bell i.dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e8752f;
+        }
+
+    .ns-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 22px 26px;
+        margin-bottom: 20px;
+    }
+
+    /* ---- Stepper ---- */
+    .ns-stepper {
+        display: flex;
+        align-items: flex-start;
+        padding: 4px 10px;
+    }
+
+    .ns-step {
+        flex: 0 0 76px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ns-step-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid #d7dae0;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: #a4aab3;
+    }
+
+    .ns-step-label {
+        margin-top: 8px;
+        font-size: 12.5px;
+        color: #a4aab3;
+        white-space: nowrap;
+    }
+
+    .ns-step.active .ns-step-circle {
+        border-color: #e8752f;
+        color: #e8752f;
+    }
+
+    .ns-step.active .ns-step-label {
+        color: #e8752f;
+        font-weight: 600;
+    }
+
+    .ns-step.done .ns-step-circle {
+        border-color: #1e4a3c;
+        background: #1e4a3c;
+        color: #fff;
+        font-size: 12px;
+    }
+
+    .ns-step.done .ns-step-label {
+        color: #1e4a3c;
+        font-weight: 600;
+    }
+
+    .ns-connector {
+        flex: 1 1 auto;
+        height: 2px;
+        background: #e3e5e9;
+        margin-top: 15px;
+    }
+
+        .ns-connector.done {
+            background: #1e4a3c;
+        }
+
+    /* ---- Card heading row ---- */
+    .ns-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #eef0f2;
+        margin-bottom: 18px;
+    }
+
+        .ns-card-head b {
+            font-size: 15px;
+            color: #22262b;
+        }
+
+        .ns-card-head span {
+            font-size: 12.5px;
+            color: #a4aab3;
+            font-style: italic;
+        }
+
+    .ns-info {
+        background: #eef1fb;
+        border-radius: 6px;
+        padding: 11px 14px;
+        font-size: 13px;
+        color: #4a5568;
+        margin-bottom: 22px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+        .ns-info i {
+            color: #4c6ef5;
+            margin-top: 2px;
+        }
+
+    /* ---- Step 1 fields ---- */
+    .ns-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px 26px;
+    }
+
+    .ns-field label {
+        display: block;
+        font-size: 12.5px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    .ns-field input, .ns-field select {
+        width: 100%;
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 9px 12px;
+        font-size: 13.5px;
+        color: #222;
+        background: #fff;
+    }
+
+        .ns-field input:focus, .ns-field select:focus, .ns-field textarea:focus {
+            outline: none;
+            border-color: #2f9e6e;
+            box-shadow: 0 0 0 1px rgba(47, 158, 110, .25);
+        }
+
+    .ns-field textarea {
+        width: 100%;
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 9px 12px;
+        font-size: 13.5px;
+        color: #222;
+        background: #fff;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .ns-field-hint {
+        font-size: 11px;
+        color: #a4aab3;
+        margin-top: 5px;
+    }
+
+    .ns-checkbox-row {
+        display: flex;
+        gap: 24px;
+        margin-top: 18px;
+    }
+
+    .ns-checkbox-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        color: #444;
+        cursor: pointer;
+    }
+
+        .ns-checkbox-item input {
+            margin: 0;
+        }
+
+    /* bootstrap-select (Secondary client emails) styled to match the
+       plain ns-field inputs/selects around it. */
+    .ns-field .bootstrap-select {
+        width: 100% !important;
+    }
+
+        .ns-field .bootstrap-select > .dropdown-toggle {
+            border: 1px solid #e3e5e9 !important;
+            border-radius: 6px !important;
+            background: #fff !important;
+            font-size: 13.5px !important;
+            color: #222 !important;
+            padding: 9px 12px !important;
+            box-shadow: none !important;
+        }
+
+            .ns-field .bootstrap-select > .dropdown-toggle:focus {
+                outline: none !important;
+                border-color: #2f9e6e !important;
+            }
+
+        .ns-field .bootstrap-select .dropdown-menu {
+            font-size: 13px;
+        }
+
+        .ns-field .bootstrap-select .bs-searchbox input {
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+        }
+
+    /* ---- Step 2 package ---- */
+    .ns-pkg-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .ns-pkg-card {
+        border: 1px solid #e3e5e9;
+        border-radius: 8px;
+        padding: 16px 18px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        cursor: pointer;
+        background: #fff;
+    }
+
+        .ns-pkg-card.selected {
+            border-color: #2f9e6e;
+            background: #eef8f1;
+        }
+
+    .ns-pkg-radio {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #c7cad0;
+        margin-top: 2px;
+        flex: 0 0 16px;
+        position: relative;
+        background: #fff;
+    }
+
+    .ns-pkg-card.selected .ns-pkg-radio {
+        border-color: #1e4a3c;
+    }
+
+        .ns-pkg-card.selected .ns-pkg-radio:after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #1e4a3c;
+        }
+
+    .ns-pkg-title {
+        font-weight: 600;
+        font-size: 14px;
+        color: #22262b;
+        margin-bottom: 3px;
+    }
+
+    .ns-pkg-desc {
+        font-size: 12.5px;
+        color: #8a9099;
+    }
+
+    .ns-pkg-fullinfo {
+        background: #fdf1e2;
+        border: 1px solid #f3d9ad;
+        color: #7a5a1e;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-size: 13px;
+        margin-bottom: 18px;
+    }
+
+        .ns-pkg-fullinfo i {
+            color: #c76a1e;
+            margin-right: 6px;
+        }
+
+    .ns-select-products-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        color: #8a9099;
+        margin-bottom: 12px;
+    }
+
+    .ns-subtabs {
+        display: flex;
+        border-bottom: 1px solid #eef0f2;
+        margin-bottom: 16px;
+    }
+
+    .ns-subtab {
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 8px 4px;
+        margin-right: 20px;
+        font-size: 13px;
+        color: #8a9099;
+        cursor: pointer;
+    }
+
+        .ns-subtab.active {
+            color: #1e4a3c;
+            font-weight: 600;
+            border-bottom-color: #1e4a3c;
+        }
+
+    .ns-product-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px 20px;
+        margin-bottom: 14px;
+        max-height: 280px;
+        overflow-y: auto;
+        border: 1px solid #e3e5e9;
+        border-radius: 8px;
+        padding: 14px;
+    }
+
+    .ns-product-item {
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 9px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        color: #333;
+        font-weight: 400;
+        margin: 0;
+        cursor: pointer;
+    }
+
+        .ns-product-item input {
+            margin: 0;
+        }
+
+    .ns-product-count {
+        font-size: 12.5px;
+        color: #4c6ef5;
+    }
+
+    /* ---- Step 3 coverage ---- */
+    .ns-coverage-fullnote {
+        background: #eef1fb;
+        border-radius: 6px;
+        padding: 11px 14px;
+        font-size: 13px;
+        color: #4a5568;
+    }
+
+    /* Scrolls internally instead of the page growing indefinitely once a
+       company's product count runs into the hundreds (CRM auto-bind of an
+       existing subscription, or a large A la carte / Full pick) - ~20 rows'
+       worth of height before a scrollbar kicks in, same pattern as
+       .ns-product-grid above. */
+    #CoverageRows {
+        max-height: 1700px;
+        overflow-y: auto;
+        padding-right: 6px;
+    }
+
+    .ns-coverage-row {
+        border: 1px solid #eef0f2;
+        border-radius: 8px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+    }
+
+    .ns-coverage-row-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .ns-coverage-product-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #22262b;
+    }
+
+    .ns-coverage-product-sub {
+        font-size: 12.5px;
+        color: #8a9099;
+        margin-top: 2px;
+    }
+
+    .ns-coverage-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12.5px;
+        color: #333;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+
+        .ns-coverage-toggle input {
+            margin: 0;
+        }
+
+        .ns-coverage-toggle.checked {
+            background: #1e4a3c;
+            border-color: #1e4a3c;
+            color: #fff;
+        }
+
+    .ns-coverage-countries {
+        margin-top: 14px;
+    }
+
+    .ns-coverage-countries-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .ns-coverage-country-item {
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 9px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        color: #333;
+        font-weight: 400;
+        margin: 0;
+        cursor: pointer;
+    }
+
+        .ns-coverage-country-item input {
+            margin: 0;
+            accent-color: #2f9e6e;
+        }
+
+        .ns-coverage-country-item.selected {
+            border-color: #2f9e6e;
+            background: #eef8f1;
+        }
+
+    .ns-coverage-selected-count {
+        font-size: 12.5px;
+        color: #4c6ef5;
+    }
+
+    .ns-coverage-subtabs {
+        display: flex;
+        border-bottom: 1px solid #eef0f2;
+        margin-bottom: 14px;
+    }
+
+    .ns-coverage-subtab {
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 6px 4px;
+        margin-right: 18px;
+        font-size: 12.5px;
+        color: #8a9099;
+        cursor: pointer;
+    }
+
+        .ns-coverage-subtab.active {
+            color: #1e4a3c;
+            font-weight: 600;
+            border-bottom-color: #1e4a3c;
+        }
+
+    .ns-coverage-market-label {
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        color: #8a9099;
+        margin-bottom: 8px;
+    }
+
+    .ns-coverage-market-loading {
+        font-size: 12.5px;
+        color: #8a9099;
+        padding: 6px 0;
+    }
+
+    /* ---- Range selection card (Chemical Range / Market Analysis Range) ----
+       One shared card at the TOP of Step 3, above the per-product country
+       coverage list - not repeated per product. All three dropdowns cover
+       every selected product at once (each option is labelled with its own
+       product name by the server, so a combined list stays unambiguous). */
+    .ns-range-card {
+        border: 1px solid #dde1e6;
+        border-top: 3px solid #1e4a3c;
+        border-radius: 8px;
+        background: #fff;
+        padding: 16px 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 4px rgba(20, 30, 25, .06);
+    }
+
+    .ns-range-card-head {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+    }
+
+    .ns-range-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        color: #1e4a3c;
+        text-transform: uppercase;
+    }
+
+    .ns-range-card-sub {
+        font-size: 12.5px;
+        color: #8a9099;
+        margin-bottom: 14px;
+    }
+
+    .ns-range-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+    }
+
+    .ns-range-field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 6px;
+    }
+
+    .ns-range-field .bootstrap-select {
+        width: 100% !important;
+    }
+
+    .ns-range-field .btn-default {
+        background: #fff;
+        border: 1px solid #d7dae0;
+        font-size: 13px;
+    }
+
+    .ns-range-empty-note {
+        font-size: 12px;
+        color: #a4aab3;
+        font-style: italic;
+        padding: 6px 0;
+    }
+
+    .ns-range-error .ns-range-field .btn-default {
+        border-color: #d9534f;
+    }
+
+    @@media (max-width: 900px) {
+        .ns-range-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ---- Action row ---- */
+    .ns-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ns-actions-right {
+        display: flex;
+        gap: 10px;
+    }
+
+    .ns-btn-cancel {
+        background: #fff;
+        border: 1px solid #d7dae0;
+        color: #444;
+        padding: 9px 22px;
+        border-radius: 6px;
+        font-size: 13.5px;
+    }
+
+        .ns-btn-cancel:hover {
+            background: #f7f8f9;
+        }
+
+    .ns-btn-continue {
+        background: #1e4a3c;
+        border: 1px solid #1e4a3c;
+        color: #fff;
+        padding: 9px 24px;
+        border-radius: 6px;
+        font-size: 13.5px;
+    }
+
+        .ns-btn-continue:hover {
+            background: #17392e;
+        }
+
+    .ns-btn-continue.ns-btn-disabled,
+    .ns-btn-continue:disabled {
+        background: #9bb3aa;
+        border-color: #9bb3aa;
+        cursor: not-allowed;
+        opacity: .75;
+    }
+
+    .ns-btn-transfer {
+        background: #e8752f;
+        border: 1px solid #e8752f;
+        color: #fff;
+        padding: 9px 24px;
+        border-radius: 6px;
+        font-size: 13.5px;
+    }
+
+        .ns-btn-transfer:hover {
+            background: #d5661f;
+        }
+
+    /* ---- Step 4 users ---- */
+    .ns-users-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 4px;
+    }
+
+        .ns-users-table th {
+            background: #f6f7f9;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            color: #8a94a6;
+            padding: 10px 12px;
+            border-bottom: 1px solid #eef0f2;
+        }
+
+        .ns-users-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eef0f2;
+            vertical-align: middle;
+        }
+
+        .ns-users-table input {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #222;
+            background: #fff;
+        }
+
+            .ns-users-table input:focus {
+                outline: none;
+                border-color: #2f9e6e;
+                box-shadow: 0 0 0 1px rgba(47, 158, 110, .25);
+            }
+
+    .ns-btn-remove-user {
+        background: #fff;
+        border: 1px solid #d7dae0;
+        color: #444;
+        padding: 7px 16px;
+        border-radius: 6px;
+        font-size: 12.5px;
+        white-space: nowrap;
+    }
+
+        .ns-btn-remove-user:hover {
+            background: #f7f8f9;
+        }
+
+    .ns-btn-add-user {
+        background: #1e4a3c;
+        border: 1px solid #1e4a3c;
+        color: #fff;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-top: 14px;
+    }
+
+        .ns-btn-add-user:hover {
+            background: #17392e;
+        }
+
+    /* ---- Step 6 review ---- */
+    .ns-review-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 20px;
+        align-items: start;
+        margin-bottom: 20px;
+    }
+
+    .ns-review-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f2f3f5;
+        font-size: 13px;
+    }
+
+        .ns-review-row:last-child {
+            border-bottom: none;
+        }
+
+    .ns-review-label {
+        color: #6b7280;
+    }
+
+    .ns-review-value {
+        color: #22262b;
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .ns-review-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fdf1e2;
+        color: #7a5a1e;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .ns-user-badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .ns-user-badge-primary {
+        background: #eef1fb;
+        color: #4c6ef5;
+    }
+
+    .ns-user-badge-secondary {
+        background: #eef8f1;
+        color: #2f9e6e;
+    }
+
+    .ns-review-note {
+        background: #fdf1e2;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 12.5px;
+        color: #7a5a1e;
+        margin-top: 4px;
+    }
+
+        .ns-review-note i {
+            margin-right: 6px;
+        }
+
+    .ns-card-head .ns-review-details-link {
+        font-size: 12px;
+        color: #4c6ef5;
+        cursor: pointer;
+        font-style: normal;
+    }
+
+    .ns-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(20, 20, 30, .45);
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+
+    .ns-modal {
+        background: #fff;
+        border-radius: 10px;
+        width: 640px;
+        max-width: 92vw;
+        max-height: 82vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+    }
+
+    .ns-modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #eef0f2;
+        position: sticky;
+        top: 0;
+        background: #fff;
+    }
+
+        .ns-modal-head b {
+            font-size: 15px;
+            color: #22262b;
+        }
+
+    .ns-modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        line-height: 1;
+        color: #8a9099;
+        cursor: pointer;
+    }
+
+    .ns-modal-body {
+        padding: 16px 20px;
+    }
+
+    .ns-modal-product {
+        border: 1px solid #eef0f2;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+
+        .ns-modal-product:last-child {
+            margin-bottom: 0;
+        }
+
+    .ns-modal-product-name {
+        font-weight: 600;
+        font-size: 13.5px;
+        color: #22262b;
+        margin-bottom: 8px;
+    }
+
+    .ns-modal-scope-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        color: #8a9099;
+        margin-top: 10px;
+    }
+
+    .ns-modal-scope-value {
+        font-size: 12.5px;
+        color: #444;
+        line-height: 1.5;
+        margin-top: 3px;
+    }
+</style>
+<div class="ns-loader-overlay" id="NsLoaderOverlay">
+    <div class="ns-loader-bar"><div class="ns-loader-bar-fill" id="NsLoaderBarFill"></div></div>
+    <div class="ns-loader-text" id="NsLoaderText">Loading...</div>
+    <div class="ns-loader-percent" id="NsLoaderPercent"></div>
+</div>
+<div class="ns-wrap">
+    <div class="ns-header">
+        <div>
+            <span class="ns-title">New subscription</span>
+            <span class="ns-breadcrumb">/ New</span>
+        </div>
+        <div class="ns-header-right">
+            <div class="ns-search">
+                <i class="fa fa-search"></i>
+                <input type="text" placeholder="Search leads, company or email..." />
+            </div>
+            <span class="ns-bell"><i class="fa fa-bell-o"></i><i class="dot"></i></span>
+        </div>
+    </div>
+
+    <div class="ns-card">
+        <div class="ns-stepper" id="Stepper">
+            <div class="ns-step" id="StepBlock1">
+                <div class="ns-step-circle" id="StepCircle1">1</div>
+                <div class="ns-step-label">Contact</div>
+            </div>
+            <div class="ns-connector" id="Connector1"></div>
+            <div class="ns-step" id="StepBlock2">
+                <div class="ns-step-circle" id="StepCircle2">2</div>
+                <div class="ns-step-label">Package</div>
+            </div>
+            <div class="ns-connector" id="Connector2"></div>
+            <div class="ns-step" id="StepBlock3">
+                <div class="ns-step-circle" id="StepCircle3">3</div>
+                <div class="ns-step-label">Coverage</div>
+            </div>
+            <div class="ns-connector" id="Connector3"></div>
+            <div class="ns-step" id="StepBlock4">
+                <div class="ns-step-circle" id="StepCircle4">4</div>
+                <div class="ns-step-label">Users</div>
+            </div>
+            <div class="ns-connector" id="Connector4"></div>
+            <div class="ns-step" id="StepBlock5">
+                <div class="ns-step-circle" id="StepCircle5">5</div>
+                <div class="ns-step-label">Terms</div>
+            </div>
+            <div class="ns-connector" id="Connector5"></div>
+            <div class="ns-step" id="StepBlock6">
+                <div class="ns-step-circle" id="StepCircle6">6</div>
+                <div class="ns-step-label">Review</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 1: Primary contact & company -->
+    <div id="Step1Panel">
+        <form id="frmPrimaryContact">
+            <div class="ns-card">
+                <div class="ns-card-head">
+                    <b>Primary contact &amp; company</b>
+                    <span>prefilled from the won deal</span>
+                </div>
+
+                <div class="ns-info">
+                    <i class="fa fa-info-circle"></i>
+                    <span>This becomes the account's <strong>primary user (login)</strong> and the main contact handed to CSM.</span>
+                </div>
+
+                <div class="ns-grid">
+                    <div class="ns-field">
+                        <label>Company *</label>
+                        <select id="CompanyId" name="CompanyId" title="Company">
+                            <option value="">Select Company</option>
+                        </select>
+                        <!-- Swapped in for the Sales "New subscription" -> Convert
+                             flow (IsSalesConvertFlow) - that company doesn't exist
+                             in SA_CompanyMaster yet, so there's nothing to pick
+                             from the dropdown above; CRM keeps using the dropdown
+                             unchanged. -->
+                        <input type="text" id="CompanyNameText" name="CompanyNameText" autocomplete="off" placeholder="Company name" style="display:none" />
+                    </div>
+                    <div class="ns-field">
+                        <label>Client type</label>
+                        <select id="ClientType" name="ClientType" title="ClientType">
+                            <option value="New">New</option>
+                            <option value="Existing">Existing</option>
+                        </select>
+                    </div>
+                    <div class="ns-field">
+                        <label>Primary contact name *</label>
+                        <input type="text" id="PrimaryContactName" name="PrimaryContactName" autocomplete="off" />
+                    </div>
+                    <div class="ns-field">
+                        <label>Designation</label>
+                        <input type="text" id="Designation" name="Designation" autocomplete="off" />
+                    </div>
+                    <div class="ns-field">
+                        <label>Primary email &middot; login *</label>
+                        <input type="email" id="PrimaryEmail" name="PrimaryEmail" autocomplete="off" />
+                    </div>
+                    <div class="ns-field">
+                        <label>Phone</label>
+                        <input type="text" id="Phone" name="Phone" autocomplete="off" />
+                    </div>
+                    <div class="ns-field">
+                        <label>Country <span style="color:#d9534f">*</span></label>
+                        <select id="Country" name="Country" title="Country">
+                            <option value="">Select Country</option>
+                        </select>
+                    </div>
+                    <div class="ns-field">
+                        <label>Billing email</label>
+                        <input type="email" id="BillingEmail" name="BillingEmail" autocomplete="off" />
+                    </div>
+                    <div class="ns-field">
+                        <label>Secondary client email</label>
+                        <!-- Plain text, not the old dropdown/multi-select - saved
+                             into SA_CompanyMaster.SecondContactEmail when the
+                             company record is created (Sales-convert flow). Not
+                             related to the Users step's emails, which go into
+                             Lead_Master.SecondaryClintEmail separately. -->
+                        <input type="text" id="SecondContactEmail" name="SecondContactEmail" autocomplete="off" placeholder="Optional" />
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="ns-actions">
+            <button type="button" class="ns-btn-cancel" id="BtnCancelStep1">Cancel</button>
+            <button type="button" class="ns-btn-continue" id="BtnContinueStep1">Continue &rarr;</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Subscription package -->
+    <div id="Step2Panel" style="display:none">
+        <div class="ns-card">
+            <div class="ns-card-head">
+                <b>Subscription package</b>
+                <span>what they're buying</span>
+            </div>
+
+            <input type="hidden" id="PackageType" value="ALaCarte" />
+
+            <div class="ns-pkg-options">
+                <div class="ns-pkg-card" id="PkgFull" data-pkg="Full">
+                    <div class="ns-pkg-radio"></div>
+                    <div>
+                        <div class="ns-pkg-title">Full package</div>
+                        <div class="ns-pkg-desc">Every product &amp; module we track &mdash; with a limited download quota.</div>
+                    </div>
+                </div>
+                <div class="ns-pkg-card selected" id="PkgALaCarte" data-pkg="ALaCarte">
+                    <div class="ns-pkg-radio checked"></div>
+                    <div>
+                        <div class="ns-pkg-title">&Agrave; la carte</div>
+                        <div class="ns-pkg-desc">Pick only the specific products they want.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ns-pkg-fullinfo" id="PkgFullInfo" style="display:none">
+                <i class="fa fa-info-circle"></i><strong>Full package &mdash; limited download.</strong>
+                All products across all modules; download quota capped per the standard full-package policy. Coverage defaults to all tracked countries (adjustable in the next step).
+            </div>
+
+            <div id="PkgProductsSection">
+                <div class="ns-select-products-label" style="display:flex; align-items:center; justify-content:space-between;">
+                    <span>SELECT PRODUCTS</span>
+                    <span>
+                        <button type="button" id="BtnSelectAllProducts" class="ns-btn-cancel" style="padding:5px 12px; font-size:12px; margin-right:6px;">Select all</button>
+                        <button type="button" id="BtnUnselectAllProducts" class="ns-btn-cancel" style="padding:5px 12px; font-size:12px;">Unselect all</button>
+                    </span>
+                </div>
+
+                <div class="ns-subtabs">
+                    <button type="button" class="ns-subtab active" data-tab="Pricing">Pricing</button>
+                    <button type="button" class="ns-subtab" data-tab="Market">Market</button>
+                    <button type="button" class="ns-subtab" data-tab="News">News</button>
+                    <button type="button" class="ns-subtab" data-tab="Capacity">Capacity Tracker</button>
+                </div>
+
+                <div class="ns-subtab-panel" id="ProductPanelPricing">
+                    <div class="ns-product-grid" id="ProductGrid"></div>
+                    <div class="ns-product-count" id="ProductCount">0 product(s) selected.</div>
+                </div>
+
+                <div class="ns-subtab-panel" id="ProductPanelMarket" style="display:none">
+                    <div class="ns-product-grid" id="ProductGridMarket"></div>
+                    <div class="ns-product-count" id="ProductCountMarket">0 product(s) selected.</div>
+                </div>
+
+                <div class="ns-subtab-panel" id="ProductPanelNews" style="display:none">
+                    <div class="ns-product-grid" id="ProductGridNews"></div>
+                    <div class="ns-product-count" id="ProductCountNews">0 product(s) selected.</div>
+                </div>
+
+                <div class="ns-subtab-panel" id="ProductPanelCapacity" style="display:none">
+                    <div class="ns-product-grid" id="ProductGridCapacity"></div>
+                    <div class="ns-product-count" id="ProductCountCapacity">0 product(s) selected.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ns-actions">
+            <button type="button" class="ns-btn-cancel" id="BtnCancelStep2">Cancel</button>
+            <div class="ns-actions-right">
+                <button type="button" class="ns-btn-cancel" id="BtnBackStep2">&larr; Back</button>
+                <button type="button" class="ns-btn-continue" id="BtnContinueStep2">Continue &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Country coverage -->
+    <div id="Step3Panel" style="display:none">
+        <div class="ns-range-card ns-range-card-global">
+            <div class="ns-range-card-head">
+                <div class="ns-range-title">Range selection</div>
+                <span class="ns-range-loading" id="RangeLoadingIndicator"><span class="ns-mini-spinner"></span> Updating ranges...</span>
+            </div>
+            <div class="ns-range-card-sub">Applies across every selected product. Everything is selected by default - remove anything you don't want to include.</div>
+            <div class="ns-range-grid">
+                <div class="ns-range-field">
+                    <label>Chemical Range</label>
+                    <select id="GlobalRangeChemical" class="selectpicker" multiple data-actions-box="true" data-live-search="true" data-container="body" data-dropup-auto="false" data-size="8" data-selected-text-format="count > 2" data-none-selected-text="No chemical range available" title="Select Chemical Range"></select>
+                </div>
+                <div class="ns-range-field">
+                    <label>Market Analysis Range &middot; Country wise</label>
+                    <select id="GlobalRangeMarketCountry" class="selectpicker" multiple data-actions-box="true" data-live-search="true" data-container="body" data-dropup-auto="false" data-size="8" data-selected-text-format="count > 2" data-none-selected-text="No market range available" title="Select Market Range (country wise)"></select>
+                </div>
+                <div class="ns-range-field">
+                    <label>Market Analysis Range &middot; Region wise</label>
+                    <select id="GlobalRangeMarketRegion" class="selectpicker" multiple data-actions-box="true" data-live-search="true" data-container="body" data-dropup-auto="false" data-size="8" data-selected-text-format="count > 2" data-none-selected-text="No market range available" title="Select Market Range (region wise)"></select>
+                </div>
+            </div>
+            <div class="ns-range-overlay" id="RangeLoadingOverlay"><span class="ns-mini-spinner"></span> Updating ranges...</div>
+        </div>
+
+        <div class="ns-card">
+            <div class="ns-card-head">
+                <b>Country coverage</b>
+                <span>&agrave; la carte or all tracked countries</span>
+            </div>
+
+            <div class="ns-info">
+                <i class="fa fa-info-circle"></i>
+                <span>For each product, cover <strong>all the countries we track</strong> it in, or hand-pick specific countries (&agrave; la carte).</span>
+            </div>
+
+            <div id="CoverageRows"></div>
+        </div>
+
+        <div class="ns-actions">
+            <button type="button" class="ns-btn-cancel" id="BtnCancelStep3">Cancel</button>
+            <div class="ns-actions-right">
+                <button type="button" class="ns-btn-cancel" id="BtnBackStep3">&larr; Back</button>
+                <button type="button" class="ns-btn-continue" id="BtnContinueStep3">Continue &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: Additional users -->
+    <div id="Step4Panel" style="display:none">
+        <div class="ns-card">
+            <div class="ns-card-head">
+                <b>Additional users</b>
+                <span>secondary logins on the same package</span>
+            </div>
+
+            <div class="ns-info">
+                <i class="fa fa-info-circle"></i>
+                <span>These users get the <strong>same products &amp; coverage</strong> as the primary, added as <strong>secondary users</strong>. Add as many as the deal includes.</span>
+            </div>
+
+            <table class="ns-users-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Designation</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="AdditionalUsersRows"></tbody>
+            </table>
+
+            <button type="button" class="ns-btn-add-user" id="BtnAddUserRow">+ Add user</button>
+        </div>
+
+        <div class="ns-actions">
+            <button type="button" class="ns-btn-cancel" id="BtnCancelStep4">Cancel</button>
+            <div class="ns-actions-right">
+                <button type="button" class="ns-btn-cancel" id="BtnBackStep4">&larr; Back</button>
+                <button type="button" class="ns-btn-continue" id="BtnContinueStep4">Continue &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 5: Subscription terms -->
+    <div id="Step5Panel" style="display:none">
+        <div class="ns-card">
+            <div class="ns-card-head">
+                <b>Subscription terms</b>
+            </div>
+
+            <div class="ns-grid">
+                <div class="ns-field">
+                    <label>From date</label>
+                    <input type="text" id="TermsFromDate" name="TermsFromDate" class="ns-select" placeholder="Select From date" autocomplete="off" readonly />
+                </div>
+                <div class="ns-field">
+                    <label>To date</label>
+                    <input type="text" id="TermsToDate" name="TermsToDate" class="ns-select" placeholder="Select To date" autocomplete="off" readonly />
+                </div>
+                <div class="ns-field">
+                    <label>Approval basis</label>
+                    <select id="ApprovalBasis" name="ApprovalBasis">
+                        <option value="">Select Approval basis</option>
+                        <option value="PaymentReceived">Payment received</option>
+                        <option value="PurchaseOrderReceived">Purchase order received</option>
+                        <option value="BothReceived">Both received</option>
+                    </select>
+                </div>
+                <div class="ns-field">
+                    <label>User type</label>
+                    <select id="TermsUserType" name="TermsUserType">
+                        <option value="">Select User Type</option>
+                        <option value="Manufacturer">Manufacturer</option>
+                        <option value="Trader">Trader</option>
+                        <option value="Executive">Executive</option>
+                        <option value="Industry Expert">Industry Expert</option>
+                        <option value="Customer">Customer</option>
+                    </select>
+
+                </div>
+                <div class="ns-field">
+                    <label>Assign analyst</label>
+                    <select id="AssignAnalyst" name="AssignAnalyst">
+                        <option value="">Select Assign analyst</option>
+                    </select>
+                </div>
+                <div class="ns-field">
+                    <label>Assign CRM &middot; CSM</label>
+                    <select id="AssignCrmCsm" name="AssignCrmCsm">
+                        <option value="">Select Assign CRM &middot; CSM</option>
+                    </select>
+                </div>
+                <div class="ns-field">
+                    <label>Payment document</label>
+                    <input type="file" id="PaymentDocument" name="PaymentDocument" accept=".pdf,.jpg,.jpeg,.png" />
+                    <div class="ns-field-hint">PDF/JPG of PO or payment proof</div>
+                </div>
+            </div>
+
+            <div class="ns-checkbox-row">
+                <label class="ns-checkbox-item"><input type="checkbox" id="TraderAccount" /> Trader account</label>
+                <label class="ns-checkbox-item" id="RenewalCheckboxItem"><input type="checkbox" id="Renewal" /> Renewal</label>
+            </div>
+
+            <div class="ns-field" id="CreditPointsField" style="margin-top:16px; display:none;">
+                <label>Credit points <span style="color:#e2453c">*</span></label>
+                <input type="number" id="CreditPoints" name="CreditPoints" min="0" step="1" placeholder="Enter credit points" />
+            </div>
+
+            <div class="ns-field" style="margin-top:16px">
+                <label>Remarks for CSM</label>
+                <textarea id="RemarksForCsm" name="RemarksForCsm" rows="3" placeholder="Anything CSM should know at handover..."></textarea>
+            </div>
+        </div>
+
+        <div class="ns-actions">
+            <button type="button" class="ns-btn-cancel" id="BtnCancelStep5">Cancel</button>
+            <div class="ns-actions-right">
+                <button type="button" class="ns-btn-cancel" id="BtnBackStep5">&larr; Back</button>
+                <button type="button" class="ns-btn-continue" id="BtnContinueStep5">Continue &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 6: Review -->
+    <div id="Step6Panel" style="display:none">
+        <div class="ns-review-grid">
+            <div class="ns-card">
+                <div class="ns-card-head"><b>Account &amp; package</b></div>
+                <div class="ns-review-row"><span class="ns-review-label">Company</span><span class="ns-review-value" id="RevCompany">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Primary user</span><span class="ns-review-value" id="RevPrimaryUser">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Client type</span><span class="ns-review-value" id="RevClientType">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Country</span><span class="ns-review-value" id="RevCountry">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Billing email</span><span class="ns-review-value" id="RevBillingEmail">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Package</span><span class="ns-review-value" id="RevPackage">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Term</span><span class="ns-review-value" id="RevTerm">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Approval basis</span><span class="ns-review-value" id="RevApprovalBasis">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">User type</span><span class="ns-review-value" id="RevUserType">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Assign analyst</span><span class="ns-review-value" id="RevAssignAnalyst">&mdash;</span></div>
+                <div class="ns-review-row"><span class="ns-review-label">Assign CRM &middot; CSM</span><span class="ns-review-value" id="RevAssignCrmCsm">&mdash;</span></div>
+            </div>
+
+            <div>
+                <div class="ns-card">
+                    <div class="ns-card-head">
+                        <b>Coverage</b>
+                        <span class="ns-review-details-link" id="BtnViewCoverageDetails">View details</span>
+                    </div>
+                    <div class="ns-review-row"><span class="ns-review-label" id="RevCoverageProducts">&mdash;</span><span class="ns-review-value" id="RevCoverageCountries">&mdash;</span></div>
+                </div>
+
+                <div class="ns-card">
+                    <div class="ns-card-head"><b>Users</b><span id="RevUsersTotal">0 total</span></div>
+                    <div id="RevUsersList"></div>
+                </div>
+
+                <div class="ns-review-note" id="RevTransferNote"></div>
+            </div>
+        </div>
+
+        <div class="ns-actions">
+            <button type="button" class="ns-btn-cancel" id="BtnCancelStep6">Cancel</button>
+            <div class="ns-actions-right">
+                <button type="button" class="ns-btn-cancel" id="BtnBackStep6">&larr; Back</button>
+                <button type="button" class="ns-btn-transfer" id="BtnTransfer">Transfer to CSM &rarr;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ns-modal-overlay" id="CoverageDetailOverlay">
+    <div class="ns-modal">
+        <div class="ns-modal-head">
+            <b>Coverage details</b>
+            <button type="button" class="ns-modal-close" id="CoverageDetailClose">&times;</button>
+        </div>
+        <div class="ns-modal-body" id="CoverageDetailBody"></div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js" defer></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script>
+    // ---------- Loaders ----------
+    // Full-page overlay - shown whenever a step is waiting on data (initial
+    // load, and the Step 2 -> Step 3 coverage/range fetch). Hidden again
+    // only once every underlying AJAX call has actually resolved.
+    var NsLoaderTrickle = null;
+    var NsLoaderStart = 0;
+
+    function NsSetBar(pct, sub) {
+        pct = Math.max(0, Math.min(100, Math.round(pct)));
+        $("#NsLoaderBarFill").css("width", pct + "%");
+        $("#NsLoaderPercent").text(pct + "%" + (sub ? " \u00B7 " + sub : ""));
+    }
+
+    function ShowNsLoader(text) {
+        $("#NsLoaderText").text(text || "Loading...");
+        $("#NsLoaderOverlay").addClass('active');
+        NsLoaderStart = new Date().getTime();
+        NsSetBar(0, "");
+        // Unknown-length work (single bulk request / page load) still shows
+        // movement - a trickle that eases toward 90% until real progress
+        // (SetNsLoaderProgress) or completion (HideNsLoader) takes over.
+        clearInterval(NsLoaderTrickle);
+        var fake = 0;
+        NsLoaderTrickle = setInterval(function () {
+            fake += (90 - fake) * 0.08;
+            NsSetBar(fake, "");
+        }, 300);
+    }
+
+    // Real progress: done of total, with a rough time-left estimate.
+    function SetNsLoaderProgress(done, total) {
+        clearInterval(NsLoaderTrickle);
+        NsLoaderTrickle = null;
+        if (!total) { return; }
+        var pct = done / total * 100;
+        var sub = done + " / " + total;
+        var elapsed = (new Date().getTime() - NsLoaderStart) / 1000;
+        if (done > 0 && done < total) {
+            var left = Math.ceil(elapsed / done * (total - done));
+            sub += " \u00B7 ~" + left + "s left";
+        }
+        NsSetBar(pct, sub);
+    }
+
+    function HideNsLoader() {
+        clearInterval(NsLoaderTrickle);
+        NsLoaderTrickle = null;
+        NsSetBar(100, "");
+        $("#NsLoaderOverlay").removeClass('active');
+    }
+
+    // Small inline loader on the Range card - used while its dropdowns are
+    // being refreshed from a coverage change within Step 3, without
+    // blocking the whole page like the full overlay does.
+    function ShowRangeLoading() {
+        $("#RangeLoadingIndicator, #RangeLoadingOverlay").addClass('active');
+        // Jab tak ranges bind na ho jaayein, Continue disable rahe.
+        $("#BtnContinueStep3").prop('disabled', true).addClass('ns-btn-disabled');
+    }
+    function HideRangeLoading() {
+        $("#RangeLoadingIndicator, #RangeLoadingOverlay").removeClass('active');
+        $("#BtnContinueStep3").prop('disabled', false).removeClass('ns-btn-disabled');
+    }
+
+    $(document).ready(function () {
+        ShowNsLoader("Loading subscription form...");
+        $('#GlobalRangeChemical, #GlobalRangeMarketCountry, #GlobalRangeMarketRegion').selectpicker();
+
+        // Full package me Range dropdown khul kar list dikhe (details), par kuch
+        // unselect na ho — koi item hatte hi sabhi wapas select ho jate hain.
+        $('#GlobalRangeChemical, #GlobalRangeMarketCountry, #GlobalRangeMarketRegion')
+            .on('changed.bs.select', function () {
+                if ($("#PackageType").val() !== 'Full') { return; }
+                var $s = $(this);
+                var total = $s.find('option').length;
+                if (total > 0 && ($s.val() || []).length !== total) {
+                    $s.selectpicker('selectAll');
+                }
+            });
+
+        // Terms From/To dates use the same xdsoft datetimepicker calendar as
+        // leadJS.js, with the time picker on (format Y-m-d H:i). Year-first
+        // format keeps the existing string "from > to" comparison working.
+        if ($.fn.datetimepicker) {
+            $('#TermsFromDate, #TermsToDate').datetimepicker({
+                timepicker: true,
+                format: 'Y-m-d H:i',
+                step: 15,
+                scrollInput: false
+            });
+        }
+
+        // Sales role's popup marks the page ?salesFlow=1 on both "Convert"
+        // and "Start a blank subscription" - this needs to run up front,
+        // not wait on FetchRenewLeadPrefill, so a blank subscription (no
+        // leadId at all) still gets the free-text Company/Secondary-emails
+        // fields instead of the CRM-only dropdowns.
+        // Robust sales-flow detection: the URL uses ?salesFlow=1 (numeric),
+        // which the controller's bool param can't always parse - so read the
+        // raw query param here too instead of relying only on InitialSalesFlow.
+        var SalesFlowParam = (function () {
+            var m = /[?&]salesFlow=([^&]+)/i.exec(window.location.search);
+            return m ? decodeURIComponent(m[1]) : "";
+        })();
+        var IsSalesFlowNow = InitialSalesFlow || SalesFlowParam === "1" || SalesFlowParam.toLowerCase() === "true";
+
+        if (IsSalesFlowNow) {
+            SetCompanyFieldMode(true);
+            // Renewal is a CRM-only concept - hide it in the Sales flow.
+            $("#RenewalCheckboxItem").hide();
+            $("#Renewal").prop('checked', false);
+        }
+
+        // Credit points show only when "Trader account" is ticked (and is
+        // mandatory then). Unchecking hides and clears it.
+        $("#TraderAccount").on('change', function () {
+            if ($(this).is(':checked')) {
+                $("#CreditPointsField").show();
+            } else {
+                $("#CreditPointsField").hide();
+                $("#CreditPoints").val('');
+            }
+        });
+
+        $.when(
+            GetCompanyList(),
+            GetCountryListForForm(),
+            GetProductListForPackage(),
+            GetMarketProductListForPackage(),
+            GetNewsProductListForPackage(),
+            GetCapacityTrackerProductListForPackage(),
+            GetSubscriptionRegionAndCrmList(),
+            GetAssignAnalystListForTerms(),
+            FetchRenewLeadPrefill()
+        ).always(function () {
+            HideNsLoader();
+            renderStepper(1);
+
+            // PrefillCompanyId's own 'change' trigger (inside GetCompanyList's
+            // success handler above) can fire before the product grids built
+            // by GetProductListForPackage/GetMarketProductListForPackage/etc.
+            // above have finished rendering, since all of these run in
+            // parallel - so BindSubscribedProductsForCompany's checkbox
+            // lookups could find nothing yet. Calling it again here, now that
+            // every promise in this $.when has settled, guarantees the grids
+            // exist first. Harmless no-op when there's no company selected.
+            BindSubscribedProductsForCompany($("#CompanyId").val());
+        });
+    });
+
+    // ---------- Stepper ---------- (Contact, Package, Coverage, Users, Terms, Review)
+    function renderStepper(step) {
+        for (var i = 1; i <= 6; i++) {
+            var $block = $("#StepBlock" + i);
+            var $circle = $("#StepCircle" + i);
+            $block.removeClass('active done');
+            if (i < step) {
+                $block.addClass('done');
+                $circle.html('<i class="fa fa-check"></i>');
+            } else if (i === step) {
+                $block.addClass('active');
+                $circle.text(i);
+            } else {
+                $circle.text(i);
+            }
+        }
+        for (var j = 1; j <= 5; j++) {
+            if (j < step) {
+                $("#Connector" + j).addClass('done');
+            } else {
+                $("#Connector" + j).removeClass('done');
+            }
+        }
+    }
+
+    function showStep(step) {
+        $("#Step1Panel, #Step2Panel, #Step3Panel, #Step4Panel, #Step5Panel, #Step6Panel").hide();
+        $("#Step" + step + "Panel").show();
+        renderStepper(step);
+        // Users step: the primary contact (from Step 1) is auto-bound as a
+        // disabled, non-removable first row.
+        if (step === 4) {
+            RenderPrimaryUserRow();
+        }
+        window.scrollTo(0, 0);
+    }
+
+    // ---------- Step 1: Primary contact & company ----------
+    // PrefillCompanyId comes from "Renew / extend" on CustomerDetail.cshtml
+    // (?companyId=... on this page's URL) - once the Company dropdown is
+    // populated, select it and fire the same change handler manually picking
+    // a company would, so the autofill runs exactly the same way either way.
+    // with a null-coalesce so this always renders a valid number
+    // (0 when there's no company context) even if ViewBag.PrefillCompanyId
+    // somehow comes through unset - an empty Razor output here would leave
+    // "var PrefillCompanyId = ;", a JS syntax error that silently breaks
+    // every dropdown on this page (Company, Country, Products, etc.), not
+    // just the prefill.
+    var PrefillCompanyId = @(ViewBag.PrefillCompanyId ?? 0);
+
+    // PrefillLeadId comes from the Update button on
+    // LeadManagementSubscription/CRMRenew_LeadDetails.cshtml when a lead is
+    // marked "Renew Won" (?leadId=... on this page's URL). Same null-coalesce
+    // reasoning as PrefillCompanyId above - this must always render a valid
+    // number even if ViewBag.PrefillLeadId is ever unset.
+    var PrefillLeadId = @(ViewBag.PrefillLeadId ?? 0);
+    var RenewLeadData = null;
+
+    // True when this page was reached via the "New subscription" popup on
+    // SalesManagement/SalesIndex.cshtml (Sales role only) - set on both its
+    // "Convert" and "Start a blank subscription" buttons (?salesFlow=1), so
+    // Company/Secondary-emails start in free-text mode even for a blank
+    // subscription with no leadId to fall back on. Same null-coalesce
+    // reasoning as PrefillCompanyId/PrefillLeadId above.
+    var InitialSalesFlow = @(ViewBag.IsSalesFlow == true ? "true" : "false");
+
+    // Also set (redundantly, harmlessly) once FetchSalesLeadPrefill finds a
+    // lead via the CRM-proc-empty fallback - see SetCompanyFieldMode below.
+    var IsSalesConvertFlow = false;
+
+    function SetCompanyFieldMode(isSalesFlow) {
+        IsSalesConvertFlow = isSalesFlow;
+        $("#CompanyId").toggle(!isSalesFlow);
+        $("#CompanyNameText").toggle(isSalesFlow);
+    }
+
+    // Secondary client emails are no longer entered on this step at all -
+    // they're just whatever emails were entered in the Users step
+    // (AdditionalUsersList, Step 4) further down the wizard.
+    function GetSecondaryEmails() {
+        return $.map(AdditionalUsersList, function (user) {
+            return $.trim(user.Email) || null;
+        });
+    }
+
+    // Set by CreateCompanyAndUsersForSalesFlow (Step 5 Continue, Sales-convert
+    // mode only) once the new SA_CompanyMaster row's ID is looked up - 0
+    // until then.
+    var SalesConvertCompanyId = 0;
+
+    // Company/name accessors used everywhere the wizard needs "the company"
+    // - branch on IsSalesConvertFlow so the CRM dropdown path stays exactly
+    // as it was.
+    function GetSelectedCompanyId() {
+        return IsSalesConvertFlow ? (SalesConvertCompanyId || "") : $("#CompanyId").val();
+    }
+    function GetSelectedCompanyName() {
+        return IsSalesConvertFlow ? $.trim($("#CompanyNameText").val()) : $("#CompanyId option:selected").text();
+    }
+
+    // Pulls the won renewal lead's own details via the exact same
+    // BindCRMOpenLeadDetailsByid endpoint CRMRenew_LeadDetails.cshtml
+    // already uses to bind its own fields - no new backend code needed.
+    // Included in the page-load $.when(...) below so the full-page loader
+    // covers this fetch too.
+    //
+    // BindCRMOpenLeadDetailsByid comes back empty for a lead that was
+    // marked Won straight from the Sales "New subscription" -> Convert flow
+    // (SalesManagement/SalesIndex.cshtml) rather than through CRM's own
+    // renewal flow - confirmed by running it directly against a lead like
+    // that (nothing came back). Rather than guess at that proc's own
+    // filtering, this falls back to SalesNew's own SA_MaskEmail_Open lookup
+    // (the exact same one LeadDetail.cshtml already uses) whenever the CRM
+    // one has nothing for this ID.
+    function FetchRenewLeadPrefill() {
+        var dfd = $.Deferred();
+        if (!PrefillLeadId) { dfd.resolve(); return dfd.promise(); }
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/BindCRMOpenLeadDetailsByid",
+            data: { Id: PrefillLeadId }
+        }).done(function (response) {
+            RenewLeadData = (response && response.length) ? response[0] : null;
+            if (RenewLeadData) {
+                ApplyRenewLeadTextFields(RenewLeadData);
+                TryApplyRenewLeadCompanyAndCountry();
+                dfd.resolve();
+            } else {
+                FetchSalesLeadPrefill().always(function () {
+                    dfd.resolve();
+                });
+            }
+        }).fail(function () {
+            FetchSalesLeadPrefill().always(function () {
+                dfd.resolve();
+            });
+        });
+
+        return dfd.promise();
+    }
+
+    // Fallback source for FetchRenewLeadPrefill above - reuses SalesNew's
+    // own GetLeadDetail endpoint (SA_MaskEmail_Open by ID, source="Open"
+    // since this only ever runs for a Won lead) instead of the CRM proc.
+    // Reshaped into the same {Name, Designation, CorpEmail,
+    // ContactCountryCode, Mobile, CompanyName, CountryName} shape
+    // ApplyRenewLeadTextFields/TryApplyRenewLeadCompanyAndCountry already
+    // expect, so neither of those needed to change for the CRM path.
+    function FetchSalesLeadPrefill() {
+        var dfd = $.Deferred();
+
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetLeadDetail",
+            data: { id: PrefillLeadId, source: "Open" },
+            dataType: "json"
+        }).done(function (response) {
+            var lead = response && response.DataItem;
+            if (lead) {
+                SetCompanyFieldMode(true);
+                $("#CompanyNameText").val(lead.CompanyName || '');
+
+                RenewLeadData = {
+                    Name: lead.Name,
+                    Designation: '',
+                    CorpEmail: lead.CorpEmail,
+                    ContactCountryCode: lead.ContactCountryCode,
+                    Mobile: lead.ContactNumber,
+                    CompanyName: lead.CompanyName,
+                    CountryName: lead.CountryName
+                };
+                ApplyRenewLeadTextFields(RenewLeadData);
+                // Country still comes off the real dropdown - only Company
+                // switched to free text (SetCompanyFieldMode above), so this
+                // still needs to run to match Country by name.
+                TryApplyRenewLeadCompanyAndCountry();
+            }
+        }).always(function () {
+            dfd.resolve();
+        });
+
+        return dfd.promise();
+    }
+
+    // Free-text fields don't need the Company/Country dropdowns to be
+    // loaded first, so these get set the moment the lead's data comes back.
+    function ApplyRenewLeadTextFields(lead) {
+        $("#PrimaryContactName").val(lead.Name || '');
+        $("#Designation").val(lead.Designation || '');
+        $("#PrimaryEmail").val(lead.CorpEmail || '');
+        $("#Phone").val((lead.ContactCountryCode || '') + (lead.Mobile || ''));
+
+        // This whole prefill only runs for a won renewal, so Renewal is
+        // ticked here - but never in the Sales flow (Renewal is CRM-only).
+        if (!IsSalesConvertFlow) {
+            $("#Renewal").prop('checked', true);
+        }
+    }
+
+    // Company/Country are populated by their own separate AJAX calls
+    // (GetCompanyList / GetCountryListForForm) that can finish before or
+    // after the renewal lead's own data does - called from both places
+    // below plus from FetchRenewLeadPrefill's own success handler, so
+    // whichever finishes last is what actually applies the selection.
+    function TryApplyRenewLeadCompanyAndCountry() {
+        if (!RenewLeadData) return;
+
+        if (!PrefillCompanyId && RenewLeadData.CountryID && $("#Country option").length > 1) {
+            $("#Country").val(String(RenewLeadData.CountryID));
+        }
+        // The Sales-flow fallback (FetchSalesLeadPrefill) only has a country
+        // name, not the ID BindCRMOpenLeadDetailsByid returns - match by
+        // text instead, same approach as the Company match just below.
+        else if (!PrefillCompanyId && RenewLeadData.CountryName && $("#Country option").length > 1) {
+            var targetCountry = $.trim(RenewLeadData.CountryName).toLowerCase();
+            $("#Country option").each(function () {
+                if ($.trim($(this).text()).toLowerCase() === targetCountry) {
+                    $("#Country").val($(this).val());
+                    return false;
+                }
+            });
+        }
+
+        // Selected silently (no 'change' trigger) so the company's own
+        // stored contact doesn't overwrite this specific renewal lead's
+        // contact details set in ApplyRenewLeadTextFields above. Skipped
+        // entirely in Sales-convert mode - Company is a free-text field
+        // there (SetCompanyFieldMode), already filled directly.
+        if (!IsSalesConvertFlow && !PrefillCompanyId && RenewLeadData.CompanyName && $("#CompanyId option").length > 1) {
+            var targetName = $.trim(RenewLeadData.CompanyName).toLowerCase();
+            $("#CompanyId option").each(function () {
+                if ($.trim($(this).text()).toLowerCase() === targetName) {
+                    $("#CompanyId").val($(this).val());
+                    return false;
+                }
+            });
+        }
+    }
+
+    function GetCompanyList() {
+        return $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetCompanyList",
+            dataType: "json",
+            success: function (response) {
+                var html = "<option value=''>Select Company</option>";
+                $(response.DataList).each(function (index, item) {
+                    html += "<option value='" + item.Value + "'>" + item.Text + "</option>";
+                });
+                $("#CompanyId").html(html);
+
+                if (PrefillCompanyId) {
+                    $("#CompanyId").val(String(PrefillCompanyId)).trigger('change');
+                } else {
+                    TryApplyRenewLeadCompanyAndCountry();
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function GetCountryListForForm() {
+        return $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetCountryList",
+            dataType: "json",
+            success: function (response) {
+                var html = "<option value=''>Select Country</option>";
+                $(response.DataList).each(function (index, item) {
+                    html += "<option value='" + item.Value + "'>" + item.Text + "</option>";
+                });
+                $("#Country").html(html);
+                TryApplyRenewLeadCompanyAndCountry();
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    // Autofill: on company change, pull that company's primary contact
+    // name/email/phone/designation into the form.
+    $("#CompanyId").on("change", function () {
+        var companyId = $(this).val();
+        if (companyId === "") {
+            $("#PrimaryContactName, #Designation, #PrimaryEmail, #Phone").val('');
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetCompanyDetails",
+            data: { companyId: companyId },
+            dataType: "json",
+            success: function (response) {
+                var d = response.DataList;
+                if (d) {
+                    $("#PrimaryContactName").val(d.PrimaryContactName);
+                    $("#Designation").val(d.Designation);
+                    $("#PrimaryEmail").val(d.PrimaryEmail);
+                    $("#Phone").val(d.Phone);
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+        BindExistingSecondaryUsersForCompany(companyId);
+        BindSubscribedProductsForCompany(companyId);
+    });
+
+    // Step 4 (Additional users) — CRM only. Once a company is picked, pull
+    // its already-active secondary users (SA_CompanyMaster/SA_Customer/
+    // SalesPackageSubscriptions) so CRM doesn't have to retype people who
+    // are already on the account. Skipped entirely in the Sales-convert
+    // flow (IsSalesConvertFlow) — Sales always starts from the two blank
+    // rows AddUserRow() seeds on page load.
+    function BindExistingSecondaryUsersForCompany(companyId) {
+        if (IsSalesConvertFlow || !companyId) {
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetExistingSecondaryUsers",
+            data: { companyId: companyId },
+            dataType: "json",
+            success: function (response) {
+                var users = response.DataList;
+                $("#AdditionalUsersRows").empty();
+                if (users && users.length > 0) {
+                    $(users).each(function (index, u) {
+                        AddUserRow(u.Name, u.Email, u.Phone, u.Designation);
+                    });
+                } else {
+                    AddUserRow();
+                    AddUserRow();
+                }
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    // CRM role keeps going to the old Index list; everyone else (Sales)
+    // lands on the SalesIndex "Subscriptions" page - same branch the
+    // save-success redirect further down already uses, just shared here so
+    // every Cancel button (all 6 steps) goes to the right place too.
+    function GoToSubscriptionsList() {
+        window.location.href = "@(Session["UserRole"] != null && Session["UserRole"].ToString().ToUpper() == "CRM" ? Url.Action("Index", "SalesManagement") : Url.Action("SalesIndex", "SalesManagement"))";
+    }
+
+    $("#BtnCancelStep1, #BtnCancelStep2, #BtnCancelStep3").click(function () {
+        GoToSubscriptionsList();
+    });
+
+    $("#BtnContinueStep1").click(function () {
+        var companyOk = IsSalesConvertFlow ? $.trim($("#CompanyNameText").val()) !== "" : $("#CompanyId").val() !== "";
+        var primaryContactName = $.trim($("#PrimaryContactName").val());
+        var primaryEmail = $.trim($("#PrimaryEmail").val());
+
+        if (!companyOk) {
+            swal("Warning", IsSalesConvertFlow ? "Please enter a Company name" : "Please select a Company", "error");
+            return;
+        }
+        if (primaryContactName === "") {
+            swal("Warning", "Please enter Primary contact name", "error");
+            return;
+        }
+        if (primaryEmail === "") {
+            swal("Warning", "Please enter Primary email", "error");
+            return;
+        }
+        if (!$("#Country").val()) {
+            swal("Warning", "Please select a Country", "error");
+            return;
+        }
+        showStep(2);
+    });
+
+    // ---------- Step 2: Subscription package ----------
+    function GetProductListForPackage() {
+        return $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetProductList",
+            dataType: "json",
+            success: function (response) {
+                var list = (response && response.DataList) || [];
+                // Pricing products alphabetically (A→Z, case-insensitive) dikhein.
+                list.sort(function (a, b) {
+                    return $.trim(a.Text || '').toLowerCase().localeCompare($.trim(b.Text || '').toLowerCase());
+                });
+                var html = '';
+                $(list).each(function (index, item) {
+                    html += "<label class='ns-product-item'><input type='checkbox' class='ns-product-chk' value='" + item.Value + "' /> " + item.Text + "</label>";
+                });
+                $("#ProductGrid").html(html);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    // Market tab — kept in sync from Pricing selections (see the
+    // .ns-product-chk change handler below).
+    function GetMarketProductListForPackage() {
+        return $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetMarketProductList",
+            dataType: "json",
+            success: function (response) {
+                var html = '';
+                $(response.DataList).each(function (index, item) {
+                    html += "<label class='ns-product-item'><input type='checkbox' class='ns-market-chk' value='" + item.Value + "' /> " + item.Text + "</label>";
+                });
+                $("#ProductGridMarket").html(html);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function GetNewsProductListForPackage() {
+        return $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetNewsProductList",
+            dataType: "json",
+            success: function (response) {
+                var html = '';
+                $(response.DataList).each(function (index, item) {
+                    html += "<label class='ns-product-item'><input type='checkbox' class='ns-news-chk' value='" + item.Value + "' /> " + item.Text + "</label>";
+                });
+                $("#ProductGridNews").html(html);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function GetCapacityTrackerProductListForPackage() {
+        return $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetCapacityTrackerProductList",
+            dataType: "json",
+            success: function (response) {
+                var html = '';
+                $(response.DataList).each(function (index, item) {
+                    html += "<label class='ns-product-item'><input type='checkbox' class='ns-capacity-chk' value='" + item.Value + "' /> " + item.Text + "</label>";
+                });
+                $("#ProductGridCapacity").html(html);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    // CRM only. Once a company is picked, auto-check whichever products
+    // this company already has an active subscription for, in every module
+    // tab (Pricing/Market/News/Capacity Tracker), so CRM doesn't have to
+    // re-pick products that are already on the account. Sets .prop('checked')
+    // directly instead of .trigger('change') so this never runs through the
+    // Pricing -> Market/News/Capacity auto-sync handler below — a product
+    // subscribed only under Market Analysis, say, must not get checked in
+    // Pricing too just because the same ProductId happens to exist there.
+    // Skipped entirely in the Sales-convert flow (IsSalesConvertFlow), same
+    // as BindExistingSecondaryUsersForCompany above.
+    function BindSubscribedProductsForCompany(companyId) {
+        if (IsSalesConvertFlow || !companyId) {
+            return;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetSubscribedProductsByCompany",
+            data: { companyId: companyId },
+            dataType: "json",
+            success: function (response) {
+                var rows = response.DataList;
+                if (!rows || rows.length === 0) {
+                    return;
+                }
+                var moduleToClass = {
+                    "Chemical Pricing": "ns-product-chk",
+                    "Market Analysis": "ns-market-chk",
+                    "News": "ns-news-chk",
+                    "Capacity Tracker": "ns-capacity-chk"
+                };
+                $(rows).each(function (index, row) {
+                    var cls = moduleToClass[row.ModuleName];
+                    if (!cls) {
+                        return;
+                    }
+                    $("." + cls + "[value='" + row.ProductId + "']").prop('checked', true);
+                });
+                $("#ProductCount").text($(".ns-product-chk:checked").length + " product(s) selected.");
+                $("#ProductCountMarket").text($(".ns-market-chk:checked").length + " product(s) selected.");
+                $("#ProductCountNews").text($(".ns-news-chk:checked").length + " product(s) selected.");
+                $("#ProductCountCapacity").text($(".ns-capacity-chk:checked").length + " product(s) selected.");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $(document).on('change', '.ns-news-chk', function () {
+        $("#ProductCountNews").text($(".ns-news-chk:checked").length + " product(s) selected.");
+    });
+
+    $(document).on('change', '.ns-capacity-chk', function () {
+        $("#ProductCountCapacity").text($(".ns-capacity-chk:checked").length + " product(s) selected.");
+    });
+
+    $(document).on('click', '.ns-subtab', function () {
+        var tab = $(this).data('tab');
+        $('.ns-subtab').removeClass('active');
+        $(this).addClass('active');
+        $('.ns-subtab-panel').hide();
+        $('#ProductPanel' + tab).show();
+    });
+
+    $(".ns-pkg-card").click(function () {
+        $(".ns-pkg-card").removeClass('selected');
+        $(this).addClass('selected');
+        var pkg = $(this).data('pkg');
+        $("#PackageType").val(pkg);
+        $("#PkgFullInfo").toggle(pkg === 'Full');
+        // Products section stays visible either way now - for Full package
+        // it shows every product checked (and locked) as visual confirmation
+        // that everything is included, instead of hiding the picker entirely.
+        $("#PkgProductsSection").show();
+
+        // Full package me sab products locked/selected hote hain, to "Select all"/"Unselect all" chhupao
+        $("#BtnUnselectAllProducts, #BtnSelectAllProducts").toggle(pkg !== 'Full');
+
+        var $allProductChks = $(".ns-product-chk, .ns-market-chk, .ns-news-chk, .ns-capacity-chk");
+        if (pkg === 'Full') {
+            $allProductChks.prop('checked', true).prop('disabled', true);
+        } else {
+            // Switching back to A la carte - release the lock and start
+            // from a clean slate so the "select all" state doesn't silently
+            // carry over as a manual pick.
+            $allProductChks.prop('disabled', false).prop('checked', false);
+        }
+        $("#ProductCount").text($(".ns-product-chk:checked").length + " product(s) selected.");
+        $("#ProductCountMarket").text($(".ns-market-chk:checked").length + " product(s) selected.");
+        $("#ProductCountNews").text($(".ns-news-chk:checked").length + " product(s) selected.");
+        $("#ProductCountCapacity").text($(".ns-capacity-chk:checked").length + " product(s) selected.");
+    });
+
+    $(document).on('change', '.ns-product-chk', function () {
+        var n = $(".ns-product-chk:checked").length;
+        $("#ProductCount").text(n + " product(s) selected.");
+
+        // Whatever gets picked in Pricing auto-selects the same product in
+        // Market, News and Capacity Tracker too, wherever it's present -
+        // same sync behaviour across all three.
+        var productId = $(this).val();
+        var isChecked = $(this).is(':checked');
+
+        var $marketMatch = $(".ns-market-chk[value='" + productId + "']");
+        if ($marketMatch.length) {
+            $marketMatch.prop('checked', isChecked);
+            $("#ProductCountMarket").text($(".ns-market-chk:checked").length + " product(s) selected.");
+        }
+
+        var $newsMatch = $(".ns-news-chk[value='" + productId + "']");
+        if ($newsMatch.length) {
+            $newsMatch.prop('checked', isChecked);
+            $("#ProductCountNews").text($(".ns-news-chk:checked").length + " product(s) selected.");
+        }
+
+        var $capacityMatch = $(".ns-capacity-chk[value='" + productId + "']");
+        if ($capacityMatch.length) {
+            $capacityMatch.prop('checked', isChecked);
+            $("#ProductCountCapacity").text($(".ns-capacity-chk:checked").length + " product(s) selected.");
+        }
+    });
+
+    $(document).on('change', '.ns-market-chk', function () {
+        var n = $(".ns-market-chk:checked").length;
+        $("#ProductCountMarket").text(n + " product(s) selected.");
+
+        // Market me select kiya product News/Capacity Tracker me bhi ho to
+        // wahan bhi auto-select ho jaye (Pricing wale sync ki tarah).
+        var productId = $(this).val();
+        var isChecked = $(this).is(':checked');
+
+        var $newsMatch = $(".ns-news-chk[value='" + productId + "']");
+        if ($newsMatch.length) {
+            $newsMatch.prop('checked', isChecked);
+            $("#ProductCountNews").text($(".ns-news-chk:checked").length + " product(s) selected.");
+        }
+
+        var $capacityMatch = $(".ns-capacity-chk[value='" + productId + "']");
+        if ($capacityMatch.length) {
+            $capacityMatch.prop('checked', isChecked);
+            $("#ProductCountCapacity").text($(".ns-capacity-chk:checked").length + " product(s) selected.");
+        }
+    });
+
+    $("#BtnBackStep2").click(function () {
+        showStep(1);
+    });
+
+    // "Select all" / "Unselect all" — sirf currently active tab ke products par kaam karega
+    var NsTabMap = {
+        Pricing:  { chk: '.ns-product-chk',  count: '#ProductCount' },
+        Market:   { chk: '.ns-market-chk',   count: '#ProductCountMarket' },
+        News:     { chk: '.ns-news-chk',     count: '#ProductCountNews' },
+        Capacity: { chk: '.ns-capacity-chk', count: '#ProductCountCapacity' }
+    };
+    function NsActiveTabCfg() {
+        var tab = $('.ns-subtab.active').data('tab') || 'Pricing';
+        return NsTabMap[tab] || NsTabMap.Pricing;
+    }
+    $("#BtnSelectAllProducts").click(function () {
+        var cfg = NsActiveTabCfg();
+        $(cfg.chk).not(':disabled').prop('checked', true);
+        $(cfg.count).text($(cfg.chk + ':checked').length + " product(s) selected.");
+    });
+    $("#BtnUnselectAllProducts").click(function () {
+        var cfg = NsActiveTabCfg();
+        $(cfg.chk).not(':disabled').prop('checked', false);
+        $(cfg.count).text($(cfg.chk + ':checked').length + " product(s) selected.");
+    });
+
+    $("#BtnContinueStep2").click(function () {
+        var packageType = $("#PackageType").val();
+        // Pricing / Market / News / Capacity — kisi bhi tab me product select ho to chalega
+        var anySelected = $(".ns-product-chk:checked, .ns-market-chk:checked, .ns-news-chk:checked, .ns-capacity-chk:checked").length;
+        if (packageType === 'ALaCarte' && anySelected === 0) {
+            swal("Warning", "Please select at least one product", "error");
+            return;
+        }
+        BuildCoverageStep();
+    });
+
+    // ---------- Step 3: Country coverage ----------
+    var CoverageCountryCache = {}; // productId -> [{Value, Text}]
+
+    // Runs taskFn(item) for each item, at most `limit` at a time, and
+    // resolves only once EVERY task has settled (succeeded or failed) -
+    // unlike $.when.apply, one failing/timed-out AJAX call never makes the
+    // whole batch settle early while the rest are still in flight. That
+    // early-settle was the actual bug behind Full package showing
+    // "All tracked countries (0)" on products that do have real coverage
+    // and Market tabs stuck on "Loading..." forever: firing 40+ products'
+    // worth of Chemical + Market fetches (the Market one being a heavy
+    // 24-table union) all in parallel could overwhelm the server, and the
+    // first failure made Step 3 render using whatever partial cache existed
+    // at that instant instead of waiting for every fetch to actually finish.
+    function RunThrottled(items, limit, taskFn, onProgress) {
+        var dfd = $.Deferred();
+        var total = items.length;
+        if (total === 0) {
+            dfd.resolve();
+            return dfd.promise();
+        }
+
+        var index = 0;
+        var completed = 0;
+
+        function runNext() {
+            if (index >= total) return;
+            var item = items[index++];
+            $.when(taskFn(item)).always(function () {
+                completed++;
+                if (typeof onProgress === "function") { onProgress(completed, total); }
+                if (completed === total) {
+                    dfd.resolve();
+                } else {
+                    runNext();
+                }
+            });
+        }
+
+        for (var i = 0; i < limit && i < total; i++) {
+            runNext();
+        }
+
+        return dfd.promise();
+    }
+
+    // One product's worth of Chemical + Market coverage fetches, skipping
+    // whichever is already cached. Failures still resolve (with an empty
+    // result cached) rather than reject, so RunThrottled's per-task .always
+    // isn't the only thing standing between one bad request and a stuck batch.
+    function FetchProductCoverage(p) {
+        var tasks = [];
+        if (!CoverageCountryCache[p.id]) {
+            tasks.push($.ajax({
+                type: "GET",
+                url: "/SalesManagement/GetCountriesByProduct",
+                data: { productId: p.id },
+                dataType: "json"
+            }).then(function (response) {
+                CoverageCountryCache[p.id] = response.DataList || [];
+            }, function () {
+                CoverageCountryCache[p.id] = [];
+            }));
+        }
+        if (!MarketCoverageCache[p.id]) {
+            tasks.push($.ajax({
+                type: "GET",
+                url: "/SalesManagement/GetMarketCoverageByProduct",
+                data: { productId: p.id },
+                dataType: "json"
+            }).then(function (response) {
+                MarketCoverageCache[p.id] = response;
+            }, function () {
+                MarketCoverageCache[p.id] = { Countries: [], Regions: [] };
+            }));
+        }
+        return $.when.apply($, tasks);
+    }
+
+    // Batched replacement for FetchProductCoverage when there are many
+    // products (Full package) — one AJAX call for every product that still
+    // needs data, instead of RunThrottled firing 2 calls per product. Fills
+    // the exact same CoverageCountryCache / MarketCoverageCache the
+    // per-product path fills, in the exact same shape, so everything
+    // downstream (RenderCoverageRows, GetEffectiveCoverageForProduct,
+    // BuildCoverageRowJobs, RefreshGlobalRangeDropdowns) needs no changes.
+    function FetchBulkCoverage(products) {
+        var needed = $.grep(products, function (p) { return !CoverageCountryCache[p.id] || !MarketCoverageCache[p.id]; });
+        if (needed.length === 0) {
+            return $.Deferred().resolve().promise();
+        }
+        var ids = $.map(needed, function (p) { return p.id; }).join(',');
+        return $.ajax({
+            type: "POST",
+            url: "/SalesManagement/GetBulkCoverageByProducts",
+            data: { productIds: ids },
+            dataType: "json"
+        }).then(function (response) {
+            $.each(needed, function (i, p) {
+                if (!CoverageCountryCache[p.id]) {
+                    CoverageCountryCache[p.id] = (response.Chemical && response.Chemical[p.id]) || [];
+                }
+                if (!MarketCoverageCache[p.id]) {
+                    MarketCoverageCache[p.id] = {
+                        Countries: (response.MarketCountries && response.MarketCountries[p.id]) || [],
+                        Regions: (response.MarketRegions && response.MarketRegions[p.id]) || []
+                    };
+                }
+            });
+        }, function () {
+            // Same failure contract as FetchProductCoverage: cache empty
+            // rather than leave it missing, so nothing retries forever.
+            $.each(needed, function (i, p) {
+                if (!CoverageCountryCache[p.id]) { CoverageCountryCache[p.id] = []; }
+                if (!MarketCoverageCache[p.id]) { MarketCoverageCache[p.id] = { Countries: [], Regions: [] }; }
+            });
+        });
+    }
+
+    function BuildCoverageStep() {
+        ShowNsLoader("Loading coverage data...");
+
+        var packageType = $("#PackageType").val();
+        var $container = $("#CoverageRows").empty();
+
+        if (packageType === 'Full') {
+            // Full package now auto-checks every product on Step 2, so this
+            // just needs the same real per-product coverage rows A la carte
+            // renders below - one row per product, "All tracked countries"
+            // toggle checked by default (already covers everything). Reusing
+            // RenderCoverageRows here isn't optional cosmetics: the Range
+            // Selection dropdowns are built by RefreshGlobalRangeDropdowns,
+            // which reads each product's covered countries straight off its
+            // .ns-coverage-row element in the DOM - with no rows rendered
+            // (the old static-note-only version) those lookups found nothing
+            // and the dropdowns stayed empty no matter what was fetched.
+            var fullProductsById = {};
+            $(".ns-product-chk:checked, .ns-market-chk:checked, .ns-news-chk:checked, .ns-capacity-chk:checked").each(function () {
+                var id = $(this).val();
+                if (!fullProductsById[id]) {
+                    fullProductsById[id] = { id: id, name: $.trim($(this).parent().text()) };
+                }
+            });
+            var fullProducts = [];
+            $.each(fullProductsById, function (id, p) { fullProducts.push(p); });
+
+            if (fullProducts.length === 0) {
+                $container.html("<div class='ns-coverage-fullnote'>No products were found to build coverage from.</div>");
+                showStep(3);
+                HideNsLoader();
+                return;
+            }
+
+            FetchBulkCoverage(fullProducts).always(function () {
+                showStep(3);
+                RenderCoverageRows(fullProducts).always(function () {
+                    HideNsLoader();
+                });
+            });
+            return;
+        }
+
+        // Coverage cards Pricing (Chemical) AUR Market dono ke selected
+        // products ke liye banne chahiye — Market me alag select kiya product
+        // bhi coverage/save me aana chahiye. News/Capacity me country coverage
+        // nahi hota, isliye wo yahan include nahi hote.
+        var selectedProductsById = {};
+        $(".ns-product-chk:checked, .ns-market-chk:checked").each(function () {
+            var id = $(this).val();
+            if (!selectedProductsById[id]) {
+                selectedProductsById[id] = { id: id, name: $.trim($(this).parent().text()) };
+            }
+        });
+        var selectedProducts = [];
+        $.each(selectedProductsById, function (id, p) { selectedProducts.push(p); });
+
+        if (selectedProducts.length === 0) {
+            var onlyNewsCap = $(".ns-news-chk:checked, .ns-capacity-chk:checked").length > 0;
+            $container.html("<div class='ns-coverage-fullnote'>" +
+                (onlyNewsCap
+                    ? "News / Capacity Tracker products have no country coverage &mdash; nothing to set here. Click Continue."
+                    : "No products were selected on the Package step.") +
+                "</div>");
+            showStep(3);
+            HideNsLoader();
+            return;
+        }
+
+        // Both Chemical countries AND Market coverage get fetched eagerly here
+        // (Market used to only load lazily when its sub-tab was opened) -
+        // the Range dropdowns need both up front, since they default to
+        // covering everything before the user has touched either sub-tab.
+        //
+        // A la carte selections used to always go through RunThrottled
+        // (one/two AJAX calls per product, 6 at a time) - fine for a normal
+        // hand-picked handful of products, but BindSubscribedProductsForCompany
+        // (CRM auto-check of a company's existing subscription) can check
+        // hundreds of products at once, and throttling hundreds of
+        // sequential round trips made Step 2 -> 3 take minutes. Past a
+        // small handful, use the same single-batched-request path Full
+        // package already relies on below - same cache, same shape, just
+        // one request instead of many.
+        if (selectedProducts.length > 20) {
+            FetchBulkCoverage(selectedProducts).always(function () {
+                showStep(3);
+                RenderCoverageRows(selectedProducts).always(function () {
+                    HideNsLoader();
+                });
+            });
+        } else {
+            RunThrottled(selectedProducts, 6, FetchProductCoverage, function (done, total) {
+                SetNsLoaderProgress(done, total);
+            }).always(function () {
+                showStep(3);
+                RenderCoverageRows(selectedProducts).always(function () {
+                    HideNsLoader();
+                });
+            });
+        }
+    }
+
+    var MarketCoverageCache = {}; // productId -> { Countries: [...], Regions: [...] }
+    var CurrentCoverageProducts = []; // [{id, name}, ...] - the products Step 3 is currently showing
+
+    function RenderCoverageRows(products) {
+        CurrentCoverageProducts = products;
+        var $container = $("#CoverageRows").empty();
+        $.each(products, function (i, p) {
+            var inPricing = IsProductInPricing(p.id);
+            var inMarket = IsProductInMarket(p.id);
+
+            var chemCount = (CoverageCountryCache[p.id] || []).length;
+            var mktCount = $.grep(((MarketCoverageCache[p.id] || {}).Countries) || [], function (c) {
+                return $.trim((c.Text || '')).toLowerCase() !== 'global';
+            }).length;
+            // Head count: jis module me product hai uske hisaab se
+            var n = inPricing ? chemCount : mktCount;
+
+            // Sirf un modules ke sub-tab dikhao jisme product select hai
+            var subtabsHtml = "";
+            if (inPricing) subtabsHtml += "<button type='button' class='ns-coverage-subtab active' data-scope='Chemical'>Chemical Pricing</button>";
+            if (inMarket) subtabsHtml += "<button type='button' class='ns-coverage-subtab" + (inPricing ? "" : " active") + "' data-scope='Market'>Market</button>";
+
+            var chemPanelHtml = inPricing
+                ? ("<div class='ns-coverage-scope-panel' data-scope-panel='Chemical'>" +
+                       "<div class='ns-coverage-countries-grid'></div>" +
+                       "<div class='ns-coverage-selected-count'>0 selected.</div>" +
+                   "</div>")
+                : "";
+            var marketPanelHtml = inMarket
+                ? ("<div class='ns-coverage-scope-panel' data-scope-panel='Market' style='display:" + (inPricing ? "none" : "block") + "'>" +
+                       "<div class='ns-coverage-market-label'>Countries</div>" +
+                       "<div class='ns-coverage-countries-grid ns-coverage-market-countries'></div>" +
+                       "<div class='ns-coverage-market-label' style='margin-top:14px'>Regions</div>" +
+                       "<div class='ns-coverage-countries-grid ns-coverage-market-regions'></div>" +
+                       "<div class='ns-coverage-selected-count ns-coverage-market-count'>0 selected.</div>" +
+                   "</div>")
+                : "";
+
+            var rowHtml =
+                "<div class='ns-coverage-row' data-product-id='" + p.id + "' data-in-pricing='" + (inPricing ? 1 : 0) + "' data-in-market='" + (inMarket ? 1 : 0) + "'>" +
+                    "<div class='ns-coverage-row-head'>" +
+                        "<div class='ns-coverage-row-title'>" +
+                            "<div class='ns-coverage-product-name'>" + p.name + "</div>" +
+                            "<div class='ns-coverage-product-sub'>Covers all " + n + " countries we track this product in.</div>" +
+                        "</div>" +
+                        "<label class='ns-coverage-toggle checked'>" +
+                            "<input type='checkbox' class='ns-coverage-all-chk' checked /><span>All tracked countries (" + n + ")</span>" +
+                        "</label>" +
+                    "</div>" +
+                    "<div class='ns-coverage-countries' style='display:none'>" +
+                        "<div class='ns-coverage-subtabs'>" + subtabsHtml + "</div>" +
+                        chemPanelHtml +
+                        marketPanelHtml +
+                    "</div>" +
+                "</div>";
+            $container.append(rowHtml);
+        });
+
+        return RefreshGlobalRangeDropdowns();
+    }
+
+    // Full package me details dikhni to chahiye (row expand ho, dropdown khule),
+    // bas kuch unselect na ho paaye. Isliye disable nahi karte — jaise hi koi
+    // country/region uncheck hota hai, use wapas check kar dete hain. Toggle off
+    // karke grid dekhna allowed hai (country sab checked hi rahenge).
+    $(document).on('change', '.ns-coverage-country-chk, .ns-coverage-market-country-chk, .ns-coverage-market-region-chk', function () {
+        if ($("#PackageType").val() === 'Full' && !$(this).is(':checked')) {
+            $(this).prop('checked', true);
+        }
+    });
+
+    // Full package: "All tracked countries" toggle ko sirf VIEW expander banao.
+    // Click karne pe checkbox state nahi badlega (hamesha checked), bas country/
+    // region grid expand/collapse hoga taaki details dikhein — par kuch unselect
+    // na ho (country/region checkboxes upar wale handler se revert hote hain).
+    $(document).on('click', '.ns-coverage-toggle', function (e) {
+        if ($("#PackageType").val() !== 'Full') { return; }
+        e.preventDefault(); // checkbox toggle na ho
+
+        var $toggle = $(this);
+        var $row = $toggle.closest('.ns-coverage-row');
+        $toggle.find('.ns-coverage-all-chk').prop('checked', true);
+        $toggle.addClass('checked');
+
+        var $countriesBox = $row.find('.ns-coverage-countries');
+        var $sub = $row.find('.ns-coverage-product-sub');
+
+        if ($countriesBox.is(':visible')) {
+            $countriesBox.hide();
+            $sub.show();
+            return;
+        }
+
+        $sub.hide();
+        $countriesBox.show();
+        var activeScope = $row.find('.ns-coverage-subtab.active').data('scope');
+        if (activeScope === 'Market') {
+            RenderMarketGridIfNeeded($row, $row.data('product-id'));
+        } else {
+            RenderChemicalGridIfNeeded($row, $row.data('product-id'));
+        }
+    });
+
+    // Safety net: agar kisi tarah toggle ka change event fire ho jaye (keyboard
+    // space, etc.) to Full me use wapas checked kar do.
+    $(document).on('change', '.ns-coverage-all-chk', function () {
+        if ($("#PackageType").val() === 'Full' && !$(this).is(':checked')) {
+            $(this).prop('checked', true);
+            $(this).closest('.ns-coverage-toggle').addClass('checked');
+        }
+    });
+
+    // ---------- Chemical / Market Analysis Range dropdowns ----------
+    // Reuses the existing /LeadManagementSubscription/GetChemicalRange and
+    // GetMarketAnalysisRange endpoints. Each only accepts ONE country/region
+    // name at a time in practice (that's how the old single-country lead
+    // form always called them), so rather than assume the stored procedure
+    // accepts a comma list, this fires one call per covered country/region
+    // and merges the results client-side, deduped by range id.
+    function GetCoveredChemicalCountryNames(productId) {
+        // Chemical Range sirf Pricing wale products ke liye
+        if (!IsProductInPricing(productId)) { return []; }
+        var $row = $(".ns-coverage-row[data-product-id='" + productId + "']");
+        var countries = CoverageCountryCache[productId] || [];
+        var allChecked = $row.find('.ns-coverage-all-chk').is(':checked');
+
+        if (allChecked) {
+            return $.map(countries, function (c) { return c.Text; });
+        }
+
+        var checkedIds = $row.find('.ns-coverage-country-chk:checked').map(function () { return String($(this).val()); }).get();
+        return $.map($.grep(countries, function (c) { return checkedIds.indexOf(String(c.Value)) !== -1; }), function (c) { return c.Text; });
+    }
+
+    // Market ka DEFAULT coverage = sirf "Global" region (koi country nahi, koi
+    // doosra region nahi). Baaki country/region tabhi subscription me jaayenge
+    // jab user khud select kare. Ye un objects return karta hai jisme Global ho.
+    function DefaultMarketRegions(marketData) {
+        return $.grep((marketData && marketData.Regions) || [], function (r) {
+            return $.trim((r.Text || '')).toLowerCase() === 'global';
+        });
+    }
+
+    function GetCoveredMarketNames(productId) {
+        // Market Range sirf Market wale products ke liye
+        if (!IsProductInMarket(productId)) { return { countries: [], regions: [] }; }
+        var $row = $(".ns-coverage-row[data-product-id='" + productId + "']");
+        var data = MarketCoverageCache[productId] || { Countries: [], Regions: [] };
+        var allChecked = $row.find('.ns-coverage-all-chk').is(':checked');
+
+        if (allChecked || $row.find('.ns-coverage-market-country-chk, .ns-coverage-market-region-chk').length === 0) {
+            // Default: sirf Global region, koi country nahi.
+            return {
+                countries: [],
+                regions: $.map(DefaultMarketRegions(data), function (r) { return r.Text; })
+            };
+        }
+
+        var countries = $row.find('.ns-coverage-market-country-chk:checked').map(function () { return $.trim($(this).parent().text()); }).get();
+        var regions = $row.find('.ns-coverage-market-region-chk:checked').map(function () { return $.trim($(this).parent().text()); }).get();
+        return { countries: countries, regions: regions };
+    }
+
+    // Reuses the existing /LeadManagementSubscription/GetChemicalRange and
+    // GetMarketAnalysisRange endpoints. Each only accepts ONE country/region
+    // name at a time in practice (that's how the old single-country lead
+    // form always called them), so rather than assume the stored procedure
+    // accepts a comma list, this fires one call per covered country/region
+    // and merges the results client-side, deduped by range id.
+    function FetchChemicalRangeOptions(productId, countryNames) {
+        var dfd = $.Deferred();
+        if (!countryNames.length) { dfd.resolve([]); return dfd.promise(); }
+
+        var merged = {};
+        var calls = $.map(countryNames, function (name) {
+            return $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/GetChemicalRange",
+                data: "{ productlist: '" + productId + "', CountryName: '" + name + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (data) {
+                $(data).each(function (idx, v) {
+                    merged[String(v.Chemical_RangeID)] = v.Chemical_Range;
+                });
+            });
+        });
+
+        $.when.apply($, calls).always(function () {
+            var options = [];
+            $.each(merged, function (id, label) { options.push({ id: id, label: label }); });
+            options.sort(function (a, b) { return Number(a.id) - Number(b.id); });
+            dfd.resolve(options);
+        });
+
+        return dfd.promise();
+    }
+
+    function FetchMarketRangeByCountries(productId, countryNames) {
+        var dfd = $.Deferred();
+        if (!countryNames.length) { dfd.resolve([]); return dfd.promise(); }
+
+        var merged = {};
+        var calls = $.map(countryNames, function (name) {
+            return $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/GetMarketAnalysisRange",
+                data: "{ productlist: '" + productId + "', CountryName: '" + name + "', region: ''}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (response) {
+                $((response || {}).DataList || []).each(function (idx, v) {
+                    merged[String(v.MarketRangeID)] = v.MarketRangeName;
+                });
+            });
+        });
+
+        $.when.apply($, calls).always(function () {
+            var options = [];
+            $.each(merged, function (id, label) { options.push({ id: id, label: label }); });
+            options.sort(function (a, b) { return Number(a.id) - Number(b.id); });
+            dfd.resolve(options);
+        });
+
+        return dfd.promise();
+    }
+
+    function FetchMarketRangeByRegions(productId, regionNames) {
+        var dfd = $.Deferred();
+        if (!regionNames.length) { dfd.resolve([]); return dfd.promise(); }
+
+        var merged = {};
+        var calls = $.map(regionNames, function (name) {
+            return $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/GetMarketAnalysisRange",
+                data: "{ productlist: '" + productId + "', CountryName: '', region: '" + name + "'}",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (response) {
+                $((response || {}).DataList || []).each(function (idx, v) {
+                    merged[String(v.MarketRangeID)] = v.MarketRangeName;
+                });
+            });
+        });
+
+        $.when.apply($, calls).always(function () {
+            var options = [];
+            $.each(merged, function (id, label) { options.push({ id: id, label: label }); });
+            options.sort(function (a, b) { return Number(a.id) - Number(b.id); });
+            dfd.resolve(options);
+        });
+
+        return dfd.promise();
+    }
+
+    // ---------- Bulk versions, grouped by country/region instead of by
+    // product ---------- (used by RefreshGlobalRangeDropdowns below; the
+    // three per-product functions above are kept, unused, as an easy
+    // rollback if this turns out to misbehave).
+    //
+    // GetChemicalRange / GetMarketAnalysisRange already accept a
+    // comma-joined bulk product list via "productlist" (server-side this
+    // becomes ProductIdBulk, and the result rows already carry their own
+    // ProductId - see ConstructObjectListForChemicalPriceRange /
+    // ConstructObjectListForMarketanalysisRange in dlLeadManagementSubscription.cs).
+    // So instead of firing one call per (product, country) pair, this fires
+    // one call per UNIQUE country/region across every product on screen,
+    // passing all the products that cover it at once, then reads each row's
+    // real ProductId to attribute it back correctly - no guessing which
+    // product a returned range belongs to.
+    function FetchChemicalRangeOptionsBulk(productIdsCsv, countryName) {
+        var dfd = $.Deferred();
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetChemicalRange",
+            data: "{ productlist: '" + productIdsCsv + "', CountryName: '" + countryName + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            var rows = [];
+            $(data || []).each(function (idx, v) {
+                rows.push({ pid: String(v.ProductId), rid: v.Chemical_RangeID, label: v.Chemical_Range });
+            });
+            dfd.resolve(rows);
+        }).fail(function () {
+            dfd.resolve([]);
+        });
+        return dfd.promise();
+    }
+
+    function FetchMarketRangeOptionsBulk(productIdsCsv, countryName, regionName) {
+        var dfd = $.Deferred();
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetMarketAnalysisRange",
+            data: "{ productlist: '" + productIdsCsv + "', CountryName: '" + (countryName || '') + "', region: '" + (regionName || '') + "'}",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (response) {
+            var rows = [];
+            $((response || {}).DataList || []).each(function (idx, v) {
+                rows.push({ pid: String(v.ProductId), rid: v.MarketRangeID, label: v.MarketRangeName });
+            });
+            dfd.resolve(rows);
+        }).fail(function () {
+            dfd.resolve([]);
+        });
+        return dfd.promise();
+    }
+
+    // One shared value format across the three global selects:
+    // "<productId>_<rangeId>" - keeps entries from different products from
+    // colliding even if two products happen to reuse the same range id.
+    // Labels already carry the product's own name (from the server), so a
+    // combined multi-product list still reads unambiguously.
+    //
+    // Coverage checkbox changes re-run this to pick up newly-available
+    // ranges, which used to blow away anything the user had manually
+    // unchecked in the dropdown (every rebuild marked every option
+    // "selected" again - including a same-ish rebuild racing in behind a
+    // deselect click). Now it only auto-selects options that are genuinely
+    // new to this select; anything already present keeps whatever
+    // checked/unchecked state the user last left it in.
+    function PopulateGlobalRangeSelect($select, entries) {
+        entries.sort(function (a, b) {
+            var pa = String(a.pid), pb = String(b.pid);
+            if (pa !== pb) return pa < pb ? -1 : 1;
+            return Number(a.rid) - Number(b.rid);
+        });
+
+        var previousValues = $select.find('option').map(function () { return $(this).val(); }).get();
+        var previousSelected = $select.val() || [];
+        var isFirstPopulation = previousValues.length === 0;
+
+        var html = '';
+        $.each(entries, function (i, e) {
+            var value = e.pid + '_' + e.rid;
+            var wasKnownBefore = previousValues.indexOf(value) !== -1;
+            var shouldSelect = isFirstPopulation || (wasKnownBefore ? previousSelected.indexOf(value) !== -1 : true);
+            html += "<option value='" + value + "'" + (shouldSelect ? " selected" : "") + ">" + e.label + "</option>";
+        });
+        $select.html(html);
+        $select.prop('disabled', entries.length === 0);
+        $select.selectpicker('refresh');
+    }
+
+    // Rebuilds all three global Range dropdowns from EVERY product currently
+    // shown on Step 3 (CurrentCoverageProducts) - one Chemical/Market fetch
+    // per product, same underlying calls as before, just merged into three
+    // shared selects instead of one set per product row. Shows the small
+    // inline "Updating ranges..." indicator for the duration, and returns a
+    // promise that resolves once all three dropdowns are fully repopulated
+    // (used by BuildCoverageStep to know when to drop the full-page loader).
+    function RefreshGlobalRangeDropdowns() {
+        var chemEntryMap = {}, mcEntryMap = {}, mrEntryMap = {}; // pid -> { rid: label }
+
+        ShowRangeLoading();
+
+        // Group every product's covered countries/regions by NAME first, so
+        // a country covered by 500 products fires one bulk call instead of
+        // 500 individual ones. GetCoveredChemicalCountryNames/GetCoveredMarketNames
+        // are unchanged - this only changes how the results get batched up.
+        var chemCountryMap = {};   // countryName -> [productId, ...]
+        var marketCountryMap = {}; // countryName -> [productId, ...]
+        var marketRegionMap = {};  // regionName -> [productId, ...]
+
+        $.each(CurrentCoverageProducts, function (i, p) {
+            var chemCountries = GetCoveredChemicalCountryNames(p.id);
+            $.each(chemCountries, function (j, name) {
+                chemCountryMap[name] = chemCountryMap[name] || [];
+                chemCountryMap[name].push(p.id);
+            });
+
+            var marketNames = GetCoveredMarketNames(p.id);
+            $.each(marketNames.countries, function (j, name) {
+                marketCountryMap[name] = marketCountryMap[name] || [];
+                marketCountryMap[name].push(p.id);
+            });
+            $.each(marketNames.regions, function (j, name) {
+                marketRegionMap[name] = marketRegionMap[name] || [];
+                marketRegionMap[name].push(p.id);
+            });
+        });
+
+        function addRow(map, row) {
+            map[row.pid] = map[row.pid] || {};
+            map[row.pid][row.rid] = row.label;
+        }
+
+        var chemCalls = $.map(chemCountryMap, function (pids, name) {
+            return FetchChemicalRangeOptionsBulk(pids.join(','), name).done(function (rows) {
+                $.each(rows, function (j, row) { addRow(chemEntryMap, row); });
+            });
+        });
+        var mcCalls = $.map(marketCountryMap, function (pids, name) {
+            return FetchMarketRangeOptionsBulk(pids.join(','), name, '').done(function (rows) {
+                $.each(rows, function (j, row) { addRow(mcEntryMap, row); });
+            });
+        });
+        var mrCalls = $.map(marketRegionMap, function (pids, name) {
+            return FetchMarketRangeOptionsBulk(pids.join(','), '', name).done(function (rows) {
+                $.each(rows, function (j, row) { addRow(mrEntryMap, row); });
+            });
+        });
+
+        function flatten(map) {
+            var out = [];
+            $.each(map, function (pid, rids) {
+                $.each(rids, function (rid, label) { out.push({ pid: pid, rid: rid, label: label }); });
+            });
+            return out;
+        }
+
+        var chemDone = $.when.apply($, chemCalls).always(function () {
+            PopulateGlobalRangeSelect($('#GlobalRangeChemical'), flatten(chemEntryMap));
+        });
+        var mcDone = $.when.apply($, mcCalls).always(function () {
+            PopulateGlobalRangeSelect($('#GlobalRangeMarketCountry'), flatten(mcEntryMap));
+        });
+        var mrDone = $.when.apply($, mrCalls).always(function () {
+            PopulateGlobalRangeSelect($('#GlobalRangeMarketRegion'), flatten(mrEntryMap));
+        });
+
+        return $.when(chemDone, mcDone, mrDone).always(function () {
+            HideRangeLoading();
+        });
+    }
+
+    // Chemical grid starts fully checked (deselect what you don't want),
+    // built from the cached per-product country list.
+    function RenderChemicalGridIfNeeded($row, productId) {
+        var $panel = $row.find("[data-scope-panel='Chemical']");
+        var $grid = $panel.find('.ns-coverage-countries-grid');
+        if ($grid.children().length > 0) {
+            return;
+        }
+        var countries = CoverageCountryCache[productId] || [];
+        var html = '';
+        $.each(countries, function (i, c) {
+            html += "<label class='ns-coverage-country-item selected'><input type='checkbox' class='ns-coverage-country-chk' value='" + c.Value + "' checked /> " + c.Text + "</label>";
+        });
+        $grid.html(html);
+        $panel.find('.ns-coverage-selected-count').text(countries.length + ' selected.');
+    }
+
+    // Market grid (countries + regions), fetched lazily the first time the
+    // Market sub-tab is opened for a row, then cached by product.
+    function RenderMarketGridIfNeeded($row, productId) {
+        if (MarketCoverageCache[productId]) {
+            FillMarketGrids($row, MarketCoverageCache[productId]);
+            return;
+        }
+
+        $row.find('.ns-coverage-market-countries').html("<div class='ns-coverage-market-loading'>Loading...</div>");
+        $row.find('.ns-coverage-market-regions').html('');
+
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetMarketCoverageByProduct",
+            data: { productId: productId },
+            dataType: "json",
+            success: function (response) {
+                MarketCoverageCache[productId] = response;
+                FillMarketGrids($row, response);
+            },
+            error: function (response) {
+                console.log(response);
+                $row.find('.ns-coverage-market-countries').html("<div class='ns-coverage-market-loading'>Couldn't load Market coverage.</div>");
+            }
+        });
+    }
+
+    function FillMarketGrids($row, data) {
+        var countries = data.Countries || [];
+        var regions = data.Regions || [];
+
+        var countryHtml = '';
+        $.each(countries, function (i, c) {
+            // Market ke Countries me "Global" nahi dikhana (na hi uski id DB me
+            // jani chahiye) — Global sirf Regions me rehta hai.
+            if ($.trim(c.Text).toLowerCase() === 'global') { return; }
+            // Default: Market countries UNchecked rehte hain — user khud select karega.
+            countryHtml += "<label class='ns-coverage-country-item'><input type='checkbox' class='ns-coverage-market-country-chk' value='" + c.Value + "' /> " + c.Text + "</label>";
+        });
+        $row.find('.ns-coverage-market-countries').html(countryHtml || "<div class='ns-coverage-market-loading'>No countries tracked.</div>");
+
+        var regionHtml = '';
+        $.each(regions, function (i, r) {
+            // Default: sirf "Global" region checked, baaki regions UNchecked.
+            var isGlobal = $.trim(r.Text).toLowerCase() === 'global';
+            regionHtml += "<label class='ns-coverage-country-item" + (isGlobal ? " selected" : "") + "'>" +
+                          "<input type='checkbox' class='ns-coverage-market-region-chk' value='" + r.Value + "'" + (isGlobal ? " checked" : "") + " /> " + r.Text + "</label>";
+        });
+        $row.find('.ns-coverage-market-regions').html(regionHtml || "<div class='ns-coverage-market-loading'>No regions tracked.</div>");
+
+        UpdateMarketSelectedCount($row);
+    }
+
+    function UpdateMarketSelectedCount($row) {
+        var n = $row.find('.ns-coverage-market-country-chk:checked, .ns-coverage-market-region-chk:checked').length;
+        $row.find('.ns-coverage-market-count').text(n + ' selected.');
+    }
+
+    // "All tracked countries" toggle — checked = default coverage, unchecked
+    // = à la carte view (Chemical/Market sub-tabs) for that product.
+    $(document).on('change', '.ns-coverage-all-chk', function () {
+        var $row = $(this).closest('.ns-coverage-row');
+        var productId = $row.data('product-id');
+        var $toggleLabel = $(this).closest('.ns-coverage-toggle');
+        var $countriesBox = $row.find('.ns-coverage-countries');
+        var $sub = $row.find('.ns-coverage-product-sub');
+
+        if ($(this).is(':checked')) {
+            $toggleLabel.addClass('checked');
+            $countriesBox.hide();
+            $sub.show();
+            RefreshGlobalRangeDropdowns();
+            return;
+        }
+
+        $toggleLabel.removeClass('checked');
+        $sub.hide();
+        $countriesBox.show();
+        // Jo sub-tab active hai (Chemical ya Market) uska grid load karo —
+        // market-only product me sirf Market panel hota hai.
+        var activeScope = $row.find('.ns-coverage-subtab.active').data('scope');
+        if (activeScope === 'Market') {
+            RenderMarketGridIfNeeded($row, productId);
+        } else {
+            RenderChemicalGridIfNeeded($row, productId);
+        }
+        RefreshGlobalRangeDropdowns();
+    });
+
+    // Chemical <-> Market sub-tabs, scoped to whichever coverage row they're in.
+    $(document).on('click', '.ns-coverage-subtab', function () {
+        var $row = $(this).closest('.ns-coverage-row');
+        var scope = $(this).data('scope');
+
+        $row.find('.ns-coverage-subtab').removeClass('active');
+        $(this).addClass('active');
+        $row.find('.ns-coverage-scope-panel').hide();
+        $row.find("[data-scope-panel='" + scope + "']").show();
+
+        if (scope === 'Market') {
+            RenderMarketGridIfNeeded($row, $row.data('product-id'));
+        }
+    });
+
+    // Debounced so ticking through several country/region checkboxes quickly
+    // doesn't fire a Range-fetch AJAX call per click - it settles ~500ms
+    // after the last change (one shared timer, since all three global
+    // dropdowns get rebuilt from every product together anyway).
+    var GlobalRangeRefreshTimer = null;
+    function ScheduleGlobalRangeRefresh() {
+        // Country select/unselect karte hi turant loader dikhao — refresh
+        // debounced (~500ms) hai, par loader click ke saath hi "Updating
+        // ranges..." dikhega aur RefreshGlobalRangeDropdowns ke end me hat jayega.
+        ShowRangeLoading();
+        if (GlobalRangeRefreshTimer) {
+            clearTimeout(GlobalRangeRefreshTimer);
+        }
+        GlobalRangeRefreshTimer = setTimeout(function () {
+            RefreshGlobalRangeDropdowns();
+        }, 500);
+    }
+
+    $(document).on('change', '.ns-coverage-country-chk', function () {
+        var $panel = $(this).closest('.ns-coverage-scope-panel');
+        var n = $panel.find('.ns-coverage-country-chk:checked').length;
+        $panel.find('.ns-coverage-selected-count').text(n + ' selected.');
+        $(this).closest('.ns-coverage-country-item').toggleClass('selected', $(this).is(':checked'));
+        ScheduleGlobalRangeRefresh();
+    });
+
+    $(document).on('change', '.ns-coverage-market-country-chk, .ns-coverage-market-region-chk', function () {
+        var $row = $(this).closest('.ns-coverage-row');
+        $(this).closest('.ns-coverage-country-item').toggleClass('selected', $(this).is(':checked'));
+        UpdateMarketSelectedCount($row);
+        ScheduleGlobalRangeRefresh();
+    });
+
+    $("#BtnBackStep3").click(function () {
+        showStep(2);
+    });
+
+    $("#BtnContinueStep3").click(function () {
+        var missing = [];
+
+        var checks = [
+            { $sel: $('#GlobalRangeChemical'), label: 'Chemical Range' },
+            { $sel: $('#GlobalRangeMarketCountry'), label: 'Market Analysis Range - Country wise' },
+            { $sel: $('#GlobalRangeMarketRegion'), label: 'Market Analysis Range - Region wise' }
+        ];
+
+        $.each(checks, function (i, c) {
+            var totalOptions = c.$sel.find('option').length;
+            var selectedOptions = (c.$sel.val() || []).length;
+            // Only enforce a selection when there was something to select in
+            // the first place - a dropdown with zero options just means
+            // none of the selected products have data for that scope.
+            if (totalOptions > 0 && selectedOptions === 0) {
+                missing.push(c.label);
+            }
+        });
+
+        if (missing.length > 0) {
+            swal("Missing range selection", "Please select at least one option in:\n" + missing.join('\n'), "error");
+            return;
+        }
+
+        showStep(4);
+    });
+
+    // ---------- Step 4: Additional users ----------
+    // Purely client-side for now - rows are collected into
+    // AdditionalUsersList on Continue. Where these actually get saved is
+    // still pending confirmation (see BuildReviewStep/Transfer).
+    var AdditionalUsersList = [];
+
+    // Escapes a value before it's dropped into an HTML attribute below -
+    // needed now that rows can be pre-filled from DB data (existing
+    // secondary users), not just typed by hand.
+    function NsEscAttr(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function AdditionalUserRowHtml(name, email, phone, designation) {
+        return "<tr class='ns-users-row'>" +
+            "<td><input type='text' class='ns-user-name' placeholder='Name' value='" + NsEscAttr(name) + "' /></td>" +
+            "<td><input type='email' class='ns-user-email' placeholder='Email' value='" + NsEscAttr(email) + "' /></td>" +
+            "<td><input type='tel' class='ns-user-phone' placeholder='Phone' maxlength='15' value='" + NsEscAttr(phone) + "' /></td>" +
+            "<td><input type='text' class='ns-user-designation' placeholder='Designation' value='" + NsEscAttr(designation) + "' /></td>" +
+            "<td><button type='button' class='ns-btn-remove-user ns-remove-user-row'>Remove</button></td>" +
+            "</tr>";
+    }
+
+    // Optional Name/Email/Phone/Designation prefill the existing-secondary-
+    // users bind (BindExistingSecondaryUsersForCompany) uses - "+ Add user"
+    // and the two starter rows on page load still call this with no args,
+    // which renders blank inputs exactly as before.
+    function AddUserRow(name, email, phone, designation) {
+        $("#AdditionalUsersRows").append(AdditionalUserRowHtml(name, email, phone, designation));
+    }
+
+    // The primary contact (Step 1) is shown as the first row here too -
+    // auto-bound from the Step 1 fields, disabled (it's the account login,
+    // edited on Step 1), and with no Remove button. It uses the
+    // ns-primary-user-row class (not ns-users-row), so CollectAdditionalUsers
+    // and the row validation both skip it - it's saved as the primary, not a
+    // secondary user.
+    function RenderPrimaryUserRow() {
+        $("#AdditionalUsersRows .ns-primary-user-row").remove();
+        var name = $.trim($("#PrimaryContactName").val());
+        var email = $.trim($("#PrimaryEmail").val());
+        var phone = $.trim($("#Phone").val());
+        var designation = $.trim($("#Designation").val());
+        var dis = "disabled style='background:#f1f2f4;color:#6b7178;cursor:not-allowed;'";
+        var rowHtml = "<tr class='ns-primary-user-row'>" +
+            "<td><input type='text' value='" + NsEscAttr(name) + "' " + dis + " /></td>" +
+            "<td><input type='email' value='" + NsEscAttr(email) + "' " + dis + " /></td>" +
+            "<td><input type='tel' value='" + NsEscAttr(phone) + "' " + dis + " /></td>" +
+            "<td><input type='text' value='" + NsEscAttr(designation) + "' " + dis + " /></td>" +
+            "<td><span class='ns-user-badge ns-user-badge-primary'>Primary</span></td>" +
+            "</tr>";
+        $("#AdditionalUsersRows").prepend(rowHtml);
+
+        // No duplicate: drop any secondary row that is the same person as the
+        // primary (same email), so the primary shows once, as the primary.
+        var primaryEmailLc = email.toLowerCase();
+        if (primaryEmailLc) {
+            $("#AdditionalUsersRows .ns-users-row").each(function () {
+                if ($.trim($(this).find(".ns-user-email").val()).toLowerCase() === primaryEmailLc) {
+                    $(this).remove();
+                }
+            });
+        }
+    }
+
+    function CollectAdditionalUsers() {
+        var list = [];
+        var seen = {};
+        // The primary is saved separately, so never collect it here again, and
+        // don't collect the same secondary email twice - keeps the table's
+        // primary + secondary entries from turning into duplicate saves.
+        var primaryEmailLc = $.trim($("#PrimaryEmail").val()).toLowerCase();
+        if (primaryEmailLc) { seen[primaryEmailLc] = true; }
+        $("#AdditionalUsersRows .ns-users-row").each(function () {
+            var name = $.trim($(this).find(".ns-user-name").val());
+            var email = $.trim($(this).find(".ns-user-email").val());
+            var phone = $.trim($(this).find(".ns-user-phone").val());
+            var designation = $.trim($(this).find(".ns-user-designation").val());
+            if (name || email || phone || designation) {
+                var key = email.toLowerCase();
+                if (key && seen[key]) { return; }
+                if (key) { seen[key] = true; }
+                list.push({ Name: name, Email: email, Phone: phone, Designation: designation });
+            }
+        });
+        return list;
+    }
+
+    // Two empty rows to start with, matching the design - "+ Add user" adds
+    // more.
+    AddUserRow();
+    AddUserRow();
+
+    $("#BtnAddUserRow").click(function () {
+        AddUserRow();
+    });
+
+    $(document).on("click", ".ns-remove-user-row", function () {
+        $(this).closest("tr").remove();
+    });
+
+    $("#BtnCancelStep4").click(function () {
+        GoToSubscriptionsList();
+    });
+
+    $("#BtnBackStep4").click(function () {
+        showStep(3);
+    });
+
+    // Same email-format check used app-wide (LeadManagementSubscription/CompanyMaster.cshtml).
+    function IsValidUserEmail(email) {
+        var regex = /^([a-zA-Z0-9_.+-])+\@@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return regex.test(email);
+    }
+
+    // Digits only (spaces/hyphens/+/parens stripped first) - 7 to 15 digits
+    // covers plain local numbers up to a full E.164 number with country code.
+    function IsValidUserPhone(phone) {
+        var digitsOnly = phone.replace(/[^0-9]/g, '');
+        return digitsOnly.length >= 7 && digitsOnly.length <= 15;
+    }
+
+    $("#BtnContinueStep4").click(function () {
+        // A row left completely blank just means no user was added there -
+        // skip it. But the moment any field in a row has something typed,
+        // Name and Email become required for that row - Phone and Designation
+        // stay optional. Email must be validly formatted, and Phone too when
+        // it's been filled in.
+        var rowHasError = false;
+        var rowHasFormatError = false;
+        $("#AdditionalUsersRows .ns-users-row").each(function () {
+            var $row = $(this);
+            var name = $.trim($row.find(".ns-user-name").val());
+            var email = $.trim($row.find(".ns-user-email").val());
+            var phone = $.trim($row.find(".ns-user-phone").val());
+            var designation = $.trim($row.find(".ns-user-designation").val());
+
+            if (!name && !email && !phone && !designation) {
+                return;
+            }
+            if (!name || !email) {
+                rowHasError = true;
+                return;
+            }
+            if (!IsValidUserEmail(email)) {
+                rowHasFormatError = true;
+            }
+        });
+
+        if (rowHasError) {
+            swal("Warning", "Please enter Name and Email for every user row (Phone and Designation are optional).", "error");
+            return;
+        }
+        if (rowHasFormatError) {
+            swal("Warning", "Please enter a valid Email for every user row.", "error");
+            return;
+        }
+
+        AdditionalUsersList = CollectAdditionalUsers();
+        showStep(5);
+    });
+
+    // ---------- Step 5: Subscription terms ----------
+    // Assign analyst / Subscription region / Assign CRM · CSM aren't backed
+    // by new SalesManagement queries — they reuse the existing, already-
+    // working LeadManagementSubscription endpoints (same ones the legacy
+    // Create Subscription Request page calls).
+    function GetSubscriptionRegionAndCrmList() {
+        return $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetAllDropdowndata",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var crmHtml = "<option value=''>Select Assign CRM &middot; CSM</option>";
+                $(data.DataList.Objdic_CRM).each(function (index, value) {
+                    if (value.CRM) {
+                        crmHtml += "<option value='" + value.CrmId + "'>" + value.CRM + "</option>";
+                    }
+                });
+                $("#AssignCrmCsm").html(crmHtml);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function GetAssignAnalystListForTerms() {
+        return $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetDataAnalyst",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var html = "<option value=''>Select Assign analyst</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.AssignAnalystId) {
+                        html += "<option value='" + value.AssignAnalystId + "'>" + value.AssignAnalyst + "</option>";
+                    }
+                });
+                $("#AssignAnalyst").html(html);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $("#BtnCancelStep5").click(function () {
+        GoToSubscriptionsList();
+    });
+
+    // Remaining payment date/amount only matter once the payment is split -
+    // same show/hide behaviour as CRMRenew_LeadDetails.cshtml's PaymentOption.
+    $("#BtnBackStep5").click(function () {
+        showStep(4);
+    });
+
+    // ---------- Sales-convert flow: create the SA_CompanyMaster row + save
+    // primary/additional users (triggered from Step 5 Continue, below) ----------
+    // Reuses two real, already-working endpoints as-is rather than writing
+    // new insert logic:
+    //   /LeadManagementSubscription/SaveCompanyMaster - the same one the
+    //   "+ New Customer"/"Add Company" popup elsewhere in the app already
+    //   uses to create a company. It needs a CRM value, which is why this
+    //   waits until Step 5 (Terms) where "Assign CRM and CSM" gets chosen,
+    //   rather than running right after Step 1.
+    //   /LeadManagementSubscription/InsertrecordinSAcustomer - the same one
+    //   that existing "add user" form (SaveCustomer) uses - called once for
+    //   the primary contact (chkboxPrimary=1) and once per Additional User
+    //   row from Step 4 (chkboxPrimary=0).
+    function SaveOneUser(name, email, phone, designation, companyId, isPrimary) {
+        return $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/InsertrecordinSAcustomer",
+            data: {
+                Name: name,
+                Email: email,
+                Phone: phone,
+                ClientCompanyId: companyId,
+                chkboxPrimary: isPrimary ? 1 : 0,
+                Designation: designation || ""
+            }
+        });
+    }
+
+    function SaveAllUsersForCompany(companyId) {
+        var jobs = [];
+
+        jobs.push(SaveOneUser(
+            $.trim($("#PrimaryContactName").val()),
+            $.trim($("#PrimaryEmail").val()),
+            $.trim($("#Phone").val()),
+            $.trim($("#Designation").val()),
+            companyId,
+            true
+        ));
+
+        $.each(AdditionalUsersList, function (i, user) {
+            jobs.push(SaveOneUser(user.Name, user.Email, user.Phone, user.Designation, companyId, false));
+        });
+
+        return $.when.apply($, jobs);
+    }
+
+    function CreateCompanyAndUsersForSalesFlow() {
+        var dfd = $.Deferred();
+        var targetName = (GetSelectedCompanyName() || "").trim().toLowerCase();
+
+        // usp_CompanyMaster_CREATE always INSERTs, no existence check -
+        // calling it for a name that's already in SA_CompanyMaster would
+        // create a duplicate row. Check first and reuse the existing
+        // company's ID instead of creating a new one whenever the typed
+        // name already matches one.
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetCompanyList",
+            dataType: "json"
+        }).done(function (companyListResponse) {
+            var existingId = 0;
+            $(companyListResponse.DataList).each(function (i, item) {
+                if (($.trim(item.Text) || "").toLowerCase() === targetName) {
+                    existingId = item.Value;
+                    return false;
+                }
+            });
+
+            if (existingId) {
+                SalesConvertCompanyId = existingId;
+                SaveAllUsersForCompany(existingId).done(function () {
+                    dfd.resolve();
+                }).fail(function () {
+                    dfd.resolve();
+                });
+                return;
+            }
+
+            if (!$("#AssignCrmCsm").val()) {
+                dfd.reject("Please select Assign CRM \u00B7 CSM first - it's needed to create the company record.");
+                return;
+            }
+
+            var companyPayload = {
+                ID: 0,
+                CompanyName: GetSelectedCompanyName(),
+                FirstContactName: $.trim($("#PrimaryContactName").val()),
+                FirstContactEmail: $.trim($("#PrimaryEmail").val()),
+                FirstContactNumber: $.trim($("#Phone").val()),
+                Designation: $.trim($("#Designation").val()),
+                SecondContactEmail: $.trim($("#SecondContactEmail").val()),
+                CRM: $("#AssignCrmCsm").val() || ""
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/SaveCompanyMaster",
+                data: JSON.stringify(companyPayload),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (response) {
+                if (response !== "Success") {
+                    dfd.reject("Could not create the company record.");
+                    return;
+                }
+
+                // SaveCompanyMaster doesn't hand back the new row's ID - look
+                // it up the same way TryApplyRenewLeadCompanyAndCountry
+                // already matches Company by name.
+                $.ajax({
+                    type: "GET",
+                    url: "/SalesManagement/GetCompanyList",
+                    dataType: "json"
+                }).done(function (companyListResponse2) {
+                    var newId = 0;
+                    $(companyListResponse2.DataList).each(function (i, item) {
+                        if (($.trim(item.Text) || "").toLowerCase() === targetName) {
+                            newId = item.Value;
+                            return false;
+                        }
+                    });
+                    SalesConvertCompanyId = newId;
+
+                    if (!newId) {
+                        dfd.reject("Company was created, but couldn't be matched back by name.");
+                        return;
+                    }
+
+                    SaveAllUsersForCompany(newId).done(function () {
+                        dfd.resolve();
+                    }).fail(function () {
+                        // Company + primary contact are what actually matter
+                        // for the rest of the wizard - an individual
+                        // Additional User failing to save shouldn't block
+                        // the whole flow.
+                        dfd.resolve();
+                    });
+                }).fail(function () {
+                    dfd.reject("Company was created, but the company list couldn't be reloaded.");
+                });
+            }).fail(function () {
+                dfd.reject("Could not create the company record.");
+            });
+        }).fail(function () {
+            dfd.reject("Couldn't check existing companies. Please try again.");
+        });
+
+        return dfd.promise();
+    }
+
+    $("#BtnContinueStep5").click(function () {
+        var fromDate = $("#TermsFromDate").val();
+        var toDate = $("#TermsToDate").val();
+
+        if (fromDate === "") {
+            swal("Warning", "Please enter From date", "error");
+            return;
+        }
+        if (toDate === "") {
+            swal("Warning", "Please enter To date", "error");
+            return;
+        }
+        if (fromDate > toDate) {
+            swal("Warning", "From date can't be after To date", "error");
+            return;
+        }
+        if (!$("#ApprovalBasis").val()) {
+            swal("Warning", "Please select Approval basis", "error");
+            return;
+        }
+        if (!$("#TermsUserType").val()) {
+            swal("Warning", "Please select User type", "error");
+            return;
+        }
+        if (!$("#AssignAnalyst").val()) {
+            swal("Warning", "Please select Assign analyst", "error");
+            return;
+        }
+        if (!$("#AssignCrmCsm").val()) {
+            swal("Warning", "Please select Assign CRM · CSM", "error");
+            return;
+        }
+
+        // Only Sales-convert mode creates SA_CompanyMaster/SA_Customer rows
+        // here, and only once (SalesConvertCompanyId stays 0 until this
+        // succeeds) - CRM's flow is completely unchanged. The Assign CRM
+        // CSM check now lives inside CreateCompanyAndUsersForSalesFlow -
+        // it's only required when a new company actually needs creating,
+        // not when the typed name matches an existing one.
+        if (IsSalesConvertFlow && !SalesConvertCompanyId) {
+            ShowNsLoader("Creating company & saving users...");
+            CreateCompanyAndUsersForSalesFlow().done(function () {
+                HideNsLoader();
+                BuildReviewStep();
+                showStep(6);
+            }).fail(function (message) {
+                HideNsLoader();
+                swal("Couldn't continue", message || "Please try again.", "error");
+            });
+            return;
+        }
+
+        // CRM flow (existing company dropdown se): naye additional users bhi
+        // SA_Customer me save karo. Proc email-check karta hai, to pehle se
+        // maujood users skip honge aur sirf naye insert honge.
+        var crmCompanyId = $("#CompanyId").val();
+        if (!IsSalesConvertFlow && crmCompanyId) {
+            ShowNsLoader("Saving users...");
+            SaveAllUsersForCompany(crmCompanyId).always(function () {
+                HideNsLoader();
+                BuildReviewStep();
+                showStep(6);
+            });
+            return;
+        }
+
+        BuildReviewStep();
+        showStep(6);
+    });
+
+    // ---------- Step 6: Review ----------
+    // Plain ASCII placeholder/joiner ('-', 'to') on purpose here: this text
+    // goes in via .text(), so HTML entities would show up literally instead
+    // of being decoded.
+    function textOrDash(text) {
+        text = $.trim(text || '');
+        if (text === '' || text.indexOf('Select') === 0) {
+            return '-';
+        }
+        return text;
+    }
+
+    function BuildReviewStep() {
+        $("#RevCompany").text(textOrDash(GetSelectedCompanyName()));
+
+        var primaryName = $.trim($("#PrimaryContactName").val());
+        var primaryEmail = $.trim($("#PrimaryEmail").val());
+        var primaryUser = primaryEmail ? (primaryName ? primaryName + ' <' + primaryEmail + '>' : primaryEmail) : '-';
+        $("#RevPrimaryUser").text(primaryUser);
+
+        $("#RevClientType").text(textOrDash($("#ClientType").val()));
+        $("#RevCountry").text(textOrDash($("#Country option:selected").text()));
+        $("#RevBillingEmail").text(textOrDash($("#BillingEmail").val()));
+
+        var packageType = $("#PackageType").val();
+        // Package badge ka count — saare tabs (Pricing/Market/News/Capacity) ke
+        // distinct products, kyunki ek product sirf Market me bhi select ho sakta
+        // hai (pehle sirf Pricing ginti thi, isliye Market-only product chhut jata tha).
+        var selectedPkgIds = {};
+        $(".ns-product-chk:checked, .ns-market-chk:checked, .ns-news-chk:checked, .ns-capacity-chk:checked").each(function () {
+            selectedPkgIds[$(this).val()] = true;
+        });
+        var selectedProductCount = Object.keys(selectedPkgIds).length;
+        var packageLabel = packageType === 'Full'
+            ? 'Full package &middot; limited download'
+            : '&Agrave; la carte &middot; ' + selectedProductCount + ' product(s)';
+        $("#RevPackage").html("<span class='ns-review-badge'>&#9679; " + packageLabel + "</span>");
+
+        var fromDate = $("#TermsFromDate").val() || '-';
+        var toDate = $("#TermsToDate").val() || '-';
+        $("#RevTerm").text(fromDate + ' to ' + toDate);
+
+        $("#RevApprovalBasis").text(textOrDash($("#ApprovalBasis option:selected").text()));
+        $("#RevUserType").text(textOrDash($("#TermsUserType option:selected").text()));
+        $("#RevAssignAnalyst").text(textOrDash($("#AssignAnalyst option:selected").text()));
+        $("#RevAssignCrmCsm").text(textOrDash($("#AssignCrmCsm option:selected").text()));
+
+        // Coverage summary
+        if (packageType === 'Full') {
+            $("#RevCoverageProducts").text('All products');
+            $("#RevCoverageCountries").text('All tracked countries');
+        } else {
+            var allDefault = $(".ns-coverage-all-chk").length > 0 &&
+                $(".ns-coverage-all-chk").length === $(".ns-coverage-all-chk:checked").length;
+            // Coverage box ka count = Coverage step me jitne products aate hain
+            // (Pricing + Market ke distinct; News/Capacity me country coverage
+            // nahi hoti isliye wo yahan nahi ginti).
+            var coverageIds = {};
+            $(".ns-product-chk:checked, .ns-market-chk:checked").each(function () {
+                coverageIds[$(this).val()] = true;
+            });
+            var coverageProductCount = Object.keys(coverageIds).length;
+            $("#RevCoverageProducts").text(coverageProductCount + ' product(s)');
+            $("#RevCoverageCountries").text(allDefault ? 'All tracked countries' : 'Custom coverage per product');
+        }
+
+        // Users summary: primary contact + selected secondary client emails
+        var usersHtml = '';
+        var total = 0;
+        if (primaryEmail) {
+            usersHtml += "<div class='ns-review-row'><span class='ns-review-value'>" + primaryEmail + "</span><span class='ns-user-badge ns-user-badge-primary'>&#9679; Primary</span></div>";
+            total++;
+        }
+        $.each(GetSecondaryEmails(), function (i, email) {
+            usersHtml += "<div class='ns-review-row'><span class='ns-review-value'>" + email + "</span><span class='ns-user-badge ns-user-badge-secondary'>Secondary</span></div>";
+            total++;
+        });
+        $("#RevUsersList").html(usersHtml || "<div class='ns-review-row'><span class='ns-review-label'>No users yet</span></div>");
+        $("#RevUsersTotal").text(total + ' total');
+
+        var packageNoun = packageType === 'Full' ? 'full package' : '&agrave; la carte package';
+        $("#RevTransferNote").html(
+            "<i class='fa fa-long-arrow-right'></i> On <strong>Transfer to CSM</strong>, this " + packageNoun +
+            " is sent and the account is routed <strong>Operations &rarr; Finance &rarr; Department Head</strong>, " +
+            "then logins go live. It lands on the CSM's <strong>New accounts &middot; approval pipeline</strong> with everything above."
+        );
+    }
+
+    $("#BtnCancelStep6").click(function () {
+        GoToSubscriptionsList();
+    });
+
+    $("#BtnBackStep6").click(function () {
+        showStep(5);
+    });
+
+    // ---------- Transfer to CSM (real save into Lead_Master) ----------
+    // Reuses the already-working /LeadManagementSubscription endpoints
+    // (GetChemicalRange, GetMarketAnalysisRange, UploadFiles, SaveLeadRecord)
+    // instead of writing new insert SQL.
+    //
+    // Row grouping matches how the old page actually saved: pick a country,
+    // every product that has data for that country lands in ONE row, with
+    // Subscription_Product comma-separated and Chemical_Range/Market_Analysis_Range
+    // holding the combined [{PID,RID}...] list for all of those products. So
+    // here it's the other way round from a per-product loop: group by
+    // country/region FIRST, across every selected product, then one row per
+    // country (still one row per country even for the same product, since
+    // that's Lead_Master's structure) and one extra row per Market region
+    // that isn't already covered by one of the country rows. Chemical pricing
+    // has no region concept - only Market Analysis can be region-based.
+    // Product kis tab me select hua — coverage/module isi se decide hota hai.
+    function IsProductInPricing(id) { return $(".ns-product-chk[value='" + id + "']").is(':checked'); }
+    function IsProductInMarket(id) { return $(".ns-market-chk[value='" + id + "']").is(':checked'); }
+
+    function GetEffectiveCoverageForProduct(productId) {
+        var $row = $(".ns-coverage-row[data-product-id='" + productId + "']");
+        // Chemical coverage sirf tab jab product Pricing me select ho; Market
+        // coverage sirf tab jab Market me select ho. Warna wo empty rahe (jaise
+        // Market-only product ko Chemical countries/range nahi milni chahiye).
+        var chemCountries = IsProductInPricing(productId) ? (CoverageCountryCache[productId] || []) : [];
+        var marketData = IsProductInMarket(productId) ? (MarketCoverageCache[productId] || { Countries: [], Regions: [] }) : { Countries: [], Regions: [] };
+        // Market ke Countries me "Global" kabhi DB me nahi jana chahiye — wo sirf Regions me
+        var marketCountries = $.grep(marketData.Countries || [], function (c) {
+            return $.trim((c.Text || '')).toLowerCase() !== 'global';
+        });
+        var marketRegions = marketData.Regions || [];
+
+        var allChecked = $row.find('.ns-coverage-all-chk').is(':checked');
+        if (allChecked) {
+            // Chemical: saari tracked countries. Market: sirf Global region (default).
+            return { chemCountries: chemCountries, marketCountries: [], marketRegions: DefaultMarketRegions(marketData) };
+        }
+
+        var checkedChemIds = $row.find('.ns-coverage-country-chk:checked').map(function () { return String($(this).val()); }).get();
+        var effChem = $.grep(chemCountries, function (c) { return checkedChemIds.indexOf(String(c.Value)) !== -1; });
+
+        var effMarketCountries, effMarketRegions;
+        if ($row.find('.ns-coverage-market-country-chk, .ns-coverage-market-region-chk').length > 0) {
+            var checkedMCountryIds = $row.find('.ns-coverage-market-country-chk:checked').map(function () { return String($(this).val()); }).get();
+            effMarketCountries = $.grep(marketCountries, function (c) { return checkedMCountryIds.indexOf(String(c.Value)) !== -1; });
+
+            var checkedMRegionIds = $row.find('.ns-coverage-market-region-chk:checked').map(function () { return String($(this).val()); }).get();
+            effMarketRegions = $.grep(marketRegions, function (r) { return checkedMRegionIds.indexOf(String(r.Value)) !== -1; });
+        } else {
+            // Grid abhi render nahi hua — default: sirf Global region.
+            effMarketCountries = [];
+            effMarketRegions = DefaultMarketRegions(marketData);
+        }
+
+        return { chemCountries: effChem, marketCountries: effMarketCountries, marketRegions: effMarketRegions };
+    }
+
+    function BuildCoverageRowJobs(productIds) {
+        var countryMap = {}; // countryId -> { id, name, chemProductIds: [], marketProductIds: [] }
+        var regionMap = {};  // regionId -> { id, name, marketProductIds: [] }
+
+        $.each(productIds, function (i, productId) {
+            var cov = GetEffectiveCoverageForProduct(productId);
+
+            $.each(cov.chemCountries, function (j, c) {
+                var key = String(c.Value);
+                countryMap[key] = countryMap[key] || { id: c.Value, name: c.Text, chemProductIds: [], marketProductIds: [] };
+                if (countryMap[key].chemProductIds.indexOf(productId) === -1) countryMap[key].chemProductIds.push(productId);
+            });
+            $.each(cov.marketCountries, function (j, c) {
+                var key = String(c.Value);
+                countryMap[key] = countryMap[key] || { id: c.Value, name: c.Text, chemProductIds: [], marketProductIds: [] };
+                if (countryMap[key].marketProductIds.indexOf(productId) === -1) countryMap[key].marketProductIds.push(productId);
+            });
+            $.each(cov.marketRegions, function (j, r) {
+                var key = String(r.Value);
+                regionMap[key] = regionMap[key] || { id: r.Value, name: r.Text, marketProductIds: [] };
+                if (regionMap[key].marketProductIds.indexOf(productId) === -1) regionMap[key].marketProductIds.push(productId);
+            });
+        });
+
+        var jobs = [];
+        $.each(countryMap, function (key, entry) {
+            jobs.push({
+                countryId: entry.id, countryName: entry.name, regionId: '', regionName: '',
+                chemProductIds: entry.chemProductIds, marketProductIds: entry.marketProductIds
+            });
+        });
+        $.each(regionMap, function (key, entry) {
+            jobs.push({
+                countryId: '', countryName: '', regionId: entry.id, regionName: entry.name,
+                chemProductIds: [], marketProductIds: entry.marketProductIds
+            });
+        });
+
+        return jobs;
+    }
+
+    function SubmitLeadRows(rowJobs, ctx) {
+        var fileInput = $("#PaymentDocument").get(0);
+        var files = fileInput ? fileInput.files : null;
+        var fileName = files && files.length ? files[0].name : '';
+
+        var uploadDone = $.Deferred();
+        if (files && files.length) {
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("FileUpload", files[i]);
+            }
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/UploadFiles",
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                data: fileData
+            }).always(function () { uploadDone.resolve(); });
+        } else {
+            uploadDone.resolve();
+        }
+
+        uploadDone.done(function () {
+            var arrayOfLead = [];
+
+            // News (5) / Capacity Tracker (8) product selections — inki id
+            // coverage row ke module me comma-append hogi (alag row nahi).
+            var newsIds = $(".ns-news-chk:checked").map(function () { return String($(this).val()); }).get();
+            var capacityIds = $(".ns-capacity-chk:checked").map(function () { return String($(this).val()); }).get();
+            var coveredIds = {}; // jo product ids coverage rows me aa gaye
+
+            // Ek country/region ke andar products ko unke module-signature se
+            // group karo: jo product Chemical+Market dono me hai -> ek "1,2" row
+            // (pehle jaisa), market-only product -> alag "2" row, chem-only ->
+            // alag "1" row. Isse har product ko sirf uska sahi module milta hai.
+            $.each(rowJobs, function (i, job) {
+                var chemSet = {}; $.each(job.chemProductIds || [], function (k, id) { chemSet[String(id)] = true; });
+                var marketSet = {}; $.each(job.marketProductIds || [], function (k, id) { marketSet[String(id)] = true; });
+
+                var allProductIds = (job.chemProductIds || []).concat(
+                    $.grep(job.marketProductIds || [], function (id) { return (job.chemProductIds || []).indexOf(id) === -1; })
+                );
+
+                // signature -> { products:[], hasChem, hasMarket }
+                var groups = {};
+                $.each(allProductIds, function (k, pid) {
+                    var sid = String(pid);
+                    coveredIds[sid] = true;
+                    var inChem = !!chemSet[sid], inMarket = !!marketSet[sid];
+                    var sig = (inChem ? "1" : "0") + (inMarket ? "1" : "0");
+                    if (!groups[sig]) groups[sig] = { products: [], hasChem: inChem, hasMarket: inMarket };
+                    groups[sig].products.push(sid);
+                });
+
+                $.each(groups, function (sig, g) {
+                    var rowHasNews = false, rowHasCapacity = false;
+                    $.each(g.products, function (k, sid) {
+                        if (newsIds.indexOf(sid) !== -1) rowHasNews = true;
+                        if (capacityIds.indexOf(sid) !== -1) rowHasCapacity = true;
+                    });
+
+                    var moduleParts = [];
+                    if (g.hasChem) moduleParts.push("1");
+                    if (g.hasMarket) moduleParts.push("2");
+                    if (rowHasNews) moduleParts.push("5");
+                    if (rowHasCapacity) moduleParts.push("8");
+
+                    arrayOfLead.push({
+                        Id: arrayOfLead.length + 1,
+                        Name: ctx.primaryName,
+                        CorpEmail: ctx.primaryEmail,
+                        Organisation: ctx.companyName,
+                        CountryName: "",
+                        CountryID: ctx.clientCountryId || 0,
+                        StateName: "",
+                        StateId: 0,
+                        Phone: ctx.phone,
+                        module: moduleParts.join(","),
+                        InterestArea: ctx.requestId ? String(ctx.requestId) : "",
+                        UserType: ctx.userType,
+                        Subject: "",
+                        Query: "",
+                        Status: ctx.clientType,
+                        AssignTo: "",
+                        Designation: ctx.designation,
+                        AssignDate: null,
+                        IPAddress: "",
+                        BillingEmail: ctx.billingEmail,
+                        SubscriptionType: "Package",
+                        AssignAnalyst: ctx.assignAnalyst || 0,
+                        SecondaryClintEmail: ctx.secondaryEmails,
+                        SubscriptionDateFrom: ctx.fromDate,
+                        SubscriptionDateTo: ctx.toDate,
+                        Subscription_Country: job.countryId,
+                        Subscription_Product: g.products.join(','),
+                        Chemical_Range: g.hasChem ? (job.chemicalRangeJson || '') : '',
+                        Market_Analysis_Range: g.hasMarket ? (job.marketRangeJson || '') : '',
+                        SubSubscriptionRemark: ctx.remark,
+                        ProcedureName: "",
+                        ConnectionTime: 0,
+                        RegionId: job.regionId,
+                        RegionName: "",
+                        ModuleId: 0,
+                        ModuleName: "",
+                        MarketRangeID: 0,
+                        MarketRangeName: "",
+                        files: fileName,
+                        PaymentMode: ctx.approvalBasis,
+                        CRM: ctx.assignCrm,
+                        Trader: ctx.trader,
+                        Credit: (arrayOfLead.length === 0 ? ctx.credit : ""),
+                        Renew: ctx.renew
+                    });
+                });
+            });
+
+            // News (MenuId 5) aur Capacity Tracker (MenuId 8) ke products me
+            // country/region coverage nahi hota, isliye ye rowJobs me nahi aate.
+            // Inhe module-level rows ke roop me alag se add karte hain, warna
+            // ye DB me insert hi nahi hote.
+            function PushModuleOnlyRow(moduleId, productIds) {
+                if (!productIds || !productIds.length) return;
+                arrayOfLead.push({
+                    Id: arrayOfLead.length + 1,
+                    Name: ctx.primaryName,
+                    CorpEmail: ctx.primaryEmail,
+                    Organisation: ctx.companyName,
+                    CountryName: "",
+                    CountryID: ctx.clientCountryId || 0,
+                    StateName: "",
+                    StateId: 0,
+                    Phone: ctx.phone,
+                    module: moduleId,
+                    InterestArea: ctx.requestId ? String(ctx.requestId) : "",
+                    UserType: ctx.userType,
+                    Subject: "",
+                    Query: "",
+                    Status: ctx.clientType,
+                    AssignTo: "",
+                    Designation: ctx.designation,
+                    AssignDate: null,
+                    IPAddress: "",
+                    BillingEmail: ctx.billingEmail,
+                    SubscriptionType: "Package",
+                    AssignAnalyst: ctx.assignAnalyst || 0,
+                    SecondaryClintEmail: ctx.secondaryEmails,
+                    SubscriptionDateFrom: ctx.fromDate,
+                    SubscriptionDateTo: ctx.toDate,
+                    Subscription_Country: "",
+                    Subscription_Product: productIds.join(','),
+                    Chemical_Range: '',
+                    Market_Analysis_Range: '',
+                    SubSubscriptionRemark: ctx.remark,
+                    ProcedureName: "",
+                    ConnectionTime: 0,
+                    RegionId: "",
+                    RegionName: "",
+                    ModuleId: 0,
+                    ModuleName: "",
+                    MarketRangeID: 0,
+                    MarketRangeName: "",
+                    files: fileName,
+                    PaymentMode: ctx.approvalBasis,
+                    CRM: ctx.assignCrm,
+                    Trader: ctx.trader,
+                    Credit: "",
+                    Renew: ctx.renew
+                });
+            }
+
+            // Ab News/Capacity ki id coverage rows ke module me comma-append
+            // ho chuki hai. Sirf un products ke liye alag row banao jo kisi bhi
+            // coverage row me nahi aaye (yaani jo Pricing/Market me nahi hain).
+            var uncoveredNews = $.grep(newsIds, function (id) { return !coveredIds[id]; });
+            var uncoveredCapacity = $.grep(capacityIds, function (id) { return !coveredIds[id]; });
+            PushModuleOnlyRow("5", uncoveredNews);      // News-only products
+            PushModuleOnlyRow("8", uncoveredCapacity);  // Capacity-only products
+
+            console.log("SaveLeadRecord payload", arrayOfLead);
+
+            // ASP.NET MVC's JsonValueProviderFactory caps how many JSON
+            // "members" it will bind per request (default 1000). Each lead
+            // row here has ~44 properties, and "All tracked countries"
+            // fans out into one row per country -- so a single POST of the
+            // whole array can blow past that cap and fail with
+            // "The JSON request was too large to be deserialized." before
+            // the action even runs. Rather than raise the framework limit
+            // (web.config), split into small batches and save sequentially.
+            var SaveBatchSize = 15;
+            var saveBatches = [];
+            for (var sb = 0; sb < arrayOfLead.length; sb += SaveBatchSize) {
+                saveBatches.push(arrayOfLead.slice(sb, sb + SaveBatchSize));
+            }
+
+            var savedRowCount = 0;
+
+            function ParseSaveErrorDetail(xhr) {
+                // The server returned the full "Oops" error HTML page (our
+                // global exception handler). A plain tag-strip leaves the
+                // <style> block's CSS text behind, so strip <script>/<style>
+                // blocks (content and all) first, then prefer the
+                // #DebugExceptionBlock (the real ex.ToString() we surface
+                // there) over the generic wrapper text.
+                var raw = xhr.responseText || "";
+                var cleaned = raw.replace(/<script[\s\S]*?<\/script>/gi, ' ')
+                                  .replace(/<style[\s\S]*?<\/style>/gi, ' ');
+                var detail;
+                var debugMatch = /<div id=['"]DebugExceptionBlock['"][^>]*>([\s\S]*?)<\/div>/i.exec(cleaned);
+                if (debugMatch) {
+                    detail = debugMatch[1]
+                        .replace(/<[^>]*>/g, ' ')
+                        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+                        .replace(/\s+/g, ' ').trim();
+                } else {
+                    detail = cleaned.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                }
+                return detail || ("HTTP " + xhr.status);
+            }
+
+            function SendSaveBatch(batchIndex) {
+                if (batchIndex >= saveBatches.length) {
+                    swal({ title: "Success", text: "Subscription transferred to CSM successfully.", type: "success" }).then(function () {
+                        GoToSubscriptionsList();
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/LeadManagementSubscription/SaveLeadRecord",
+                    data: JSON.stringify(saveBatches[batchIndex]),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        console.log("SaveLeadRecord response (batch " + (batchIndex + 1) + "/" + saveBatches.length + ")", response);
+                        // The controller returns the plain string message from
+                        // the last row it processed in this batch - "Success"
+                        // (case can vary) when it went through, anything else
+                        // (often blank, if Name / Subscription_Product /
+                        // BillingEmail / CorpEmail came through empty) means a
+                        // row was skipped without saving.
+                        var ok = typeof response === "string" && response.toLowerCase().indexOf("success") !== -1;
+                        if (ok) {
+                            savedRowCount += saveBatches[batchIndex].length;
+                            SendSaveBatch(batchIndex + 1);
+                        } else {
+                            // Table naam / row / payload details nahi — sirf clean error
+                            var msg = (typeof response === "string" && $.trim(response)) ? $.trim(response) : "Could not transfer to CSM. Please try again.";
+                            NsEndSaving();
+                            swal("Failed", msg, "error");
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log("SaveLeadRecord error", xhr.status, xhr.responseText);
+                        var detail = ParseSaveErrorDetail(xhr);
+                        NsEndSaving();
+                        // Table naam / row-count wrapper nahi — sirf error message
+                        swal("Failed", (detail || "Could not transfer to CSM. Please try again.").substring(0, 600), "error");
+                    }
+                });
+            }
+
+            SendSaveBatch(0);
+        });
+    }
+
+    function BuildAndSaveLeadRows() {
+        var packageType = $("#PackageType").val();
+        // Full package now auto-checks every product and gets the exact same
+        // real .ns-coverage-row elements + Range dropdowns as A la carte, so
+        // it saves through this same path with no special-casing needed.
+
+        var companyId = GetSelectedCompanyId();
+        var companyName = GetSelectedCompanyName();
+        var primaryName = $.trim($("#PrimaryContactName").val());
+        var primaryEmail = $.trim($("#PrimaryEmail").val());
+        var billingEmail = $.trim($("#BillingEmail").val());
+
+        // CRM must pick a real, existing Company (companyId required) -
+        // Sales-convert mode has no Company record yet, so the typed name
+        // is what's required there instead (companyId stays "" -> 0 below).
+        // Billing email is optional (validated on Step 1 for the required
+        // fields only), so it's not required here anymore.
+        var companyOk = IsSalesConvertFlow ? !!companyName : !!companyId;
+        if (!companyOk || !primaryName || !primaryEmail) {
+            NsEndSaving();
+            swal("Missing info", "Company, primary contact name and primary email are required before saving.", "error");
+            return;
+        }
+
+        var ctx = {
+            companyName: companyName,
+            primaryName: primaryName,
+            primaryEmail: primaryEmail,
+            // Billing email is optional for the user, but the save requires a
+            // value - fall back to the primary email when it's left blank so
+            // the row never goes out with an empty BillingEmail.
+            billingEmail: billingEmail || primaryEmail,
+            phone: $.trim($("#Phone").val()),
+            designation: $.trim($("#Designation").val()),
+            clientType: $("#ClientType").val() || "",
+            clientCountryId: $("#Country").val(),
+            secondaryEmails: GetSecondaryEmails().join(','),
+            fromDate: $("#TermsFromDate").val(),
+            toDate: $("#TermsToDate").val(),
+            approvalBasis: $("#ApprovalBasis").val() || "",
+            userType: $("#TermsUserType").val() || "",
+            assignAnalyst: parseInt($("#AssignAnalyst").val(), 10) || 0,
+            assignCrm: $("#AssignCrmCsm").val() || "",
+            remark: $.trim($("#RemarksForCsm").val()),
+            trader: $("#TraderAccount").is(':checked') ? 'Trader' : '',
+            renew: $("#Renewal").is(':checked') ? 'Renew' : '',
+            credit: $("#TraderAccount").is(':checked') ? $.trim($("#CreditPoints").val()) : ''
+        };
+
+        // Credit points is mandatory when Trader account is selected.
+        if ($("#TraderAccount").is(':checked') && ctx.credit === '') {
+            NsEndSaving();
+            swal("Missing info", "Credit points are required when Trader account is selected.", "error");
+            return;
+        }
+
+        var products = [];
+        $(".ns-coverage-row").each(function () {
+            products.push($(this).data('product-id'));
+        });
+
+        // News/Capacity-only subscription me coverage rows nahi hote, par phir
+        // bhi valid hai (unke products fallback rows se save honge).
+        var hasNewsOrCapacityProducts = $(".ns-news-chk:checked, .ns-capacity-chk:checked").length > 0;
+        if (products.length === 0 && !hasNewsOrCapacityProducts) {
+            NsEndSaving();
+            swal("Missing info", "No products were selected on the Package step.", "error");
+            return;
+        }
+
+        // Market coverage is normally already cached from Step 3 (fetched
+        // eagerly for the Range dropdowns) - this is just a safety net in
+        // case a product somehow reached here without it.
+        var precache = [];
+        $.each(products, function (i, productId) {
+            if (!MarketCoverageCache[productId]) {
+                precache.push(
+                    $.ajax({
+                        type: "GET",
+                        url: "/SalesManagement/GetMarketCoverageByProduct",
+                        data: { productId: productId },
+                        dataType: "json"
+                    }).done(function (response) {
+                        MarketCoverageCache[productId] = response;
+                    })
+                );
+            }
+        });
+
+        $.when.apply($, precache).always(function () {
+            var rowJobs = BuildCoverageRowJobs(products);
+
+            // News/Capacity products ke liye country coverage nahi hota, to
+            // rowJobs empty ho sakta hai par phir bhi save valid hai.
+            var hasNewsOrCapacity = $(".ns-news-chk:checked").length > 0 || $(".ns-capacity-chk:checked").length > 0;
+            if (rowJobs.length === 0 && !hasNewsOrCapacity) {
+                NsEndSaving();
+                swal("Missing info", "No countries or regions are covered for the selected products.", "error");
+                return;
+            }
+
+            swal({ title: "Transferring to CSM...", text: "Please wait while the subscription is being created.", showConfirmButton: false, allowOutsideClick: false });
+
+            // One SA_SubscriptionRequest row per submission - this is what the
+            // Subscriptions list reads from. Its Id then gets stamped onto
+            // every Lead_Master row from this submission (via InterestArea)
+            // so the two can still be traced back to each other.
+            var subscriptionRequest = {
+                CompanyId: parseInt(companyId, 10) || 0,
+                CompanyName: ctx.companyName,
+                PrimaryContactName: ctx.primaryName,
+                PackageType: packageType,
+                PackageSummary: ComputePackageSummary(),
+                CoverageSummary: ComputeCoverageSummary(rowJobs),
+                CSM: $("#AssignCrmCsm option:selected").text() || ""
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/SalesManagement/CreateSubscriptionRequest",
+                data: JSON.stringify(subscriptionRequest),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (response) {
+                ctx.requestId = (response && response.RequestId) ? response.RequestId : 0;
+            }).always(function () {
+                RunRangeFetchAndSave(rowJobs, ctx);
+            });
+        });
+    }
+
+    function ComputePackageSummary() {
+        var hasMarket = $(".ns-market-chk:checked").length > 0;
+        return hasMarket ? "Chemical Pricing + Market Analysis" : "Chemical Pricing";
+    }
+
+    function ComputeCoverageSummary(rowJobs) {
+        var allTracked = $(".ns-coverage-all-chk").length > 0 &&
+            $(".ns-coverage-all-chk").length === $(".ns-coverage-all-chk:checked").length;
+
+        if (allTracked) {
+            return "All tracked countries";
+        }
+
+        var countryCount = 0, regionCount = 0;
+        $.each(rowJobs, function (i, job) {
+            if (job.countryId) countryCount++;
+            if (job.regionId) regionCount++;
+        });
+
+        var parts = [];
+        if (countryCount > 0) parts.push(countryCount + (countryCount === 1 ? " country" : " countries"));
+        if (regionCount > 0) parts.push(regionCount + (regionCount === 1 ? " region" : " regions"));
+        return parts.length ? parts.join(', ') : "No coverage selected";
+    }
+
+    // Reads whatever's selected in the three GLOBAL Range dropdowns (each
+    // option's value is "productId_rangeId") and splits it back out per row
+    // job by product id - no AJAX needed here, Step 3 already fetched every
+    // available range option and the Continue-button validation already
+    // guarantees a dropdown that had options isn't left empty. A
+    // country-type row draws from the country-wise Market dropdown, a
+    // region-type row from the region-wise one.
+    function GetGlobalRangeSelections($select) {
+        var values = $select.val() || [];
+        return $.map(values, function (v) {
+            var parts = String(v).split('_');
+            return { PID: parts[0], RID: parts.slice(1).join('_') };
+        });
+    }
+
+    function RunRangeFetchAndSave(rowJobs, ctx) {
+        var chemSelected = GetGlobalRangeSelections($('#GlobalRangeChemical'));
+        var mcSelected = GetGlobalRangeSelections($('#GlobalRangeMarketCountry'));
+        var mrSelected = GetGlobalRangeSelections($('#GlobalRangeMarketRegion'));
+
+        $.each(rowJobs, function (i, job) {
+            var chemProductIds = $.map(job.chemProductIds || [], function (pid) { return String(pid); });
+            var chemArr = $.map($.grep(chemSelected, function (item) { return chemProductIds.indexOf(String(item.PID)) !== -1; }),
+                function (item) { return { PID: item.PID, RID: item.RID }; });
+            job.chemicalRangeJson = chemArr.length ? JSON.stringify(chemArr) : '';
+
+            var marketSelected = job.countryId ? mcSelected : mrSelected;
+            var marketProductIds = $.map(job.marketProductIds || [], function (pid) { return String(pid); });
+            var marketArr = $.map($.grep(marketSelected, function (item) { return marketProductIds.indexOf(String(item.PID)) !== -1; }),
+                function (item) { return { PID: item.PID, RID: item.RID }; });
+            job.marketRangeJson = marketArr.length ? JSON.stringify(marketArr) : '';
+        });
+
+        SubmitLeadRows(rowJobs, ctx);
+    }
+
+    var NsSaving = false;
+    function NsEndSaving() {
+        NsSaving = false;
+        $("#BtnTransfer").prop("disabled", false).css({ opacity: 1, cursor: "pointer" });
+    }
+    $("#BtnTransfer").click(function () {
+        if (NsSaving) return;                 // double-click guard
+        NsSaving = true;
+        $("#BtnTransfer").prop("disabled", true).css({ opacity: 0.6, cursor: "not-allowed" });
+        BuildAndSaveLeadRows();
+    });
+
+    // ---------- Coverage details popup ----------
+    // Always shows the actual country/region names — not just "All tracked
+    // countries" — for both Chemical and Market. When a row is still on
+    // "All tracked countries" (default), that means every name from the
+    // cached list; when it's à la carte, it's whatever's checked in that
+    // row's grid. Market data gets fetched here if a product's Market tab
+    // was never opened, so the list is never empty just because nobody
+    // clicked into it.
+    function joinNames(list) {
+        return $.map(list || [], function (item) { return item.Text; }).join(', ');
+    }
+
+    function BuildCoverageDetailPopup() {
+        var packageType = $("#PackageType").val();
+
+        $("#CoverageDetailOverlay").css('display', 'flex');
+
+        if (packageType === 'Full') {
+            $("#CoverageDetailBody").html("<div class='ns-modal-scope-value'>Full package - every tracked product, all tracked countries and regions (Chemical + Market).</div>");
+            return;
+        }
+
+        var $rows = $(".ns-coverage-row");
+        var pending = [];
+
+        $rows.each(function () {
+            var productId = $(this).data('product-id');
+            // Market data sirf un products ke liye fetch karo jo Market tab me
+            // actually select hain — warna Pricing-only product ke liye bhi
+            // popup Market coverage dikha deta tha jo DB me jaata hi nahi.
+            if (IsProductInMarket(productId) && !MarketCoverageCache[productId]) {
+                pending.push(
+                    $.ajax({
+                        type: "GET",
+                        url: "/SalesManagement/GetMarketCoverageByProduct",
+                        data: { productId: productId },
+                        dataType: "json"
+                    }).done(function (response) {
+                        MarketCoverageCache[productId] = response;
+                    })
+                );
+            }
+        });
+
+        $("#CoverageDetailBody").html("<div class='ns-modal-scope-value'>Loading...</div>");
+
+        $.when.apply($, pending).always(function () {
+            RenderCoverageDetailPopup($rows);
+        });
+    }
+
+    function RenderCoverageDetailPopup($rows) {
+        var html = '';
+
+        $rows.each(function () {
+            var $row = $(this);
+            var productId = $row.data('product-id');
+            var productName = $.trim($row.find('.ns-coverage-product-name').text());
+            var allChecked = $row.find('.ns-coverage-all-chk').is(':checked');
+            var marketData = MarketCoverageCache[productId] || { Countries: [], Regions: [] };
+
+            // Popup wahi dikhaye jo DB me actually jayega: Chemical sirf jab
+            // product Pricing me select ho, Market sirf jab Market me select ho.
+            var inPricing = IsProductInPricing(productId);
+            var inMarket = IsProductInMarket(productId);
+
+            var chemicalText = null, marketCountryText = null, marketRegionText = null;
+
+            if (allChecked) {
+                if (inPricing) {
+                    chemicalText = joinNames(CoverageCountryCache[productId]) || 'No countries tracked';
+                }
+                if (inMarket) {
+                    // Default: Market me sirf Global region jaata hai, koi country nahi.
+                    marketCountryText = 'None selected';
+                    marketRegionText = joinNames(DefaultMarketRegions(marketData)) || 'None selected';
+                }
+            } else {
+                if (inPricing) {
+                    var chemCountries = $row.find('.ns-coverage-country-chk:checked').map(function () {
+                        return $.trim($(this).parent().text());
+                    }).get();
+                    chemicalText = chemCountries.length ? chemCountries.join(', ') : 'None selected';
+                }
+
+                if (inMarket) {
+                    if ($row.find('.ns-coverage-market-country-chk, .ns-coverage-market-region-chk').length > 0) {
+                        // Market tab was opened for this row — use what's actually checked.
+                        var marketCountries = $row.find('.ns-coverage-market-country-chk:checked').map(function () {
+                            return $.trim($(this).parent().text());
+                        }).get();
+                        marketCountryText = marketCountries.length ? marketCountries.join(', ') : 'None selected';
+
+                        var marketRegions = $row.find('.ns-coverage-market-region-chk:checked').map(function () {
+                            return $.trim($(this).parent().text());
+                        }).get();
+                        marketRegionText = marketRegions.length ? marketRegions.join(', ') : 'None selected';
+                    } else {
+                        // Market tab abhi tak khola nahi gaya — default sirf Global region.
+                        marketCountryText = 'None selected';
+                        marketRegionText = joinNames(DefaultMarketRegions(marketData)) || 'None selected';
+                    }
+                }
+            }
+
+            var blockHtml = "<div class='ns-modal-product-name'>" + productName + "</div>";
+            if (chemicalText !== null) {
+                blockHtml += "<div class='ns-modal-scope-label'>Chemical &middot; countries</div>" +
+                             "<div class='ns-modal-scope-value'>" + chemicalText + "</div>";
+            }
+            if (marketCountryText !== null) {
+                blockHtml += "<div class='ns-modal-scope-label'>Market &middot; countries</div>" +
+                             "<div class='ns-modal-scope-value'>" + marketCountryText + "</div>" +
+                             "<div class='ns-modal-scope-label'>Market &middot; regions</div>" +
+                             "<div class='ns-modal-scope-value'>" + marketRegionText + "</div>";
+            }
+
+            html += "<div class='ns-modal-product'>" + blockHtml + "</div>";
+        });
+
+        $("#CoverageDetailBody").html(html || "<div class='ns-modal-scope-value'>No products were selected on the Package step.</div>");
+    }
+
+    $("#BtnViewCoverageDetails").click(function () {
+        BuildCoverageDetailPopup();
+    });
+
+    $("#CoverageDetailClose").click(function () {
+        $("#CoverageDetailOverlay").hide();
+    });
+
+    $("#CoverageDetailOverlay").click(function (e) {
+        if (e.target === this) {
+            $(this).hide();
+        }
+    });
+</script>

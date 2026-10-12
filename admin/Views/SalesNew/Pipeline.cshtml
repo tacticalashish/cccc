@@ -1,0 +1,1443 @@
+@{
+    ViewBag.Title = "Pipeline";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .spl-wrap {
+        background: #f4f5f7;
+        padding: 18px 28px 40px;
+    }
+
+    .spl-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .spl-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #22262b;
+        margin: 0;
+    }
+
+    .spl-search-box {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+        width: 320px;
+        background: #fff;
+    }
+
+    .spl-toolbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid #e3e5e8;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 14px;
+    }
+
+    .spl-toggle-group {
+        display: flex;
+        flex: 0 0 auto;
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .spl-toggle-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #7c828a;
+        background: #fff;
+        border: none;
+        cursor: pointer;
+    }
+
+        .spl-toggle-btn.active {
+            background: #22262b;
+            color: #fff;
+        }
+
+    .spl-toolbar-search {
+        flex: 0 1 240px;
+        min-width: 150px;
+        max-width: 280px;
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+    }
+
+    .spl-select {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 13px;
+        color: #33383f;
+        background: #fff;
+    }
+
+    .spl-create-btn {
+        background: #1f5a37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .spl-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .spl-pill-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .spl-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #fff;
+        border: 1px solid #e3e5e8;
+        color: #33383f;
+    }
+
+    .spl-pill-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .spl-dot-won {
+        background: #1f5a37;
+    }
+
+    .spl-dot-lost {
+        background: #c0392b;
+    }
+
+    .spl-view-all {
+        font-size: 13px;
+        font-weight: 600;
+        color: #33383f;
+        text-decoration: none;
+    }
+
+    .spl-board {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .spl-column {
+        flex: 1;
+        min-width: 0;
+        background: #f0f1f3;
+        border-radius: 10px;
+        padding: 12px;
+    }
+
+    .spl-column-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 0 2px;
+    }
+
+    .spl-column-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .spl-column-count {
+        background: #dfe2e6;
+        color: #55595f;
+        border-radius: 10px;
+        padding: 1px 8px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .spl-column-total {
+        font-size: 12px;
+        color: #7c828a;
+        font-weight: 600;
+    }
+
+    .spl-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-left: 3px solid #d8dbdf;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+        .spl-card:hover {
+            border-color: #c7ccd2;
+        }
+
+    #SplNewCards, #SplContactedCards, #SplDemoCards {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .spl-card-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .spl-card-sub {
+        font-size: 12px;
+        color: #7c828a;
+        margin-top: 2px;
+    }
+
+    .spl-card-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    .spl-card-pill {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: #eef0f2;
+        color: #55595f;
+    }
+
+    .spl-pill-new { background: #eef0f2; color: #55595f; }
+    .spl-pill-open { background: #e6f0fb; color: #3f6fd4; }
+    .spl-pill-demo { background: #f1e9fb; color: #7c4fd4; }
+    .spl-pill-won { background: #e5f3ea; color: #2c8a4b; }
+    .spl-pill-lost { background: #fbe8e6; color: #c0392b; }
+    .spl-pill-junk { background: #fdf3dd; color: #a5760f; }
+
+    .spl-card-amount {
+        font-size: 12px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .spl-empty-col {
+        font-size: 12px;
+        color: #9aa0a6;
+        padding: 14px 4px;
+        text-align: center;
+    }
+
+    .spl-loading-col {
+        font-size: 12px;
+        color: #9aa0a6;
+        padding: 14px 4px;
+        text-align: center;
+    }
+
+    .spl-list-meta {
+        font-size: 12px;
+        color: #7c828a;
+        margin-bottom: 8px;
+    }
+
+    .spl-list-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+
+    .spl-type-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 5px;
+        background: #eef0f2;
+        color: #55595f;
+        letter-spacing: 0.3px;
+    }
+
+    .spl-type-badge-in {
+        background: #e6f0fb;
+        color: #3f6fd4;
+    }
+
+    .spl-type-badge-out {
+        background: #fdeee0;
+        color: #e07b1f;
+    }
+
+    .spl-stage-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 9px;
+        border-radius: 10px;
+        background: #eef0f2;
+        color: #55595f;
+    }
+
+    .spl-stage-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #9aa0a6;
+        display: inline-block;
+    }
+
+    .spl-stage-dot-new { background: #9096a0; }
+    .spl-stage-dot-contacted { background: #3f6fd4; }
+    .spl-stage-dot-demo { background: #e07b1f; }
+    .spl-stage-dot-negotiation { background: #6c47c9; }
+    .spl-stage-dot-won { background: #2c8a4b; }
+    .spl-stage-dot-lost { background: #c0392b; }
+    .spl-stage-dot-open { background: #3f6fd4; }
+
+    .spl-stage-pill-new { background: #eef0f2; color: #55595f; }
+    .spl-stage-pill-open { background: #e6f0fb; color: #3f6fd4; }
+    .spl-stage-pill-contacted { background: #e6f0fb; color: #3f6fd4; }
+    .spl-stage-pill-demo { background: #fdeee0; color: #e07b1f; }
+    .spl-stage-pill-negotiation { background: #f1eafb; color: #6c47c9; }
+    .spl-stage-pill-won { background: #e5f3ea; color: #2c8a4b; }
+    .spl-stage-pill-lost { background: #fbe8e6; color: #c0392b; }
+
+    table.spl-list-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+    }
+
+        table.spl-list-table th, table.spl-list-table td {
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 13px;
+        }
+
+        table.spl-list-table th {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7c828a;
+            text-transform: uppercase;
+            background: #fafbfc;
+        }
+
+        table.spl-list-table tbody tr {
+            cursor: pointer;
+        }
+
+            table.spl-list-table tbody tr:hover {
+                background: #f7f8f9;
+            }
+
+    .spl-list-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .spl-list-sub {
+        font-size: 12px;
+        color: #7c828a;
+        margin-top: 2px;
+    }
+
+    .spl-pager {
+        margin-top: 14px;
+    }
+
+        .spl-pager:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .spl-pager .pagination {
+            margin: 0;
+        }
+
+        .spl-pager .paginate_button > a {
+            cursor: pointer;
+        }
+
+    .spl-pg-btn {
+        border: 1px solid #e3e5e8;
+        background: #fff;
+        border-radius: 6px;
+        padding: 6px 11px;
+        font-size: 12px;
+        cursor: pointer;
+        color: #33383f;
+    }
+
+        .spl-pg-btn.active {
+            background: #22262b;
+            color: #fff;
+            border-color: #22262b;
+        }
+
+        .spl-pg-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+    /* ===== Create lead modal ===== */
+    .spl-cl-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(20,20,30,.35);
+        z-index: 1000;
+        justify-content: flex-end;
+    }
+
+        .spl-cl-backdrop.spl-cl-open {
+            display: flex;
+        }
+
+    .spl-cl-card {
+        background: #fff;
+        width: 440px;
+        max-width: 92vw;
+        height: 100%;
+        box-shadow: -4px 0 20px rgba(20,20,30,.15);
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .spl-cl-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid #eef0f2;
+    }
+
+    .spl-cl-head-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .spl-cl-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        background: #1f5a37;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .spl-cl-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1b1f23;
+    }
+
+    .spl-cl-subtitle {
+        font-size: 12.5px;
+        color: #8a94a6;
+        margin-top: 1px;
+    }
+
+    .spl-cl-close {
+        font-size: 20px;
+        line-height: 1;
+        color: #8a94a6;
+        cursor: pointer;
+        border: none;
+        background: none;
+        padding: 2px;
+    }
+
+    .spl-cl-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .spl-cl-field label {
+        display: block;
+        font-size: 12.5px;
+        color: #56606e;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .spl-cl-field input,
+    .spl-cl-field select,
+    .spl-cl-field textarea {
+        width: 100%;
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 13px;
+        color: #1b1f23;
+        background: #fff;
+        box-sizing: border-box;
+    }
+
+        .spl-cl-field input:focus,
+        .spl-cl-field select:focus,
+        .spl-cl-field textarea:focus {
+            outline: none;
+            border-color: #1f5a37;
+            box-shadow: 0 0 0 3px rgba(31,90,55,0.12);
+        }
+
+    .spl-cl-field textarea {
+        resize: vertical;
+        min-height: 64px;
+    }
+
+    .spl-cl-row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .spl-cl-pill-group {
+        display: flex;
+        background: #f1f2f4;
+        border-radius: 8px;
+        padding: 3px;
+        gap: 3px;
+    }
+
+    .spl-cl-pill-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        padding: 8px 0;
+        font-size: 13px;
+        font-weight: 600;
+        color: #7c828a;
+        cursor: pointer;
+    }
+
+        .spl-cl-pill-btn.active {
+            background: #fff;
+            color: #1b1f23;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+        }
+
+    .spl-cl-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 14px 20px 18px;
+        border-top: 1px solid #eef0f2;
+    }
+
+    .spl-cl-btn {
+        border-radius: 8px;
+        padding: 9px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid #e3e5e8;
+        background: #fff;
+        color: #33383f;
+    }
+
+    .spl-cl-btn-primary {
+        background: #1f5a37;
+        border-color: #1f5a37;
+        color: #fff;
+    }
+
+        .spl-cl-btn-primary:hover {
+            background: #17472b;
+        }
+
+    /* Site-wide stylesheets force white text on generic list/dropdown
+       elements (same class of issue as CompanyMaster.cshtml's form fields) -
+       intl-tel-input's country dropdown inherits that, making every country
+       name invisible against its own white background except the
+       highlighted row. Force it back to readable here, specifically for
+       this widget. */
+    .iti__country-list {
+        color: #1a1a1a !important;
+    }
+
+    .iti__country-name,
+    .iti__dial-code {
+        color: #1a1a1a !important;
+    }
+
+    .iti__country.iti__highlight {
+        background-color: #f2f4f5 !important;
+    }
+</style>
+
+<div class="spl-wrap">
+    <div class="spl-header-row">
+        <div class="spl-title">Pipeline</div>
+    </div>
+
+    <div class="spl-toolbar">
+        <div class="spl-toggle-group">
+            <button type="button" class="spl-toggle-btn active" id="SplBoardBtn" onclick="SplShowBoard()">Board</button>
+            <button type="button" class="spl-toggle-btn" id="SplListBtn" onclick="SplShowList()">List</button>
+        </div>
+        <input type="text" class="spl-toolbar-search" id="SplSearch" placeholder="Search leads..." />
+        <select class="spl-select" id="SplStageFilter">
+            <option value="">All stages</option>
+            <option value="new">New</option>
+            <option value="open">Opened</option>
+            <option value="demo">Demo</option>
+            @*<option value="negotiation">Negotiation</option>*@
+            <option value="won">Won</option>
+            <option value="lost">Lost</option>
+            <option value="Junk">Junk</option>
+        </select>
+        <select class="spl-select" id="SplTypeFilter">
+            <option value="">All types</option>
+            <option value="Inbound">Inbound</option>
+            <option value="Outbound">Outbound</option>
+        </select>
+        <select class="spl-select" id="SplSourceFilter">
+            <option value="">Select LeadSource</option>
+            <option value="WebsiteForms">Website Forms</option>
+            <option value="Chat">Chat</option>
+            <option value="Email">Email</option>
+            <option value="SocialMedia">Social Media</option>
+            <option value="Event/Conference">Event/Conference</option>
+            <option value="Others">Others</option>
+
+        </select>
+        <input type="date" class="spl-select" id="SplFromDate" title="Created from" style="display:none" />
+        <input type="date" class="spl-select" id="SplToDate" title="Created to" style="display:none" />
+        <button type="button" class="spl-create-btn" onclick="SplOpenCreateLeadModal()">+ Create lead</button>
+    </div>
+
+    <div class="spl-summary-row">
+        <div class="spl-pill-group">
+            <span class="spl-pill" style="cursor:pointer;" onclick="SplShowListForStage('won')"><span class="spl-pill-dot spl-dot-won"></span><span id="SplWonSummary">Won 0 &middot; $0</span></span>
+            <span class="spl-pill" style="cursor:pointer;" onclick="SplShowListForStage('lost')"><span class="spl-pill-dot spl-dot-lost"></span><span id="SplLostSummary">Lost 0 &middot; $0</span></span>
+        </div>
+        <a class="spl-view-all" href="javascript:void(0);" onclick="SplShowList()">View all leads &rarr;</a>
+    </div>
+
+    <div class="spl-board" id="SplBoardView">
+        <div class="spl-column">
+            <div class="spl-column-head">
+                <div class="spl-column-title">New <span class="spl-column-count" id="SplNewCount">0</span></div>
+                <div class="spl-column-total" id="SplNewTotal">$0</div>
+            </div>
+            <div id="SplNewCards"><div class="spl-loading-col">Loading&hellip;</div></div>
+        </div>
+        <div class="spl-column">
+            <div class="spl-column-head">
+                <div class="spl-column-title">Opened <span class="spl-column-count" id="SplContactedCount">0</span></div>
+                <div class="spl-column-total" id="SplContactedTotal">$0</div>
+            </div>
+            <div id="SplContactedCards"><div class="spl-loading-col">Loading&hellip;</div></div>
+        </div>
+        <div class="spl-column">
+            <div class="spl-column-head">
+                <div class="spl-column-title">Demo <span class="spl-column-count" id="SplDemoCount">0</span></div>
+                <div class="spl-column-total" id="SplDemoTotal">$0</div>
+            </div>
+            <div id="SplDemoCards"><div class="spl-loading-col">Loading&hellip;</div></div>
+        </div>
+    </div>
+
+    <div id="SplListView" style="display:none;">
+        <div class="spl-list-meta" id="SplListMeta">&nbsp;</div>
+        <div class="spl-list-card">
+            <table class="spl-list-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Company</th>
+                        <th>Lead</th>
+                        <th>Country</th>
+                        <th>Stage</th>
+                        <th>Source</th>
+                        <th>Value</th>
+                        <th>Exp. close</th>
+                        <th>Next follow-up</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+                <tbody id="SplListRows">
+                    <tr><td colspan="9" class="spl-empty-col">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="spl-pager" id="SplListPager"></div>
+    </div>
+</div>
+
+<div class="spl-cl-backdrop" id="SplClBackdrop">
+    <div class="spl-cl-card">
+        <div class="spl-cl-head">
+            <div class="spl-cl-head-left">
+                <div class="spl-cl-avatar">NL</div>
+                <div>
+                    <div class="spl-cl-title">Create lead</div>
+                    <div class="spl-cl-subtitle" id="SplClSubtitle">New inbound lead</div>
+                </div>
+            </div>
+            <button type="button" class="spl-cl-close" onclick="SplCloseCreateLeadModal()">&times;</button>
+        </div>
+        <div class="spl-cl-body">
+            <div class="spl-cl-field">
+                <label>Lead type <span style="color:#e2453c">*</span></label>
+                <div class="spl-cl-pill-group">
+                    <button type="button" class="spl-cl-pill-btn active" id="SplClTypeInbound" onclick="SplClSelectType('Inbound')">Inbound</button>
+                    <button type="button" class="spl-cl-pill-btn" id="SplClTypeOutbound" onclick="SplClSelectType('Outbound')">Outbound</button>
+                </div>
+                <input type="hidden" id="SplClLeadType" value="Inbound" />
+            </div>
+            <div class="spl-cl-field">
+                <label>Contact name <span style="color:#e2453c">*</span></label>
+                <input type="text" id="SplClName" placeholder="e.g. Maria Rossi" autocomplete="off" />
+            </div>
+            <div class="spl-cl-field">
+                <label>Corporate email <span style="color:#e2453c">*</span></label>
+                <input type="text" id="SplClEmail" placeholder="name@company.com" autocomplete="off" />
+            </div>
+            <div class="spl-cl-row2">
+                <div class="spl-cl-field">
+                    <label>Mobile number <span style="color:#e2453c">*</span></label>
+                    <input type="tel" maxlength="15" id="SplClMobile" placeholder="Mobile number" autocomplete="off" />
+                </div>
+                <div class="spl-cl-field">
+                    <label>Telephone</label>
+                    <input type="tel" maxlength="15" id="SplClTelephone" placeholder="Telephone (optional)" autocomplete="off" />
+                </div>
+            </div>
+            <div class="spl-cl-field">
+                <label>Company <span style="color:#e2453c">*</span></label>
+                <input type="text" id="SplClCompany" placeholder="Company name" autocomplete="off" />
+            </div>
+            <div class="spl-cl-field">
+                <label>Designation <span style="color:#e2453c">*</span></label>
+                <input type="text" id="SplClDesignation" placeholder="e.g. Procurement Manager" autocomplete="off" />
+            </div>
+            <div class="spl-cl-row2">
+                <div class="spl-cl-field">
+                    <label>Country <span style="color:#e2453c">*</span></label>
+                    <select id="SplClCountry">
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+                <div class="spl-cl-field" id="SplClStateWrap" style="display:none;">
+                    <label>State <span style="color:#e2453c">*</span></label>
+                    <select id="SplClState">
+                        <option value="">Select State</option>
+                    </select>
+                </div>
+            </div>
+            <div class="spl-cl-field">
+                <label>Source <span style="color:#e2453c">*</span></label>
+                <select id="SplClSource">
+                    <option value="">Select source</option>
+                    <option value="WebsiteForms" selected>Website Forms</option>
+                    <option value="Chat">Chat</option>
+                    <option value="Email">Email</option>
+                    <option value="SocialMedia">Social Media</option>
+                    <option value="Event/Conference">Event/Conference</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="spl-cl-field">
+                <label>Products of interest <span style="color:#e2453c">*</span></label>
+                <textarea id="SplClMessage" placeholder="e.g. Pricing &mdash; Methanol"></textarea>
+            </div>
+        </div>
+        <div class="spl-cl-foot">
+            <button type="button" class="spl-cl-btn" onclick="SplCloseCreateLeadModal()">Cancel</button>
+            <button type="button" class="spl-cl-btn spl-cl-btn-primary" onclick="SplSaveCreateLead()">Create lead</button>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput-jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<script>
+    var SplBoardData = null;
+
+    function SplComingSoon() {
+        if (window.swal) {
+            swal("Coming soon", "This part of the Pipeline board isn't wired up yet.", "info");
+        }
+    }
+
+    // ===== Create lead modal =====
+    // Same fields / same save endpoint pattern as the real
+    // LeadManagementSubscription/CreateOutboundLead page - just a new modal UI
+    // on the Pipeline board. Country/State dropdowns reuse the real, existing
+    // LeadManagementSubscription GetClintCountry / GetStateDDL endpoints as-is.
+    var SplClIntlInitDone = false;
+
+    function SplOpenCreateLeadModal() {
+        $("#SplClName").val("");
+        $("#SplClEmail").val("");
+        $("#SplClMobile").val("");
+        $("#SplClTelephone").val("");
+        $("#SplClCompany").val("");
+        $("#SplClDesignation").val("");
+        $("#SplClMessage").val("");
+        $("#SplClSource").val("WebsiteForms");
+        $("#SplClState").html("<option value=''>Select State</option>");
+        $("#SplClStateWrap").hide();
+        SplClSelectType("Inbound");
+
+        if (!SplClIntlInitDone) {
+            $("#SplClMobile").intlTelInput({ initialCountry: "in", separateDialCode: true });
+            $("#SplClTelephone").intlTelInput({ initialCountry: "in", separateDialCode: true });
+            SplClIntlInitDone = true;
+        }
+
+        SplClGetCountry();
+        $("#SplClBackdrop").addClass("spl-cl-open");
+    }
+
+    function SplCloseCreateLeadModal() {
+        $("#SplClBackdrop").removeClass("spl-cl-open");
+    }
+
+    function SplClSelectType(type) {
+        $("#SplClLeadType").val(type);
+        $("#SplClTypeInbound").toggleClass("active", type === "Inbound");
+        $("#SplClTypeOutbound").toggleClass("active", type === "Outbound");
+        $("#SplClSubtitle").text("New " + type.toLowerCase() + " lead");
+    }
+
+    function SplClGetCountry() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCountry",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                var innerHTML = "<option value=''>Select Country</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.CountryName) {
+                        innerHTML += "<option value='" + value.CountryID + "'>" + value.CountryName + "</option>";
+                    }
+                });
+                $("#SplClCountry").html(innerHTML);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $(document).on("change", "#SplClCountry", function () {
+        var countryId = $("#SplClCountry").val();
+        if (countryId === "1") {
+            $("#SplClStateWrap").show();
+            SplClGetStateDDL(countryId);
+        } else {
+            $("#SplClStateWrap").hide();
+        }
+    });
+
+    function SplClGetStateDDL(countryId) {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetStateDDL",
+            data: "{CountryID: '" + countryId + "' }",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var innerHTML = "<option value=''>Select State</option>";
+                $(response).each(function (index, value) {
+                    if (value.StateName) {
+                        innerHTML += "<option value='" + value.StateId + "'>" + value.StateName + "</option>";
+                    }
+                });
+                $("#SplClState").html(innerHTML);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function SplClFormatDate(d) {
+        var day = ("0" + d.getDate()).slice(-2);
+        var month = ("0" + (d.getMonth() + 1)).slice(-2);
+        var year = String(d.getFullYear()).slice(-2);
+        return day + "/" + month + "/" + year;
+    }
+
+    function SplSaveCreateLead() {
+        var LeadType = $("#SplClLeadType").val();
+        var Name = $("#SplClName").val();
+        var CorpEmail = $("#SplClEmail").val();
+        var Mobile = $("#SplClMobile").val();
+        var Contactcode = $("#SplClMobile").intlTelInput("getSelectedCountryData").dialCode;
+        var Telephone = $("#SplClTelephone").val();
+        var Telecode = $("#SplClTelephone").intlTelInput("getSelectedCountryData").dialCode;
+        var CompanyName = $("#SplClCompany").val();
+        var Designation = $("#SplClDesignation").val();
+        var Country = $("#SplClCountry option:selected").text().trim();
+        var State = (Country === "India") ? $("#SplClState option:selected").text().trim() : null;
+        var OutboundLeadSource = $("#SplClSource").val();
+        var Message = $("#SplClMessage").val();
+        var RequestedDate = SplClFormatDate(new Date());
+
+        if (!Name) { swal("Warning", "Please enter the contact name", "error"); return; }
+        if (!CorpEmail) { swal("Warning", "Please enter the corporate email", "error"); return; }
+        if (!Mobile) { swal("Warning", "Please enter the mobile number", "error"); return; }
+        if (!CompanyName) { swal("Warning", "Please enter the company name", "error"); return; }
+        if (!Designation) { swal("Warning", "Please enter the designation", "error"); return; }
+        if ($("#SplClCountry").val() === "") { swal("Warning", "Please select a country", "error"); return; }
+        if (Country === "India" && !State) { swal("Warning", "Please select a state", "error"); return; }
+        if (!OutboundLeadSource) { swal("Warning", "Please select a source", "error"); return; }
+        if (!Message) { swal("Warning", "Please enter the products of interest", "error"); return; }
+
+        var GetDetails = {
+            Name: Name,
+            CorpEmail: CorpEmail,
+            Phone: Telephone,
+            Organisation: CompanyName,
+            Country: Country,
+            State: State,
+            OutboundLeadSource: OutboundLeadSource,
+            LeadType: LeadType,
+            RequestedDate: RequestedDate,
+            DiscriptionMessage: Message,
+            Mobile: Mobile,
+            Designation: Designation,
+            ContactCountryCode: Contactcode,
+            TelephoneCountryCode: Telecode
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/SaveOutboundLeadDetails",
+            data: JSON.stringify(GetDetails),
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                var ok = false;
+                $(response).each(function (index, value) {
+                    if (value.ValidationMessage === "SUCCESS") { ok = true; }
+                });
+                if (ok) {
+                    swal({ title: "Thank you!", text: "Lead created successfully.", type: "success" }).then(function () {
+                        window.location.reload();
+                    });
+                } else {
+                    swal("Warning", "Something went wrong, please try again.", "error");
+                }
+            },
+            error: function (response) {
+                console.log(response);
+                swal("Warning", "Something went wrong, please try again.", "error");
+            }
+        });
+    }
+
+    function SplEscape(text) {
+        if (text === null || text === undefined) return "";
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function SplValueOrDash(text) {
+        return (text === null || text === undefined || text === "") ? "&mdash;" : SplEscape(text);
+    }
+
+    function SplFormatMoney(amount, currency) {
+        if (amount === null || amount === undefined) return "&mdash;";
+        var symbol = "$";
+        var code = (currency || "").toUpperCase();
+        if (code === "INR") symbol = "\u20B9";
+        else if (code === "EUR") symbol = "\u20AC";
+        else if (code === "GBP") symbol = "\u00A3";
+        var rounded = Math.round(amount);
+        return symbol + rounded.toLocaleString();
+    }
+
+    // "source" tells LeadDetail which table the id lives in - New-stage
+    // leads are still in SA_MaskEmail (source=New), everything else has
+    // already been promoted into SA_MaskEmail_Open (source=Open). The two
+    // tables have independent identity columns, so this can't be inferred
+    // from the id alone; it's derived from item.Status the same way the
+    // board's own "New" column filter (Status = 'new') already does.
+    function SplSourceForStatus(status) {
+        return (status || "").toLowerCase() === "new" ? "New" : "Open";
+    }
+
+    function SplGoToLead(id, source) {
+        window.location.href = "@Url.Action("LeadDetail", "SalesNew")" + "?id=" + id + "&source=" + (source || "Open");
+    }
+
+    function SplStatusPillClass(status) {
+        var s = (status || "").toLowerCase();
+        if (s === "new") return "spl-pill-new";
+        if (s === "open") return "spl-pill-open";
+        if (s === "demo") return "spl-pill-demo";
+        if (s === "won") return "spl-pill-won";
+        if (s === "lost") return "spl-pill-lost";
+        if (s === "junk") return "spl-pill-junk";
+        return "spl-pill-new";
+    }
+
+    function SplRenderCards(containerId, list) {
+        if (!list || !list.length) {
+            $("#" + containerId).html("<div class='spl-empty-col'>No leads here.</div>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var heading = item.CompanyName || item.Name;
+            var subParts = [];
+            if (item.CompanyName && item.Name) subParts.push(SplEscape(item.Name));
+            if (item.CountryName) subParts.push(SplEscape(item.CountryName));
+            html += "<div class='spl-card' onclick=\"SplGoToLead(" + item.ID + ", '" + SplSourceForStatus(item.Status) + "')\">";
+            html += "  <div class='spl-card-name'>" + SplValueOrDash(heading) + "</div>";
+            html += "  <div class='spl-card-sub'>" + (subParts.length ? subParts.join(" &middot; ") : SplValueOrDash(item.CorpEmail)) + "</div>";
+            html += "  <div class='spl-card-bottom'>";
+            html += "    <span class='spl-card-pill " + SplStatusPillClass(item.Status) + "'>" + SplValueOrDash(item.Status) + "</span>";
+            html += "    <span class='spl-card-amount'>" + SplFormatMoney(item.Amount, item.Currency) + "</span>";
+            html += "  </div>";
+            html += "</div>";
+        }
+        $("#" + containerId).html(html);
+    }
+
+    // ASP.NET MVC Json() serializes DateTime as "/Date(1425600000000)/",
+    // which the native Date constructor can't parse. Pull the epoch ms out
+    // of that wrapper first; fall back to the raw value for ISO strings.
+    function SplParseDate(value) {
+        if (!value) return null;
+        if (value instanceof Date) return value;
+        var m = /\/Date\((-?\d+)/.exec(value);
+        var d = m ? new Date(parseInt(m[1], 10)) : new Date(value);
+        return isNaN(d.getTime()) ? null : d;
+    }
+
+    function SplFormatDate(value) {
+        var d = SplParseDate(value);
+        if (!d) return "&mdash;";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function SplFormatRelativeDate(value) {
+        var d = SplParseDate(value);
+        if (!d) return "&mdash;";
+        var today = new Date();
+        var dOnly = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        var tOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var diffDays = Math.round((dOnly - tOnly) / 86400000);
+        if (diffDays === 0) return "Today";
+        if (diffDays === 1) return "Tomorrow";
+        if (diffDays === -1) return "Yesterday";
+        return SplFormatDate(value);
+    }
+
+    function SplTypeBadge(leadType) {
+        if (!leadType) return "&mdash;";
+        var t = leadType.toUpperCase();
+        if (t.indexOf("OUT") === 0) return "<span class='spl-type-badge spl-type-badge-out'>OUT</span>";
+        if (t.indexOf("IN") === 0) return "<span class='spl-type-badge spl-type-badge-in'>IN</span>";
+        return "<span class='spl-type-badge'>" + SplEscape(leadType) + "</span>";
+    }
+
+    function SplStageKey(status) {
+        var s = (status || "").toLowerCase().replace(/\s+/g, "");
+        var known = ["new", "contacted", "demo", "negotiation", "won", "lost", "open"];
+        return known.indexOf(s) !== -1 ? s : "new";
+    }
+
+    function SplStageDotClass(status) {
+        return "spl-stage-dot spl-stage-dot-" + SplStageKey(status);
+    }
+
+    function SplStagePill(status) {
+        return "<span class='spl-stage-pill spl-stage-pill-" + SplStageKey(status) + "'><span class='" + SplStageDotClass(status) + "'></span>" + SplValueOrDash(status) + "</span>";
+    }
+
+    var SplCurrentView = "board";
+
+    function SplShowBoard() {
+        SplCurrentView = "board";
+        $("#SplBoardBtn").addClass("active");
+        $("#SplListBtn").removeClass("active");
+        $("#SplBoardView").show();
+        $("#SplListView").hide();
+        // The board only has New / Opened / Demo columns - a leftover
+        // won/lost (or any) stage filter from the List view would wipe every
+        // column to 0, so clear the filters when coming back to the board.
+        $("#SplStageFilter, #SplTypeFilter, #SplSourceFilter").val("").prop("disabled", true);
+        // Date filter sirf List pe — board me clear + disable
+        $("#SplFromDate, #SplToDate").val("").prop("disabled", true).hide();
+        SplApplyFilters();
+    }
+
+    function SplShowList() {
+        SplCurrentView = "list";
+        $("#SplListBtn").addClass("active");
+        $("#SplBoardBtn").removeClass("active");
+        $("#SplBoardView").hide();
+        $("#SplListView").show();
+        $("#SplStageFilter, #SplTypeFilter, #SplSourceFilter").prop("disabled", false);
+        $("#SplFromDate, #SplToDate").prop("disabled", false).show();
+        SplListCurrentPage = 1;
+        SplLoadList();
+    }
+
+    // Won / Lost summary pills - open the List view already filtered to that
+    // stage so clicking "Won 30" shows just the won leads (and "Lost" the
+    // lost ones).
+    function SplShowListForStage(stage) {
+        $("#SplStageFilter").val(stage);
+        SplShowList();
+    }
+
+    function SplApplyFilters() {
+        if (SplCurrentView === "list") {
+            SplListCurrentPage = 1;
+            SplLoadList();
+            return;
+        }
+        if (!SplBoardData) return;
+        var search = $.trim($("#SplSearch").val()).toLowerCase();
+        var stage = $("#SplStageFilter").val();
+        var leadType = $("#SplTypeFilter").val();
+        var source = $("#SplSourceFilter").val();
+
+        function matches(item) {
+            if (search) {
+                var hay = ((item.Name || "") + " " + (item.CompanyName || "") + " " + (item.CorpEmail || "")).toLowerCase();
+                if (hay.indexOf(search) === -1) return false;
+            }
+            if (leadType && (item.LeadType || "") !== leadType) return false;
+            if (source && (item.Source || "") !== source) return false;
+            return true;
+        }
+
+        var newList = (!stage || stage === "new") ? SplBoardData.NewList.filter(matches) : [];
+        var contactedList = (!stage || stage === "open") ? SplBoardData.ContactedList.filter(matches) : [];
+        var demoList = (!stage || stage === "demo") ? SplBoardData.DemoList.filter(matches) : [];
+
+        SplRenderCards("SplNewCards", newList);
+        SplRenderCards("SplContactedCards", contactedList);
+        SplRenderCards("SplDemoCards", demoList);
+
+        $("#SplNewCount").text(newList.length);
+        $("#SplContactedCount").text(contactedList.length);
+        $("#SplDemoCount").text(demoList.length);
+
+        $("#SplNewTotal").html(SplColumnTotal(newList));
+        $("#SplContactedTotal").html(SplColumnTotal(contactedList));
+        $("#SplDemoTotal").html(SplColumnTotal(demoList));
+    }
+
+    function SplColumnTotal(list) {
+        var total = 0;
+        var hasAny = false;
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].Amount !== null && list[i].Amount !== undefined) {
+                total += list[i].Amount;
+                hasAny = true;
+            }
+        }
+        return hasAny ? SplFormatMoney(total, "USD") : "$0";
+    }
+
+    function SplLoadBoard() {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetPipelineBoard", "SalesNew")",
+            dataType: "json"
+        }).done(function (response) {
+            SplBoardData = {
+                NewList: response.NewList || [],
+                ContactedList: response.ContactedList || [],
+                DemoList: response.DemoList || []
+            };
+            SplApplyFilters();
+
+            $("#SplWonSummary").html("Won " + (response.WonCount || 0) + " &middot; " + SplFormatMoney(response.WonTotal || 0, "USD"));
+            $("#SplLostSummary").html("Lost " + (response.LostCount || 0) + " &middot; " + SplFormatMoney(response.LostTotal || 0, "USD"));
+        }).fail(function () {
+            $("#SplNewCards, #SplContactedCards, #SplDemoCards").html("<div class='spl-empty-col'>Couldn't load - please refresh.</div>");
+        });
+    }
+
+    // ---- List tab: real server-side paging. The page only ever reads
+    // ActivePage/NumberOfPages from the response -- it never computes a
+    // page count itself, same rule as the Activity/Emails tabs on
+    // LeadDetail.cshtml.
+    var SplListCurrentPage = 1;
+
+    function SplRenderListRows(list) {
+        if (!list || !list.length) {
+            $("#SplListRows").html("<tr><td colspan='9' class='spl-empty-col'>No leads found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr onclick=\"SplGoToLead(" + item.ID + ", '" + SplSourceForStatus(item.Status) + "')\">";
+            html += "  <td>" + SplTypeBadge(item.LeadType) + "</td>";
+            html += "  <td class='spl-list-name'>" + SplValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td><div class='spl-list-name'>" + SplValueOrDash(item.Name) + "</div><div class='spl-list-sub'>" + SplValueOrDash(item.CorpEmail) + "</div></td>";
+            html += "  <td>" + SplValueOrDash(item.CountryName) + "</td>";
+            html += "  <td>" + SplStagePill(item.Status) + "</td>";
+            html += "  <td>" + SplValueOrDash(item.Source) + "</td>";
+            html += "  <td>" + SplFormatMoney(item.Amount, item.Currency) + "</td>";
+            html += "  <td>" + SplFormatDate(item.ExpectedCloseDate) + "</td>";
+            html += "  <td>" + SplFormatRelativeDate(item.SetFollowUp) + "</td>";
+            html += "  <td>" + SplFormatDate(item.CreatedDate) + "</td>";
+            
+            html += "</tr>";
+        }
+        $("#SplListRows").html(html);
+    }
+
+    // Pagination -- exact same GetPaginationHTML/GetPagination/PaggingButton
+    // structure used across the rest of the app (LeadManagementSubscription
+    // etc.), just prefixed "Spl" and wired to SplListCurrentPage/SplLoadList().
+    function SplGetPaginationHTML(json) {
+        var pagingInnerHTML = "<span class='pull-left' style='color:#7c828a; font-size:12px;'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = SplGetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+        return pagingInnerHTML;
+    }
+
+    function SplPaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        SplListCurrentPage = pageNumber;
+        SplLoadList();
+    }
+
+    function SplGetPagination(activePage, pagerSize, numberOfPages, URL) {
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='SplPaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='SplPaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='SplPaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='SplPaggingButton($(this));' href='javascript:void(0);'  url='";
+                innerHTML += URL + i;
+            }
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage + 1);
+                innerHTML += "' onclick='SplPaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage + 1);
+            innerHTML += "' onclick='SplPaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (next);
+            innerHTML += "' onclick='SplPaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+
+    function SplLoadList() {
+        $("#SplListRows").html("<tr><td colspan='9' class='spl-empty-col'>Loading&hellip;</td></tr>");
+        var search = $.trim($("#SplSearch").val());
+        var stage = $("#SplStageFilter").val();
+        var leadType = $("#SplTypeFilter").val();
+        var source = $("#SplSourceFilter").val();
+        var fromDate = $("#SplFromDate").val();
+        var toDate = $("#SplToDate").val();
+        var isFiltered = !!(search || stage || leadType || source || fromDate || toDate);
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetPipelineList", "SalesNew")",
+            data: {
+                stage: stage,
+                leadType: leadType,
+                source: source,
+                search: search,
+                fromDate: fromDate,
+                toDate: toDate,
+                pageNumber: SplListCurrentPage
+            },
+            dataType: "json"
+        }).done(function (response) {
+            SplRenderListRows(response.DataList);
+            $("#SplListPager").html(SplGetPaginationHTML(response));
+            var count = response.RecordsCount || 0;
+            $("#SplListMeta").text(count + (count === 1 ? " lead" : " leads") + (isFiltered ? " \u00B7 filtered" : ""));
+        }).fail(function () {
+            $("#SplListRows").html("<tr><td colspan='9' class='spl-empty-col'>Couldn't load - please refresh.</td></tr>");
+            $("#SplListMeta").text("");
+        });
+    }
+
+    var SplSearchTimer = null;
+    $(document).ready(function () {
+        SplLoadBoard();
+        $("#SplStageFilter, #SplTypeFilter, #SplSourceFilter").prop("disabled", true);
+
+        $("#SplSearch").on("input", function () {
+            clearTimeout(SplSearchTimer);
+            SplSearchTimer = setTimeout(SplApplyFilters, 250);
+        });
+        $("#SplStageFilter").on("change", SplApplyFilters);
+        $("#SplTypeFilter").on("change", SplApplyFilters);
+        $("#SplSourceFilter").on("change", SplApplyFilters);
+        $("#SplFromDate, #SplToDate").on("change", SplApplyFilters);
+    });
+</script>

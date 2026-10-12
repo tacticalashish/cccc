@@ -1,0 +1,911 @@
+@{
+    ViewBag.Title = "Incentives";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .in-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .in-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 26px 28px;
+        margin-bottom: 24px;
+    }
+
+    .in-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 16px;
+    }
+
+    .in-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .in-title-note {
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .in-banner {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        background: #f4f5f7;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        color: #6b7078;
+        margin-bottom: 18px;
+    }
+
+        .in-banner b {
+            color: #33383f;
+            font-weight: 700;
+        }
+
+    .in-kpi-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 16px;
+    }
+
+    .in-kpi-card {
+        border-radius: 8px;
+        padding: 24px 24px;
+        color: #fff;
+    }
+
+    .in-kpi-green { background: #1f6b45; }
+    .in-kpi-blue { background: #1f6fb0; }
+    .in-kpi-orange { background: linear-gradient(90deg, #8a4a12, #d98a2b); }
+
+    .in-kpi-clickable {
+        cursor: pointer;
+    }
+
+        .in-kpi-clickable:hover {
+            filter: brightness(1.08);
+        }
+
+    .in-kpi-amount {
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .in-kpi-label {
+        font-size: 13px;
+        opacity: .88;
+        margin-top: 6px;
+    }
+
+    .in-section-label {
+        font-size: 11px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: #a4aab3;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+        .in-section-label span {
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 400;
+            color: #c2c6cc;
+        }
+
+    /* horizontal scroll on narrow screens so the last column never gets cut */
+    .in-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table.in-table {
+        width: 100%;
+        min-width: 760px;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-top: 12px;
+    }
+
+        table.in-table th,
+        table.in-table td {
+            white-space: nowrap;
+        }
+
+        table.in-table th,
+        table.in-table td {
+            border: none;
+        }
+
+        table.in-table thead th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+        }
+
+        table.in-table tbody td {
+            padding: 15px 14px;
+            font-size: 13px;
+            color: #33383f;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: top;
+        }
+
+        table.in-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .in-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .in-sub {
+        display: block;
+        font-size: 12px;
+        color: #a4aab3;
+        margin-top: 2px;
+    }
+
+    .in-pill {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 3px 10px;
+        white-space: nowrap;
+    }
+
+    .in-pill-gray { background: #f0f1f3; color: #6b7078; }
+    .in-pill-blue { background: #e8f1fc; color: #1f6fb0; }
+    .in-pill-green { background: #e7f6ec; color: #2c8a4b; }
+    .in-pill-mint { background: #e7f6ec; color: #2c8a4b; font-weight: 700; }
+
+    .in-month {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .in-empty {
+        text-align: center;
+        padding: 30px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .in-search {
+        position: relative;
+        max-width: 340px;
+        margin-bottom: 16px;
+    }
+
+        .in-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .in-search input {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .in-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .in-pager {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 14px;
+    }
+
+        .in-pager button {
+            border: 1px solid #e3e5e9;
+            background: #fff;
+            color: #444;
+            border-radius: 6px;
+            padding: 5px 11px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+            .in-pager button.active {
+                background: #1f5a37;
+                border-color: #1f5a37;
+                color: #fff;
+            }
+
+            .in-pager button:disabled {
+                color: #c2c6cc;
+                cursor: default;
+            }
+
+        .in-pager-ellipsis {
+            color: #a4aab3;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+
+    table.in-table tbody td.in-cell-link {
+        color: #1f6fb0;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        table.in-table tbody td.in-cell-link:hover {
+            background: #eef5fb;
+            text-decoration: underline;
+        }
+
+    .in-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 4000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .in-modal-backdrop.active {
+            display: flex;
+        }
+
+    .in-modal {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px;
+        width: 780px;
+        max-width: 94vw;
+        max-height: 82vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .in-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex: 0 0 auto;
+    }
+
+    .in-modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .in-modal-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        line-height: 1;
+        color: #a4aab3;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .in-modal-body-scroll {
+        overflow-y: auto;
+        flex: 1 1 auto;
+    }
+
+    @@media (max-width: 900px) {
+        .in-kpi-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<div class="in-wrap">
+    <div class="in-card">
+        <div class="in-card-head">
+            <div class="in-title">Incentives</div>
+            <div class="in-title-note">&#8377;700 per completed demo</div>
+        </div>
+
+        <div class="in-banner">
+            <span>&#8505;</span>
+            <span>You earn <b>&#8377;700</b> the moment Sales completes a demo from your lead. Click a card below to see the leads behind it.</span>
+        </div>
+
+        <div class="in-kpi-row">
+            <div class="in-kpi-card in-kpi-green in-kpi-clickable" onclick="OpenIncentiveKpiDetail('month')">
+                <div class="in-kpi-amount" id="InThisMonthAmount">&#8377;0</div>
+                <div class="in-kpi-label">This month</div>
+            </div>
+            <div class="in-kpi-card in-kpi-blue in-kpi-clickable" onclick="OpenIncentiveKpiDetail('quarter')">
+                <div class="in-kpi-amount" id="InThisQuarterAmount">&#8377;0</div>
+                <div class="in-kpi-label" id="InThisQuarterLabel">This quarter</div>
+            </div>
+            <div class="in-kpi-card in-kpi-orange in-kpi-clickable" onclick="OpenIncentiveKpiDetail('sixmonths')">
+                <div class="in-kpi-amount" id="InLast6MonthsAmount">&#8377;0</div>
+                <div class="in-kpi-label">Last 6 months</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="in-card">
+        <div class="in-section-label">Demos completed</div>
+
+        <div class="in-search">
+            <i class="fa fa-search"></i>
+            <input type="text" id="InDemosSearch" placeholder="Search company, contact..." />
+        </div>
+
+        <div class="in-table-wrap">
+        <table class="in-table">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Contact demoed</th>
+                    <th>Source</th>
+                    <th>Demo date</th>
+                    <th>Demo by (sales)</th>
+                    <th>Result</th>
+                    <th>Incentive</th>
+                </tr>
+            </thead>
+            <tbody id="InDemosRows">
+                <tr><td colspan="7" class="in-empty">Loading...</td></tr>
+            </tbody>
+        </table>
+        </div>
+        <div class="in-pager" id="InDemosPager"></div>
+    </div>
+
+    <div class="in-card">
+        <div class="in-section-label">Monthly performance <span>&mdash; replaces the old "All Lead Status Report" &middot; click any number to see the leads behind it(Last 1 year)</span></div>
+
+        <div class="in-search">
+            <i class="fa fa-search"></i>
+            <input type="text" id="InMonthlySearch" placeholder="Search month (e.g. Aug 2026)..." />
+        </div>
+
+        <div class="in-table-wrap">
+        <table class="in-table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Leads generated</th>
+                    <th>Transferred</th>
+                    <th>Demos done <span style="text-transform:none;font-weight:400;color:#c2c6cc;">(by demo date)</span></th>
+                    <th>Won</th>
+                    <th>Incentive earned</th>
+                    <th>Won incentive</th>
+                    <th>Total incentive</th>
+                </tr>
+            </thead>
+            <tbody id="InMonthlyRows">
+                <tr><td colspan="8" class="in-empty">Loading...</td></tr>
+            </tbody>
+        </table>
+        </div>
+        <div class="in-pager" id="InMonthlyPager"></div>
+    </div>
+</div>
+
+<div class="in-modal-backdrop" id="InMonthDetailBackdrop">
+    <div class="in-modal">
+        <div class="in-modal-header">
+            <div class="in-modal-title" id="InMonthDetailTitle">Month</div>
+            <button type="button" class="in-modal-close" id="InMonthDetailCloseBtn">&times;</button>
+        </div>
+        <div class="in-modal-body-scroll">
+            <table class="in-table">
+                <thead>
+                    <tr id="InMonthDetailHeadRow">
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Source</th>
+                        <th>Requested</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="InMonthDetailRows">
+                    <tr><td colspan="5" class="in-empty">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var InPerDemoIncentive = 700;
+    var InPerWonIncentive = 2000;   // har Won lead par incentive
+    var InMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function InFormatRupees(amount) {
+        var n = amount || 0;
+        return "&#8377;" + n.toLocaleString("en-IN");
+    }
+
+    function InEscape(val) {
+        return val ? $("<div>").text(val).html() : "";
+    }
+
+    function InValueOrDash(val) {
+        return val ? InEscape(val) : "<span style='color:#c2c6cc'>&mdash;</span>";
+    }
+
+    function InFormatDate(dotNetDate) {
+        if (!dotNetDate) return "";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    // The 3 KPI cards are based on the ACTUAL demo date -- a deliberate
+    // departure from the Monthly performance table below, which stays keyed
+    // off usp_GetSalesLeadStatusReporyPreSales's RequestedDate on purpose
+    // (that table exists to mirror the real proc exactly). A lead's
+    // RequestedDate can be long in the past even though its demo happened
+    // this month, so these cards use the demo's actual DemoDate instead.
+    // Every distinct demoed lead is one payout, regardless of Won/Demo done
+    // status. The counting itself happens server-side (GetIncentiveKpiCounts)
+    // rather than by fetching every demoed lead to the browser -- this list
+    // can get large in production, so only the 3 aggregate numbers travel
+    // over the wire.
+    function InRenderKpis() {
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetIncentiveKpiCounts",
+            dataType: "json"
+        }).done(function (response) {
+            var counts = (response && response.DataItem) || {};
+            var now = new Date();
+            var curMonth = now.getMonth();
+            var quarterStart = Math.floor(curMonth / 3) * 3;
+
+            $("#InThisMonthAmount").html(InFormatRupees((counts.ThisMonth || 0) * InPerDemoIncentive));
+            $("#InThisQuarterAmount").html(InFormatRupees((counts.ThisQuarter || 0) * InPerDemoIncentive));
+            $("#InThisQuarterLabel").text("This quarter (" + InMonthNames[quarterStart] + "-" + InMonthNames[quarterStart + 2] + ")");
+            $("#InLast6MonthsAmount").html(InFormatRupees((counts.SixMonths || 0) * InPerDemoIncentive));
+        }).fail(function () {
+            $("#InThisMonthAmount").html(InFormatRupees(0));
+            $("#InThisQuarterAmount").html(InFormatRupees(0));
+            $("#InLast6MonthsAmount").html(InFormatRupees(0));
+        });
+    }
+
+    // Each cell in a month's row is its own drill-down: "Leads generated"
+    // opens every lead requested that month, while "Transferred"/"Won" open
+    // just the leads matching that specific column, filtered client-side
+    // out of the same GetMonthlyPerformanceDetail payload (see
+    // OpenMonthDetail). The whole <td> box is clickable, not just the
+    // number inside it. "Demos done" is NOT built with this helper -- see
+    // InDemoCellLink/OpenMonthDemoDetail below, since that column is
+    // demo-date based rather than RequestedDate based.
+    function InCellLink(value, monthNo, yearNo, monthName, filterType) {
+        var safeMonthName = (monthName || "").replace(/'/g, "\\'");
+        return "<td class='in-cell-link' onclick=\"OpenMonthDetail(" + monthNo + ", " + yearNo + ", '" + safeMonthName + "', '" + filterType + "')\">" + value + "</td>";
+    }
+
+    // "Demos done" / "Incentive earned" are shown on the demo's ACTUAL date
+    // (lastdemodate), same basis as the top Incentive KPI cards and the
+    // Demos completed table -- deliberately NOT the RequestedDate basis the
+    // rest of this row (Leads generated/Transferred/Won) uses, since those
+    // mirror the real usp_GetSalesLeadStatusReporyPreSales report exactly.
+    // This keeps "this month" numbers consistent between the top cards and
+    // this table instead of one saying 6/₹3,000 and the other saying 1/₹700.
+    function InDemoCellLink(value, monthNo, yearNo, monthName) {
+        var safeMonthName = (monthName || "").replace(/'/g, "\\'");
+        return "<td class='in-cell-link' onclick=\"OpenMonthDemoDetail(" + monthNo + ", " + yearNo + ", '" + safeMonthName + "')\">" + value + "</td>";
+    }
+
+    // Builds a compact page-number list -- 1,2,3,4,5,...,N near the start;
+    // 1,...,N-4..N near the end; 1,...,cur-1,cur,cur+1,...,N in the middle --
+    // instead of one button per page.
+    function InCompactPageList(current, total) {
+        if (total <= 7) {
+            var all = [];
+            for (var i = 1; i <= total; i++) all.push(i);
+            return all;
+        }
+        if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+        if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+        return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+
+    // True server-side page/search -- GetMonthlyPerformancePaged wraps the
+    // real report proc (via INSERT...EXEC, untouched) merged with the
+    // demo-date based count entirely in SQL, so the browser only ever holds
+    // one page (10 months) at a time, same pattern as every other table on
+    // this page.
+    var InMonthlyPageSize = 10;
+    var InMonthlyCurrentPage = 1;
+    var InMonthlyTotalCount = 0;
+
+    function InRenderMonthlyPager() {
+        var numberOfPages = Math.max(1, Math.ceil(InMonthlyTotalCount / InMonthlyPageSize));
+        if (numberOfPages <= 1) {
+            $("#InMonthlyPager").html("");
+            return;
+        }
+        var html = "";
+        html += "<button " + (InMonthlyCurrentPage <= 1 ? "disabled" : "onclick='GoToMonthlyPage(" + (InMonthlyCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = InCompactPageList(InMonthlyCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='in-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === InMonthlyCurrentPage ? "active" : "") + "' onclick='GoToMonthlyPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (InMonthlyCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToMonthlyPage(" + (InMonthlyCurrentPage + 1) + ")'") + ">Next</button>";
+        $("#InMonthlyPager").html(html);
+    }
+
+    function GoToMonthlyPage(page) {
+        InMonthlyCurrentPage = page;
+        LoadMonthlyPerformance();
+    }
+
+    function InRenderMonthlyTable(list) {
+        if (!list.length) {
+            $("#InMonthlyRows").html("<tr><td colspan='8' class='in-empty'>No monthly data yet.</td></tr>");
+            $("#InMonthlyPager").html("");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var row = list[i];
+            var demoCount = row.DemoDateBasedCount || 0;
+            var incentive = demoCount * InPerDemoIncentive;
+            var wonCount = row.WonLead || 0;
+            var wonIncentive = wonCount * InPerWonIncentive;   // Won × 2000
+            var totalIncentive = incentive + wonIncentive;     // dono ka sum
+            var monthName = row.MonthName || "";
+            html += "<tr>";
+            html += "  <td class='in-month'>" + $("<div>").text(monthName.substr(0, 3) + " " + row.YearNo).html() + "</td>";
+            html += InCellLink(row.TotalLead || 0, row.MonthNo, row.YearNo, monthName, "all");
+            html += InCellLink(row.LeadTransfer || 0, row.MonthNo, row.YearNo, monthName, "transferred");
+            html += InDemoCellLink(demoCount, row.MonthNo, row.YearNo, monthName);
+            html += InCellLink(wonCount, row.MonthNo, row.YearNo, monthName, "won");
+            html += "  <td>" + InFormatRupees(incentive) + "</td>";
+            html += "  <td>" + InFormatRupees(wonIncentive) + "</td>";
+            html += "  <td><strong>" + InFormatRupees(totalIncentive) + "</strong></td>";
+            html += "</tr>";
+        }
+        $("#InMonthlyRows").html(html);
+        InRenderMonthlyPager();
+    }
+
+    function LoadMonthlyPerformance() {
+        var search = $.trim($("#InMonthlySearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetMonthlyPerformancePaged",
+            data: { search: search, pageNumber: InMonthlyCurrentPage, pageSize: InMonthlyPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            InMonthlyTotalCount = (response && response.TotalCount) || 0;
+            InRenderMonthlyTable((response && response.DataList) || []);
+        }).fail(function () {
+            $("#InMonthlyRows").html("<tr><td colspan='8' class='in-empty'>Couldn't load monthly performance - please refresh.</td></tr>");
+        });
+    }
+
+    var InMonthlySearchTimer = null;
+    $("#InMonthlySearch").on("input", function () {
+        clearTimeout(InMonthlySearchTimer);
+        InMonthlySearchTimer = setTimeout(function () {
+            InMonthlyCurrentPage = 1;
+            LoadMonthlyPerformance();
+        }, 300);
+    });
+
+    // ---- Demos completed (real leads with a logged demo) -------------
+    function InSourceBadge(source) {
+        if (!source) return "<span style='color:#c2c6cc'>&mdash;</span>";
+        return "<span class='in-pill in-pill-gray'>" + InEscape(source) + "</span>";
+    }
+
+    function InResultBadge(status) {
+        var key = (status || "").trim().toLowerCase();
+        if (key === "won") return "<span class='in-pill in-pill-green'>Won</span>";
+        return "<span class='in-pill in-pill-blue'>Demo done</span>";
+    }
+
+    // Every distinct demoed lead earns the incentive, Won or not -- one row
+    // in this list is one distinct lead, one payout.
+    function InIncentivePill() {
+        return "<span class='in-pill in-pill-mint'>+" + InFormatRupees(InPerDemoIncentive) + "</span>";
+    }
+
+    // Each page's rows are fetched from the server on demand -- only
+    // InDemosTotalCount (for the pager) and the current page's 10 rows ever
+    // live in the browser, so this stays cheap even once the underlying
+    // table has tens of thousands of demoed leads.
+    var InDemosPageSize = 10;
+    var InDemosCurrentPage = 1;
+    var InDemosTotalCount = 0;
+
+    function InRenderDemosPager() {
+        var numberOfPages = Math.max(1, Math.ceil(InDemosTotalCount / InDemosPageSize));
+        if (numberOfPages <= 1) {
+            $("#InDemosPager").html("");
+            return;
+        }
+        var html = "";
+        html += "<button " + (InDemosCurrentPage <= 1 ? "disabled" : "onclick='GoToDemosPage(" + (InDemosCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = InCompactPageList(InDemosCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='in-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === InDemosCurrentPage ? "active" : "") + "' onclick='GoToDemosPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (InDemosCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToDemosPage(" + (InDemosCurrentPage + 1) + ")'") + ">Next</button>";
+        $("#InDemosPager").html(html);
+    }
+
+    function GoToDemosPage(page) {
+        InDemosCurrentPage = page;
+        LoadDemosCompletedList();
+    }
+
+    function InRenderDemosRows(list) {
+        if (!list.length) {
+            $("#InDemosRows").html("<tr><td colspan='7' class='in-empty'>No demos completed yet.</td></tr>");
+            $("#InDemosPager").html("");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr>";
+            html += "  <td class='in-name'>" + InValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td>" + InValueOrDash(item.ContactName) + (item.CorpEmail ? "<span class='in-sub'>" + InEscape(item.CorpEmail) + "</span>" : "") + "</td>";
+            html += "  <td>" + InSourceBadge(item.Source) + "</td>";
+            html += "  <td>" + InValueOrDash(InFormatDate(item.DemoDate)) + "</td>";
+            html += "  <td>" + InValueOrDash(item.DemoBySales) + "</td>";
+            html += "  <td>" + InResultBadge(item.Status) + "</td>";
+            html += "  <td>" + InIncentivePill() + "</td>";
+            html += "</tr>";
+        }
+        $("#InDemosRows").html(html);
+        InRenderDemosPager();
+    }
+
+    function LoadDemosCompletedList() {
+        var search = $.trim($("#InDemosSearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDemosCompletedListPaged",
+            data: { search: search, pageNumber: InDemosCurrentPage, pageSize: InDemosPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            InDemosTotalCount = (response && response.TotalCount) || 0;
+            InRenderDemosRows((response && response.DataList) || []);
+        }).fail(function () {
+            $("#InDemosRows").html("<tr><td colspan='7' class='in-empty'>Couldn't load demos - please refresh.</td></tr>");
+        });
+    }
+
+    var InDemosSearchTimer = null;
+    $("#InDemosSearch").on("input", function () {
+        clearTimeout(InDemosSearchTimer);
+        InDemosSearchTimer = setTimeout(function () {
+            InDemosCurrentPage = 1;
+            LoadDemosCompletedList();
+        }, 300);
+    });
+
+    // ---- Monthly performance row click-through popup ------------------
+    // Shows every SA_MaskEmail_PreSales lead this user generated in the
+    // clicked month, labeled Won / Transferred / Demo done / New from
+    // usp_PreSalesNew_GetMonthlyPerformanceDetail's PreSalesStatus /
+    // OpenStatus / HasDemo columns.
+    function InLeadResultLabel(row) {
+        var openStatus = (row.OpenStatus || "").trim().toLowerCase();
+        var presalesStatus = (row.PreSalesStatus || "").trim().toLowerCase();
+        if (openStatus === "won") return "<span class='in-pill in-pill-green'>Won</span>";
+        if (row.HasDemo) return "<span class='in-pill in-pill-blue'>Demo done</span>";
+        if (presalesStatus === "transferred") return "<span class='in-pill in-pill-gray'>Transferred</span>";
+        if (presalesStatus) return "<span class='in-pill in-pill-gray'>" + InEscape(row.PreSalesStatus) + "</span>";
+        return "<span style='color:#c2c6cc'>&mdash;</span>";
+    }
+
+    var InMonthDetailTitles = {
+        all: "Leads generated",
+        transferred: "Transferred",
+        demo: "Demos done",
+        won: "Won"
+    };
+
+    // The month's full lead list (with each lead's PreSalesStatus /
+    // OpenStatus / HasDemo) is fetched once, then filtered client-side to
+    // the specific column that was clicked — "all" shows every lead
+    // requested that month, "transferred"/"demo"/"won" show only the
+    // leads matching that column, same categorization the underlying
+    // usp_GetSalesLeadStatusReporyPreSales proc uses for its own counts.
+    function InFilterMonthDetail(list, filterType) {
+        if (filterType === "transferred") {
+            return list.filter(function (row) {
+                return (row.PreSalesStatus || "").trim().toLowerCase() === "transferred";
+            });
+        }
+        if (filterType === "demo") {
+            return list.filter(function (row) { return row.HasDemo; });
+        }
+        if (filterType === "won") {
+            return list.filter(function (row) {
+                return (row.OpenStatus || "").trim().toLowerCase() === "won";
+            });
+        }
+        return list;
+    }
+
+    function InResetMonthDetailHead() {
+        $("#InMonthDetailHeadRow").html("<th>Name</th><th>Company</th><th>Source</th><th>Requested</th><th>Status</th>");
+    }
+
+    function OpenMonthDetail(monthNo, yearNo, monthName, filterType) {
+        filterType = filterType || "all";
+        var titleSuffix = InMonthDetailTitles[filterType] || "Leads generated";
+        InResetMonthDetailHead();
+        $("#InMonthDetailTitle").text((monthName || "") + " " + yearNo + " - " + titleSuffix);
+        $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>Loading...</td></tr>");
+        $("#InMonthDetailBackdrop").addClass("active");
+
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetMonthlyPerformanceDetail",
+            data: { monthNo: monthNo, yearNo: yearNo },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            list = InFilterMonthDetail(list, filterType);
+            if (!list.length) {
+                $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>No leads found for this month.</td></tr>");
+                return;
+            }
+            var html = "";
+            for (var i = 0; i < list.length; i++) {
+                var row = list[i];
+                html += "<tr>";
+                html += "  <td class='in-name'>" + InValueOrDash(row.Name) + (row.CorpEmail ? "<span class='in-sub'>" + InEscape(row.CorpEmail) + "</span>" : "") + "</td>";
+                html += "  <td>" + InValueOrDash(row.CompanyName) + "</td>";
+                html += "  <td>" + InValueOrDash(row.OutboundLeadSource) + "</td>";
+                html += "  <td>" + InValueOrDash(InFormatDate(row.RequestedDate)) + "</td>";
+                html += "  <td>" + InLeadResultLabel(row) + "</td>";
+                html += "</tr>";
+            }
+            $("#InMonthDetailRows").html(html);
+        }).fail(function () {
+            $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>Couldn't load leads - please refresh.</td></tr>");
+        });
+    }
+
+    // Drill-down for the Monthly Performance table's "Demos done" cell --
+    // demo-date based (see GetMonthlyPerformancePaged's DemoDateBasedCount),
+    // fetched separately from OpenMonthDetail/GetMonthlyPerformanceDetail
+    // above since that endpoint is RequestedDate based and would show a
+    // mismatched set of leads here.
+    function OpenMonthDemoDetail(monthNo, yearNo, monthName) {
+        $("#InMonthDetailHeadRow").html("<th>Contact</th><th>Company</th><th>Source</th><th>Demo date</th><th>Result</th>");
+        $("#InMonthDetailTitle").text((monthName || "") + " " + yearNo + " - Demos done");
+        $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>Loading...</td></tr>");
+        $("#InMonthDetailBackdrop").addClass("active");
+
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDemosCompletedListByMonth",
+            data: { monthNo: monthNo, yearNo: yearNo },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            if (!list.length) {
+                $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>No demos completed this month.</td></tr>");
+                return;
+            }
+            var html = "";
+            for (var i = 0; i < list.length; i++) {
+                var item = list[i];
+                html += "<tr>";
+                html += "  <td class='in-name'>" + InValueOrDash(item.ContactName) + (item.CorpEmail ? "<span class='in-sub'>" + InEscape(item.CorpEmail) + "</span>" : "") + "</td>";
+                html += "  <td>" + InValueOrDash(item.CompanyName) + "</td>";
+                html += "  <td>" + InValueOrDash(item.Source) + "</td>";
+                html += "  <td>" + InValueOrDash(InFormatDate(item.DemoDate)) + "</td>";
+                html += "  <td>" + InResultBadge(item.Status) + "</td>";
+                html += "</tr>";
+            }
+            $("#InMonthDetailRows").html(html);
+        }).fail(function () {
+            $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>Couldn't load leads - please refresh.</td></tr>");
+        });
+    }
+
+    var InKpiDetailTitles = {
+        month: "This month",
+        quarter: "This quarter",
+        sixmonths: "Last 6 months"
+    };
+
+    // Drill-down for the 3 top KPI cards -- reuses the same modal as
+    // OpenMonthDetail, but pulls from the server-side range endpoint
+    // (DemoDate filtered) instead of the RequestedDate-based month detail
+    // endpoint, and swaps in headers that fit that shape of data. Every
+    // distinct demoed lead counts here, Won or not -- matches
+    // GetIncentiveKpiCounts above. This/quarter/6-month windows are all
+    // naturally small (a handful of demos), so it's safe to fetch the whole
+    // matching set for the popup rather than paginating it.
+    function OpenIncentiveKpiDetail(rangeType) {
+        $("#InMonthDetailHeadRow").html("<th>Contact</th><th>Company</th><th>Source</th><th>Demo date</th><th>Result</th>");
+        $("#InMonthDetailTitle").text((InKpiDetailTitles[rangeType] || "") + " — demoed leads");
+        $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>Loading...</td></tr>");
+        $("#InMonthDetailBackdrop").addClass("active");
+
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDemosCompletedListByRange",
+            data: { rangeType: rangeType },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            if (!list.length) {
+                $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>No demos completed in this period.</td></tr>");
+                return;
+            }
+            var html = "";
+            for (var i = 0; i < list.length; i++) {
+                var item = list[i];
+                html += "<tr>";
+                html += "  <td class='in-name'>" + InValueOrDash(item.ContactName) + (item.CorpEmail ? "<span class='in-sub'>" + InEscape(item.CorpEmail) + "</span>" : "") + "</td>";
+                html += "  <td>" + InValueOrDash(item.CompanyName) + "</td>";
+                html += "  <td>" + InValueOrDash(item.Source) + "</td>";
+                html += "  <td>" + InValueOrDash(InFormatDate(item.DemoDate)) + "</td>";
+                html += "  <td>" + InResultBadge(item.Status) + "</td>";
+                html += "</tr>";
+            }
+            $("#InMonthDetailRows").html(html);
+        }).fail(function () {
+            $("#InMonthDetailRows").html("<tr><td colspan='5' class='in-empty'>Couldn't load leads - please refresh.</td></tr>");
+        });
+    }
+
+    $("#InMonthDetailCloseBtn").click(function () {
+        $("#InMonthDetailBackdrop").removeClass("active");
+    });
+
+    $(document).ready(function () {
+        LoadMonthlyPerformance();
+        LoadDemosCompletedList();
+        InRenderKpis();
+    });
+</script>

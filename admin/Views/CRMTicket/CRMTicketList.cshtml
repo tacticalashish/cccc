@@ -1,0 +1,349 @@
+﻿
+@{
+    ViewBag.Title = "CRMTicketList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/ckeditor/ckeditor.js" type="text/javascript"></script>
+
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper  container-fluid mt-0 pt-0">
+        <div class="row">
+            <div class="col-sm-12 col-md-12"><h3 class="text-white">CRM Ticket List</h3></div>
+            <div class="col-sm-12 col-md-4">
+                <label><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="CRMTicketsearch" aria-controls="Userlist"></label>
+                <input type="button" class="btn btn-success" value="Search" onclick="GetCRMTicketsearchValues()" />
+                <input type="hidden" id="CRMTicketPageNumber" name="CRMTicketPageNumber" value="1" />
+            </div>
+            <div class="col-sm-12 col-md-4 d-flex">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="FromDate" autocomplete="off" />
+                    <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control ms-2" id="Todate" autocomplete="off" />
+                    <div class="input-group-addon p-1"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        <div class="data-detail-wrapper table-responsive scrolladmin01 mt-2">
+            <table id="Associateratinglist" class="table table-sm table-bordered mb-0">
+                <thead class="bg-dark text-nowrap">
+                    <tr>
+                        <th hidden="hidden">Id</th>
+                        <th>Product Name</th>                        
+                        <th>Query</th>
+                        <th>Query Type</th>
+                        <th>Company Name</th>
+                        <th>CreatedDate</th>
+                        <th>Created By</th>                       
+                    </tr>
+                </thead>
+                <tbody class="CRMTicketbodydata" id="CRMTickettbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="CRMTicketdivPagging"></div>
+</div>
+
+
+<div class="position-relative popup-open1" id="AddMoreRating" style="display:none">
+    <div class="child01" style="padding:5px!important">
+        <textarea rows="4" name="Description" placeholder="Description *"></textarea>
+        <script type="text/javascript">
+            CKEDITOR.replace("Description");
+        </script>
+        <div class="col-md-12 mt-2">
+            <button class="btn btn-danger btn-sm" style="float:right" id="Cancelparameters" type="button">Cancel</button>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<script src="~/js/bootstrap-select.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script>
+            $("#Cancelparameters").click(function () {
+                $("#AddMoreRating").css("display", "none");
+            });
+    function GetCRMTicketsearchValues() {
+        Search = $('#CRMTicketsearch').val();
+        $('#search').html(GetPaginationHTML(Search));
+        GetCRMTicketViewBasedOnSearchFilter();
+    }
+    $(document).ready(function () {
+        $("#Todate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#FromDate").datepicker({ dateFormat: "dd/MM/yy" });
+        GetCRMTicketViewBasedOnSearchFilter();
+    });
+
+
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1;
+        var year = dateObject.getFullYear();
+        day = day < 10 ? "0" + day : day;
+        month = month < 10 ? "0" + month : month;
+        var formattedDate = day + "/" + month + "/" + year;
+        return formattedDate;
+    };
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left py-5' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#CRMTicketPageNumber').val(pageNumber);
+
+        GetCRMTicketViewBasedOnSearchFilter();
+
+    }
+
+    function getFormattedDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    const today = new Date();
+    const fromDate = new Date();
+    fromDate.setDate(today.getDate() - 30)
+    const toDatePlusOne = new Date(today);
+    toDatePlusOne.setDate(toDatePlusOne.getDate() + 1);
+
+    document.getElementById('FromDate').setAttribute('value', getFormattedDate(fromDate));
+    document.getElementById('Todate').setAttribute('value', getFormattedDate(toDatePlusOne));
+
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+
+
+    function GetCRMTicketViewBasedOnSearchFilter() {
+      
+        var FromDate = $('#FromDate').val();
+        var ToDate = $('#Todate').val();
+        var pageNumber = $('#CRMTicketPageNumber').val();
+        var Search = $('#CRMTicketsearch').val();
+        var URL = "/CRMTicket/CRMTicketViewRatingList?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        URL += '&FromDate=' + FromDate;
+        URL += '&ToDate=' + ToDate;
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                debugger;
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        var formattedDate = ($.formattedDate(new Date(parseInt(elm.CreatedDate.substr(6)))));
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.ID + "</td>";
+                        tbodyHTML += "<td>" + elm.ProductName + "</td>";
+                        tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-info' value='Show' onclick=ShowDetails('" + elm.ID + "')>" + "</td>";
+                        tbodyHTML += "<td>" + elm.QuearyType + "</td>"; 
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + formattedDate + "</td>";
+                        tbodyHTML += "<td>" + elm.CreatedBy + "</td>";                        
+                        tbodyHTML += "</tr>"
+                    });
+
+                    $('#CRMTicketdivPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+
+              
+                $('.CRMTicketbodydata').html(tbodyHTML);
+            }
+        });
+    }
+
+    function ShowDetails(value) {
+        var URL = "/CRMTicket/GetCRMDetails?id=" + value;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                debugger;
+                if (json != null) {
+                    $(json).each(function (idx, elm) {
+                        CKEDITOR.instances.Description.setData(elm.Queary);
+                        $('#DassociateName').html(elm.QuearyType);
+                        $("#AddMoreRating").css("display", "block");
+                    });
+                }
+            }
+        });
+    }
+
+</script>

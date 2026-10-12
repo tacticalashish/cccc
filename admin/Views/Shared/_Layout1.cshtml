@@ -1,0 +1,899 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <title>Chem Analyst - Administrator </title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/bootstrap-admin.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/style2.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link rel="icon" href="~/images/logo.png"  sizes="16x16">
+
+</head>
+<body oncontextmenu="return false;">
+    <script>
+        $(document).ready(function () {
+
+            $(this).bind("contextmenu", function (e) {
+
+                e.preventDefault();
+
+            });
+
+            //Note: get notification from ticket
+           // BindTicketBellNotification();
+        });
+
+
+        function BindTicketBellNotification() {
+
+
+            $.ajax({
+                type: "POST",
+                url: "/ticket/TicketNotificationBell",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: true,
+                success: function (response) {
+
+                    var count = 0;
+                    $(response).each(function (index, value) {
+                        count = 1 + count;
+                    });
+                    $('#spnNotificationBell').text(count);
+
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+        function UpdateTicketBellNotification() {
+
+
+            $.ajax({
+                type: "POST",
+                url: "/ticket/UpdateTicketNotificationBell",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                    if (response == 's') {
+                        window.location.href = "/ticket/list";
+                    }
+                    else {
+                        console.log(response);
+                    }
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+        }
+
+
+        //Note: Loading modal pop up
+        function Loading(status) {
+            if (status) {
+                $('#loading').modal('show');
+            }
+            else {
+                $('#loading').modal('hide');
+            }
+        }
+
+    </script>
+    <section class="top-wrapper">
+        <div class="side-left">
+            <span>
+                <img src="~/images/icon01.png" alt="" />
+            </span>
+            @*<h2>Chem Analyst</h2>*@
+        </div>
+        <div class="top-inner">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="top-left">
+                            <span>
+                                <i class="fa fa-bars"></i>
+                            </span>
+                            <h2>Control Panel</h2>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="top-right" style="position:relative;">
+                            @*<img src="~/@Session["UserImg"].ToString()" alt="" />*@
+                            <a href="javascript:void(0)" onclick="UpdateTicketBellNotification();">
+                                <span style="display:inline-block;margin-right:20px;">
+                                    <i class="fa fa-bell text-white" aria-hidden="true"></i>
+                                </span>
+                                <span id="spnNotificationBell" name="spnNotificationBell" style="position:absolute;background-color:red;padding: 4px 5px 2px 4px;font-size: 9px;color: #fff;    border-radius: 50%;left: 8px;">
+                                    0
+                                </span>
+                            </a>
+                            <span style="margin-top:10px;color:#fff;display:inline-block">@Session["User"].ToString()</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    @{
+        List<ChemAnalyst.Models.SA_RoleWiseAccess> objAccess = (List<ChemAnalyst.Models.SA_RoleWiseAccess>)@Session["Access"];
+        <div class="side-wrapper">
+            <ul>
+                @if ((Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    //-------------Admin User ----------------------------------------
+                    <li>
+                        <a data-toggle="collapse" data-target="#aumenu" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Admin User <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="aumenu" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("ShowUserList", "Admin" )">
+                                    <i class="fa fa-user"></i>User Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("CustomerList", "Admin" )">
+                                    <i class="fa fa-user"></i>Customer Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("CustomerLoginDetail", "Admin" )">
+                                    <i class="fa fa-bar-chart"></i>Customer Login Detail
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Role", "Admin" )">
+                                    <i class="fa fa-users"></i>Role Management
+                                </a>
+                            </li>
+                            @* <li>
+                                    <a href="@Url.Action(" LeadTracker", "Report" )">
+                                      <i class="fa fa-user"></i>Lead Tracker </a>
+                                </li>*@
+                        </ul>
+                        @*<li>
+                                <a href="@Url.Action("ShowCountryList", "Admin")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Country Management
+                                </a>
+                            </li>*@
+                    </li>
+                    //-----------------------Homepage CMS-----------------------------
+                    <li>
+                        <a data-toggle="collapse" data-target="#cmsmenu" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Homepage CMS
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="cmsmenu" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("Slider", "Slider")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Slider Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Job", "Job")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Free Trail
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AddChemContent", "ChemContent")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Pricing Content
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Advisory", "AdvisorySolutions")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Advisory Solution
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AddWorld", "World")">
+                                    <i class="fa fa-circle-o text-aqua"></i> World Content
+                                </a>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("Quote", "Quote")">
+                                        <i class="fa fa-circle-o text-aqua"></i> Testimonials
+                                    </a>
+                                </li>*@
+
+                        </ul>
+                    </li>
+                    <!--<li>
+                        <a href="@Url.Action("CMS", "NewsAndDeals")">
+                            <i class="fa fa-list"></i>CMS Management
+                        </a>
+                    </li>-->
+                    //---------Product-Category---------------------------------------
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Product-Category
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="pcmenu" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("Category", "ProductAndCategory")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Category Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Product", "ProductAndCategory")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Product Management
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    //------------------News And Deals--------------------------------
+                    <li>
+                        <a data-toggle="collapse" data-target="#newsmenu" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-comment"></i>News and Deals
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="newsmenu" aria-expanded="true" style="">
+                            @if ((objAccess.Where(page => page.Pageid == 5).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                            {
+                                <li>
+                                    <a href="@Url.Action("News", "NewsAndDeals")">
+                                        <i class="fa fa-circle-o text-aqua"></i> News Management
+                                    </a>
+                                </li>
+                            }
+                            @if ((objAccess.Where(page => page.Pageid == 6).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                            {
+                                <li>
+                                    <a href="@Url.Action("Deals", "NewsAndDeals")">
+                                        <i class="fa fa-circle-o text-aqua"></i> Deals Management
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                    //----------------------------------------------------------------
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu01" class="" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Approval Chemical Pricing
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="pcmenu01" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("EmployeeMaster", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Employee Master</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ProductEmpRelation", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i> Product Employee Relation</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AssociatePriceList", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Associate Pricing List</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ConsultantPriceList", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Consultant Pricing List</a>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("SimpleViewProduct", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Simple View Product List</a>
+                                </li>*@
+                            <li>
+                                <a href="@Url.Action("ProjectManagerList", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Project Manager List</a>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("OrganizationalChartLayout", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>OrganizationalChartLayout</a>
+                                </li>*@
+                            @*<li>
+                                    <a href="@Url.Action("KeyboardInteraction", "Diagram")"><i class="fa fa-circle-o text-aqua"></i>OrganizationalChartLayout</a>
+                                </li>*@
+                        </ul>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 3).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    //-----------------------Company Management---------------------------
+                    <li>
+                        <a data-toggle="collapse" data-target="#comprofmenu" class="drop-menu" aria-expanded="true" href="#">
+
+                            <i class="fa fa-signal"></i>Company Management
+
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="comprofmenu" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("AllCompanyProf", "CompanyProf")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Manage Company Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AllCompanyProfileRecords", "CompanyProfRecord")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Manage FY Data
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AllComAndProductRelationRecords", "CompanyAndProductRelation")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Company &amp; Product Relation
+                                </a>
+                            </li>
+
+                            @*<li>
+                                    <a href="@Url.Action("AllComAndProductRelationRecords", "CompanyAndProductRelation")">
+                                        <i class="fa fa-circle-o text-aqua"></i> Edit Company &amp; Product Listing
+                                    </a>
+                                </li>*@
+                        </ul>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 7).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#salemenu" class="drop-menu" aria-expanded="true" href="#">
+
+                            <i class="fa fa-signal"></i>Subscription Management
+
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="salemenu" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("CompanyReport", "admin")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Company Managment
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("LeadManagement", "SubsManagement")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Lead Management
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="@Url.Action("GetAllAPIClint", "ApiSubscription")">
+                                    <i class="fa fa-circle-o text-aqua"></i>Api Subscription
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="@Url.Action("ShowSubscriptionListForSales", "SubsManagement")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Subscription Package
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="@Url.Action("ShowSubscriptionListForSalesNew", "SubsManagement")">
+                                    <i class="fa fa-circle-o text-aqua"></i> Subscription Package New
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Subscription", "Report")">
+                                    <i class="fa fa-circle-o text-aqua"></i>Subscription
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("LeadTracker", "Report")">
+                                    <i class="fa fa-user"></i>Lead Tracker
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 15).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#rtmenu" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Reports Tool
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="rtmenu" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("Commentary", "Report")">
+                                    <i class="fa fa-user"></i>Commentary Report
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("UploadProduct", "Report")">
+                                    <i class="fa fa-user"></i>Product Report
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ExcelLogs", "Report")">
+                                    <i class="fa fa-user"></i>Excel Logs Report
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ErrorExcelLogs", "Report")">
+                                    <i class="fa fa-user"></i>Error Excel Logs Report
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("email", "Report")">
+                                    <i class="fa fa-user"></i>Mass Mailing
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Subscription", "Report")">
+                                    <i class="fa fa-user"></i>Subscription
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 1).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu09" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Admin Product Varient
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+
+                        <ul class="sub-menu collapse" id="pcmenu09" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("AddVariant", "ProductVariant")">
+                                    <i class="fa fa-bar-chart"></i> Add Product Variant
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("AddProductVariantRelation", "ProductVariant")">
+                                    <i class="fa fa-bar-chart"></i> Add Product Variant Relation
+                                </a>
+                            </li>
+
+                            <li><a href="@Url.Action("SearchProductVariant", "ProductVariant")"><i class="fa fa-bar-chart"></i>  Update Product variant </a></li>
+
+                            <li><a href="@Url.Action("ProductVariantRelationSearch", "ProductVariant")"><i class="fa fa-bar-chart"></i> Update Product variant Relation </a></li>
+                        </ul>
+                    </li>
+
+                }
+
+                @if ((objAccess.Where(page => page.Pageid == 1).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu02" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Admin Chemical Pricing
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+
+                        @*<ul class="sub-menu collapse" id="pcmenu02" aria-expanded="true" style="">
+                                <li>
+                                    <a href="@Url.Action("AdminChemicalPricing", "AdminChemicalPricing")">
+                                        <i class="fa fa-circle-o text-aqua"></i>Upload Chemical Pricing Data
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("GetChemicalPriceList", "AdminChemicalPricing")">
+                                        <i class="fa fa-circle-o text-aqua"></i>Admin Chemical Pricing List
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("DownloadChemicalPricing", "AdminChemicalPricing")">
+                                        <i class="fa fa-circle-o text-aqua"></i>Download Chemical Pricing Data
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("UpdateChemicalPrice", "AdminChemicalPricing")">
+                                        <i class="fa fa-circle-o text-aqua"></i>Update Chemical Pricing Data
+                                    </a>
+                                </li>
+                            </ul>*@
+                        <ul class="sub-menu collapse" id="pcmenu02" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("ChemicalPricingList", "ChemicalPricing")">
+                                    <i class="fa fa-bar-chart"></i>Chemical Pricing
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                }
+                @if ((objAccess.Where(page => page.Pageid == 17).Count() > 0))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu0" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Internal Commentary Associate
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="pcmenu0" aria-expanded="true" style="">
+
+                            <li>
+                                <a href="@Url.Action("AssociateCommentaryList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Pricing List Pending For Insights</a>
+                            </li>
+                            @*<li>
+                                         <a href="@Url.Action("AddExternalCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>External Commentary List</a>
+                                </li>*@
+
+                            <li>
+                                <a href="@Url.Action("AssociateListForCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Status of Uploaded Insights</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("OrganizationalChartLayout_Commentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Organizational Chart layout-Insights Team</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("UpdateCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Edit Insights</a>
+                            </li>
+                        </ul>
+
+                        @*<ul class="sub-menu collapse" id="pcmenu0" aria-expanded="true" style="">
+                                <li>
+                                    <a href="@Url.Action("CommentaryProductEmpRelation","AdminCommentaryPricing")">
+                                        <i class="fa fa-bar-chart"></i>Commentary Employee Product Relation
+                                    </a>
+                                </li>
+                            </ul>*@
+                    </li>
+
+                }
+                @if ((objAccess.Where(page => page.Pageid == 18).Count() > 0))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu0" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Internal Commentary Consulatant
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="pcmenu0" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("ConsultantCommentaryList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Insights Pending for Approval</a>
+                            </li>
+
+                            <li>
+                                <a href="@Url.Action("OrganizationalChartLayout_Commentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Organizational Chart layout-Insights Team</a>
+                            </li>
+                        </ul>
+
+                        @*<ul class="sub-menu collapse" id="pcmenu0" aria-expanded="true" style="">
+                                <li>
+                                    <a href="@Url.Action("CommentaryProductEmpRelation","AdminCommentaryPricing")">
+                                        <i class="fa fa-bar-chart"></i>Commentary Employee Product Relation
+                                    </a>
+                                </li>
+                            </ul>*@
+                    </li>
+
+                }
+                @if ((Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu0" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>Admin Commentary Pricing
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="pcmenu0" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("CommentaryEmployeeMaster","AdminCommentaryPricing")">
+                                    <i class="fa fa-bar-chart"></i>Commentary Employee Master
+                                </a>
+                            </li>
+                            <li>
+                                @*<a href="@Url.Action("AssociateCommentaryList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Associate Pricing Commentary List</a>*@
+                                <a href="@Url.Action("AssociateCommentaryList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Pricing List Pending For Insights</a>
+                            </li>
+                            @*<li>
+                                    <a href="@Url.Action("AddExternalCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>External Commentary List</a>
+                                </li>*@
+                            <li>
+                                <a href="@Url.Action("ConsultantCommentaryList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Insights Pending for Approval</a>
+                            </li>
+                            <li>
+                                @*<a href="@Url.Action("AssociateListForCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Associate List For Commentary</a>*@
+                                <a href="@Url.Action("AssociateListForCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Status of Uploaded Insights</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("OrganizationalChartLayout_Commentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Organizational Chart layout-Insights Team</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("CommentaryProjectManagerList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Manager List</a>
+                            </li>
+                            <li>
+                                @*<a href="@Url.Action("UpdateCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Update Commentary</a>*@
+                                <a href="@Url.Action("UpdateCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>Edit Insights</a>
+                            </li>
+                        </ul>
+
+                        <ul class="sub-menu collapse" id="pcmenu0" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("CommentaryProductEmpRelation","AdminCommentaryPricing")">
+                                    <i class="fa fa-bar-chart"></i>Commentary Employee Product Relation
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                }
+
+                @*External Commentary*@
+                @if ((objAccess.Where(page => page.Pageid == 19).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+
+                    <li>
+                        <a data-toggle="collapse" data-target="#pcmenu6" class="drop-menu" aria-expanded="true" href="#">
+                            <i class="fa fa-list"></i>External Commentary Pricing
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="sub-menu collapse" id="pcmenu6" aria-expanded="true" style="">
+                            <li>
+                                <a href="@Url.Action("AddExternalCommentary", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>External Commentary Pricing List</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ExternalCommentaryList", "AdminCommentaryPricing")"><i class="fa fa-circle-o text-aqua"></i>External Commentary List</a>
+                            </li>
+                        </ul>
+
+
+                    </li>
+
+                }
+                @if ((objAccess.Where(page => page.Pageid == 2).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("MarketAnalysisList", "MarketAnalysis")">
+                            <i class="fa fa-bar-chart"></i>Market Analysis
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 4).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("ShowIndustryList", "Admin")">
+                            <i class="fa fa-bar-chart"></i> Industry Report
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 5).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("News", "NewsAndDeals")">
+                            <i class="fa fa-circle-o text-aqua"></i> News Management
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 6).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("Deals", "NewsAndDeals")">
+                            <i class="fa fa-circle-o text-aqua"></i> Deals Management
+                        </a>
+                    </li>
+                }
+
+                @if ((objAccess.Where(page => page.Pageid == 8).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("ShowSectoralList", "Admin")">
+                            <i class="fa fa-bar-chart"></i> Sectroal Report
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 9).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("ShowCommentaryList", "Admin")">
+                            <i class="fa fa-bar-chart"></i> Commentary Management
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 10).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("list", "disruptionTracker")">
+                            <i class="fa fa-bar-chart"></i> Capacity Tracker
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 11).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("AssociatePriceList", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Associate Pricing List</a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("AdminChemicalPricing", "AdminChemicalPricing")">
+                            <i class="fa fa-circle-o text-aqua"></i>Upload Chemical Pricing Data
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("UpdateChemicalPrice", "AdminChemicalPricing")">
+                            <i class="fa fa-circle-o text-aqua"></i>Update Chemical Pricing Data
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("SimpleViewProduct", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Simple View Product List</a>
+                    </li>
+
+                }
+                @if ((objAccess.Where(page => page.Pageid == 12).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("ConsultantPriceList", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Consultant Pricing List</a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("OrganizationalChartLayout", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Organizational Chart Layout</a>
+                    </li>
+                    if ((Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                    { }
+                    else
+                    {
+                        <li>
+                            <a href="@Url.Action("SimpleViewProduct", "AdminChemicalPricing")"><i class="fa fa-circle-o text-aqua"></i>Simple View Product List</a>
+                        </li>
+                    }
+                }
+                @if ((objAccess.Where(page => page.Pageid == 13).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("ShowoverviewList", "Admin")">
+                            <i class="fa fa-bar-chart"></i> Pricing Overview
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 14).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("list", "Ticket")">
+                            <i class="fa fa-user"></i>Ticket Management
+                        </a>
+                    </li>
+                }
+
+                @if ((objAccess.Where(page => page.Pageid == 16).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action(" CustomerList", "Admin" )">
+                            <i class="fa fa-user"></i>Customer Management
+                        </a>
+                    </li>
+                }
+                @if ((Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("ShowCommentaryList", "Admin")">
+                            <i class="fa fa-user"></i> Commentary Management
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("GetChemicalPriceList", "AdminChemicalPricing")">
+                            <i class="fa fa-circle-o text-aqua"></i>Admin Chemical Pricing List
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("DownloadChemicalPricing", "AdminChemicalPricing")">
+                            <i class="fa fa-circle-o text-aqua"></i>Download Chemical Pricing Data
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("GetPriceDifference", "AdminChemicalPricing")">
+                            <i class="fa fa-circle-o text-aqua"></i>Monthly Forecast Change
+                        </a>
+                    </li>
+                }
+                @*++++++++++++++++++++++++++++++++++++New Subscription++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-*@
+                @if ((objAccess.Where(page => page.Pageid == 20).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("LeadsManagement", "LeadManagementSubscription")">
+                            <i class="fa fa-link"></i> Lead Management
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 21).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("OperationLeadApproval","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>Operation Lead Approval
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 22).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("AccountsLeadApproval","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>Accounts Lead Approval
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 23).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("SalesHeadLeadApproval","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>Sales Manager Lead Approval
+                        </a>
+                    </li>
+                }
+                @if ((objAccess.Where(page => page.Pageid == 24).Count() > 0) || (Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("CRMDashboard","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>CRM Leads Management
+                        </a>
+                    </li>
+                }
+                @if ((Session["UserRole"].ToString().ToUpper() == "ADMIN"))
+                {
+                    <li>
+                        <a href="@Url.Action("AddExternalMaintenanceAndShutdown","AdminChemicalPricing")">
+                            <i class="fa fa-circle-o text-aqua"></i> External Shutdown
+                        </a>
+                    </li>
+                    <li><a href="@Url.Action("DescriptionList", "Admin")"><i class="fa fa-bar-chart"></i> Product Description List </a></li>
+                    <li><a href="@Url.Action("Update_ChemPriceFlag", "AdminChemicalPricing")"><i class="fa fa-bar-chart"></i> Update ChemPrice Flag </a></li>
+                    <li><a href="@Url.Action("DownloadDataExcel", "DownloadFiles")"><i class="fa fa-bar-chart"></i> Download Excel Data </a></li>
+                    <li>
+                        <a href="@Url.Action("ListOfSalesPackageSubscriptions","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>List Sales Package Subscriptions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("DataAnalystCreateSubsCription","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>DataAnalyst Create SubsCription
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("LeaddeatilsForProjectManger","LeadManagementSubscription")">
+                            <i class="fa fa-link"></i>Sales Project Manager List
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ClintApiSubscription","ApiSubscription")">
+                            <i class="fa fa-link"></i>Create Api
+                        </a>
+                    </li>
+                }
+                <li>
+                    <a href="@Url.Action("UpdateProfile", "User")"><i class="fa fa-pencil-square-o"></i>Profile Update</a>
+                </li>
+                <li>
+                    <a href="@Url.Action("ChangePassword", "User")"><i class="fa fa-lock"></i>Change Password</a>
+                </li>
+                <li><a href="@Url.Action("LogOut", "User")"><i class="fa fa-sign-out"></i>Logout</a></li>
+            </ul>
+        </div>
+    }
+
+    <div class="right-contant-bar">
+        @RenderBody()
+    </div>
+    <div class="clearfix fillbluedark"></div>
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>Copyright © @DateTime.Now.Year Chem Analyst Pvt. Ltd. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+ 
+  
+</body>
+</html>

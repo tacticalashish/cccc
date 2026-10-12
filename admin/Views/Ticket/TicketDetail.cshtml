@@ -1,0 +1,533 @@
+﻿@using ChemAnalyst.DAL
+@model EntityLayer.enTicket
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int loggedUserFID = Convert.ToInt32(Session["LoginUser"]);
+    bool isClosed = false;
+    if (Model.Status.Equals("closed", StringComparison.CurrentCultureIgnoreCase))
+    {
+        isClosed = true;
+    }
+}
+
+<head>
+    <style>
+        .btn-comment {
+            padding: 2px 10px;
+            background-color: #f5f5f5;
+            border: none;
+            border-radius: 4px;
+            float: right;
+        }
+
+        .main-cont {
+            border: 1px solid #dcdcdc;
+            padding: 15px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            background: #282b2f;
+        }
+
+            .main-cont p {
+                color: #fff;
+                display: block;
+                margin-bottom: 10px;
+                background: #282b2f;
+            }
+
+        .ticet-heading {
+            font-size: 30px;
+        }
+
+        .back-btn {
+            margin-bottom: 10px;
+            color: #cf1410;
+        }
+
+            .back-btn:hover {
+                color: #ff0000 !important;
+            }
+
+        .ticket-detail {
+            margin-top: 10px;
+            padding: 5px;
+            border: 1px solid #dcdcdc;
+            background: #282b2f;
+        }
+
+        .sub-heading {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 8px;
+            display: contents;
+        }
+
+        .horizontal-line {
+            margin-top: 0px !important;
+        }
+
+        .ticket-detail span {
+            color: #c7c7c7;
+            line-height: 30px;
+            text-align: right;
+            display: block;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: capitalize;
+        }
+
+        .label-warning {
+            padding: 1px 10px;
+            border-radius: 5px;
+        }
+
+        .label-danger {
+            padding: 1px 10px;
+            border-radius: 5px;
+        }
+
+        .label-success {
+            padding: 1px 10px;
+            border-radius: 5px;
+        }
+
+        .text-white {
+            color: #fff
+        }
+
+        .reply-box {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            background-color: azure;
+            position: relative;
+            margin-right: 8px;
+            border-radius: 5px 0px 5px 5px;
+        }
+
+            .reply-box::before {
+                content: "";
+                position: absolute;
+                top: -0.8px;
+                right: -8px;
+                border: 8px solid transparent;
+                border-top-color: #5cb85c;
+                transform: rotate( 0deg);
+                border-radius: 3px;
+            }
+
+        .reply-heading {
+            background-color: #5cb85c;
+            padding: 1px 10px;
+            border-radius: 5px 5px 0px 0px;
+        }
+
+        .left-reply-box {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            background-color: azure;
+            position: relative;
+            margin-left: 8px;
+            border-radius: 5px 5px 5px 5px;
+        }
+
+            .left-reply-box::before {
+                content: "";
+                position: absolute;
+                top: -0.8px;
+                left: -8px;
+                border: 8px solid transparent;
+                border-top-color: #5cb85c;
+                transform: rotate( 0deg);
+                border-radius: 3px;
+            }
+        .time-cont {
+            text-align: right;
+            color: #fff;
+        }
+        .reply-msg {
+            padding: 10px;
+        }
+        .emp-name{
+            letter-spacing: 1px;
+            text-transform: capitalize;
+            color: #fff;
+                 }
+        .com-box {
+            width: 100%;
+            padding: 10px 0px;
+            display: none;
+                 }
+            .com-box button {
+                 float: right;
+               }
+            .mr-10 {
+            margin-right: 5px;
+        }
+        .comment-cont {
+            display: none;
+        }
+        .content {
+            position: absolute;
+            left: 40%;
+            transform: translate(-40%, -50%);
+            width: 100%;
+            max-width: 500px;
+            background-color: #282B2F;
+            box-sizing: border-box;
+            padding: 20px 5px;
+            z-index: 100;
+            display: none;
+            border: 2px solid #fff;
+            /*to hide popup initially*/
+        }
+        .close-ticket {
+            position: absolute;
+            left: 40%;
+            transform: translate(-40%, -50%);
+            width: 100%;
+            max-width: 500px;
+            background-color: #282B2F;
+            box-sizing: border-box;
+            padding: 20px 5px;
+            z-index: 100;
+            display: none;
+            border: 2px solid #fff;
+            /*to hide popup initially*/
+        }
+        .close-btn {
+            position: absolute;
+            right: -14px;
+            top: -14px;
+            background-color: #df241f;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 10px;
+            cursor: pointer;
+        }
+        .update-btn {
+            cursor: pointer;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #dcdcdc;
+        }
+
+        .modal-btn {
+            margin: 10px 5px 0px 5px;
+        }
+
+        .attechment-cont {
+            color: #fff;
+            background: #333;
+            padding: 4px;
+            border-radius: 5px;
+        }
+            .attechment-cont:hover {
+                color: #fff;
+                background: #333;
+                padding: 2px 3px;
+                border-radius: 5px;
+                font-size: 16px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $("#hide").click(function () {
+                $(".com-box").hide();
+                $('#show').show();
+                window.location.reload(true);
+            });
+            $("#show").click(function () {
+                $(".com-box").show();
+                $(this).hide();
+            });
+        });
+
+        /***popup***/
+        function togglePopup() {
+            $(".content").toggle();
+        }
+
+        function togglePopupCloseTicket() {
+            $(".close-ticket").toggle();
+        }
+
+    </script>
+</head>
+
+<div class="update-profile-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 bg-light">
+                <a href="/ticket/list" class="back-btn text-danger">Back To Tickets List</a>
+            </div>
+            <div class="col-md-12">
+                <div class="main-cont">
+                    <div class="heding-cont">
+                        <p>TICKET ID: @string.Concat("CHEM00", Model.ID)</p>
+                        @*<p class="ticet-heading">FCP And LCP Not Good of Server</p>*@
+                    </div>
+                    @if (!isClosed)
+                    {
+                        <div class="btn-cont ">
+                            <button class="btn btn-success floatRight update-btn" onclick="togglePopup()">Update Ticket</button>
+                            <button class="btn btn-danger floatRight" onclick="togglePopupCloseTicket();">Close Ticket</button>
+                        </div>
+                    }
+                </div>
+                <!-- div containing the popup -->
+                <div class="content">
+                    <div onclick="togglePopup()" class="close-btn">×</div>
+                    <form id="frmChangeStatus">
+                        <input type="hidden" id="hdnTicketFID" name="TicketFID" value="@Model.ID" />
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <select class="custom-select" id="ddlRoleName" name="ddlRoleName">
+                                        @foreach (var item in new DALHelper().IEnumerableRole(null))
+                                        {
+                                            <option value="@item.Text">@item.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <br />
+                                    <label>Comments</label>
+                                    <textarea id="txtComment" name="txtComment" class="form-control" rows="5"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <button class="btn btn-success modal-btn" type="button" id="btnSubmitStatus" name="btnSubmitStatus" onclick="SubmitStatus()">Submit</button>
+                                    <button class="btn btn-danger modal-btn" type="button" id="btnCancelStatus" name="btnCancelStatus" onclick="togglePopup(); $('#txtComment').val('');">Cancel</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="close-ticket">
+                    <div onclick="togglePopupCloseTicket()" class="close-btn">×</div>
+                    <form id="frmCloseTicket">
+                        <input type="hidden" id="hdnTicketFID" name="TicketFID" value="@Model.ID" />
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label style="color:white;">Rating</label>
+                                    <select id="ddlRating" name="ddlRating" class="form-control">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12">
+                                    <label>Comments</label>
+                                    <textarea id="txtCommentCloseTicket" name="txtCommentCloseTicket" class="form-control" rows="5"></textarea>
+                                </div>
+                                <div class="col-md-12">
+                                    <button class="btn btn-success modal-btn" type="button" id="btnSubmitCloseTicket" name="btnSubmitCloseTicket" onclick="SubmitCloseTicket()">Submit</button>
+                                    <button class="btn btn-danger modal-btn" type="button" id="btnCancelCloseTicket" name="btnCancelCloseTicket" onclick="togglePopupCloseTicket(); $('#txtCommentCloseTicket').val('');">Cancel</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="ticket-detail">
+                    <p class="sub-heading">Details</p>
+                    <hr class="horizontal-line" />
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-5"><span>Created By</span></div>
+                                <div class="col-md-7"><label>@Model.CustomerName</label></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5"><span>Created On</span></div>
+                                <div class="col-md-7"><label>@Model.CreatedDateView</label></div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-5"><span>Status</span></div>
+                                <div class="col-md-7"><label class="label-warning">@Model.Status</label></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5"><span>Modified On</span></div>
+                                <div class="col-md-7"><label>@Model.UpdatedDateView</label></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                @if (!isClosed)
+                {
+                    <div class="ticket-detail">
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <p class="sub-heading">Add Comments</p>
+                                <button class="btn-comment" type="button" id="show"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Comments</button>
+
+                                <form id="frmTicketComment" method="post" action="/ticket/TicketCommentCreate" enctype="multipart/form-data">
+                                    <input type="hidden" id="TicketFID" name="TicketFID" value="@Model.ID" />
+                                    <input type="hidden" id="ManagerFID" name="ManagerFID" value="@loggedUserFID" />
+                                    <div class="com-box" id="comment-cont">
+                                        <textarea id="Comment" name="Comment" rows="5" class="form-control" required="required" placeholder="Type Your Message..."></textarea>
+                                        <input type="file" name="file" style="margin-top:10px;border-radius:5px;" />
+                                        <div class="com-box">
+                                            <button class="btn btn-danger floatRight" id="hide" type="button">Cancel</button>
+                                            <button class="btn btn-success floatRight mr-10" id="btnSubmit" name="btnSubmit" type="submit">Submit</button>
+                                            <div style="clear:both"></div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="ticket-detail">
+                    <div class="row">
+                        @foreach (var item in Model.ListOfTicketComments)
+                        {
+                            if (item.UserFID.HasValue)
+                            {
+                                <div class="col-md-10">
+                                    <div class=" left-reply-box">
+                                        <div class="reply-heading">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p class="emp-name" user-fid="@item.UserFID">
+                                                        @item.CustomerName
+                                                        @if (item.IsFileNameExist)
+                                                        {
+                                                            <b><a href="@string.Concat(Utility.ApplicationSettings.TicketVirtualPath,"/",item.FileName)" target="_blank" file-name="@item.FileName"><i class="fa fa-paperclip attechment-cont" aria-hidden="true"></i></a></b>
+                                                        }
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="time-cont">@item.CreatedDate.ToLongDateString() @item.CreatedDate.ToLongTimeString()</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="reply-msg">
+                                            <p>@item.Comment</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-offset-2 col-md-10">
+                                    <div class="reply-box">
+                                        <div class="reply-heading">
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p class="emp-name" manager-fid="@item.ManagerFID">
+                                                        @item.ManagerName
+                                                        @if (item.IsFileNameExist)
+                                                        {
+                                                            <b><a href="@string.Concat(Utility.ApplicationSettings.TicketVirtualPath,"/",item.FileName)" target="_blank" file-name="@item.FileName"> <i class="fa fa-paperclip attechment-cont" aria-hidden="true"></i></a></b>
+                                                        }
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p class="time-cont">@item.CreatedDate.ToLongDateString() @item.CreatedDate.ToLongTimeString()</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="reply-msg">
+                                            <p>@item.Comment</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#ddlRoleName').val('@Model.RoleName');
+    });
+
+    function SubmitStatus() {
+        var hdnTicketFID = $('#hdnTicketFID').val();
+        var ddlRoleName = $('#ddlRoleName').val();
+        var txtComment = $('#txtComment').val();
+
+        if (ddlRoleName == '' || txtComment == '')
+        {
+            alert('Please complete required feild value');
+            return true;
+        }
+
+        var urlWithParam = '/ticket/ChangeTicketType?ID=' + hdnTicketFID + '&Query=' + txtComment + '&RoleName=' + ddlRoleName;
+
+        $(this).attr('disabled', 'disabled');
+
+        $.ajax({
+            //type: "POST",
+            url: urlWithParam,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                if (json == 's') {
+                    window.location.href = "/ticket/list";
+                }
+                else
+                {
+                    alert("something went wrong.! Please try after some time.");
+                }
+            }
+        });
+    }
+
+    function SubmitCloseTicket() {
+        var hdnTicketFID = $('#hdnTicketFID').val();
+        var txtComment = $('#txtCommentCloseTicket').val();
+        var ddlRating = $('#ddlRating').val();
+
+        if (txtComment == '') {
+            alert('Please complete required field value');
+            return true;
+        }
+
+        var urlWithParam = '/ticket/CloseTicket?ID=' + hdnTicketFID + '&Query=' + txtComment + '&rating=' + ddlRating;
+
+        $(this).attr('disabled', 'disabled');
+
+        $.ajax({
+            //type: "POST",
+            url: urlWithParam,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                if (json == 's') {
+                    window.location.href = "/ticket/TicketDetail/" + hdnTicketFID;
+                }
+                else {
+                    alert("something went wrong.! Please try after some time.");
+                }
+            }
+        });
+    }
+
+</script>

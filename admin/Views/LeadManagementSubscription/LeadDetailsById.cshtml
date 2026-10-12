@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "LeadDetailsById";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@*<h2>LeadDetailsById</h2>*@
+<style>
+    .text-success{color:lightgreen;font-family:Arial}
+</style>
+<div class="data-detail-wrapper table-responsive">
+    <table class="table">
+       
+        <tbody class="tbodydata" id="tbodydata"></tbody>
+    </table>
+</div>
+
+<script>
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1;
+        var year = dateObject.getFullYear();
+        day = day < 10 ? "0" + day : day;
+        month = month < 10 ? "0" + month : month;
+        var formattedDate = day + "/" + month + "/" + year;
+        return formattedDate;
+    };
+    $(document).ready(function () {
+
+
+        GetchemicalRange();
+
+    });
+    function GetchemicalRange() {
+    
+        var LeadId = 0;
+        LeadId = @ViewBag.LeadId;
+        var StatusType = '@ViewBag.StatusType';
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetLeadDetails",
+            data: "{ LeadId: '" + LeadId + "', StatusType: '" + StatusType + "' }",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+           
+                var innerHTML = '';
+                $(response).each(function (jsonIndex, Value) {
+                    var date = Value.CreatedDate;
+                    var FromDate = Value.DateFrom;
+                    var Todate = Value.DateTo;
+                      var CreatedformattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                      var FromformattedDate = ($.formattedDate(new Date(parseInt(FromDate.substr(6)))));
+                      var TodformattedDate = ($.formattedDate(new Date(parseInt(Todate.substr(6)))));
+                    innerHTML += "<tr><th class='text-success'> Name</th > <td>" + Value.Name + "</td>";
+                    innerHTML += "<th class='text-success'>Email</th><td>" + Value.CorpEmail + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Phone</th><td>" + Value.Phone + "</td>";
+                    innerHTML += "<th class='text-success'>Company Name</th><td>" + Value.Organisation + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Payment Type</th><td>" + Value.PaymentMode + "</td>";
+                    innerHTML += "<th class='text-success'>Clint Country</th><td>" + Value.ClintCountry + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Assign Analyst</th><td>" + Value.AssignAnalyst + "</td>";
+                    innerHTML += "<th class='text-success'>UserType</th><td>" + Value.UserType + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Createdby</th><td>" + Value.createdby + "</td>";
+                    innerHTML += "<th class='text-success'>CreatedDate</th><td>" + CreatedformattedDate + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Subs From Date</th><td>" + FromformattedDate + "</td>";
+                    innerHTML += "<th class='text-success'>Subs To Date</th><td>" + TodformattedDate + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Subs Product</th><td>" + Value.ProductName + "</td>";
+                    innerHTML += "<th class='text-success'>Subs Module</th><td>" + Value.ModuleName + "</td></tr>";
+
+                    innerHTML += "<tr><th class='text-success'>Subs Country</th><td>" + Value.CountryName + "</td>";
+                    innerHTML += "<th class='text-success'>Secondary Clint Email</th><td>" + Value.SecondaryClintEmail + "</td></tr>";
+                });
+                $('#tbodydata').html(innerHTML);
+
+            },
+            failure: function (response) {
+            },
+            error: function (response) {
+            }
+        });
+    }
+</script>

@@ -1,0 +1,869 @@
+﻿@using ChemAnalyst.DAL
+@{
+    ViewBag.Title = "AddPackage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-group {
+        margin-bottom: 40px;
+    }
+</style>
+<div class="update-profile-wrapper">
+    <h3><a href="~/SubsManagement/ShowSubscriptionListForSales" class="btn btn-info"><i class="fa fa-list"></i> Lead Details</a></h3>
+    <div class="white-wrapper" style="padding-top:10px">
+        <div class="col-md-8 col-lg-8 col-md-offset-2 form-style">
+            <input type="hidden" value="@ViewBag.LeadId" id="Leadid" />
+            <div class="eq-form" style="margin-top:0px">
+                <div class="col-sm-6 col-lg-12 form-group" id="FreePackage">
+                    <legend>Subscription Type</legend>
+                    <div class="radio-success radio-inline">
+                        <input type="radio" name="subscription_type" value="1">
+                        <label for="inlineradio2">Free Trial </label>
+                    </div>
+                    <div class="radio-success radio-inline">
+                        <input type="radio" name="subscription_type" value="2">
+                        <label for="inlineradio2">Package </label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-6 form-group">
+                    <input type="text" value="" size="40" class="form-control" placeholder="Date From" id="FromDatepicker">
+                </div>
+                <div class="col-md-4 col-lg-6 form-group">
+                    <input type="text" value="" size="40" class="form-control" placeholder="Date To" id="ToDatepicker">
+                </div>
+                <div class="col-sm-6 col-lg-12 form-group">
+                    <legend>Select Module</legend>
+                    <div class="checkbox-success checkbox-inline">
+                        <input id="business_add" type="checkbox" name="module" value="1" module-type="ChemicalPricing" onchange="selectModule(this); ManageRange($(this));">
+                        <label for="inlineCheckbox2">Chemical Pricing </label>
+                    </div>
+                    <div class="checkbox-success checkbox-inline">
+                        <input id="business_edit" type="checkbox" name="module" value="2" module-type="MarketAnalysis" onchange="selectModule(this); ManageRange($(this));">
+                        <label for="inlineCheckbox2">Market Analysis </label>
+                    </div>
+                    <div class="checkbox-success checkbox-inline">
+                        <input id="business_delete" type="checkbox" name="module" value="3" onchange="selectModule(this);">
+                        <label for="inlineCheckbox2">Company Profile </label>
+                    </div>
+                    @*<div class="checkbox-success checkbox-inline">
+                            <input id="business_delete" type="checkbox" name="module" value="4" onchange="selectModule(this);">
+                            <label for="inlineCheckbox2">Industry Report </label>
+                        </div>*@
+                    <div class="checkbox-success checkbox-inline">
+                        <input id="business_delete" type="checkbox" name="module" value="5" onchange="selectModule(this);">
+                        <label for="inlineCheckbox2">News </label>
+                    </div>
+                    <div class="checkbox-success checkbox-inline">
+                        <input id="business_delete" type="checkbox" name="module" value="6" onchange="selectModule(this);">
+                        <label for="inlineCheckbox2">Deals </label>
+                    </div>
+                </div>
+                <div class="loaderCustom" style="display:none;position: absolute; margin-left: 300px; margin-top: 150px;" id="loaderCustom"></div>
+
+                <div class="col-sm-6 col-lg-12 form-group">
+                    <legend>Subscription Region/Country</legend>
+                    <div class="custom-select-option">
+                        <div class="multiselect">
+                            <select id="ddlSubscriptionType" name="ddlSubscriptionType" class="form-control" onchange="SubscriptionType($(this));">
+                                <option value="region">Region Wise</option>
+                                <option value="country">Country Wise</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-12 form-group" id="divRegion">
+                    <legend>Select Region</legend>
+                    <div class="custom-select-option">
+                        <div class="multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="showRegionCheckBoxes()">
+                                <select class="form-control">
+                                    <option>Select Region</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="checkboxesregion" style="display: none;margin-top: 15px;height: 150px;overflow: scroll;border-style:groove;padding:15px; padding-top:5px">
+                                @*<div><label id="lblAllRegion"><input name="chkAllRegion" onchange="SelectAllRegion(this);" type="checkbox" id="chkAllRegion" />Select All</label></div>*@
+                                @foreach (var item in new DALHelper().IEnumerableRegion(null))
+                                {
+                                    <div><label id="@item.Value"><input name="productList" onchange="selectRegionProduct(this);" type="checkbox" id="@item.Value" value="@item.Text" />@item.Text</label></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-12 form-group" id="divCountry" style="display:none;">
+                    <legend>Select Country</legend>
+                    <div class="custom-select-option">
+                        <div class="multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="showCountryCheckBoxes()">
+                                <select class="form-control">
+                                    <option>Select Country</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="checkboxesCountry" style="display: none;margin-top: 15px;height: 150px;overflow: scroll;border-style:groove;padding:15px; padding-top:5px">
+                                @*<div><label id="lblSelectAllCountry"><input name="chckSelectAllCountry" onchange="SelectAllCountry(this);" type="checkbox" id="chckSelectAllCountry" />Select All</label></div>*@
+                                @foreach (var item in new DALHelper().IEnumerableCountry(true, null))
+                                {
+                                    <div><label id="@item.Value"><input name="productList"  onchange="select_Product(this);" type="checkbox" value="@item.Text" id="@item.Value" />@item.Text</label></div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-12 form-group">
+                    <legend>Select Products</legend>
+                    <div class="custom-select-option">
+                        <div class="multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="showCheckBoxes()">
+                                <select class="form-control">
+                                    <option>Select product</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="checkboxes" style="display: block;margin-top: 15px;height: 150px;overflow: scroll;border-style:groove;padding:15px; padding-top:5px">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-12 form-group" id="divChemicalPricing" style="display:none;">
+                    <legend>Select Chemical Pricing Range</legend>
+                    <div class="custom-select-option">
+                        <div class="multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="ShowChemicalPricingRange()">
+                                <select class="form-control">
+                                    <option>Select Chemical Pricing</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="divChemicalPricingRange" style="display: none;margin-top: 15px;height: 150px;overflow: scroll;border-style:groove;padding:15px; padding-top:5px">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-12 form-group" id="divMarketAnalysis" style="display:none;">
+                    <legend>Select Market Analysis Range</legend>
+                    <div class="custom-select-option">
+                        <div class="multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="ShowMarketAnalysisRange()">
+                                <select class="form-control">
+                                    <option>Select Market Analysis</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="divMarketAnalysisRange" style="display: none;margin-top: 15px;height: 150px;overflow: scroll;border-style:groove;padding:15px; padding-top:5px">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4 col-lg-12 form-group">
+                    <legend>Description</legend>
+                    <textarea rows="7" class="form-control" id="description"></textarea>
+                </div>
+                <div class="btn-wrapper">
+                    <a class="gray-btn" href="#">Cancel</a>
+                    <a class="blue-btn" href="#" id="btnSave">Active Subscription</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css"/ >
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+    <script src="jquery.js"></script>
+    <script src="~/js/jquery.datetimepicker.full.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(function () {
+            jQuery('#FromDatepicker').datetimepicker();
+            jQuery('#ToDatepicker').datetimepicker();
+            //getProduct();
+            var checkboxes = document.getElementById("checkboxes");
+            if (checkboxes)
+                checkboxes.style.display = "none";
+        });
+    </script>
+
+    <script>
+        var expanded = false;
+        var expandedRegion = false;
+        var expandedCountry = false;
+        var productList = [];
+        var moduleList = [];
+        var expandedShowChemicalPricing = false;
+        var expandedShowMarketAnalysis = false;
+        var productCountry = [];
+
+        function ManageRange(elm) {
+            var checkboxValue = elm.attr('module-type');
+            var isChecked = elm.prop('checked');
+
+            if (checkboxValue.toLowerCase() == 'chemicalpricing') {
+                $('#divChemicalPricingRange').html('');
+                if (isChecked) {
+                    $('#divChemicalPricing').show();
+                }
+                else {
+                    $('#divChemicalPricing,#divChemicalPricingRange').hide();
+                    expandedShowChemicalPricing = false;
+                }
+            }
+            else if (checkboxValue.toLowerCase() == 'marketanalysis') {
+                $('#divMarketAnalysisRange').html('');
+                if (isChecked) {
+                    $('#divMarketAnalysis').show();
+                }
+                else {
+                    $('#divMarketAnalysis,#divMarketAnalysisRange').hide();
+                    expandedShowMarketAnalysis = false;
+                }
+            }
+        }
+
+        function CleanRange() {
+            $('#divChemicalPricingRange,#divMarketAnalysisRange').hide();
+            expandedShowMarketAnalysis = expandedShowChemicalPricing = false;
+            $('#divChemicalPricingRange,#divMarketAnalysisRange').html('');
+        }
+
+        function SubscriptionType($elm) {
+            $('#checkboxesRegion,#checkboxesCountry,#checkboxes').hide();
+            expanded = expandedRegion = expandedCountry = false;
+            CleanCheckbox();
+
+            var subscriptionValue = $elm.val();
+            if (subscriptionValue == 'country') {
+                $('#divCountry').show();
+                $('#divRegion').hide();
+            }
+            else {
+                $('#divCountry').hide();
+                $('#divRegion').show();
+            }
+        }
+
+
+        function selectProductAll() {
+            $('#checkboxes input:checkbox').each(function () {
+                if ($(this).prop("checked")) {
+                    $(this).prop('checked', false);
+                    var index = productList.indexOf($(this).prop('id'));
+                    if (index > -1) {
+                        productList.splice(index, 1);
+                    }
+                }
+                else {
+                    $(this).prop('checked', true);
+                    productList.push($(this).prop('id'));
+                }
+            });
+        }
+
+        function SelectAllRegion(elm) {
+
+            $('#checkboxesregion input:checkbox').each(function () {
+                if ($(this).attr("id") != 'chkAllRegion') {
+                    if ($(elm).prop("checked")) {
+                        $(this).prop('checked', true);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+            });
+        }
+
+        function SelectAllCountry(elm) {
+            $('#checkboxesCountry input:checkbox').each(function () {
+                if ($(this).attr("id") != 'chckSelectAllCountry') {
+                    if ($(elm).prop("checked")) {
+                        $(this).prop('checked', true);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+            });
+        }
+
+        function SelectAllProduct(elm) {
+            $('#checkboxes input:checkbox').each(function () {
+                if ($(this).attr("id") != 'chckSelectAllProduct') {
+                    if ($(elm).prop("checked")) {
+                        $(this).prop('checked', true);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+            });
+        }
+
+        function SelectAllRange(elm) {
+            $('#checkboxesRange input:checkbox').each(function () {
+                if ($(this).attr("id") != 'chckSelectAllRange') {
+                    if ($(elm).prop("checked")) {
+                        $(this).prop('checked', true);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+            });
+        }
+
+        function SelectAllChemicalPricingRange(elm) {
+            $('#divChemicalPricingRange input:checkbox').each(function () {
+                if ($(this).attr("id") != 'chckSelectAllChemicalPricingRange') {
+                    if ($(elm).prop("checked")) {
+                        $(this).prop('checked', true);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+            });
+        }
+
+        function SelectAllMarketAnalysisRange(elm) {
+            $('#divMarketAnalysisRange input:checkbox').each(function () {
+                if ($(this).attr("id") != 'chckSelectAllMarketAnalysisRange') {
+                    if ($(elm).prop("checked")) {
+                        $(this).prop('checked', true);
+                    }
+                    else {
+                        $(this).prop('checked', false);
+                    }
+                }
+            });
+        }
+
+        function showRegionCheckBoxes() {
+
+            $('#checkboxesCountry,#checkboxes').hide();
+            expanded = expandedCountry = false;
+
+            var checkboxesregion = document.getElementById("checkboxesregion");
+            if (!expandedRegion) {
+                checkboxesregion.style.display = "block";
+                expandedRegion = true;
+
+            } else {
+                checkboxesregion.style.display = "none";
+                expandedRegion = false;
+            }
+        }
+
+        function showCountryCheckBoxes() {
+            $('#checkboxesregion,#checkboxes').hide();
+            expanded = expandedRegion = false;
+
+            var checkboxesCountry = document.getElementById("checkboxesCountry");
+            if (!expandedCountry) {
+                checkboxesCountry.style.display = "block";
+                expandedCountry = true;
+            } else {
+                checkboxesCountry.style.display = "none";
+                expandedCountry = false;
+            }
+        }
+
+
+        function showCheckBoxes() {
+            $('#checkboxesregion,#checkboxesCountry').hide();
+            expandedRegion = expandedCountry = false;
+
+            var origionalMessage = '';
+            var withCommaValue = '';
+
+            var subscriptionType = $('#ddlSubscriptionType').val();
+            if (subscriptionType == 'region') {
+                origionalMessage = 'Please Select Region(s)';
+                withCommaValue = GetCheckedBox('checkboxesregion');
+            }
+            else {
+                origionalMessage = 'Please Select Country(s)';
+                withCommaValue = GetCheckedBox('checkboxesCountry');
+            }
+
+            if (withCommaValue == '') {
+                swal("Warning", origionalMessage, "error");
+                return true;
+            }
+
+            //to clean and reset Range dropdown
+            CleanRange();
+
+            var checkboxes = document.getElementById("checkboxes");
+            if (!expanded) {
+                checkboxes.style.display = "block";
+                expanded = true;
+                GetProduct(withCommaValue, subscriptionType);
+
+            } else {
+                checkboxes.style.display = "none";
+                expanded = false;
+            }
+        }
+
+
+        function ShowChemicalPricingRange() {
+
+            var product = GetProductCheckbox();
+            if (product == '') {
+                swal("Warning", 'Please select product', "error");
+                return true;
+            }
+
+            var checkboxesCountry = document.getElementById("divChemicalPricingRange");
+            if (!expandedShowChemicalPricing) {
+                checkboxesCountry.style.display = "block";
+                expandedShowChemicalPricing = true;
+                GetRange('ChemicalPricing');
+            } else {
+                checkboxesCountry.style.display = "none";
+                expandedShowChemicalPricing = false;
+            }
+        }
+
+
+        function ShowMarketAnalysisRange() {
+            var product = GetProductCheckbox();
+            if (product == '') {
+                swal("Warning", 'Please select product', "error");
+                return true;
+            }
+
+            var checkboxesMarketAnalysisRange = document.getElementById("divMarketAnalysisRange");
+            if (!expandedShowMarketAnalysis) {
+                checkboxesMarketAnalysisRange.style.display = "block";
+                expandedShowMarketAnalysis = true;
+                GetRange('marketanalysis');
+            } else {
+                checkboxesMarketAnalysisRange.style.display = "none";
+                expandedShowMarketAnalysis = false;
+            }
+        }
+
+        function selectProduct(obj) {
+
+            if ($(obj).prop('checked') == true) {
+                productList.push(obj.id);
+            } else {
+                var index = productList.indexOf(obj.id);
+                if (index > -1) {
+                    productList.splice(index, 1);
+                }
+            }
+        }
+        function select_Product(obj) {
+           
+            productCountry = [];
+            if ($(obj).prop('checked') == true) {
+                $("#checkboxesCountry input[type=checkbox]").removeAttr("checked");
+                productList.push(obj.id);
+                productCountry.push(obj.value);
+                $(obj).prop("checked", "checked");
+            }
+        }
+
+        function selectRegionProduct(obj) {
+            productCountry = [];
+            if ($(obj).prop('checked') == true) {
+                $("#checkboxesregion input[type=checkbox]").removeAttr("checked");
+                productList.push(obj.id);
+                productCountry.push(obj.value);
+                $(obj).prop("checked", "checked");
+            }
+        }
+
+        function selectModule(obj) {
+            if ($(obj).prop('checked') == true) {
+                moduleList.push(obj.value);
+            } else {
+                var index = moduleList.indexOf(obj.value);
+                if (index > -1) {
+                    moduleList.splice(index, 1);
+                }
+            }
+        }
+
+        function GetCheckedBox(elm) {
+            var valueWithComma = '';
+            $('#' + elm + ' input:checked').each(function () {
+                var id = $(this).attr('id');
+                if ($.isNumeric(id)) {
+                    valueWithComma += id + ",";
+                }
+            });
+
+            if (valueWithComma != '') {
+                valueWithComma = valueWithComma.slice(0, -1);
+            }
+            return valueWithComma;
+        }
+
+        function GetRangeCheckbox(elm) {
+
+            var data = []
+            $('#' + elm + ' input:checked').each(function () {
+                var innerData = {};
+                innerData['PID'] = $(this).attr('product-value');
+                innerData['RID'] = $(this).attr('range-value');
+
+                if ($.isNumeric($(this).attr('name'))) {
+                    data.push(innerData);
+                }
+            });
+            var rangeCollection = JSON.stringify(data);
+            if (rangeCollection == '[]')
+                return '';
+            else
+                return rangeCollection;
+        }
+
+        function GetProductCheckbox() {
+
+            var valueWithComma = '';
+            $('#checkboxes input:checked').each(function () {
+                var id = $(this).attr('id');
+                if ($.isNumeric(id)) {
+                    valueWithComma += id + ",";
+                }
+            });
+
+            if (valueWithComma != '') {
+                valueWithComma = valueWithComma.slice(0, -1);
+            }
+            return valueWithComma;
+        }
+
+        function CleanCheckbox() {
+
+            $('#checkboxesregion input:checkbox').each(function () {
+                $(this).prop('checked', false);
+            });
+
+            $('#checkboxesCountry input:checkbox').each(function () {
+                $(this).prop('checked', false);
+            });
+
+            $('#checkboxes input:checkbox').each(function () {
+                $(this).prop('checked', false);
+            });
+        }
+
+    </script>
+
+    <script type="text/javascript">
+
+        function getProduct() {
+            $.ajax({
+                type: "GET",
+                //url: '../ProductAndCategory/ProductList',
+                url: '@(Url.Action("ProductList4AddPkg", "ProductAndCategory"))',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                cache: false,
+                success: function (result) {
+
+                    var checkboxes = document.getElementById("checkboxes");
+                    for (var i = 0; i < result.data.length; i++) {
+                        if (i == 0) {
+                            var node = document.createElement('div');
+                            node.innerHTML = '<label id="lblAllSelect"><input name ="productList" onchange="selectProductAll(this);" type="checkbox"  id="chkAllSelect"/>Select All</label>';
+                            document.getElementById('checkboxes').appendChild(node);
+                        }
+                        else
+                        {
+                            var node = document.createElement('div');
+                            node.innerHTML = '<label id="' + result.data[i].id + '"><input name ="productList" onchange="selectProduct(this);" type="checkbox" id="' + result.data[i].id + '"/>' + result.data[i].ProductName + '</label>';
+                            document.getElementById('checkboxes').appendChild(node);
+                        }
+
+                    }
+                },
+                error: function (msg) {
+                    alert("error" + msg);
+                }
+            });
+        }
+
+
+        function GetCountry(regionWithComma) {
+            $('#checkboxesCountry').html('');
+
+
+            $("#loaderCustom").show();
+            $.ajax({
+                url: "/ProductAndCategory/GetCountriesBasedOnRegions",
+                data: { regionIDS: regionWithComma }
+            }).complete(function (jqXHR, textStatus) {
+                $("#loaderCustom").hide();
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                   // console.log(json);
+                    innerHTML = '<div><label id="lblSelectAllCountry"><input id="chckSelectAllCountry" name="chckSelectAllCountry"  onchange="SelectAllCountry(this);" type="checkbox"  />Select All</label></div>';
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<div><label id='lbl" + value.id + "'><input name='" + value.id + "' id='" + value.id + "' type='checkbox' />" + value.CountryName + "</label></div>";
+                    });
+                    $('#checkboxesCountry').html(innerHTML);
+                }
+            });
+        }
+
+        function GetProduct(withCommaValue, subscriptionType) {
+
+            $('#checkboxes').html('');
+
+            $("#loaderCustom").show();
+
+            $.ajax({
+                url: "/ProductAndCategory/GetProductBasedOnRegionOrCountryWise",
+                data: { withCommaValue: withCommaValue, subscriptionType: subscriptionType  }
+            }).complete(function (jqXHR, textStatus) {
+                $("#loaderCustom").hide();
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    innerHTML = '<div> <label id="lblSelectAllProduct"><input id="chckSelectAllProduct" name="chckSelectAllProduct"  onchange="SelectAllProduct(this);" type="checkbox"  />Select All</label></div>';
+
+                    $(json).each(function (index, value) {
+                        innerHTML += "<div><label id='lbl" + value.id + "'><input name='" + value.id + "' id='" + value.id + "' product-text='" + value.ProductName +"' type='checkbox' />" + value.ProductName + "</label></div>";
+                    });
+                    $('#checkboxes').html(innerHTML);
+                }
+            });
+        }
+
+        function GetRange(rangeType) {
+
+            var checkboxes = document.getElementById("checkboxes");
+                checkboxes.style.display = "none";
+                expanded = false;
+
+            if (rangeType.toLowerCase() == 'chemicalpricing') {
+                $('#divChemicalPricingRange').html('');
+            }
+            else if (rangeType.toLowerCase() == 'marketanalysis') {
+                $('#divMarketAnalysisRange').html('');
+            }
+
+            var commaValue = GetProductCheckbox();
+            var isCountryWise = true;
+            if ($('#ddlSubscriptionType').val() == 'region')
+                var isCountryWise = false;
+
+            $("#loaderCustom").show();
+          
+            $.ajax({
+                url: "/ProductAndCategory/GetRange",
+                data: { rangeType: rangeType, pids: commaValue, isCountryWise: isCountryWise, CountryName: productCountry[0]}
+            }).complete(function (jqXHR, textStatus) {
+
+                $("#loaderCustom").hide();
+                if (textStatus == "success" && jqXHR.responseText != null) {
+                    var json = JSON.parse(jqXHR.responseText);
+                    var innerHTML = '';
+
+                    if (rangeType.toLowerCase() == 'chemicalpricing') {
+                        innerHTML = '<div> <label id="lblSelectAllChemicalPricing"><input id="chckSelectAllChemicalPricingRange" name="chckSelectAllChemicalPricingRange"  onchange="SelectAllChemicalPricingRange(this);" type="checkbox"  />Select All</label></div>';
+                    }
+                    else if (rangeType.toLowerCase() == 'marketanalysis') {
+                        innerHTML = '<div> <label id="lblSelectAllMarketAnalysis"><input id="chckSelectAllMarketAnalysisRange" name="chckSelectAllMarketAnalysisRange"  onchange="SelectAllMarketAnalysisRange(this);" type="checkbox"  />Select All</label></div>';
+                    }
+
+                    $(json).each(function (jsonIndex, jsonValue) {
+                        if (jsonValue.Value.toLowerCase() != 'demand supply gap graph' &&
+                            jsonValue.Value.toLowerCase() != 'quarterly' &&
+                            jsonValue.Value.toLowerCase() != 'daily data import' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 1' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 2' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 3' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 4' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 5' &&
+                            jsonValue.Value.toLowerCase() != 'chemical 6') {
+                            innerHTML += "<div><label id='lbl" + jsonValue.ProductID + jsonValue.Key + "'><input name='" + jsonValue.ProductID + jsonValue.Key + "' id='" + jsonValue.ProductID + jsonValue.Key + "' type='checkbox' product-value=" + jsonValue.ProductID + " range-value='" + jsonValue.Key + "' />" + jsonValue.ProductText + " [" + jsonValue.Value + "]</label></div>";
+                        }
+                    });
+
+                    //var valueWithComma = '';
+                    //$('#checkboxes input:checked').each(function () {
+                    //    var productID = $(this).attr('id');
+                    //    var productText = $(this).attr('product-text');
+
+                    //    if ($.isNumeric(productID)) {
+                    //        $(json).each(function (jsonIndex, jsonValue) {
+                    //            if (jsonValue.Value.toLowerCase() != 'demand supply gap graph' &&
+                    //                jsonValue.Value.toLowerCase() != 'quarterly' &&
+                    //                jsonValue.Value.toLowerCase() != 'daily data import' &&
+                    //                jsonValue.Value.toLowerCase() != 'chemical 1' &&
+                    //                jsonValue.Value.toLowerCase() != 'chemical 2' &&
+                    //                jsonValue.Value.toLowerCase() != 'chemical 3' &&
+                    //                jsonValue.Value.toLowerCase() != 'chemical 4' &&
+                    //                jsonValue.Value.toLowerCase() != 'chemical 5' &&
+                    //                jsonValue.Value.toLowerCase() != 'chemical 6') {
+                    //                innerHTML += "<div><label id='lbl" + productID + jsonValue.Key + "'><input name='" + productID + jsonValue.Key + "' id='" + productID + jsonValue.Key + "' type='checkbox' product-value=" + productID + " range-value='" + jsonValue.Key + "' />" + productText + " [" + jsonValue.Value + "]</label></div>";
+                    //            }
+                    //            });
+                    //    }
+                    //});
+
+                    if (rangeType.toLowerCase() == 'chemicalpricing') {
+                        $('#divChemicalPricingRange').html(innerHTML);
+                    }
+                    else if (rangeType.toLowerCase() == 'marketanalysis') {
+                        $('#divMarketAnalysisRange').html(innerHTML);
+                    }
+                }
+            });
+        }
+
+    </script>
+    <script>
+        $(function () {
+            $("#btnSave").click(function () {
+                //var ProductId = "";
+                //for (var i = 0; i < productList.length; i++) {
+                //    if (!ProductId) {
+                //        ProductId = productList[i];
+                //    }
+                //    else {
+                //        ProductId = ProductId + ',' + productList[i];
+                //    }
+                //}
+
+                var MenuId = "";
+                for (var i = 0; i < moduleList.length; i++) {
+                    if (!MenuId) {
+                        MenuId = moduleList[i];
+                    }
+                    else {
+                        MenuId = MenuId + ',' + moduleList[i];
+                    }
+                }
+
+                var subs = {};
+                var subsType = $('#ddlSubscriptionType').val();
+                subs.SubscriptionType = $("input:radio[name = subscription_type]:checked").val();
+                subs.FromDate = $("#FromDatepicker").val();
+                subs.ToDate = $("#ToDatepicker").val();
+                subs.Description = $("#description").val();
+                //subs.ProductId = ProductId;
+                subs.LeadId = $("#Leadid").val();
+                subs.MenuId = MenuId;
+
+                subs.RegionsID = GetCheckedBox('checkboxesregion');
+                subs.CountriesID = GetCheckedBox('checkboxesCountry');
+                subs.ProductId = GetCheckedBox('checkboxes');
+                subs.ChemicalPricingRange = GetRangeCheckbox('divChemicalPricingRange');
+                subs.MarketAnalysisRange = GetRangeCheckbox('divMarketAnalysisRange');
+
+                if (!subs.SubscriptionType) {
+                    //alert("Please Select Subscription Type");
+                    swal("Warning", "Please Select Subscription Type", "error");
+                    return false;
+                }
+
+                if (!subs.FromDate) {
+                    //alert("Please Enter From Date");
+                    swal("Warning", "Please Enter From Date", "error");
+                    return false;
+                }
+
+                if (!subs.ToDate) {
+                    //alert("Please Enter From ToDate");
+                    swal("Warning", "Please Enter To Date", "error");
+                    return false;
+                }
+
+                if (!subs.MenuId) {
+                    //alert("Please Select Module");
+                    swal("Warning", "Please Select Module", "error");
+                    return false;
+                }
+
+                if (subsType == 'region' && !subs.RegionsID) {
+                    //alert("Please Select Product");
+                    swal("Warning", "Please Select Region", "error");
+                    return false;
+                }
+
+                if (subsType == 'country' && !subs.CountriesID) {
+                    //alert("Please Select Product");
+                    swal("Warning", "Please Select Country", "error");
+                    return false;
+                }
+
+                if (!subs.ProductId) {
+                    //alert("Please Select Product");
+                    swal("Warning", "Please Select Product", "error");
+                    return false;
+                }
+
+
+               
+
+               $("#loaderCustom").show();
+
+               $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveSalesPackageSubscriptionAsync")',
+                    data:  subs,
+                   success: function (data) {
+
+                       $("#loaderCustom").hide();
+                        if (data && data.result) {
+                            //setTimeout(function () {
+                            swal("Thank you!", "Subscription Created Sucessfully.", "success");
+                            //alert(data.result);
+                            window.location.href = "../../SubsManagement/ShowSubscriptionListForSales";
+                            $("#FromDatepicker").val('');
+                            $("#ToDatepicker").val('');
+                            $("#description").val('');
+                            productList = [];
+                            moduleList = [];
+                            $('input[name="module"]').each(function () {
+                                this.checked = false;
+                            });
+                            $('input[name="productList"]').each(function () {
+                                this.checked = false;
+                            });
+                                document.getElementById("checkboxes").style.display = "none";
+                            //}, 2000);
+                        }
+                        else {
+                            //alert("Error while inserting data");
+                            swal("Warning", "Error while inserting data :)", "error");
+                        }
+                    },
+                    error: function () {
+                        //alert("Error while inserting data");
+                        swal("Warning", "Error while inserting data :)", "error");
+                    }
+                });
+            return false;
+        });
+    });
+
+    </script>
+}
+
+
+
+

@@ -1,0 +1,175 @@
+﻿
+@{
+    ViewBag.Title = "SalesPersonCountryRelation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .mt-2 {
+        margin-top: 8px;
+    }
+</style>
+<form id="frmChemicalPrice">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="" style="margin-top:10px">
+                <div class="col-md-12">
+                    <div class="padding-0"> <h4 style="color:#fff;text-align:center" class="mb-1">Create Country User Relation</h4></div>
+                    <div class="col-md-12 padding-0">
+                        <hr style="margin-top:5px!important" />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                 
+                    <div class="col-md-3">
+                        <label>Country</label>
+                        <select class="form-control mb-1" id="Country" name="Country" title="Country">
+                            <option value="">Select Country</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>User</label>
+                        <select class="form-control mb-1" id="User" name="User" title="User">
+                            <option value="">Select User</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label><br/></label>
+                        <input class="btn btn-success form-control mb-1" value="Submit" onclick="SaveChemanalystTaxInvoice()" type="button" />
+                    </div>
+                    @*<div class="col-md-3">
+                       
+                        <input class="btn btn-success form-control mb-1"  value="Submit" onclick="SaveChemanalystTaxInvoice()" type="button" />
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script>
+    $(document).ready(function () {
+      
+        GetCountry();
+        GetUser();
+    });
+
+    function GetCountry() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCountry",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                var innerHTML = "";
+                innerHTML += "<option  value = ''>" + "Select Country" + "</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.CountryName != null || value.CountryName != "" || value.CountryName != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.CountryID + "'> " + value.CountryName + "</option>"
+                    }
+                });
+
+                $('#Country').html(innerHTML);
+                $('#ClientCountryName').html(innerHTML);
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    } 
+
+    function GetUser() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetUser",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                var innerHTML = "";
+                innerHTML += "<option  value = ''>" + "Select Country" + "</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.CorpEmail != null || value.CorpEmail != "" || value.CorpEmail != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.Id + "'> " + value.CorpEmail + "</option>"
+                    }
+                });
+
+                $('#User').html(innerHTML);
+             
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+  
+    function SaveUserRelation() {
+        debugger
+        var CountryName = $('#Country option:selected').text();
+        CountryName = CountryName.replace(/^\s+/, '');
+        var User = $("#User").val();
+        var StateName = $('#State option:selected').text();
+        StateName = StateName.replace(/^\s+/, '');
+        if (CountryName != "India") {
+            StateName = "";
+            StateId = "";
+        }
+
+        var GetDetails = {
+            Name: Name,
+            CorpEmail: CorpEmail,
+          
+        }
+        if (Name == "") {
+            swal("Warning", "Please Insert Name", "error");
+        }
+        else if (CorpEmail == "") {
+            swal("Warning", "Please Insert CorpEmail", "error");
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/SaveUserRelation",
+                data: JSON.stringify(GetDetails),
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $(response).each(function (index, value) {
+                        if (value.ValidationMessage == "SUCCESS") {
+                            swal(
+                                { title: "Thank you!", text: "Created Sucessfully.", type: "success" }).then(function () {
+                                    window.location.reload();
+                                });
+                        }
+                    });
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+
+        }
+
+    }
+</script>

@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewBag.Title = "OpenLeadEmployeeMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="update-profile-wrapper">
+
+    <form id="frmChemicalPrice">
+        <div class="white-wrapper container-fluid" style="margin-top:0px!important">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 style="color: #a5a8ad; text-align:center;float:none">Sales Employee Relation Master</h3>
+                </div>
+            </div>
+            <div class="col-md-6 col-md-offset-3">
+                <div class="import-form eq-form-box">
+                    <div class="change-pass-box">
+                        <div class="col-sm-12 col-lg-12 " style="margin-bottom:10px;">
+                            <label style="margin-bottom:5px;">Sales Parent Employee</label>
+                            <select id="Parent" class="form-control" name="Parent">
+                                <option value="">--Select Parent--</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-lg-12" style="margin-bottom:10px;">
+                            <label style="margin-bottom:5px;">Sales Child Employee</label>
+                            <select id="Child" class="form-control" name="Child">
+                                <option value="">--Select Child--</option>
+                            </select>
+                        </div>
+                        <div class="btn-wrapper" style="margin-top:3px">
+                            <input id="btnSubmit" name="btnSubmit" type="button" class="btn blue-btn" onclick="SaveEmployeeRecord()" value="Submit">
+                            <a class="btn blue-btn" id="btnCancel" name="btnCancel" href="@Url.Action("OpenLeadEmployeeMaster","LeadManagementSubscription")">Cancel</a>
+
+                            <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetEmployeeMasterOpenLeadData",
+            success: function (response) {
+
+                var innerHTML = "";
+                var innerHTML2 = "";
+                innerHTML += "<option value=''>--Select Parent--</option>";
+                innerHTML2 += "<option value=''>--Select Child--</option>";
+                $(response).each(function (index, value) {
+                    if (value.Id != null || value.Id != "" || value.Id != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.Id + "'> " + value.Name + "</option>"
+                        innerHTML2 += "<option class='option01' value = '" + value.Id + "'> " + value.Name + "</option>"
+                    }
+                });
+                if (response == '' || response == null) {
+                    $('#Parent').html("<option value=''>Select Parent</option>");
+                    $('#Child').html("<option value=''>Select Child</option>");
+                    return true;
+                }
+                else {
+
+                    $('#Parent').html(innerHTML);
+                    $('#Child').html(innerHTML2);
+                }
+
+            },
+
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+
+            }
+        });
+
+
+    });
+
+
+    function SaveEmployeeRecord()
+    {
+
+        var Parent = $("#Parent").val();
+        var Child = $("#Child").val();
+        if (Parent == "") {
+            swal({
+                title: "Please Enter All Values!",
+                type: "success"
+            }).then(function () {
+            });
+         }
+        else if (Child == "") {
+             swal({
+                 title: "Please Enter All Values!",
+                 type: "success"
+             }).then(function () {
+             });
+         }
+         else {
+             $.ajax({
+                 type: "POST",
+                 url: "/LeadManagementSubscription/SaveEmployeeOpenLeadData",
+                 data: { ChildId: Child, ParentId: Parent },
+                 success: function (response) {
+                     $(response).each(function (index, value) {
+
+                         var ResponseMessage = value.ValidationMessage;
+                         if (ResponseMessage == "Success") {
+                             swal({
+                                 title: ResponseMessage,
+                                 //text: ResponseMessage,
+                                 type: "success"
+                             }).then(function () {
+                                 window.location.href = "../../LeadManagementSubscription/OpenLeadEmployeeMaster";
+                             });
+                         }
+                         else if (ResponseMessage == "Record Already Exists") {
+                             swal({
+                                 title: ResponseMessage,
+                                 //text: ResponseMessage,
+                                 type: "success"
+                             }).then(function () {
+                                 window.location.href = "../../LeadManagementSubscription/OpenLeadEmployeeMaster";
+                             });
+                         }
+                         else if (ResponseMessage == "Updated Success") {
+                             swal({
+                                 title: ResponseMessage,
+                                 //text: ResponseMessage,
+                                 type: "success"
+                             }).then(function () {
+                                 window.location.href = "../../LeadManagementSubscription/OpenLeadEmployeeMaster";
+                             });
+                         }
+                          else {
+                             swal({
+                                 title: "Failed!",
+                                 text: "Failed Try Again.",
+                                 type: "success"
+                             }).then(function () {
+                                 window.location.href = "../../LeadManagementSubscription/OpenLeadEmployeeMaster";
+                             });
+                         }
+                     });
+                 },
+                 failure: function (response) {
+
+                     console.log(response)
+                 },
+                 error: function (response) {
+
+                     console.log(response)
+                 }
+             });
+         }
+    }
+</script>
+

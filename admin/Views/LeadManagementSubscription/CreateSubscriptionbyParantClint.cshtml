@@ -1,0 +1,199 @@
+﻿
+@{
+    ViewBag.Title = "CreateSubscriptionbyParantClint";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="~/css/leadStyle.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<style>
+    .bootstrap-select .dropdown-toggle:focus, .bootstrap-select > select.mobile-device:focus + .dropdown-toggle {
+        outline: thin dotted #333 !important;
+        outline: 0px auto -webkit-focus-ring-color !important;
+        outline-offset: -2px !important;
+    }
+
+    .box-height {
+        height: 58px !important
+    }
+   
+</style>
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'none';
+    });
+</script>
+<div class='container' id="loader">
+    <div class='loader'>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--dot'></div>
+        <div class='loader--text'></div>
+    </div>
+</div>
+<form id="frmChemicalPrice">
+    <div class="white-wrapper">
+        <div class="col-md-12 ">
+            <div class="import-form ">
+                <div class="col-md-12">
+                    <h4 style="color:#fff" class="mb-1">Create Subscription by Parent Client</h4>
+                </div>
+
+                <div class=" ">
+                    <div class="col-md-3">
+                        <label style="margin-bottom:5px">Primary Email</label>
+                        <select class="form-control" id="ClientPrimaryEmail" data-live-search="true" data-none-selected-text="Client Primary Email" ></select>  
+                    </div>
+                    <div class="col-md-3 ">
+                        <label style="margin-bottom:5px">Secondary Email</label>
+                        <select class="form-control selectpicker" id="ClientSecondaryEmail" data-live-search="true" data-none-selected-text="Client Secondary Email" multiple data-actions-box="true" data-selected-text-format="count > 3"></select>
+                    </div>
+                    <div class="col-md-12">
+                       
+                        <input class="btn btn-success " style="margin-top:10px" value="Create" onclick="CreateSalesPackageSubscriptions()" type="button" />
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+        GetClintEmail();
+    });
+    $("#ClientPrimaryEmail").change(function () {
+        GetsecondaryEmail();
+    });
+    var LeadId = @ViewBag.LeadId;
+    function GetClintEmail() {
+        var ClintEmailinnerHTML = "";
+        ClintEmailinnerHTML += "<option  value = ''>" + "Client Primary Email" + "</option>";
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintEmail",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $(data).each(function (index, value) {
+                    ClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>"
+                });
+
+                $('#ClientPrimaryEmail').html(ClintEmailinnerHTML);
+                $('#ClientPrimaryEmail').selectpicker('refresh');
+                //$('#ClientSecondaryEmail').html(ClintEmailinnerHTML);
+                //$('#ClientSecondaryEmail').selectpicker('refresh');
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+    function CreateSalesPackageSubscriptions() {
+        $("#loader").show()
+        var ClientPrimaryId = $("#ClientPrimaryEmail").val();
+        var ClientSecondaryId = $("#ClientSecondaryEmail").val();
+
+        if (ClientSecondaryId != null) {
+            ClientSecondaryId = $("#ClientSecondaryEmail").val().join(",");
+        }
+        else {
+
+        }
+        if (ClientPrimaryId == "" || ClientPrimaryId == null || ClientPrimaryId == undefined) {
+            $("#loader").hide();
+            swal("Warning", "Please Insert Client Primary Email", "error");
+            return false;
+           
+        }
+        if (ClientSecondaryId == "" || ClientSecondaryId == null || ClientSecondaryId == undefined) {
+            $("#loader").hide();
+            swal("Warning", "Please Insert Client Secondary Email", "error");
+            return false;
+           
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/InsertrecordprimarytoSecondary",
+                data: "{'PrimaryUser': '" + ClientPrimaryId + "','SecondaryUser': '" + ClientSecondaryId + "','LeadId': '" + LeadId + "'}", 
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    var responseMessage = response;
+                    if (responseMessage == "success") {
+                        $("#loader").hide()
+                        swal({
+
+                            title: "Thank you!",
+                            text: "Updated Sucessfully.",
+                            type: "success"
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        $("#loader").hide();
+                        swal({
+                            title: "Failed!",
+                            text: "Failed Try Again.",
+                            type: "success"
+                        }).then(function () {
+                          
+                            });
+                       
+                    }
+                },
+                Error: function (ErrMsg) {
+
+                }
+                  
+            })
+           
+        }
+    }  
+
+    function GetsecondaryEmail() {
+        var ClintEmailinnerHTML = "";
+  
+        var ClientCompanyName = $("#ClientPrimaryEmail").val();
+        //ClintEmailinnerHTML += "<option value=''>" + "Select Secondary Client Email" + "</option>";
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintEmailByCompanyId",
+            //contentType: "application/json; charset=utf-8",
+            //dataType: "json",
+            data: { CompanyId: ClientCompanyName },
+            //async: false,
+            success: function (data) {
+                $(data).each(function (index, value) {
+                    ClintEmailinnerHTML += "<option value = '" + value.UserId + "'> " + value.CorpEmail + "</option>"
+
+                });
+
+                $('#ClientSecondaryEmail').html(ClintEmailinnerHTML);
+                $('#ClientSecondaryEmail').selectpicker('refresh');
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+</script>

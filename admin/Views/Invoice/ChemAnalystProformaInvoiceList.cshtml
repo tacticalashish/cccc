@@ -1,0 +1,2380 @@
+﻿
+@{
+    ViewBag.Title = "ChemAnalystProformaInvoiceList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+<style>
+    .tableStyle {
+        border: 1px solid #808080;
+        margin-top: 10px;
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+
+    .popup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .child {
+        z-index: 999;
+        background: #ffffff;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: left;
+        padding: 24px 28px;
+        color: #1b1f23;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.28);
+        height: auto;
+        max-height: 92vh;
+        max-width: 900px;
+        min-width: 900px;
+        overflow: auto;
+        border: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+        .child h4 {
+            color: #1b1f23 !important;
+            font-weight: 700;
+            text-align: left !important;
+            font-size: 17px;
+            padding-bottom: 14px;
+            margin-bottom: 18px !important;
+            border-bottom: 1px solid #eef0f2;
+        }
+
+        .child label {
+            color: #56606e;
+            font-weight: 600;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            margin-bottom: 4px;
+        }
+
+        .child .col-md-3,
+        .child .col-md-12 {
+            padding-bottom: 10px;
+        }
+
+        .child .form-control {
+            border: 1px solid #dde1e6;
+            border-radius: 8px;
+            height: 38px;
+            font-size: 13px;
+            box-shadow: none;
+            padding: 6px 12px;
+        }
+
+        .child textarea.form-control {
+            height: auto;
+        }
+
+        .child .form-control:focus {
+            border-color: #1f5a37;
+            box-shadow: 0 0 0 3px rgba(31,90,55,0.12);
+        }
+
+        .child .form-control[disabled] {
+            background: #f6f8fa;
+            color: #8a94a6;
+        }
+
+        .child .btn-success {
+            background: #1f5a37;
+            border-color: #1f5a37;
+            border-radius: 8px;
+            padding: 7px 18px;
+            font-weight: 600;
+        }
+
+            .child .btn-success:hover {
+                background: #17472b;
+                border-color: #17472b;
+            }
+
+        .child .btn-danger {
+            background: #fff;
+            color: #c0392b;
+            border: 1px solid #f0c4bd;
+            border-radius: 8px;
+            padding: 7px 18px;
+            font-weight: 600;
+        }
+
+            .child .btn-danger:hover {
+                background: #fdf1ef;
+            }
+
+    .Ipopup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+    }
+
+    .Ichild {
+        z-index: 999;
+        background: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: left;
+        padding: 10px;
+        /*color: #fff;*/
+        border-radius: 2px;
+        box-shadow: 2px 3px 5px #000;
+        height: 550px;
+        width: auto;
+        overflow: auto;
+        border: solid 2px #eee;
+    }
+
+    .bttn-danger {
+        background-color: #dc3545;
+        border: 1px solid #b14643;
+    }
+
+    .bttn-success {
+        background-color: #95c23d;
+        border: 1px solid #85ab3a;
+    }
+    /*end popup css*/
+    .card-title {
+        margin-top: 5px;
+    }
+
+    .mt-2 {
+        margin-top: 4px;
+    }
+
+    .ms-2 {
+        margin-left: 4px;
+    }
+
+    label {
+        font-size: 12.5px;
+    }
+
+    /*invoice code starts here*/
+    body {
+        background: #d2d2d2;
+        padding: 0px;
+        margin: 0px;
+        font-family: system-ui, sans-serif;
+        font-weight: 500;
+        font-size: 11px;
+    }
+
+    .container-section {
+        width: 842px;
+        background: white;
+        height: auto;
+        color: #151515;
+        padding: 10px 60px;
+        margin: 0px auto;
+        display: block;
+    }
+
+
+    .row-sec {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .col-left,
+    .col-right {
+        width: 50%;
+    }
+
+    .border-left {
+        border-left: solid .5px #6e902b;
+        padding: 0px 8px;
+        height: 40px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mb-4 {
+        margin-bottom: 25px;
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .strong {
+        font-weight: 700;
+    }
+
+    .ps-5 {
+        padding-left: 20px;
+    }
+
+    .mt-6 {
+        margin-top: 24px;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .border-right {
+        border-right: solid 1px black;
+        padding: 0px 5px;
+    }
+
+    .mt-20 {
+        margin-top: 30px;
+    }
+
+    .w-50 {
+        width: 50%;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .border-bottom {
+        border-bottom: solid 1px black;
+        width: 12%;
+        text-align: right;
+    }
+
+    .py-2 {
+        padding: 5px 0px;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .text-white {
+        color: #fff;
+    }
+
+    .border {
+        border: solid 1px black;
+        padding: 4px;
+    }
+
+    .me-5 {
+        margin-right: 20px;
+    }
+
+    .ms-5 {
+        margin-right: 20px;
+    }
+
+    .min-height {
+        min-height: 210px;
+        max-height: 320px;
+    }
+
+
+    .table-border {
+        border: solid 1px black;
+        border-collapse: collapse;
+    }
+
+        .table-border th {
+            background: #244061;
+            color: white;
+        }
+
+    .w-120 {
+        width: 120px;
+    }
+
+    th, td {
+        border: solid 1px black;
+        padding: 0px 4px;
+    }
+
+    .w-100 {
+        width: 100%;
+    }
+
+    .w-42 {
+        width: 42%;
+    }
+
+    .w-33 {
+        width: 33.333%;
+    }
+
+    .w-29 {
+        width: 29%;
+    }
+
+    .w-60 {
+        width: 60%;
+    }
+
+    .w-40 {
+        width: 40%;
+    }
+
+    .py-1 {
+        padding: 2px 0px;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    .form-control-sm {
+        height: 31px;
+        /*background-color: #0e1d26 !important;
+        color: white;*/
+        padding-top: 3px;
+        border: solid .5px #888888;
+    }
+
+    .text-danger {
+        color: red;
+        /*font-size: 15px*/
+    }
+
+    .mb-2 {
+        margin-bottom: 8px;
+    }
+
+    .pagination {
+        display: inline-block;
+        padding-left: 0;
+        margin: 2px 0;
+        border-radius: 4px;
+    }
+
+    /* ===== Proforma Invoices - modern list redesign ===== */
+    .pi-page {
+        background: #eef1f4;
+        padding: 20px;
+        min-height: calc(100vh - 40px);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .pi-card {
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+        padding: 20px 24px;
+    }
+
+    .pi-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #eef0f2;
+    }
+
+    .pi-title {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 700;
+        color: #1b1f23;
+    }
+
+    .pi-subtitle {
+        margin-top: 2px;
+        font-size: 12.5px;
+        color: #8a94a6;
+    }
+
+    .pi-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .pi-search-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .pi-search-input {
+        height: 36px;
+        border: 1px solid #dde1e6;
+        border-radius: 8px;
+        padding: 0 12px;
+        font-size: 12.5px;
+        min-width: 220px;
+        outline: none;
+    }
+
+    .pi-search-input:focus {
+        border-color: #1f5a37;
+        box-shadow: 0 0 0 3px rgba(31,90,55,0.12);
+    }
+
+    .pi-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 36px;
+        padding: 0 16px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .pi-btn-primary {
+        background: #1f5a37;
+        color: #fff;
+    }
+
+    .pi-btn-primary:hover {
+        background: #17472b;
+        color: #fff;
+    }
+
+    .pi-btn-outline {
+        background: #fff;
+        color: #1f5a37;
+        border-color: #1f5a37;
+    }
+
+    .pi-btn-outline:hover {
+        background: #f1f7f3;
+    }
+
+    .pi-table-wrap {
+        overflow: auto;
+        border: 1px solid #eef0f2;
+        border-radius: 8px;
+    }
+
+    table.pi-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+        table.pi-table thead th {
+            background: #f6f8fa;
+            color: #56606e;
+            font-weight: 600;
+            text-align: left;
+            padding: 10px 12px;
+            white-space: nowrap;
+            border: none;
+            border-bottom: 1px solid #eef0f2;
+        }
+
+        table.pi-table tbody td {
+            padding: 9px 12px;
+            border: none;
+            border-bottom: 1px solid #f1f3f5;
+            white-space: nowrap;
+            color: #333;
+        }
+
+        table.pi-table tbody tr:hover {
+            background: #fafbfc;
+        }
+
+        table.pi-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .pi-table .btn-xs {
+        border-radius: 6px;
+        font-size: 11.5px;
+        padding: 3px 10px;
+    }
+
+    .pi-footer {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        gap: 12px;
+    }
+
+        .pi-footer > span,
+        .pi-footer .pagination {
+            float: none;
+            margin: 0;
+        }
+
+        .pi-footer .pagination {
+            display: flex;
+            align-items: center;
+        }
+</style>
+
+<div class="position-relative popup-open">
+    <div class="child">
+        <div class="container-fluid">
+            <div class="padding-0"> <h4 style="color:#fff;text-align:center; margin-bottom:8px" class="mb-1">Update ChemAnalyst Proforma Invoice</h4></div>
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <label>Country <span class="text-danger">*</span></label>
+                    <select class="form-control" id="Country" name="Country" title="Country" disabled>
+                        <option value="">Select Country</option>
+                        <option value="India">India</option>
+                        <option value="TechSci Research LLC(USA)">TechSci Research LLC(USA)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <input type="hidden" class="form-control" placeholder="AccountNo" id="AccountNo" name="AccountNo" />
+                    <label>InvoiceDate <span class="text-danger">*</span></label>
+                    <input type="datetime" class="form-control" placeholder="InvoiceDate" id="InvoiceDate" name="InvoiceDate" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3  mb-2">
+                    <label>ReverseCharge <span class="text-danger">*</span></label>
+                    <select class="form-control" id="ReverseCharge" name="ReverseCharge" title="ReverseCharge" disabled>
+                        <option value="">Select ReverseCharge</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                @*<div class="col-md-3 mb-2">
+                        <label>PO </label>
+                        <input type="text" class="form-control" placeholder="PO" id="PO" name="PO" autocomplete="off" />
+                    </div>*@
+
+                <div class="col-md-3 mb-2">
+                    <label>PO</label>
+                    <select class="form-control" id="PO" name="PO" title="PO" disabled="disabled">
+                        <option value="">Select po option</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>PODATE</label>
+                    <input type="text" class="form-control" placeholder="PODATE" id="PODATE" name="PODATE" autocomplete="off" disabled="disabled" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>KindAttn <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="KindAttn" id="KindAttn" name="KindAttn" autocomplete="off" />
+                </div>
+                <div class="col-md-3  mb-2">
+                    <label>Company Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="Name" id="Name" name="Name" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3  mb-2">
+                    <label>Address <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="Address" id="Address" name="Address" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3 mb-2" id="DivGSTIN">
+                    <label>GSTIN <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="GSTIN" id="GSTIN" name="GSTIN" oninput="this.value = this.value.replace(/\s/g, '')" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3 mb-2" id="DivPAN">
+                    <label>PAN <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="PAN" id="PAN" name="PAN" autocomplete="off" />
+                </div>
+
+                @*<div class="col-md-3">
+                        <label>State</label>
+                        <input type="text" class="form-control" placeholder="State" id="State" name="State" autocomplete="off" />
+                    </div>*@
+                <div class="col-md-3 mb-2">
+                    <label>Telephone <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="Telephone" id="Telephone" name="Telephone" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>Email <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="Email" id="Email" name="Email" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label>SacCode <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="SacCode" id="SacCode" name="SacCode" autocomplete="off" disabled="disabled" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>Currency <span class="text-danger">*</span></label>
+                    <select class="form-control" id="Currency" name="Currency" title="Currency">
+                        <option value="">Select Currency</option>
+                        <option value="INR">INR</option>
+                        <option value="USD">USD</option>
+                        <option value="WON">WON</option>
+                        <option value="YEN">YEN</option>
+                        <option value="EURO">EURO</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>Amount <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="Amount" id="Amount" name="Amount" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>Discount %</label>
+                    <input type="text" class="form-control" placeholder="Discount" id="Discounts" name="Discount" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>Subtotal <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="Subtotal" id="Subtotal" name="Subtotal" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2" id="StateDivEdit">
+                    <label>State <span class="text-danger">*</span></label>
+                    <select class="form-control" id="State" name="State" title="State">
+                        <option value="">Select State/Union Territory</option>
+                        <!-- States -->
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                        <!-- Union Territories -->
+                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                        <option value="Chandigarh">Chandigarh</option>
+                        <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="Puducherry">Puducherry</option>
+                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                        <option value="Ladakh">Ladakh</option>
+                    </select>
+                    @*<input type="text" class="form-control" placeholder="State" id="State" name="State" autocomplete="off" />*@
+                </div>
+                <div class="col-md-3 mb-2" id="CGSTDivEdit">
+                    <label>CGST <span class="text-danger">*</span><span class="text-danger"> (9%)</span></label>
+                    <input type="text" class="form-control" placeholder="CGST" id="CGST" name="CGST" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2" id="SGSTDivEdit">
+                    <label>SGST <span class="text-danger">*</span><span class="text-danger"> (9%)</span></label>
+                    <input type="text" class="form-control" placeholder="SGST" id="SGST" name="SGST" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2" id="IGSTDivEdit">
+                    <label>IGST <span class="text-danger">*</span><span class="text-danger"> (18%)</span></label>
+                    <input type="text" class="form-control" placeholder="IGST" id="IGST" name="IGST" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2" id="divTotalTaxAmountEdit">
+                    <label>TotalTaxAmount <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="TotalTaxAmount" id="TotalTaxAmount" name="TotalTaxAmount" autocomplete="off" />
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <label>TotalAmount <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="TotalAmount" id="TotalAmount" name="TotalAmount" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>AmountInWords <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="AmountInWords" id="AmountInWords" name="AmountInWords" autocomplete="off" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label>PaymentTerms <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="PaymentTerms" id="PaymentTerms" name="PaymentTerms" autocomplete="off" />
+                </div>
+
+                <div class="col-md-12 col-lg-12  mb-2">
+                    <label>Discription <span class="text-danger">*</span></label>
+                    <textarea id="Discription" class="form-control " rows="4" name="Discription" placeholder="Discription"></textarea>
+                </div>
+                <div class="col-md-12 mt-2 text-right">
+                    <input class="btn btn-success btn-sm" value="Submit" onclick="UPDATEChemanalystProformaInvoice()" type="button" />
+                    <button class="btn btn-danger btn-sm ms-2" id="CancelDisRemark">Cancel</button>
+                </div>
+            </div>
+            <input type="hidden" id="InvoiceID" />
+        </div>
+
+    </div>
+</div>
+<!--Start Invoice Popup code start pdf download-->
+<div class="position-relative Ipopup-open">
+    <div class="Ichild">
+        <div class="text-right">
+            <button class="btn btn-primary btn-sm" id="downloadPdfBtn"><i class="fa fa-file-pdf-o"></i></button>
+            <button class="btn btn-danger btn-sm ms-2" id="CancelButton"><i class="fa fa-times"></i></button>
+            <hr />
+        </div>
+        <div class='container-section' id="invoiceContent">
+            <div class='row-sec'>
+                <div class='w-60' id="pdfLogo">
+                    <img src='../images/logo1.png' width='200'>
+                </div>
+                <div class='w-40 border-left'>
+                    <div class='d-flex align-items-center' style='margin-top:6px'>
+                        <span><img src='../images/globe.png' width='10'></span>
+                        <span class='ps-5' style='font-size: 10px;' id="pdfwebsite" >www.chemanalyst.com</span>
+                    </div>
+                    <div class='d-flex'>
+                        <span><img src='../images/envelope.png' width='10'></span>
+                        <span class='ps-5' style='font-size: 10px;' id="pdfComMail">info chemanalyst.com</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h6 class='text-center strong' style="font-size:12px;"> Invoice</h6>
+                <div class='d-flex justify-content-between'>
+                    <div class='w-50'></div>
+                    <div class='w-50 mb-4'>
+                        <div class='d-flex'>
+                            <span class='strong'>Invoice No:-</span>
+                            <span class='ps-5' style='margin-left:45px;' id="pdfInvoiceNo"></span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>Date:-</span>
+                            <span class='ps-5' style='margin-left:76px;' id="pdfInvoiceDate"></span>
+                        </div>
+
+                        @*<div class='d-flex align-items-center'>
+                                <span class='strong'> Place of Supply along <br /> with name of State :-</span>
+                                <span style='margin-left:19px;' id="pdfSupplyState">  </span>
+                            </div>*@
+
+                        <div class='d-flex'>
+                            <span class='strong'>Reverse Charge(Y/N):-</span>
+                            <span style='margin-left:13px;' id="pdfReverseCharge">  </span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>PO:-</span>
+                            <span class='ps-5' style='margin-left:85px;' id="pdfPO"></span>
+                        </div>
+                        <div class='d-flex'>
+                            <span class='strong'>PO DATE:-</span>
+                            <span class='ps-5' style='margin-left:55px;' id="pdfPODATE">N.A</span>
+                        </div>
+                    </div>
+                </div>
+                <div class='row-sec'>
+                    <div class='col-left'>
+                        <div class='border min-height' style='margin-right: 30px;'>
+                            <div class='mb-4 strong'>Supplier(Bill From)</div>
+                            <div class="PdfComName"></div>
+                            <div class='d-flex'>
+                                <span class='strong'>Address:-</span>
+                                <span class="PdfAddress" style='margin-left:26px' >                                   
+                                </span>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Ph:-</span>
+                                <span style='margin-left: 54px' id="pdfnumber">  </span>
+                            </div>
+                            <div id="pdfBillGST">
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>CIN NO:-</span>
+                                    <span style='margin-left: 28px'> U74110UP2018PTC109822 </span>
+                                </div>
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>GSTIN NO:-</span>
+                                    <span style='margin-left: 15px'> 09AAMCM1992J2ZT</span>
+                                </div>
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>PAN NO:-</span>
+                                    <span class='ps-5' style='margin-left: 5px'>AAMCM1992J</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='col-right'>
+                        <div class='border  min-height' style='margin-left: 30px;'>
+                            <div class='strong'>Recipient(Bill To)</div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Kind Attn:-</span>
+                                <span style='margin-left: 19px' id="pdfKindAttn"></span>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Name:-</span>
+                                <span class='ps-5' style='margin-left: 18px' id="pdfName"></span>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Address:-</span>
+                                <span class='ps-5' style='margin-left: 7px' id="pdfAddress"></span>
+                            </div>
+                            <div id="pdfGSTBOX">
+                                <div class='d-flex mt-6'>
+                                    <span class='strong'>GSTIN:-</span>
+                                    <span class='ps-5' style='margin-left: 17px' id="pdfGSTIN"></span>
+                                </div>
+                                <div class='d-flex py-1'>
+                                    <span class='strong'>PAN:-</span>
+                                    <span class='ps-5' style='margin-left: 27px' id="pdfPAN"></span>
+                                </div>
+                                <div class='d-flex py-1' id="StateDiv">
+                                    <span class='strong'>State:-</span>
+                                    <span class='ps-5' style='margin-left: 23px' id="pdfState"></span>
+                                </div>
+                            </div>
+                            <div class='d-flex py-1'>
+                                <span class='strong'>Tel:-</span>
+                                <span class='ps-5' style='margin-left: 35px' id="pdfTelephone"></span>
+                            </div>
+                            <div class='d-flex'>
+                                <span class='strong'>Email:-</span>
+                                <span class='ps-5' style='margin-left: 21px' id="pdfEmail"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='row-sec mt-6'>
+                    <div class='border w-100'>
+                        <div class='d-flex w-100 justify-content-between'>
+                            <span class='strong w-40' id="pdfDes">Description</span>
+                            <span class='strong w-29 text-center'><span id="SACCODEBOX">SAC CODE</span></span>
+                            <span class='strong w-29 text-right' id="AmountType"></span>
+                        </div>
+                        <div class='d-flex w-100'>
+                            <span class='w-40' id="pdfDescription"></span>
+                            <span class='w-29 text-center' ><span id="pdfSacCode"></span></span>
+                            <span class='w-29 text-right' id="pdfAmount"></span>
+                        </div>
+                        @*<div class='d-flex mt-6'>
+                                <div><span class='border-right'>3 User License</span> <span class='border-right'>12 Months Subscription</span><span>Global News</span></div>
+                            </div>*@
+
+                        <div class='d-flex justify-content-between mt-20'>
+                            <div class='w-50'></div>
+                            <div class='w-50'>
+                                <div class='d-flex justify-content-between' id="DiscountBox">
+                                    <span class="ps-5 w-50">Discount</span>
+                                    <span class="w-25 text-right" id="pdfDiscountPercent"></span>
+                                    <span class='w-25 text-right' id="pdfDiscount"></span>
+                                </div>
+                                <div class='d-flex justify-content-between'>
+                                    <span class="ps-5">Subtotal</span>
+                                    <span class='border-bottom' id="pdfSubtotal"></span>
+                                </div>
+                                <div id="taxBox">
+                                    <div class='d-flex justify-content-between w-100'>
+                                        <span class="ps-5 w-50">Add:- CGST</span>
+                                        <span class="w-25 text-right" id="CGSTPercent"></span>
+                                        <span class="w-25 text-right" id="pdfCGST"></span>
+                                    </div>
+                                    <div class='d-flex justify-content-between w-100'>
+                                        <span class="ps-5 w-50">Add:- SGST</span>
+                                        <span class="w-25 text-right" id="SGSTPercent"></span>
+                                        <span class="w-25 text-right" id="pdfSGST"></span>
+                                    </div>
+                                    <div class='d-flex justify-content-between w-100'>
+                                        <span class="ps-5 w-50">Add:- IGST <br /> (LUT No:AD090424001791A)</span>
+                                        <span class="w-25 text-right" id="IGSTPercent"></span>
+                                        <span class="w-25 text-right" id="pdfIGST"></span>
+                                    </div>
+
+                                    <div class='d-flex justify-content-between'>
+
+                                        <span class="ps-5">Total Tax Amount</span>
+                                        <span id="TotalTaxAmount"></span>
+                                    </div>
+                                </div>
+                                <div class='d-flex justify-content-between'>
+                                    <span class="ps-5">Total Amount</span>
+                                    <span id="pdfTotalAmount"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin: 8px 0px;">
+                    <table class='table-border' style='width:75%'>
+                        <tr><td>Amount In Words</td><td id="pdfAmountInWords"></td></tr>
+                        <tr><td>Payments Terms</td><td id="pdfPaymentTerms"></td></tr>
+                    </table>
+                    <p class='' style="color:black; font-size:10.5px; margin-top: 10px; line-height:1.5" id="DivMessage" hidden="hidden">
+                        <i>
+                            Note:- SUPPLY MEANT FOR EXPORT/SUPPLY TO SEZ UNIT OR SEZ DEVELOPER FOR AUTHORISED OPERATIONS
+                            UNDER BOND OR LETTER OF UNDERTAKING WITH OUT PAYMENT OF INTEGRATED TAX
+                        </i>
+                    </p>
+
+                    <div class=''>
+                        <table class='table-border' style='width:60%;margin-top: 10px;'>
+                            <tr><th colspan='2' style='padding: 3px 0px; text-align:center'>Banking Details</th></tr>
+                            <tr><td style='width: 30%;'> Account Name</td><td id="pdfAccountName"></td></tr>
+                            <tr><td>Bank Name</td><td id="pdfBankName"></td></tr>
+                            <tr><td>Bank Add</td><td id="pdfBankAdd"></td></tr>
+                            <tr><td>Account No.</td><td id="pdfAccountNo"></td></tr>
+                            <tr><td>SWIFT Code</td><td id="pdfSWIFTCode"></td></tr>
+                            <tr id="pdfRTGSIFSCCode"><td>RTGS/IFSC Code</td><td>HDFC0001592</td></tr>
+                            <tr id="pdfABARoutingNumber"><td>ABA Routing Number</td><td>021000322</td></tr>
+                        </table>
+                        <div class="mt-2">
+                            <span style="color:black; font-size:11px">Thank you for doing business with <span id="Pdfhankyou"></span> </span>
+                        </div>
+                    </div>
+                    <div style="float:right; padding-right:20px; padding-bottom:50px;" id="pdfsig"> </div>                    
+                    <div class='text-center mt-6' style="padding-top:10px">
+                        <div class="PdfComName"></div>
+                        <div class="PdfAddress"></div>
+                        <div id="pdfAddtell" ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--END Invoice Popup code start-->
+<div class="update-profile-wrapper">
+    <div class="pi-page" id="dvDefaultCommentary">
+        <div class="pi-card" style="margin-bottom:20px;">
+            <div class="pi-card-header">
+                <div>
+                    <h4 class="pi-title">Sales Order Forms</h4>
+                    <div class="pi-subtitle">Signed/uploaded order forms for your leads</div>
+                </div>
+                <div class="pi-header-actions">
+                    <div class="pi-search-wrap">
+                        <input type="text" name="search" class="pi-search-input" placeholder="Search order forms..." id="SofSearch">
+                        <button type="button" class="pi-btn pi-btn-outline" onclick="SofGetSearchValues()">Search</button>
+                    </div>
+                    <input type="hidden" id="SofPageNumber" name="SofPageNumber" value="1" />
+                </div>
+            </div>
+            <div class="pi-table-wrap data-detail-wrapper scrolladmin01">
+                <table id="SofTable" class="table pi-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Signatory</th>
+                            <th>Value</th>
+                            <th>Payment</th>
+                            <th>Attachment</th>
+                        </tr>
+                    </thead>
+                    <tbody id="SofRows"></tbody>
+                </table>
+            </div>
+            <div class="pi-footer" id="SofPagging"></div>
+        </div>
+
+        <div class="pi-card">
+            <div class="pi-card-header">
+                <div>
+                    <h4 class="pi-title">Proforma Invoices</h4>
+                    <div class="pi-subtitle">All ChemAnalyst proforma invoices</div>
+                </div>
+                <div class="pi-header-actions">
+                    <div class="pi-search-wrap">
+                        <input type="text" name="search" class="pi-search-input" placeholder="Search invoices..." id="search" aria-controls="Userlist">
+                        <button type="button" class="pi-btn pi-btn-outline" onclick="GetsearchValues()">Search</button>
+                    </div>
+                    <a class="pi-btn pi-btn-primary" href="@Url.Action("CreateChemAnalystProformaInvoice", "Invoice")">+ Create Proforma Invoice</a>
+                    <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+                </div>
+            </div>
+            <div class="pi-table-wrap data-detail-wrapper scrolladmin01">
+                <table id="Leadlist" class="table pi-table">
+                    <thead>
+                        <tr>
+                            <th hidden>ID</th>
+                            <th>Invoice #</th>
+                            <th>Company</th>
+                            <th>Kind Attn.</th>
+                            <th>Amount</th>
+                            <th>Attachment</th>
+                            <th>Preview</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbodydata" id="tbodydata"></tbody>
+                </table>
+            </div>
+            <div class="pi-footer" id="divPagging"></div>
+        </div>
+    </div>
+
+</div>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+<script type="text/javascript">
+
+    $("#Country").change(function () {
+        var Country = $("#Country").val();
+        if (Country == 'India') {
+            $("#StateDivEdit").show();
+           // AccountNo = "50200035285590";
+            $("#IGSTDivEdit").show();
+            $("#CGSTDivEdit").show();
+            $("#SGSTDivEdit").show();
+            $("#DivGSTIN").show();
+            $("#DivPAN").show();
+            $("#divTotalTaxAmountEdit").show();
+
+        } else if (Country == 'TechSci Research LLC(USA)')
+        {
+            $("#IGSTDivEdit").hide();
+            $("#CGSTDivEdit").hide();
+            $("#SGSTDivEdit").hide();
+            $("#StateDivEdit").hide();
+            $("#DivGSTIN").hide();
+            $("#DivPAN").hide();
+            $("#divTotalTaxAmountEdit").hide();
+        }
+        else {
+            $("#IGSTDivEdit").hide();
+            $("#CGSTDivEdit").hide();
+            $("#SGSTDivEdit").hide();
+            $("#StateDivEdit").hide();
+            $("#DivGSTIN").hide();
+            $("#DivPAN").hide();
+            $("#divTotalTaxAmountEdit").hide();
+            //AccountNo = "50200078519827";
+
+        }
+    });
+
+    $('#GSTIN').on('keyup change', function () {
+        var GSTIN = $("#GSTIN").val();
+        const pan = getPanFromGstin(GSTIN);
+        $("#PAN").val(pan);
+
+    });
+    function getPanFromGstin(gstin) {
+        // Check if GSTIN is valid
+        const gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/;
+        if (gstinPattern.test(gstin)) {
+            // Extract PAN (3rd to 12th characters)
+            return gstin.substring(2, 12);
+        } else {
+            return "Invalid GSTIN";
+        }
+    }
+    $("#State").change(function () {
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+
+        var State = $("#State").val();
+        var amount = parseFloat($('#Amount').val());
+        var Country = $("#Country").val();
+
+        var Discount = parseFloat($('#Discounts').val());
+        let discountAmount = (amount * Discount) / 100;
+        let subtotal = amount - discountAmount;
+
+        if (Country != "") {
+            if (State == 'Uttar Pradesh') {
+
+                let cgst = subtotal * 0.09;
+                let sgst = subtotal * 0.09;
+                let TotalTaxAmount = cgst + sgst;
+                let TotalAmount = subtotal + TotalTaxAmount;
+                let rounded = Math.round(TotalAmount);
+                $("#Subtotal").val(subtotal);
+                $("#TotalAmount").val(rounded);
+                $("#IGSTDivEdit").hide();
+                $("#CGST").val(cgst.toFixed(2));
+                $("#SGST").val(sgst.toFixed(2));
+                $("#CGSTDivEdit").show();
+                $("#SGSTDivEdit").show();
+                $("#TotalTaxAmount").val(TotalTaxAmount);
+            }
+            else {
+                $("#Subtotal").val(subtotal);
+                let igst = subtotal * 0.18;
+                $("#CGSTDivEdit").hide();
+                $("#SGSTDivEdit").hide();
+                $("#IGST").val(igst.toFixed(2));
+                $("#IGSTDivEdit").show();
+                $("#TotalTaxAmount").val(igst.toFixed(2));
+                let TotalAmount = subtotal + igst;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+            }
+        }
+        else {
+            $("#Amount").val('');
+            $("#IGST").val('');
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#TotalTaxAmount").val('');
+            $("#TotalAmount").val('');
+            swal("Warning", "Please Select Country", "error");
+
+        }
+        const number = $("#TotalAmount").val();
+        const text = numberToText(number);
+        $("#AmountInWords").val(text);
+    });
+    $('#Amount').on('keyup change', function () {
+
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+        var State = $("#State").val();
+        var amount = parseFloat($('#Amount').val());
+        var Discount = parseFloat($('#Discounts').val());
+        let discountAmount = (amount * Discount) / 100;
+        let subtotal = amount - discountAmount;
+
+        var Country = $("#Country").val();
+        if (Country == "") {
+            $("#Amount").val('');
+            $("#IGST").val('');
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#TotalTaxAmount").val('');
+            $("#TotalAmount").val('');
+            swal("Warning", "Please Select Country", "error");
+        }
+
+        if (State != '') {
+            if (State == 'Uttar Pradesh') {
+                $("#Subtotal").val(subtotal);
+                let cgst = subtotal * 0.09;
+                let sgst = subtotal * 0.09;
+                let TotalTaxAmount = cgst + sgst;
+                let TotalAmount = subtotal + TotalTaxAmount;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+                $("#IGSTDivEdit").hide();
+                $("#CGST").val(cgst.toFixed(2));
+                $("#SGST").val(sgst.toFixed(2));
+                $("#CGSTDivEdit").show();
+                $("#SGSTDivEdit").show();
+                $("#TotalTaxAmount").val(TotalTaxAmount.toFixed(2));
+                $("#divTotalTaxAmount").show();
+            }
+            else {
+                $("#Subtotal").val(subtotal);
+                let igst = subtotal * 0.18;
+                $("#CGSTDivEdit").hide();
+                $("#SGSTDivEdit").hide();
+                $("#IGST").val(igst.toFixed(2));
+                $("#IGSTDivEdit").show();
+                $("#TotalTaxAmount").val(igst.toFixed(2));
+                let TotalAmount = subtotal + igst;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+            }
+        }
+        else {
+            let rounded = Math.round(subtotal);
+            $("#TotalAmount").val(rounded);
+            $("#Subtotal").val(rounded);
+            $("#divTotalTaxAmount").hide();
+        }
+
+
+
+        const number = $("#TotalAmount").val();
+        const text = numberToText(number);
+        $("#AmountInWords").val(text);
+
+    });
+
+
+
+    $('#Discounts').on('keyup change', function () {
+
+        $("#IGST").val('');
+        $("#CGST").val('');
+        $("#SGST").val('');
+        $("#TotalTaxAmount").val('');
+        $("#TotalAmount").val('');
+        var State = $("#State").val();
+        var amount = parseFloat($('#Amount').val());
+        var Discount = parseFloat($('#Discounts').val());
+        let discountAmount = (amount * Discount) / 100;
+        let subtotal = amount - discountAmount;
+
+        var Country = $("#Country").val();
+        if (Country == "") {
+            $("#Amount").val('');
+            $("#IGST").val('');
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#TotalTaxAmount").val('');
+            $("#TotalAmount").val('');
+            swal("Warning", "Please Select Country", "error");
+        }
+
+        if (State != '') {
+            if (State == 'Uttar Pradesh') {
+                $("#Subtotal").val(subtotal);
+                let cgst = subtotal * 0.09;
+                let sgst = subtotal * 0.09;
+                let TotalTaxAmount = cgst + sgst;
+                let TotalAmount = subtotal + TotalTaxAmount;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+                $("#IGSTDivEdit").hide();
+                $("#CGST").val(cgst.toFixed(2));
+                $("#SGST").val(sgst.toFixed(2));
+                $("#CGSTDivEdit").show();
+                $("#SGSTDivEdit").show();
+                $("#TotalTaxAmount").val(TotalTaxAmount.toFixed(2));
+                $("#divTotalTaxAmount").show();
+            }
+            else {
+                $("#Subtotal").val(subtotal);
+                let igst = subtotal * 0.18;
+                $("#CGSTDivEdit").hide();
+                $("#SGSTDivEdit").hide();
+                $("#IGST").val(igst.toFixed(2));
+                $("#IGSTDivEdit").show();
+                $("#TotalTaxAmount").val(igst.toFixed(2));
+                let TotalAmount = subtotal + igst;
+                let rounded = Math.round(TotalAmount);
+                $("#TotalAmount").val(rounded);
+            }
+        }
+        else {
+            let rounded = Math.round(subtotal);
+            $("#TotalAmount").val(rounded);
+            $("#Subtotal").val(rounded);
+            $("#divTotalTaxAmount").hide();
+        }
+
+
+
+        const number = $("#TotalAmount").val();
+        const text = numberToText(number);
+        $("#AmountInWords").val(text);
+
+    });
+
+
+    function numberToText(number) {
+        const ones = [
+            "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+            "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+            "Seventeen", "eighteen", "Nineteen"
+        ];
+        const tens = [
+            "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+        ];
+
+        if (number === 0) return "Zero";
+
+        function convertHundreds(num) {
+            let result = "";
+            if (num >= 100) {
+                result += ones[Math.floor(num / 100)] + " Hundred ";
+                num %= 100;
+            }
+            if (num >= 20) {
+                result += tens[Math.floor(num / 10)] + " ";
+                num %= 10;
+            }
+            if (num > 0) {
+                result += ones[num] + " ";
+            }
+            return result.trim();
+        }
+
+        function convertNumber(num) {
+            if (num < 1000) return convertHundreds(num);
+
+            const parts = ["", "Thousand", "Million", "Billion"];
+            let partIndex = 0;
+            let result = "";
+
+            while (num > 0) {
+                if (num % 1000 !== 0) {
+                    result = convertHundreds(num % 1000) + " " + parts[partIndex] + " " + result;
+                }
+                num = Math.floor(num / 1000);
+                partIndex++;
+            }
+            return result.trim();
+        }
+
+        return convertNumber(number);
+    }
+    function PopupInvoice(InvoiceID) {
+        $.ajax({
+            type: "POST",
+            url: "/Invoice/BindProformaInvoiceDetailsByid",
+            data: { InvoiceId: InvoiceID },
+            success: function (response) {
+
+                var innerHTML = "";
+                $(response).each(function (index, value) {
+                    $("#pdfAccountNo").text(''); 
+                    $("#pdfSWIFTCode").text(''); 
+                    $("#pdfAccountName").text(''); 
+                    $("#pdfBankName").text(''); 
+                    $("#pdfBankAdd").text(''); 
+                    var date = value.InvoiceDate
+                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                   
+                  
+                  
+                    $("#pdfCountry").text(value.Country);
+                    $("#pdfInvoiceDate").text(formattedDate);
+                    $("#pdfReverseCharge").text(value.ReverseCharge);
+                    $("#pdfPO").text(value.PO);
+                    $("#pdfKindAttn").text(value.KindAttn);
+                    $("#pdfName").text(value.Name);
+                    $("#pdfAddress").text(value.Address);
+                    $("#pdfPAN").text(value.PAN);
+                    $("#pdfTelephone").text(value.Telephone);
+                    $("#pdfEmail").text(value.Email);
+                    $("#pdfSacCode").text(value.SacCode);
+                    $("#pdfAmount").text(value.Amount);
+                    var currencytype = 'AMOUNT(' + value.Currency + ')';
+                    $("#AmountType").text(currencytype);
+                    var amount = parseFloat(value.Amount);
+                    var Discount = parseFloat(value.Discount);
+                    let discountAmount = (amount * Discount) / 100;
+                    if (Discount == 0 || Discount == '') {
+                        $("#DiscountBox").hide();
+                    } else {
+                        $("#DiscountBox").show();
+                    }
+                    debugger;
+                    if (value.Country == 'India') {
+                        $("#IGSTDivEdit").show();
+                        $("#CGSTDivEdit").show();
+                        $("#SGSTDivEdit").show();
+                        $("#DivGSTIN").show();
+                        $("#DivPAN").show();
+                        $("#divTotalTaxAmountEdit").show();
+                        $("#pdfRTGSIFSCCode").show();
+                        $("#pdfABARoutingNumber").hide();
+                        $("#SACCODEBOX").css("display", "block");
+                        $("#pdfSacCode").css("display", "block");
+                        $("#taxBox").show();
+                        $("#pdfGSTBOX").show();
+                        $("#pdfBillGST").show();
+                       
+                    } else if (value.Country == 'TechSci Research LLC(USA)'){
+                        $("#IGSTDivEdit").hide();
+                        $("#CGSTDivEdit").hide();
+                        $("#SGSTDivEdit").hide();
+                        $("#StateDivEdit").hide();
+                        $("#DivGSTIN").hide();
+                        $("#DivPAN").hide();
+                        $("#divTotalTaxAmountEdit").hide();
+                        $("#divTotalTaxAmount").hide();
+                        $("#pdfABARoutingNumber").show();
+                        $("#pdfRTGSIFSCCode").hide();
+                        $("#SACCODEBOX").css("display", "none");
+                        $("#pdfSacCode").css("display", "none");
+                        $("#taxBox").hide();
+                        $("#pdfGSTBOX").hide();
+                        $("#pdfBillGST").hide();
+                       
+                    }
+                    else {
+                        $("#IGSTDivEdit").hide();
+                        $("#CGSTDivEdit").hide();
+                        $("#SGSTDivEdit").hide();
+                        $("#StateDivEdit").hide();
+                        $("#DivGSTIN").hide();
+                        $("#DivPAN").hide();
+                        $("#divTotalTaxAmountEdit").hide();
+                        $("#divTotalTaxAmount").hide();
+                        $("#pdfRTGSIFSCCode").show();
+                        $("#pdfABARoutingNumber").hide();
+                        $("#SACCODEBOX").css("display", "block");
+                        $("#pdfSacCode").css("display", "block");
+                        $("#taxBox").show();
+                        $("#pdfGSTBOX").show();
+                        $("#pdfBillGST").show();
+                      
+                    }
+                    if (value.Country == "India") {
+                        $("#DivMessage").hide();                        
+                        $("#pdfAccountNo").text('50200035285590'); 
+                        $("#pdfSWIFTCode").text('HDFCINBBXXX'); 
+                        $("#pdfAccountName").text('Chemanalyst Data Private Limited'); 
+                        $("#pdfBankName").text('HDFC BANK LTD'); 
+                        $("#pdfBankAdd").text('G- 28/29, First Floor, Sector- 18, Noida- 201301 Uttar Pradesh India'); 
+                        $("#Pdfhankyou").text('Chemanalyst!!');
+                        $(".PdfComName").text('Chemanalyst Data Private Limited');
+                        $(".PdfAddress").text('4TH FLOOR, 4F-1, B-44, BLOCK-B,, SECTOR 57, NOIDA, GAUTAM BUDDHA NAGAR, NOIDA, Uttar Pradesh, India, 201301');
+                        $("#pdfnumber").text('+91-120-4523900');
+                        $("#pdfAddtell").text('T: +91-120-4523900 CIN – U74110UP2018PTC109822');
+                        $("#pdfwebsite").text('www.chemanalyst.com');
+                        $("#pdfComMail").text('info@chemanalyst.com');
+                        $("#pdfDes").text('Description');
+                        $("#pdfLogo").html("<img src='../images/logo1.png' width='200'>");
+                        $("#pdfsig").html("<img src='../images/signature.png' width='220'>");
+                        var InvoiceNo = value.InvoiceNo;
+                        InvoiceNo = "CHEM-PI-" + InvoiceNo
+                    } else if (value.Country == "TechSci Research LLC(USA)"){
+                        $("#DivMessage").hide();                       
+                        $("#pdfAccountNo").text('4830 5889 9741'); 
+                        $("#pdfSWIFTCode").text('BOFAUS3N'); 
+                        $("#pdfAccountName").text('TechSci Research LLC'); 
+                        $("#pdfBankName").text('Bank of America'); 
+                        $("#pdfBankAdd").text('56 E 42nd Street, New York, NY 10017'); 
+                        $("#Pdfhankyou").text('TechSci Research!!');
+                        $(".PdfComName").text('TechSci Research LLC');
+                        $(".PdfAddress").text('420 Lexington Avenue, Suite 300, New York, NY, United States, 10170');
+                        $("#pdfnumber").text('+1 646 360 1656');
+                        $("#pdfAddtell").text('Tel: +1 646 360 1656 | Email: accounts@techsciresearch.com');
+                        $("#pdfwebsite").text('www.techsciresearch.com');
+                        $("#pdfComMail").text('info@techsciresearch.com');
+                        $("#pdfDes").text('Project/Report');
+                        $("#pdfLogo").html("<img src='../images/techsci-logo.png' width='200'>");
+                        $("#pdfsig").html("<img src='../images/stamp us llc.png' width='100'>");
+                        var InvoiceNo = value.InvoiceNo;
+                        InvoiceNo = InvoiceNo + "SR" 
+                    }
+                    else {
+                        $("#DivMessage").show();
+                        //$("#AmountType").text("AMOUNT(USD)");
+                        $("#pdfAccountNo").text('50200078519827'); 
+                        $("#pdfSWIFTCode").text('HDFCINBBXXX'); 
+                        $("#pdfAccountName").text('Chemanalyst Data Private Limited'); 
+                        $("#pdfBankName").text('HDFC BANK LTD'); 
+                        $("#pdfBankAdd").text('G- 28/29, First Floor, Sector- 18, Noida- 201301 Uttar Pradesh India');
+                        $("#Pdfhankyou").text('Chemanalyst!!');
+                        $(".PdfComName").text('Chemanalyst Data Private Limited');
+                        $(".PdfAddress").text('4TH FLOOR, 4F-1, B-44, BLOCK-B,, SECTOR 57, NOIDA, GAUTAM BUDDHA NAGAR, NOIDA, Uttar Pradesh, India, 201301');
+                        $("#pdfnumber").text('+91-120-4523900');
+                        $("#pdfAddtell").text('T: +91-120-4523900 CIN – U74110UP2018PTC109822');
+                        $("#pdfwebsite").text('www.chemanalyst.com');
+                        $("#pdfComMail").text('info@chemanalyst.com');
+                        $("#pdfDes").text('Description');
+                        $("#pdfLogo").html("<img src='../images/logo1.png' width='200'>");
+                        $("#pdfsig").html("<img src='../images/signature.png' width='220'>");
+                        var InvoiceNo = value.InvoiceNo;
+                        InvoiceNo = "CHEM-PI-" + InvoiceNo
+
+                    }
+                    $('#pdfInvoiceNo').text(InvoiceNo);
+                    if (PO == "No") {
+                        $("#pdfPO").text('NA');
+                        $("#pdfPODATE").text("-");
+                    }
+                    if (value.PODATE == null || value.PODATE == "") {
+                        $("#pdfPODATE").text("-");
+                    }
+                    else {
+                        $("#pdfPODATE").text(value.PODATE);
+                    }
+                    if (value.State == null || value.State == "") {
+                        $("#pdfState").text("-");
+                    } else {
+                        $("#pdfState").text(value.State);
+                    }
+                    if (value.Subtotal == null || value.Subtotal == "") {
+                        $("#pdfSubtotal").text("-");
+                    } else {
+                        $("#pdfSubtotal").text(value.Subtotal);
+                    }
+                    if (value.Discount == null || value.Discount == "") {
+                        $("#pdfDiscountPercent").text("");
+                        $("#pdfDiscount").text("-");
+                    } else {
+                        var disc = value.Discount + '%';
+                        $("#pdfDiscountPercent").text(disc);
+                        $("#pdfDiscount").text(discountAmount);
+                    }
+                    if (value.CGST == null || value.CGST == "") {
+                        $("#pdfCGST").text("-");
+                        $("#CGSTPercent").text("");
+                    } else {
+
+                        $("#CGSTPercent").text("9%");
+                        $("#pdfCGST").text(value.CGST);
+                    }
+                    if (value.SGST == null || value.SGST == "") {
+                        $("#pdfSGST").text("-");
+                        $("#SGSTPercent").text("");
+                    } else {
+                        $("#pdfSGST").text(value.SGST);
+                        $("#SGSTPercent").text("9%");
+                    }
+                    if (value.IGST == null || value.IGST == "") {
+                        $("#pdfIGST").text("-");
+                        $("#IGSTPercent").text("");
+                    } else {
+                        $("#pdfIGST").text(value.IGST);
+                        $("#IGSTPercent").text("18%");
+                    }
+                    if (value.TotalTaxAmount == null || value.TotalTaxAmount == "") {
+                        $("#pdfTotalTaxAmount").text("-");
+                    } else {
+                        $("#pdfTotalTaxAmount").text(value.TotalTaxAmount);
+                    }
+
+                    $("#pdfTotalAmount").text(value.TotalAmount);
+                    $("#pdfAmountInWords").text(value.AmountInWords);
+                    $("#pdfPaymentTerms").text(value.PaymentTerms);
+                    $("#pdfDescription").text(value.Discription);
+                    $("#pdfSupplyState").text(value.SupplyState);
+
+                    $("#pdfGSTIN").text(value.GSTIN);
+
+                    if (value.GSTIN == null || value.GSTIN == "") {
+                        $("#pdfGSTIN").text("-");
+                    } else {
+                        $("#pdfGSTIN").text(value.GSTIN);
+                    }
+                });
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+        $(".Ipopup-open").css("display", "block");
+        $("#CancelButton").click(function () {
+            $(".Ipopup-open").css("display", "none");
+        });
+    }
+    var Search = "";
+    //$.formattedDate = function (dateToFormat) {
+    //    var dateObject = new Date(dateToFormat);
+    //    var day = dateObject.getDate();
+    //    var month = dateObject.getMonth() + 1;
+    //    var year = dateObject.getFullYear();
+    //    day = day < 10 ? "0" + day : day;
+    //    month = month < 10 ? "0" + month : month;
+    //    var formattedDate = day + "/" + month + "/" + year;
+    //    return formattedDate;
+    //};
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.toLocaleString('default', { month: 'long' }); // Full month name
+        var year = dateObject.getFullYear();
+
+        var formattedDate = day + " " + month + " " + year;
+        return formattedDate;
+    };
+    function EditPopupSource(InvoiceId) {
+
+        $.ajax({
+            type: "POST",
+            url: "/Invoice/BindProformaInvoiceDetailsByid",
+            data: { InvoiceId: InvoiceId },
+            success: function (response) {
+
+                var innerHTML = "";
+                $(response).each(function (index, value) {
+                    debugger
+                    var date = value.InvoiceDate
+                    var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                    $("#Country").val(value.Country);
+                    $("#InvoiceDate").val(formattedDate);
+                    $("#ReverseCharge").val(value.ReverseCharge);
+
+                    $("#PO").val(value.PO);
+
+                    $("#PODATE").val(value.PODATE);
+                    $("#KindAttn").val(value.KindAttn);
+                    $("#Name").val(value.Name);
+                    $("#Address").val(value.Address);
+                    $("#GSTIN").val(value.GSTIN);
+                    $("#PAN").val(value.PAN);
+                    $("#Telephone").val(value.Telephone);
+                    $("#Email").val(value.Email);
+                    $("#SacCode").val(value.SacCode);
+                    $("#Currency").val(value.Currency);
+                    $("#Amount").val(value.Amount);
+                    $("#Subtotal").val(value.Subtotal);
+                    $("#Discounts").val(value.Discount);
+                    $("#CGST").val(value.CGST);
+                    $("#SGST").val(value.SGST);
+                    $("#IGST").val(value.IGST);
+                    $("#TotalTaxAmount").val(value.TotalTaxAmount);
+                    $("#TotalAmount").val(value.TotalAmount);
+                    $("#AmountInWords").val(value.AmountInWords);
+                    $("#PaymentTerms").val(value.PaymentTerms);
+                    $("#Discription").val(value.Discription);
+                    $("#InvoiceID").val(value.InvoiceID);
+                    $("#State").val(value.State);
+                    $("#supplyState").val(value.SupplyState);
+                    $("#InvoiceID").val(value.InvoiceID);
+                    debugger
+
+
+                    if (Country == "India" && State != "Uttar Pradesh") {
+                        $("#IGSTDivEdit").show();
+                        $("#CGSTDivEdit").show();
+                    }
+                    else {
+                        $("#IGSTDivEdit").hide();
+                        $("#CGSTDivEdit").hide();
+                        $("#SGSTDivEdit").hide();
+                    }
+                    if (value.Country == 'India') {
+                        //$("#IGSTDivEdit").show();
+                        //$("#CGSTDivEdit").show();
+                        //$("#SGSTDivEdit").show();
+                        $("#StateDivEdit").show();
+                        $("#DivGSTIN").show();
+                        $("#DivPAN").show();
+                        $("#divTotalTaxAmountEdit").show();
+                        $("#divTotalTaxAmount").show();
+
+                    }
+                    else {
+                        //$("#IGSTDivEdit").hide();
+                        //$("#CGSTDivEdit").hide();
+                        //$("#SGSTDivEdit").hide();
+                        $("#StateDivEdit").hide();
+                        $("#DivGSTIN").hide();
+                        $("#DivPAN").hide();
+                        $("#divTotalTaxAmountEdit").hide();
+                        $("#divTotalTaxAmount").hide();
+
+                    }
+
+                });
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+
+        $(".popup-open").css("display", "block");
+    }
+    $("#CancelDisRemark").click(function () {
+        $(".popup-open").css("display", "none");
+    });
+    $(document).ready(function () {
+        GetTaxInvoiceOnSearchFilter();
+        SofLoad();
+
+    });
+    $(document).on("keypress", "#SofSearch", function (e) {
+        if (e.which == 13) {
+            SofGetSearchValues();
+        }
+    });
+    function GetsearchValues() {
+        Search = $('#search').val();
+        $('#search').html(GetPaginationHTML(Search));
+        GetTaxInvoiceOnSearchFilter();
+    }
+    function GetTaxInvoiceOnSearchFilter() {
+        var path = "/ChemPricingImportfile/POFiles";
+        var pageNumber = $('#PageNumber').val();
+        var Search = $('#search').val();
+        var URL = "/Invoice/GetChemanalystProformaInvoiceList?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        var date = elm.CreatedDate
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.InvoiceID + "</td>";
+                        tbodyHTML += "<td>" + elm.InvoiceNo + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.KindAttn + "</td>";
+                        tbodyHTML += "<td>" + elm.Amount + "</td>";
+                        tbodyHTML += "<td>" + "<a target='_blank' href='/LeadManagementSubscription/DownloadFile?filePath=" + path + "/" + elm.POfiles + "&fileName=" + elm.POfiles + "'>" + elm.POfiles + "</a>" + "</td>";
+                        tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-info' value='Preview' onclick=PopupInvoice('" + elm.InvoiceID + "')>" + "</td>";
+                        tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-primary' value='Edit' onclick=EditPopupSource('" + elm.InvoiceID + "')>" + "</td>";
+                        tbodyHTML += "</tr>"
+                    });
+
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='8'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.tbodydata').html(tbodyHTML);
+            }
+        });
+    }
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#8a94a6'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        GetTaxInvoiceOnSearchFilter();
+
+    }
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+
+    // ---------- Sales Order Forms table (separate list/pager from the
+    // Proforma Invoices table above, same page - Sof-prefixed throughout so
+    // its pager doesn't collide with the unprefixed PaggingButton/
+    // GetPagination pair the Proforma Invoices table already uses) ----------
+    var SofSearch = "";
+
+    function SofGetSearchValues() {
+        SofSearch = $('#SofSearch').val();
+        $('#SofPageNumber').val(1);
+        SofLoad();
+    }
+
+    function SofLoad() {
+        var path = "/ChemPricingImportfile/SalesLeadDocuments";
+        var pageNumber = $('#SofPageNumber').val();
+        var search = $('#SofSearch').val();
+        var URL = "/Invoice/GetSalesOrderFormList?search=" + encodeURIComponent(search || "");
+        URL += '&pageNumber=' + pageNumber;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null && json.DataList && json.DataList.length > 0) {
+                    $(json.DataList).each(function (idx, elm) {
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + (elm.CompanyName || "\u2014") + "</td>";
+                        tbodyHTML += "<td>" + (elm.Signatory || "\u2014") + "</td>";
+                        tbodyHTML += "<td>" + (elm.Amount != null ? elm.Amount : "\u2014") + "</td>";
+                        tbodyHTML += "<td>" + (elm.PaymentOption || "\u2014") + "</td>";
+                        if (elm.Attechments) {
+                            tbodyHTML += "<td style='text-align:center'>" + "<a target='_blank' href='/LeadManagementSubscription/DownloadFile?filePath=" + path + "/" + elm.Attechments + "&fileName=" + elm.Attechments + "'>" + elm.Attechments + "</a>" + "</td>";
+                        } else {
+                            tbodyHTML += "<td style='text-align:center'>" + "\u2014" + "</td>";
+                        }
+                        tbodyHTML += "</tr>";
+                    });
+                    $('#SofPagging').html(SofGetPaginationHTML(json));
+                } else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='5'><span>No records found..!!</span></td></tr>";
+                    $('#SofPagging').html('');
+                }
+                $('#SofRows').html(tbodyHTML);
+            }
+        });
+    }
+
+    function SofGetPaginationHTML(json) {
+        var pagingInnerHTML = "<span class='pull-left' style='color:#8a94a6'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = SofGetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+        return pagingInnerHTML;
+    }
+
+    function SofPaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        $('#SofPageNumber').val(pageNumber);
+        SofLoad();
+    }
+
+    function SofGetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='SofPaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='SofPaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='SofPaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='SofPaggingButton($(this));' href='javascript:void(0);'  url='";
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='SofPaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='SofPaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='SofPaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#downloadPdfBtn').click(function () {
+            var element = document.getElementById('invoiceContent');
+
+            // Options for html2pdf
+            var opt = {
+                filename: 'invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 }, // Image quality
+                html2canvas: { scale: 3 }, // Increase scale for higher resolution (default is 1)
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Generate PDF
+            html2pdf()
+                .set(opt)
+                .from(element)
+                .save();
+        });
+    });
+</script>
+<script>
+    var AccountNo = "";
+    $(document).ready(function () {
+        $("#InvoiceDate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#PODATE").datepicker({ dateFormat: "dd/MM/yy" });
+
+    });
+
+    function UPDATEChemanalystProformaInvoice() {
+        debugger;
+        var Country = $("#Country").val();
+        if (Country != 'India') {
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#IGST").val('');
+            $("#GSTIN").val('-');
+            $("#PAN").val('-');
+            $("#divTotalTaxAmount").val('');
+        }
+
+        var InvoiceDate = $("#InvoiceDate").val();
+        var ReverseCharge = $("#ReverseCharge").val();
+        var PO = $("#PO").val();
+        var PODATE = $("#PODATE").val();
+        var KindAttn = $("#KindAttn").val();
+        var Name = $("#Name").val();
+        var Address = $("#Address").val();
+        var InvoiceID = $("#InvoiceID").val();
+        var PAN = $("#PAN").val();
+        var Telephone = $("#Telephone").val();
+        var Email = $("#Email").val();
+        var SacCode = $("#SacCode").val();
+        var Currency = $("#Currency").val();
+        var Amount = $("#Amount").val();
+        var Subtotal = $("#Subtotal").val();
+        var Discount = $("#Discounts").val();
+        var CGST = $("#CGST").val();
+        var SGST = $("#SGST").val();
+        var IGST = $("#IGST").val();
+        var TotalTaxAmount = $("#TotalTaxAmount").val();
+        var TotalAmount = $("#TotalAmount").val();
+        var AmountInWords = $("#AmountInWords").val();
+        var PaymentTerms = $("#PaymentTerms").val();
+        var Discription = $("#Discription").val();
+        var State = $("#State").val();
+        var supplyState = $("#supplyState").val();
+        var GSTIN = $("#GSTIN").val();
+
+        if (PO == "No") {
+            PODATE = $("#PODATE").val('');
+        }
+
+
+        if (Country == "India" && State == "Uttar Pradesh") {
+            $("#IGST").val('');
+        }
+        else if (Country == "India" && State != "Uttar Pradesh") {
+            $("#CGST").val('');
+            $("#SGST").val('');
+        }
+        else {
+            $("#CGST").val('');
+            $("#SGST").val('');
+            $("#IGST").val('');
+        }
+
+        var GetDetails = {
+            Country: Country,
+            InvoiceDate: InvoiceDate,
+            ReverseCharge: ReverseCharge,
+            PO: PO,
+            PODATE: PODATE,
+            KindAttn: KindAttn,
+            Name: Name,
+            Address: Address,
+            InvoiceID: InvoiceID,
+            PAN: PAN,
+            State: State,
+            Telephone: Telephone,
+            Email: Email,
+            SacCode: SacCode,
+            Currency: Currency,
+            Amount: Amount,
+            Discount: Discount,
+            Subtotal: Subtotal,
+            CGST: CGST,
+            SGST: SGST,
+            IGST: IGST,
+            TotalTaxAmount: TotalTaxAmount,
+            TotalAmount: TotalAmount,
+            AmountInWords: AmountInWords,
+            PaymentTerms: PaymentTerms,
+            AmountInWords: AmountInWords,
+            PaymentTerms: PaymentTerms,
+            Discription: Discription,
+            Supply_Name_Of_State: supplyState,
+            GSTIN: GSTIN
+        }
+        if (Country == "") {
+            swal("Warning", "Please Select Country", "error");
+        }
+        else if (InvoiceDate == "") {
+            swal("Warning", "Please Insert InvoiceDate", "error");
+        }
+        else if ((PO == "Yes") && (PODATE == "")) {
+            swal("Warning", "Please Insert PODATE", "error");
+        }
+        else if (KindAttn == "") {
+            swal("Warning", "Please Insert KindAttn", "error");
+        }
+        else if (Currency == "") {
+            swal("Warning", "Please Insert Currency", "error");
+        }
+        else if (Name == "") {
+            swal("Warning", "Please Insert Name", "error");
+        }
+        else if (Address == "") {
+            swal("Warning", "Please Insert Address", "error");
+        }
+        else if ((Country == "India") && (GSTIN == "")) {
+            swal("Warning", "Please Insert GSTIN", "error");
+        }
+        else if ((Country == "India") && (PAN == "")) {
+            swal("Warning", "Please Insert PAN", "error");
+        }
+        else if (Telephone == "") {
+            swal("Warning", "Please Insert Telephone OR Mobile", "error");
+        }
+        else if (Email == "") {
+            swal("Warning", "Please Insert Email", "error");
+        }
+        else if (Amount == "") {
+            swal("Warning", "Please Insert Amount", "error");
+        }
+
+        else if (Subtotal == "") {
+            swal("Warning", "Please Insert Subtotal", "error");
+        }
+        else if (Country == "India" && State == "") {
+            swal("Warning", "Please Select State", "error");
+        }
+        else if ((Country == "India" && State == "Uttar Pradesh") && (CGST == "")) {
+            swal("Warning", "Please Insert CGST", "error");
+        }
+        else if ((Country == "India" && State == "Uttar Pradesh") && (SGST == "")) {
+            swal("Warning", "Please Insert SGST", "error");
+        }
+        else if ((Country == "India" && State != "Uttar Pradesh") && (IGST == "")) {
+            swal("Warning", "Please Insert IGST", "error");
+        }
+        else if ((Country == "India") && (TotalTaxAmount == "")) {
+            swal("Warning", "Please Insert TotalTaxAmount", "error");
+        }
+        else if (Subtotal == "") {
+            swal("Warning", "Please Insert Subtotal", "error");
+        }
+        else if (TotalAmount == "") {
+            swal("Warning", "Please Insert TotalAmount", "error");
+        }
+        else if (AmountInWords == "") {
+            swal("Warning", "Please Insert AmountInWords", "error");
+        }
+        else if (PaymentTerms == "") {
+            swal("Warning", "Please Insert PaymentTerms", "error");
+        }
+        else if (ReverseCharge == "") {
+            swal("Warning", "Please Insert ReverseCharge", "error");
+        }
+
+        else if (Discription == "") {
+            swal("Warning", "Please Insert Subscription Details", "error");
+        }
+        else {
+
+            $.ajax({
+                type: "POST",
+                url: "/Invoice/UpdateProformaInvoiceDetails",
+                data: JSON.stringify(GetDetails),
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+
+                    $(response).each(function (index, value) {
+                        if (value.ValidationMessage == "SUCCESS") {
+                            swal({
+                                title: "Thank you!", text: "Update Sucessfully.", type: "success"
+                            }).
+                                then(function () {
+                                    window.location.reload();
+                                });
+                        }
+                        else if (value.ValidationMessage == "MANDATORY VALUES CAN NOT BE NULL.") {
+                            swal({ title: "Thank you!", text: "MANDATORY VALUES CAN NOT BE NULL.", type: "success" }).
+                                then(function () { window.location.reload(); });
+                        }
+                        else if (value.ValidationMessage == "DUPLICATE VALUES") {
+                            swal({ title: "Thank you!", text: "Duplicate Record Found.", type: "success" }).
+                                then(function () { window.location.reload(); });
+                        }
+                        else {
+                            swal("Warning", "Something Went Wrong..", "error");
+                        }
+                    });
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+
+        }
+
+    }
+
+</script>

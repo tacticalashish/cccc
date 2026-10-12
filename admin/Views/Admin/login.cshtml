@@ -1,0 +1,70 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
+    <title>Chem Analyst - Admin Login </title>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="~/css/style.css" type="text/css" />
+    <link href="~/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/css/admin-style.css" rel="stylesheet" />
+</head>
+<body>
+    <section class="main-bg-02">
+        <div class="container">
+            <div class="row login_Container">
+                <div class="col-md-12 chemAnalystlogo">
+                    @*<a href="@Url.Action("index", "ChemAnalyst")">
+                        <img class="img-fluid" src="~/images/logo.png" alt="ChemAnalyst Logo" />
+                    </a>*@
+                    <img class="img-fluid" src="~/images/logo.png" alt="ChemAnalyst Logo" />
+                </div>
+                    <div id="login" class="col-xs-12">
+                        <form action="~/Admin/Userlogin" method="post">                            
+                            <div class="row form-group">
+                                <div class="col-xs-10">
+                                    <input class="userinputWidth form-control" type="text" Placeholder="Username" name="Username" required>
+                                </div>
+                                <div class="col-xs-2 pl-10">
+                                    <span class="fa fa-envelope"></span>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-xs-10">
+                                    <input class="userinputPass form-control" type="password" Placeholder="Password" name="Password" required>
+                                </div>
+                                <div class="col-xs-2 pl-10">
+                                    <span class="fa fa-lock"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <input type="submit" value="Sign In">
+                                </div>
+                            </div>
+                        </form>
+                        <div class="clearfix"></div>
+                        @{
+                            if (TempData["ErrorMessage"] != null)
+                            {
+                                <span style="color: #962929;">@TempData["ErrorMessage"].ToString() </span>
+                            }
+                        }
+                        
+                    </div>
+                    <div class="col-xs-12 copyright-section">
+                        <div class="container-fluid">
+                            <div class="copyright text-center">
+                                <p>&copy; @DateTime.Now.Year ChemAnalyst | All Rights Reserved. </p>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+</body>
+
+
+</html>

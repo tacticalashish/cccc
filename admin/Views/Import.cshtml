@@ -1,0 +1,168 @@
+﻿@using ChemAnalyst.DAL
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<title>Market Analysis </title>
+<script type="text/javascript">
+    $("body").on("change", "#ddlProduct", function () {
+        var c = $(ddlProduct).find("option:selected").val();
+        // alert(c)
+        $("#hdproductid").val($(ddlProduct).find("option:selected").val());
+    });
+    $("body").on("change", "#type", function () {
+        $("#hdImpType").val($(type).find("option:selected").text());
+    });
+</script>
+
+
+@section scripts{
+
+    <script type="text/javascript">
+
+
+
+    </script>
+
+}
+
+<div class="update-profile-wrapper">
+    <h3 style="margin-bottom:10px; color:#a5a8ad;">Disruption Tracker</h3>
+    <div class="white-wrapper">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="">
+                <div class="form-group">
+                    @if (ViewBag.Status == "Failed")
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @ViewBag.Messge
+                        </div>
+                    }
+                    else if (ViewBag.Status == "Success")
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @ViewBag.Messge
+                        </div>
+                    }
+                </div>
+
+            </div>
+            <div class="import-form eq-form-box">
+                <div class="change-pass-box">
+                    @using (Html.BeginForm("ExcelUpload", "DisruptionTracker", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="col-sm-12 col-lg-12 form-group">
+                            <select id="ddlProduct" name="ddlProduct"  class="form-control" required>
+                                <option value="">Select Product *</option>
+                                @foreach (var item in new DALHelper().IEnumerableProduct(null))
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 form-group">
+                            <select class="form-control" id="ddlFileType" name="ddlFileType" required>
+                                <option value="">Select Type</option>
+                                <option value="maintenance and shutdown">Maintenance and Shutdown</option>
+                                <option value="expected new capacity">Expected New Capacity</option>
+                                <option value="regional capacity change">Regional Capacity Change</option>
+                                <option value="logistic">Logistics</option>
+                            </select>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-12">
+                            <div class="form-group">
+                                <input type="file" name="file" class="custom-file-input" required />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-12">
+                            <div class="form-group">
+                                @Html.TextArea("fileDiscription", new { @class = "form-control", @rows = 4, @placeholder = "Description * ", required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-12">
+                            <div class="form-group">
+                                @Html.CheckBox("ReplaceData")
+                                <label for="inlineCheckbox2">Do you want to Replace / delete existing file? </label>
+                            </div>
+                        </div>
+                        <div class="btn-wrapper">
+                            <a class="btn blue-btn" id="btnCancel" name="btnCancel" href="@Url.Action("MarketAnalysisList","MarketAnalysis")">Cancel</a>
+                            <input id="btnSubmit" name="btnSubmit" type="submit" class="btn blue-btn" value="Upload" onclick="return ValidateForm();">
+                            <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    label.error {
+        color: #d65d5d;
+    }
+</style>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.custom-file-input').change(function (e) {
+            var regionOrCountryName = '';
+            var productName = $("#ddlProduct option:selected").text().trim();
+            var fileBase = $("#ddlFileType option:selected").val();
+            var fileName = e.target.files[0].name;
+            var nameArr = fileName.split('.')[0].split('_');
+
+
+            if (nameArr.length != 2) {
+                swal({
+                    text: "The selected file is Incorrect. Please check and upload again"
+                }).then(() => {
+                    //document.location.reload(true);
+                    window.location.href = "/disruptiontracker/import";
+                });
+            }
+
+
+            if (nameArr.length > 0) {
+                if (nameArr[0] != productName ||
+                    nameArr[1] != subType) {
+                    swal({
+                        text: "The selected file is Incorrect. Please check and upload again"
+                    }).then(() => {
+                        //document.location.reload(true);
+                        window.location.href = "/disruptiontracker/import";
+                    });
+
+                    //$($('.custom-file-input')[0]).val('')//code to remove file incase needed
+                    $('input[type=submit]').attr('disabled', 'disabled');
+                } else {
+                    $('input[type=submit]').removeAttr('disabled');
+                    console.log('successfully upload');
+                }
+            }
+        });
+    });
+
+
+    function ValidateForm() {
+        var r = true;
+
+        if (!$('form').valid()) {
+            r = false;
+        }
+        else {
+            $('#btnSubmit,#btnCancel').hide();
+            $('#btnVirtualSubmit').attr('disabled', 'disabled');
+            $('#btnVirtualSubmit').show();
+        }
+        return r;
+    }
+
+
+</script>

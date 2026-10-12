@@ -1,0 +1,543 @@
+﻿@using ChemAnalyst.DAL
+
+@{
+    ViewBag.Title = "Email Trigger";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css"/ >
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<style type="text/css">
+    .has-error {
+        border-bottom: 1px solid #eb0909 !important;
+    }
+
+    .bootstrap-select > .dropdown-toggle.bs-placeholder, .bootstrap-select > .dropdown-toggle.bs-placeholder:hover, .bootstrap-select > .dropdown-toggle.bs-placeholder:focus, .bootstrap-select > .dropdown-toggle.bs-placeholder:active {
+        color: none;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+</style>
+
+
+<div class="update-profile-wrapper">
+    <div class="eq-form" style="margin-top: 1em;">
+        <form id="frmSearchFilter">
+            <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            <div class="row">
+                <div class="col-lg-4 form-group">
+                    <select id="Region" name="Region" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Region" multiple data-max-options="1">
+                        @foreach (var item in new DALHelper().IEnumerableRegion(null))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+
+                </div>
+                <div class="col-lg-4 form-group">
+                    <select id="Country" name="Country" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Country" multiple data-max-options="1">
+                        @foreach (var item in new DALHelper().IEnumerableCountry(true, null))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+
+                </div>
+
+                <div class="col-lg-4 form-group">
+                    <select id="Product" name="Product" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Product" multiple data-max-options="1">
+                        @foreach (var item in new DALHelper().IEnumerableProduct(null))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-lg-4 form-group">
+                    <select id="menu" name="menu" class="form-control selectpicker" data-none-selected-text="Select Module/Menu" multiple data-max-options="1">
+                        <option value="1">Chemical Pricing</option>
+                        <option value="2">Market Analysis</option>
+                        <option value="3">Company Profile</option>
+                        <option value="5">News</option>
+                        <option value="6">Deals</option>
+                    </select>
+                </div>
+
+                <div class="col-lg-4 form-group">
+                    <select id="Customer" name="Customer" class="form-control selectpicker" data-live-search="true" data-selected-text-format="count > 4" data-none-selected-text="Select Customer" multiple data-max-options="1">
+                        @foreach (var item in new DALHelper().IEnumerableCustomer(null))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-lg-4 form-group">
+                    <select id="status" name="status" class="form-control selectpicker" data-none-selected-text="Select Status" multiple data-max-options="1">
+                        <option value="active">Active</option>
+                        <option value="deactive">Deactive</option>
+                    </select>
+                </div>
+
+                <div class="col-lg-4 form-group">
+                    <select id="SubscriptionType" name="SubscriptionType" class="form-control selectpicker" data-none-selected-text="Select Status" multiple data-max-options="1">
+                        <option value="1">Free Trial</option>
+                        <option value="2">Package</option>
+                    </select>
+                </div>
+
+                <div class="col-lg-4 form-group">
+                    <input type="text" value="" size="40" class="form-control" placeholder="Expire From Date" id="FromDate" name="FromDate">
+                </div>
+
+                <div class="col-lg-4 form-group">
+                    <input type="text" value="" size="40" class="form-control" placeholder="Expire To Date" id="ToDate" name="ToDate">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <a href="javascript:void(0)" class="btn btn-success search-filter"><i class="fa fa-search"></i> Search</a>
+                    <button onclick="window.open('/report/ExcelExportSubscriptionBasedOnSearchFilter?' + $('#frmSearchFilter').serialize(), '_blank');" type="button" class="btn btn-info excel-export"><i class="fa fa-download"></i> Excel</button>
+                    <a href="javascript:void(0)" class="btn btn-warning" onclick="window.location.reload(true)"><i class="fa fa-retweet"></i> Reset</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="eq-form" style="margin-top: 1em; display:none;" id="dvDynamicTableData">
+        <div class="box box-default">
+            <input type="hidden" id="PageNumber" name="PageNumber" value="1">
+            <div class="box-body table-responsive">
+                <div style="">
+                    <table id="tblDynamicTableData" class="table" style="color:#fff">
+                        <thead id="theadDynamicTableData">
+                            <tr class="table-thead-tr-primary">
+                                <th style="min-width: 50px;" class="nowrap">S.No</th>
+                                <th style="min-width: 250px;" class="nowrap">Menu</th>
+                                <th style="min-width: 300px;" class="nowrap">Customer Name</th>
+                                <th style="min-width: 150px;" class="nowrap">Status</th>
+                                <th style="min-width: 150px;" class="nowrap">Type</th>
+                                <th style="min-width: 150px;" class="nowrap">Start Date</th>
+                                <th style="min-width: 150px;" class="nowrap">Expire Date</th>
+                                <th style="min-width: 150px;" class="nowrap">Created On</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDynamicTableData" style="font-size:13px;"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="box-footer clearfix" id="divPagging" style="border-top:0.5px solid #fff"></div>
+        </div>
+    </div>
+
+    <div class="eq-form" style="margin-top: 1em; display:none;" id="dvDynamicTableDataOrganisation" >
+        
+        <div class="box box-default">
+            <div class="box-body table-responsive">
+                <table id="tblDynamicTableData" class="table" style="color:#fff">
+                    <thead>
+                        <tr class="table-thead-tr-primary">
+                            <th style="min-width: 50px;" class="nowrap">S.No</th>
+                            <th style="min-width: 250px;" class="nowrap">Organisation</th>
+                            <th style="min-width: 300px;" class="nowrap">Interest Area</th>
+                            <th style="min-width: 150px;" class="nowrap">Type</th>
+                            <th style="min-width: 150px;" class="nowrap">Created On</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyDynamicTableDataOrganisation" style="font-size:13px;"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div>&nbsp;</div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#FromDate,#ToDate').datetimepicker();
+        SearchFilter(false);
+    });
+
+
+    $(document).on('click', '.search-filter', function () {
+        $('#PageNumber').val('1');
+        SearchFilter(true);
+    });
+
+
+    function SearchFilter(getOtherDetail) {
+
+
+        var result = true;
+        var pageNumber = $('#PageNumber').val();
+        var urlWithParam = '/Report/GetSubscriptionBasedOnSearchFilter?' + $('#frmSearchFilter').serialize();
+
+        $.ajax({
+            type: "POST",
+            url: urlWithParam,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+               
+
+                var tbodyInnerHTML = '';
+                if (json != null && json.DateList != null && json.DateList.length > 0) {
+
+                    if (getOtherDetail == true)
+                    {
+                        GetOtherDetail(json.OtherDetails);
+                    }
+
+
+                    $('.excel-export').show();
+                    $(json.DateList).each(function (idx, elm) {
+                        tbodyInnerHTML += "<tr>";
+
+                        tbodyInnerHTML += "<td>" + elm.RowNumber + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.MenuView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CustomerName + " (" + elm.CustomerEmail + ")" + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.StatusView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.SubscriptionTypeView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.FromDateView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.ToDateView + "</td>";
+                        //tbodyInnerHTML += "<td>" + elm.RegionNameView + "</td>";
+                        //tbodyInnerHTML += "<td>" + elm.CountryNameView + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CreatedDateView + "</td>";
+                        tbodyInnerHTML += "</tr>"
+                    });
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+                }
+                else {
+                    $('.excel-export').hide();
+                    $('#divPagging').html('');
+                    tbodyInnerHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+
+                $('#tbodyDynamicTableData').html(tbodyInnerHTML);
+                $('#dvDynamicTableData').show();
+            }
+        });
+
+    }
+
+    function GetOtherDetail()
+    {
+        $.ajax({
+            type: "POST",
+            url: "/report/GetOrginationDetals?" + $('#frmSearchFilter').serialize(),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyInnerHTML = '';
+                if (json != null && json.length > 0) {
+                    var rowNumber = 1;
+                    $(json).each(function (idx, elm) {
+                        tbodyInnerHTML += "<tr>";
+
+                        tbodyInnerHTML += "<td>" + rowNumber + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.FirstContactDetail + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.SecondContactDetail + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CreatedDateView + "</td>";
+                        tbodyInnerHTML += "</tr>"
+                        rowNumber = rowNumber + 1;
+
+                    });
+
+                    $('#tbodyDynamicTableDataOrganisation').html(tbodyInnerHTML);
+                    $('#dvDynamicTableDataOrganisation').show();
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+
+    $(document).on('change', '.emil-check', function () {
+        var emailID = $(this).attr('email-id');
+        var isChecked = $(this).is(':checked');
+
+        $.ajax({
+            url: "/Report/UpdateEmailTrigger?Email=" + emailID + "&IsChecked=" + isChecked,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                if (response != 'success') {
+                    $(this).prop('checked', isChecked);
+                    alert('something went wrong! Please try after some time');
+                    console.log(response)
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+
+    });
+
+
+
+    function TriggerEmail() {
+
+        var oldText = $('#btnSendEmail').html();
+        $('#btnSendEmail').html('<i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;sending....');
+        $('#btnSendEmail').attr('disabled', 'disabled');
+
+        //for News
+        var ddlNews = $('#ddlNews').selectpicker('val');
+        var news = '';
+        $(ddlNews).each(function (idx, val) { news += val + ','; });
+        news = news.substring(0, news.length - 1);
+
+        //for deal
+        var ddlDeal = $('#ddlDeal').selectpicker('val');
+        var deal = '';
+        $(ddlDeal).each(function (idx, val) { deal += val + ','; });
+        deal = deal.substring(0, deal.length - 1);
+
+
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/TriggerEmailForNewsAndDeal?newsIDs=" + news + '&dealIDs=' + deal,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (response) {
+                if (response == 's') {
+                    $('#btnSendEmail').removeAttr('disabled', 'disabled');
+                    $('#btnSendEmail').html(oldText);
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function RefreshEmail() {
+
+        var oldText = $('#btnRefresh').html();
+        $('#btnRefresh').html('<i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;refreshing....');
+        $('#btnRefresh').attr('disabled', 'disabled');
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/RefreshEmail",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (response) {
+                if (response == 'Success') {
+                    $('#btnRefresh').removeAttr('disabled', 'disabled');
+                    $('#btnRefresh').html(oldText);
+                }
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+
+    function PaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        $('#PageNumber').val(pageNumber);
+
+        SearchFilter(false);
+    }
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+
+    }
+
+</script>

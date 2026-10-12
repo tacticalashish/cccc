@@ -1,0 +1,95 @@
+﻿@model ChemAnalyst.ViewModel.RegionAndCountryRelationViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="update-profile-wrapper">
+    <div class="white-wrapper">
+        <div class="col-md-6 col-lg-7 col-md-offset-2">
+            <div class="eq-form">
+                <div class="change">
+                    <i class="fa fa fa-users" aria-hidden="true"></i>
+                    <p class="region_country_management">Region and Country Relationship</p>
+                </div>
+                <div class="eq-form-box">
+                    @using (Html.BeginForm("SaveRegionAndCountryRelation", "Admin", FormMethod.Post, new { id = "formRegionAndCountryRelation" }))
+                    {
+                        @Html.HiddenFor(item => item.ID)
+                        <div class="col-md-4 col-lg-12 form-group">
+                            @Html.DropDownListFor(p => p.RegionId, new SelectList(Model.Regions, "Id", "RegionName"), "Select Region *", new { @class = "form-control", @required = "required" })
+                        </div>
+                        <div class="col-md-4 col-lg-12 form-group multiselect">
+                            <div id="dropdown1" class="selectbox" onclick="showCheckBoxes()">
+                                <select class="form-control">
+                                    <option>Select Country *</option>
+                                </select>
+                                <div class="overSelect"></div>
+                            </div>
+                            <div id="checkboxes" style="display:none;margin-top: 15px; height: 150px; overflow: scroll; border-style: groove; padding: 5px 15px 15px;">
+                                @for (int i = 0; i < Model.ListOfCountry.Count(); i++)
+                                {
+                                    @*@Html.CheckBoxFor(p => Model.CompanyProduct[i].IsSelected,new { @class = "checkboxes[]" }) <span style="padding-right: 2px;"></span> @Html.DisplayFor(p => Model.CompanyProduct[i].ProductName) <span style="padding-right: 15px;"></span>
+                                        @Html.HiddenFor(p => Model.CompanyProduct[i].id)*@
+                                    <div>
+                                        <label id="@Model.ListOfCountry[i].id">
+                                            @Html.CheckBoxFor(p => Model.ListOfCountry[i].IsSelected, new { @class = "checkboxes[]" })
+                                            @Html.DisplayFor(p => Model.ListOfCountry[i].CountryName) <span style="padding-right: 15px;"></span>
+                                            @Html.HiddenFor(p => Model.ListOfCountry[i].id)
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="btn-wrapper">
+
+                            @*<a class="gray-btn" href="@Url.Action("Role","Admin")">Cancel</a>*@
+
+                            <input type="submit" class="btn btn-success" value="Save">
+                        </div>
+
+                    }
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    function showCheckBoxes() {
+        $("#checkboxes").toggle();
+    }
+
+
+    $("#formRegionAndCountryRelation").submit(function (e) {
+        var selected = [];
+
+        $('#checkboxes input:checked').each(function () {
+            selected.push($(this).attr('name'));
+        });
+
+
+        if (selected.length == 0) {
+            swal("Warning", "Please select at least one product.", "error");
+            e.preventDefault();
+        }
+        else {
+            return true;
+        }
+    });
+
+
+
+
+
+
+</script>

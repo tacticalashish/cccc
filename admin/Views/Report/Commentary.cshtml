@@ -1,0 +1,557 @@
+﻿
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="update-profile-wrapper">
+    <div class="eq-form" style="margin-top: 1em;">
+        <form id="frmSearchFilter">
+            <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+
+            <div class="row">
+                <div class="col-lg-3 form-group">
+                    <select id="Type" name="Type" class="form-control">
+                        <option value="">Select Module *</option>
+                        <option value="Chemical Pricing">Chemical Pricing</option>
+                        <option value="Market Analysis">Market Analysis</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 form-group" style="display:none;">
+                    <select id="IsRegionWise" name="IsRegionWise" class="form-control" onchange="ResetFilter('market-type');"> 
+                        <option value="">Select Type *</option>
+                        <option value="false">Country-Wise</option>
+                        <option value="true">Region-Wise</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <select id="Region" name="Region" class="form-control">
+                        <option value="">Select Region *</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <select id="Country" name="Country" class="form-control">
+                        <option value="">Select Country *</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 form-group" style="display:none;">
+                    <select id="MarketAnalysisRange" name="MarketAnalysisRange" class="form-control" onchange="ResetFilter('range');">
+                        <option value="">Select Range *</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 form-group">
+                    <input autocomplete="off" class="form-control" id="FromDate" name="FromDate" placeholder="From Date" />
+                </div>
+
+                <div class="col-lg-3 form-group">
+                    <input autocomplete="off" class="form-control" id="ToDate" name="ToDate" placeholder="To Date" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <a href="javascript:void(0)" class="btn btn-success search-filter"><i class="fa fa-search"></i> Search</a>
+                    <button onclick="window.open('/report/ExcelExportCommentary?' + $('#frmSearchFilter').serialize(), '_blank');" type="button" class="btn btn-info excel-export" style="display:none;"><i class="fa fa-download"></i> Excel</button>
+                    <a href="javascript:void(0)" class="btn btn-warning" onclick="window.location.reload(true)"><i class="fa fa-refresh"></i> Reset</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="eq-form" style="margin-top: 1em; display:none;" id="dvDynamicTableData">
+        <div class="box box-default">
+            <input type="hidden" id="PageNumber" name="PageNumber" value="1">
+            <div class="box-body table-responsive">
+                <div style="">
+                    <table id="tblDynamicTableData" class="table" style="color:#fff">
+                        <thead id="theadDynamicTableData">
+                            <tr class="table-thead-tr-primary">
+                                <th style="min-width: 50px;" class="nowrap">S.No</th>
+                                <th style="min-width: 150px;" class="nowrap">Product</th>
+                                <th style="min-width: 150px;" class="nowrap">Region</th>
+                                <th style="min-width: 150px;" class="nowrap">Country</th>
+                                <th style="min-width: 100px;" class="nowrap">Created By</th>
+                                <th style="min-width: 100px;" class="nowrap">Last Updated On</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDynamicTableData" style="font-size:13px;">
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="box-footer clearfix" id="divPagging" style="border-top:0.5px solid #fff"></div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css"/ >
+<style type="text/css">
+    .has-error {
+        border-bottom: 1px solid #eb0909 !important;
+    }
+
+</style>
+
+<script src="~/js/jquery.datetimepicker.full.min.js"></script>
+<script>
+
+    $(function () {
+        $('#FromDate,#ToDate').datetimepicker();
+    });
+
+    $(document).ready(function () {
+        
+
+        //bind market range
+        BindMarketRange();
+    });
+
+
+    function BindRegion() {
+
+        var innerHTML = "<option>loading...</option>"
+        $('#Region').html(innerHTML);
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/GetRegions",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                innerHTML = "<option value=''>Select Region *</option>"
+
+                $(response).each(function (index, value) {
+                    if (value.IsAllow) {
+                        innerHTML += "<option value='" + value.ID + "'>" + value.RegionName + "</option>"
+                    }
+                    else {
+                        innerHTML += "<option value='" + value.ID + "'>" + value.RegionName + "</option>"
+                    }
+                });
+                $('#Region').html(innerHTML);
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function BindMarketRange() {
+
+        var innerHTML = "<option>loading...</option>"
+        $('#MarketAnalysisRange').html(innerHTML);
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/GetMarketAnalysisRange",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                innerHTML = "<option value=''>Select Range *</option>"
+
+                $(response).each(function (index, value) {
+                    innerHTML += "<option value='" + value.Name + "'>" + value.Name + "</option>"
+                });
+                $('#MarketAnalysisRange').html(innerHTML);
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    $(document).on('change', '#Type', function () {
+
+        //reset filter based on type
+        ResetFilter('type');
+
+
+        var value = $(this).val().toLocaleLowerCase();
+
+        if (value == 'market analysis') {
+            $('#MarketAnalysisRange,#IsRegionWise').parent().show();
+            $('#MarketAnalysisRange,#IsRegionWise').val('');
+        }
+        else
+        {
+            $('#MarketAnalysisRange,#IsRegionWise').parent().hide();
+        }
+
+        //bind region value by default
+        BindRegion();
+
+    });
+
+    $(document).on('change', '#Region', function () {
+        //reset filter based on region
+        ResetFilter('region');
+
+        var regionFID =  $(this).val();
+
+        BindCountryBasedOnRegion(regionFID);
+
+    });
+
+    $(document).on('change', '#Country', function () {
+        //reset filter based on country
+        ResetFilter('country');
+
+        var countryFID = $(this).val();      
+
+    });
+
+
+    function BindCountryBasedOnRegion(regionFID)
+    {
+        var innerHTML = "<option>loading...</option>"
+        $('#Country').html(innerHTML);
+
+        $.ajax({
+            type: "POST",
+            url: "/Report/GetCountryBasedOnRegion?regionFID=" + regionFID,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                innerHTML = "<option value=''>Select Country *</option>"
+
+                $(response).each(function (index, value) {
+                    innerHTML += "<option value='" + value.ID + "'>" + value.CountryName + "</option>"
+                });
+                $('#Country').html(innerHTML);
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    function ResetFilter(actionName)
+    {
+        if (actionName == 'type') {
+            $('#Region,#Country,#MarketAnalysisRange,#FromDate,#ToDate').val('');
+        }
+        else if (actionName == 'region') {
+            $('#Country,#MarketAnalysisRange,#FromDate,#ToDate').val('');
+        }
+        else if (actionName == 'country') {
+            $('#MarketAnalysisRange,#FromDate,#ToDate').val('');
+        }
+        else if (actionName == 'range') {
+            $('#FromDate,#ToDate').val('');
+        }
+        else if (actionName == 'market-type') {
+            $('#Region,#Country,#MarketAnalysisRange,#FromDate,#ToDate').val('');
+        }
+        else
+        {
+            $('#Region,#Country,#MarketAnalysisRange,#FromDate,#ToDate').val('');
+        }
+    }
+
+    $(document).on('click', '.search-filter', function () {
+
+        SearchFilter();
+    });
+
+    function SearchFilter()
+    {
+        var result = true;
+        var pageNumber = $('#PageNumber').val();
+
+        if ($('#Type').val() == '') {
+            $('#Type').addClass('has-error');
+            result = false;
+        }
+        else {
+            $('#Type').removeClass('has-error');
+        }
+
+        if ($('#Region').val() == '') {
+            $('#Region').addClass('has-error');
+            result = false;
+        }
+        else {
+            $('#Region').removeClass('has-error');
+        }
+
+       
+
+        if ($('#Type option:selected').text().toLocaleLowerCase() == 'market analysis') {
+
+            if ($('#MarketAnalysisRange').val() == '') {
+                $('#MarketAnalysisRange').addClass('has-error');
+                result = false;
+            }
+            else {
+                $('#MarketAnalysisRange').removeClass('has-error');
+            }
+
+            if ($('#IsRegionWise').val() == '') {
+                $('#IsRegionWise').addClass('has-error');
+                result = false;
+            }
+            else {
+                $('#IsRegionWise').removeClass('has-error');
+            }
+
+            if ($('#IsRegionWise option:selected').text().toLocaleLowerCase() == 'country-wise')
+            {
+                if ($('#Country').val() == '') {
+                    $('#Country').addClass('has-error');
+                    result = false;
+                }
+                else {
+                    $('#Country').removeClass('has-error');
+                }
+            }
+        }
+        else
+        {
+            if ($('#Country').val() == '') {
+                $('#Country').addClass('has-error');
+                result = false;
+            }
+            else {
+                $('#Country').removeClass('has-error');
+            }
+        }
+
+        if (result == false || pageNumber == '') {
+            console.log('error: please pass required parameter');
+            return true;
+        }
+
+        
+        var urlWithParam = '/Report/GetCommentaryBasedOnSearchFilter?' + $('#frmSearchFilter').serialize();
+
+
+        
+
+        $.ajax({
+            url: urlWithParam,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+
+                var tbodyInnerHTML = '';
+                if (json != null && json.DateList != null && json.DateList.length > 0) {
+                    $('.excel-export').show();
+                    $(json.DateList).each(function (idx, elm) {
+                        console.log(json);
+                        tbodyInnerHTML += "<tr>";
+                        tbodyInnerHTML += "<td>" + elm.RowNumber + "</td>";
+                        tbodyInnerHTML += "<td product-id='" + elm.Product + "'>" + elm.ProductName + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.RegionName + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CreatedBy + "</td>";
+                        tbodyInnerHTML += "<td>" + elm.CreatedTimeView + "</td>";
+                        tbodyInnerHTML += "</tr>"
+                    });
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+                }
+                else {
+                    $('#PageNumber').val('1');
+                    $('#divPagging').html('');
+                    $('.excel-export').hide();
+                    tbodyInnerHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+
+                $('#tbodyDynamicTableData').html(tbodyInnerHTML);
+                $('#dvDynamicTableData').show();
+            }
+        });
+
+    }
+
+    
+
+    function PaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        $('#PageNumber').val(pageNumber);
+
+        SearchFilter();
+    }
+
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+
+</script>
+
+
+
+
+

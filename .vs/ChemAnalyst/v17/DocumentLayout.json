@@ -1,0 +1,357 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\5555555555\\crm\\ChemAnalyst\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|e:\\5555555555\\crm\\chemanalyst\\businesslayer\\blaccountdetails.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\blaccountdetails.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|E:\\5555555555\\crm\\ChemAnalyst\\admin\\controllers\\leadmanagementsubscriptioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|solutionrelative:admin\\controllers\\leadmanagementsubscriptioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|E:\\5555555555\\crm\\ChemAnalyst\\admin\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|solutionrelative:admin\\controllers\\logincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|E:\\5555555555\\crm\\ChemAnalyst\\admin\\controllers\\subsmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|solutionrelative:admin\\controllers\\subsmanagementcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\blsalespackagesubscriptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\blsalespackagesubscriptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7CC251-00E9-4CFE-92C9-7C442E7BAB5A}|DataLayer\\DataLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\datalayer\\dlsalespackagesubscriptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7CC251-00E9-4CFE-92C9-7C442E7BAB5A}|DataLayer\\DataLayer.csproj|solutionrelative:datalayer\\dlsalespackagesubscriptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\blcustomerdashboardaccess.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\blcustomerdashboardaccess.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7CC251-00E9-4CFE-92C9-7C442E7BAB5A}|DataLayer\\DataLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\datalayer\\dlcustomerdashboardaccess.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7CC251-00E9-4CFE-92C9-7C442E7BAB5A}|DataLayer\\DataLayer.csproj|solutionrelative:datalayer\\dlcustomerdashboardaccess.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8D7CC251-00E9-4CFE-92C9-7C442E7BAB5A}|DataLayer\\DataLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\datalayer\\dlaccountdetails.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D7CC251-00E9-4CFE-92C9-7C442E7BAB5A}|DataLayer\\DataLayer.csproj|solutionrelative:datalayer\\dlaccountdetails.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6567DA3D-7AD7-43FB-BB86-60F710B5085E}|EntityLayer\\EntityLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\entitylayer\\enticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6567DA3D-7AD7-43FB-BB86-60F710B5085E}|EntityLayer\\EntityLayer.csproj|solutionrelative:entitylayer\\enticket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6567DA3D-7AD7-43FB-BB86-60F710B5085E}|EntityLayer\\EntityLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\entitylayer\\ensalespackagesubscriptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6567DA3D-7AD7-43FB-BB86-60F710B5085E}|EntityLayer\\EntityLayer.csproj|solutionrelative:entitylayer\\ensalespackagesubscriptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\expirynotificationbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\expirynotificationbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0B2E6358-C5CB-428D-8EB8-1DF020F312AC}|UIHelper\\UIHelper.csproj|E:\\5555555555\\crm\\ChemAnalyst\\uihelper\\collectionhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0B2E6358-C5CB-428D-8EB8-1DF020F312AC}|UIHelper\\UIHelper.csproj|solutionrelative:uihelper\\collectionhelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|E:\\5555555555\\crm\\ChemAnalyst\\admin\\global.asax.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|solutionrelative:admin\\global.asax.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|E:\\5555555555\\crm\\ChemAnalyst\\admin\\controllers\\apisubscriptioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|solutionrelative:admin\\controllers\\apisubscriptioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|E:\\5555555555\\crm\\ChemAnalyst\\admin\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87160AC1-D4CA-4701-915B-85B0D80757EC}|Admin\\admin.csproj|solutionrelative:admin\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\blchemanalystinvoice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\blchemanalystinvoice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\blsalesnew.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\blsalesnew.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\blsalesmanagement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\blsalesmanagement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|E:\\5555555555\\crm\\ChemAnalyst\\businesslayer\\customerdocumentbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2D6C7515-CFA8-4E0A-9613-649AD038D418}|BusinessLayer\\BusinessLayer.csproj|solutionrelative:businesslayer\\customerdocumentbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "blAccountDetails.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blAccountDetails.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\blAccountDetails.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blAccountDetails.cs",
+              "RelativeToolTip": "BusinessLayer\\blAccountDetails.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAUwCIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:51:11.806Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "dlSalesPackageSubscriptions.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\DataLayer\\dlSalesPackageSubscriptions.cs",
+              "RelativeDocumentMoniker": "DataLayer\\dlSalesPackageSubscriptions.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\DataLayer\\dlSalesPackageSubscriptions.cs",
+              "RelativeToolTip": "DataLayer\\dlSalesPackageSubscriptions.cs",
+              "ViewState": "AgIAAIsEAAAAAAAAAAA3wJ4EAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:49:38.951Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "dlCustomerDashboardAccess.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\DataLayer\\dlCustomerDashboardAccess.cs",
+              "RelativeDocumentMoniker": "DataLayer\\dlCustomerDashboardAccess.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\DataLayer\\dlCustomerDashboardAccess.cs",
+              "RelativeToolTip": "DataLayer\\dlCustomerDashboardAccess.cs",
+              "ViewState": "AgIAAJwAAAAAAAAAAAAAAJwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:45:46.649Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LeadManagementSubscriptionController.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\LeadManagementSubscriptionController.cs",
+              "RelativeDocumentMoniker": "admin\\Controllers\\LeadManagementSubscriptionController.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\LeadManagementSubscriptionController.cs",
+              "RelativeToolTip": "admin\\Controllers\\LeadManagementSubscriptionController.cs",
+              "ViewState": "AgIAAM8CAAAAAAAAAAAcwOACAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:24:54.606Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "blCustomerDashboardAccess.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blCustomerDashboardAccess.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\blCustomerDashboardAccess.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blCustomerDashboardAccess.cs",
+              "RelativeToolTip": "BusinessLayer\\blCustomerDashboardAccess.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAA2wC8AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:51:13.858Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "dlAccountDetails.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\DataLayer\\dlAccountDetails.cs",
+              "RelativeDocumentMoniker": "DataLayer\\dlAccountDetails.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\DataLayer\\dlAccountDetails.cs",
+              "RelativeToolTip": "DataLayer\\dlAccountDetails.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAQwA8AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:45:08.651Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LoginController.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\LoginController.cs",
+              "RelativeDocumentMoniker": "admin\\Controllers\\LoginController.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\LoginController.cs",
+              "RelativeToolTip": "admin\\Controllers\\LoginController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAB4AAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:34:28.952Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SubsManagementController.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\SubsManagementController.cs",
+              "RelativeDocumentMoniker": "admin\\Controllers\\SubsManagementController.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\SubsManagementController.cs",
+              "RelativeToolTip": "admin\\Controllers\\SubsManagementController.cs",
+              "ViewState": "AgIAACwDAAAAAAAAAAAWwEoDAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:52:58.806Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "blSalesPackageSubscriptions.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blSalesPackageSubscriptions.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\blSalesPackageSubscriptions.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blSalesPackageSubscriptions.cs",
+              "RelativeToolTip": "BusinessLayer\\blSalesPackageSubscriptions.cs",
+              "ViewState": "AgIAALQAAAAAAAAAAAAAwMUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:51:15.713Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "enTicket.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\EntityLayer\\enTicket.cs",
+              "RelativeDocumentMoniker": "EntityLayer\\enTicket.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\EntityLayer\\enTicket.cs",
+              "RelativeToolTip": "EntityLayer\\enTicket.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAIwDMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:44:18.191Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "enSalesPackageSubscriptions.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\EntityLayer\\enSalesPackageSubscriptions.cs",
+              "RelativeDocumentMoniker": "EntityLayer\\enSalesPackageSubscriptions.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\EntityLayer\\enSalesPackageSubscriptions.cs",
+              "RelativeToolTip": "EntityLayer\\enSalesPackageSubscriptions.cs",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAAwF0AAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:43:49.52Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ExpiryNotificationBL.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\ExpiryNotificationBL.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\ExpiryNotificationBL.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\ExpiryNotificationBL.cs",
+              "RelativeToolTip": "BusinessLayer\\ExpiryNotificationBL.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:39:27.885Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Global.asax.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Global.asax.cs",
+              "RelativeDocumentMoniker": "admin\\Global.asax.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Global.asax.cs",
+              "RelativeToolTip": "admin\\Global.asax.cs",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAiwKsAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:35:36.474Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ApiSubscriptionController.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\ApiSubscriptionController.cs",
+              "RelativeDocumentMoniker": "admin\\Controllers\\ApiSubscriptionController.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\ApiSubscriptionController.cs",
+              "RelativeToolTip": "admin\\Controllers\\ApiSubscriptionController.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAIAywCMAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:26:15.582Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "admin\\Controllers\\AdminController.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\admin\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "admin\\Controllers\\AdminController.cs",
+              "ViewState": "AgIAAFEEAAAAAAAAAAAjwF0EAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:26:14.425Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CollectionHelper.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\UIHelper\\CollectionHelper.cs",
+              "RelativeDocumentMoniker": "UIHelper\\CollectionHelper.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\UIHelper\\CollectionHelper.cs",
+              "RelativeToolTip": "UIHelper\\CollectionHelper.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAIAwwB8AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:15:20.782Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "blSalesNew.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blSalesNew.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\blSalesNew.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blSalesNew.cs",
+              "RelativeToolTip": "BusinessLayer\\blSalesNew.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAqwGAAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:09:33.076Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "CustomerDocumentBL.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\CustomerDocumentBL.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\CustomerDocumentBL.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\CustomerDocumentBL.cs",
+              "RelativeToolTip": "BusinessLayer\\CustomerDocumentBL.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:09:30.049Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "blSalesManagement.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blSalesManagement.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\blSalesManagement.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blSalesManagement.cs",
+              "RelativeToolTip": "BusinessLayer\\blSalesManagement.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:09:27.929Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "blChemAnalystInvoice.cs",
+              "DocumentMoniker": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blChemAnalystInvoice.cs",
+              "RelativeDocumentMoniker": "BusinessLayer\\blChemAnalystInvoice.cs",
+              "ToolTip": "E:\\5555555555\\crm\\ChemAnalyst\\BusinessLayer\\blChemAnalystInvoice.cs",
+              "RelativeToolTip": "BusinessLayer\\blChemAnalystInvoice.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAhwCoAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-11T10:06:28.254Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

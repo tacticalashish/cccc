@@ -1,0 +1,37 @@
+﻿<input id="imgUpload" type="file" accept=".jpg,.png" class="custom-file-input" />
+<button id="imageUploadButton" class="btn blue-btn">Generate Image URL</button>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="~/js/jquery.js"></script>
+<script src="~/js/jquery-3.3.1.slim.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#imageUploadButton").on("click", function (e) {
+            e.preventDefault();
+            var formData = new FormData();
+            if ($('#imgUpload')[0].files.length > 0) {
+                formData.append('file', $('#imgUpload')[0].files[0]);
+                var url = '@Url.Action("ImageUpload","Admin")';
+                CallAjax(url, formData, function (response) {
+                    swal({
+                        text: "The file url is : " + response
+                    });
+                    $('#imgUpload').val('');
+                });
+            } else {
+                swal({
+                    text: "Please select image to upload."
+                });
+            }
+        });
+    })
+
+    function CallAjax(url, params, callback) {
+        const http = new XMLHttpRequest();
+        http.open('POST', url, true);
+        http.send(params) // Make sure to stringify
+        http.onload = function () {
+            // Do whatever with response
+            callback(http.response, http);
+        }
+    }
+</script>

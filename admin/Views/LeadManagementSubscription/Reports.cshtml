@@ -1,0 +1,440 @@
+@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .rp-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .rp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .rp-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .rp-header-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .rp-search {
+        position: relative;
+    }
+
+        .rp-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .rp-search input {
+            width: 280px;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fff;
+        }
+
+            .rp-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+            }
+
+    .rp-bell {
+        position: relative;
+        margin-left: 18px;
+        color: #7c828a;
+        font-size: 17px;
+    }
+
+        .rp-bell i.dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e8752f;
+        }
+
+    .rp-intro {
+        font-size: 12px;
+        color: #8b909a;
+        margin-bottom: 18px;
+    }
+
+    .rp-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .rp-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 18px 20px;
+        cursor: pointer;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+        .rp-card:hover {
+            box-shadow: 0 2px 8px rgba(20, 20, 30, .1);
+            text-decoration: none;
+            color: inherit;
+        }
+
+    .rp-card-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        background: #eef2ee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2f6b4f;
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .rp-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 3px;
+    }
+
+    .rp-card-sub {
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .rp-section-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        color: #7c828a;
+        margin-bottom: 10px;
+    }
+
+    .rp-churn-grid {
+        display: grid;
+        grid-template-columns: 2.4fr 1fr;
+        gap: 16px;
+        align-items: start;
+    }
+
+    .rp-panel {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        overflow: hidden;
+    }
+
+    .rp-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid #f2f3f5;
+    }
+
+    .rp-panel-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .rp-panel-meta {
+        font-size: 12px;
+        color: #8b909a;
+    }
+
+    table.rp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        table.rp-table thead th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 10px 18px;
+            white-space: nowrap;
+        }
+
+        table.rp-table tbody td {
+            padding: 12px 18px;
+            font-size: 13px;
+            color: #33383f;
+            border-top: 1px solid #f2f3f5;
+        }
+
+    .rp-dash { color: #c2c6cc; }
+
+    .rp-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 3px 10px 3px 8px;
+        background: #fdf3e3;
+        color: #b6791f;
+    }
+
+        .rp-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #cf9536;
+            display: inline-block;
+        }
+
+    .rp-reason-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 18px;
+        font-size: 13px;
+        color: #33383f;
+        border-top: 1px solid #f2f3f5;
+    }
+
+        .rp-reason-row:first-child {
+            border-top: none;
+        }
+
+    .rp-empty {
+        text-align: center;
+        padding: 34px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+</style>
+<div class="rp-wrap">
+    <div class="rp-header">
+        <div class="rp-title">Reports</div>
+        <div class="rp-header-right">
+            <div class="rp-search">
+                <i class="fa fa-search"></i>
+                <input type="text" placeholder="Search company, email or contact..." />
+            </div>
+            <span class="rp-bell"><i class="fa fa-bell-o"></i><i class="dot"></i></span>
+        </div>
+    </div>
+
+    <div class="rp-intro">Read-only analytics and exports live here - out of the daily workflow. Each opens with filters and a single "Download Excel".</div>
+
+    <div class="rp-grid">
+        <a href="@Url.Action("GetAllSubs", "SubsManagement")" class="rp-card">
+            <div class="rp-card-icon"><i class="fa fa-table"></i></div>
+            <div class="rp-card-title">Subscription analytics</div>
+            <div class="rp-card-sub">Active subs by company, product &amp; module</div>
+        </a>
+        <a href="@Url.Action("CustomerLoginDetail", "Admin")" class="rp-card">
+            <div class="rp-card-icon"><i class="fa fa-arrow-up"></i></div>
+            <div class="rp-card-title">Customer login &amp; engagement</div>
+            <div class="rp-card-sub">Login frequency, devices, daily actives</div>
+        </a>
+        <a href="@Url.Action("GetTwomonthsbeforeloginDetails", "LeadManagementSubscription")" class="rp-card">
+            <div class="rp-card-icon"><i class="fa fa-arrow-down"></i></div>
+            <div class="rp-card-title">Inactive customers (60 / 90 days)</div>
+            <div class="rp-card-sub">Re-engagement worklist</div>
+        </a>
+        <a href="@Url.Action("SalesPackageExpiry", "LeadManagementSubscription")" class="rp-card">
+            <div class="rp-card-icon"><i class="fa fa-hourglass-half"></i></div>
+            <div class="rp-card-title">Renewals &amp; package expiry</div>
+            <div class="rp-card-sub">Forecast by 30 / 60 / 90 days</div>
+        </a>
+        <a href="@Url.Action("GetAllAPIClint", "ApiSubscription")" class="rp-card">
+            <div class="rp-card-icon"><i class="fa fa-key"></i></div>
+            <div class="rp-card-title">API access overview</div>
+            <div class="rp-card-sub">Who has API enabled vs not</div>
+        </a>
+        <a href="#" class="rp-card rp-card-placeholder" data-report="DeliverablesSent">
+            <div class="rp-card-icon"><i class="fa fa-envelope"></i></div>
+            <div class="rp-card-title">Deliverables sent</div>
+            <div class="rp-card-sub">Reports &amp; files shared with customers</div>
+        </a>
+    </div>
+
+    <div class="rp-section-label">CHURN &amp; LOST RENEWALS</div>
+
+    <div class="rp-churn-grid">
+        <div class="rp-panel">
+            <div class="rp-panel-head">
+                <div class="rp-panel-title">Lost renewals</div>
+                <div class="rp-panel-meta" id="LostRenewalsMeta">0 &middot; &#8377;0 ARR</div>
+            </div>
+            <table class="rp-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Reason</th>
+                        <th>Switched to</th>
+                        <th>Lost ARR</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="LostRenewalsRows">
+                    <tr><td colspan="5" class="rp-empty">No lost renewals recorded yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="rp-panel">
+            <div class="rp-panel-head">
+                <div class="rp-panel-title">Top churn reasons</div>
+            </div>
+            <div id="TopChurnReasons">
+                <div class="rp-empty">No churn reasons recorded yet.</div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Five of the six cards link straight out to reports that already exist
+    // and already work elsewhere in this app (Subscription analytics ->
+    // SubsManagement/GetAllSubs, Login & engagement -> Admin/CustomerLoginDetail,
+    // Inactive customers -> LeadManagementSubscription/GetTwomonthsbeforeloginDetails,
+    // Renewals & expiry -> LeadManagementSubscription/SalesPackageExpiry, API
+    // access -> ApiSubscription/GetAllAPIClint) - this page is just the hub
+    // that gathers them in one place. Deliverables sent has no cross-company
+    // page/endpoint yet (only a per-company one on CustomerDetail.cshtml), so
+    // it stays a placeholder.
+    $(".rp-card-placeholder").click(function (e) {
+        e.preventDefault();
+        swal("Coming soon", "This report isn't wired up yet - it needs its own data source, filters and export defined first.", "info");
+    });
+
+    // ---------- Churn & Lost Renewals ----------
+    // SA_MaskEmailOpen_CRM where Lead_status = 'Lost'. That table has no
+    // "switched to" column, so that cell is always left blank rather than
+    // guessed at.
+    var CurrencySymbols = { INR: 'Rs. ', USD: '$', EUR: 'EUR ', GBP: 'GBP ' };
+
+    function CurrencyPrefix(code) {
+        if (!code) return '';
+        var upper = code.toUpperCase();
+        return CurrencySymbols[upper] || (upper + ' ');
+    }
+
+    function FormatArr(amount, currency) {
+        if (amount === null || amount === undefined) return '<span class="rp-dash">&mdash;</span>';
+        var prefix = CurrencyPrefix(currency);
+        if (amount >= 1000000) return prefix + (amount / 1000000).toFixed(1) + 'M';
+        if (amount >= 1000) return prefix + (amount / 1000).toFixed(0) + 'K';
+        return prefix + amount;
+    }
+
+    function LoadLostRenewals() {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetLostRenewals", "SalesManagement")",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            RenderLostRenewals(list);
+        }).fail(function () {
+            $("#LostRenewalsRows").html("<tr><td colspan='5' class='rp-empty'>Couldn't load lost renewals - please refresh.</td></tr>");
+        });
+    }
+
+    function RenderLostRenewals(list) {
+        if (!list || list.length === 0) {
+            $("#LostRenewalsRows").html("<tr><td colspan='5' class='rp-empty'>No lost renewals recorded yet.</td></tr>");
+            $("#LostRenewalsMeta").text("0 records");
+            return;
+        }
+
+        var html = '';
+        var total = 0;
+        var currencies = {};
+
+        $.each(list, function (i, r) {
+            var company = r.CompanyName ? $("<div>").text(r.CompanyName).html() : "<span class='rp-dash'>&mdash;</span>";
+            var reason = r.LostReason ? $("<div>").text(r.LostReason).html() : "<span class='rp-dash'>&mdash;</span>";
+
+            html += "<tr>";
+            html += "<td>" + company + "</td>";
+            html += "<td>" + reason + "</td>";
+            html += "<td><span class='rp-dash'>&mdash;</span></td>";
+            html += "<td>" + FormatArr(r.LostArr, r.LostCurrency) + "</td>";
+            html += "<td><span class='rp-badge'><span class='dot'></span>Win-back</span></td>";
+            html += "</tr>";
+
+            if (r.LostArr !== null && r.LostArr !== undefined) {
+                total += r.LostArr;
+                if (r.LostCurrency) currencies[r.LostCurrency.toUpperCase()] = true;
+            }
+        });
+
+        $("#LostRenewalsRows").html(html);
+
+        var currencyKeys = Object.keys(currencies);
+        var totalText;
+        if (currencyKeys.length === 1) {
+            totalText = FormatArr(total, currencyKeys[0]) + " ARR";
+        } else if (currencyKeys.length > 1) {
+            totalText = "Mixed currencies";
+        } else {
+            totalText = "";
+        }
+
+        $("#LostRenewalsMeta").text(list.length + (list.length === 1 ? " record" : " records") + (totalText ? " - " + totalText : ""));
+    }
+
+    function LoadTopChurnReasons() {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetTopChurnReasons", "SalesManagement")",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            RenderTopChurnReasons(list);
+        }).fail(function () {
+            $("#TopChurnReasons").html("<div class='rp-empty'>Couldn't load churn reasons - please refresh.</div>");
+        });
+    }
+
+    function RenderTopChurnReasons(list) {
+        if (!list || list.length === 0) {
+            $("#TopChurnReasons").html("<div class='rp-empty'>No churn reasons recorded yet.</div>");
+            return;
+        }
+
+        var html = '';
+        $.each(list, function (i, r) {
+            var reason = r.Text ? $("<div>").text(r.Text).html() : "Not specified";
+            html += "<div class='rp-reason-row'><span>" + reason + "</span><span>" + r.Value + "</span></div>";
+        });
+
+        $("#TopChurnReasons").html(html);
+    }
+
+    $(document).ready(function () {
+        LoadLostRenewals();
+        LoadTopChurnReasons();
+    });
+</script>

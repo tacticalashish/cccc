@@ -1,0 +1,234 @@
+@{
+    ViewBag.Title = "SearchDomain";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .sd-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .sd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .sd-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sd-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 26px 28px;
+    }
+
+    .sd-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .sd-card-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sd-search {
+        position: relative;
+        max-width: 340px;
+        flex: 1;
+        min-width: 220px;
+    }
+
+        .sd-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .sd-search input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .sd-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .sd-btn {
+        border: none;
+        background: #1f5a37;
+        color: #fff;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .sd-btn:hover {
+            background: #17452a;
+        }
+
+    .sd-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        max-height: 460px;
+        overflow-y: auto;
+    }
+
+    table.sd-table {
+        width: 100%;
+        min-width: 720px;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+        table.sd-table thead th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            background: #fff;
+        }
+
+        table.sd-table tbody td {
+            padding: 13px 14px;
+            font-size: 13px;
+            color: #33383f;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: top;
+            white-space: nowrap;
+        }
+
+        table.sd-table tbody tr:hover {
+            background: #fafbfc;
+        }
+
+    .sd-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sd-dash {
+        color: #c2c6cc;
+    }
+
+    .sd-empty {
+        text-align: center;
+        color: #9aa0a6;
+        font-size: 13px;
+        padding: 30px 0;
+    }
+</style>
+
+<div class="sd-wrap">
+    <div class="sd-header">
+        <div class="sd-title">Search Domain</div>
+    </div>
+
+    <div class="sd-card">
+        <div class="sd-card-head">
+            <div class="sd-card-title">Domains</div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <div class="sd-search">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="searchDomain" placeholder="Search name, company, domain..." />
+                </div>
+                <button type="button" class="sd-btn" onclick="SearchDomain()">Search</button>
+            </div>
+        </div>
+
+        <div class="sd-table-wrap">
+            <table class="sd-table" id="Leadlist">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>Company</th>
+                        <th>Domain</th>
+                        <th>Created by</th>
+                        <th>Created date</th>
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata">
+                    <tr><td colspan="6" class="sd-empty">Type a keyword and search.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+<script>
+    function SdEsc(v) { return $("<div>").text(v == null ? "" : v).html(); }
+    function SdOrDash(v) { return (v == null || v === "") ? "<span class='sd-dash'>&mdash;</span>" : SdEsc(v); }
+
+    function SearchDomain() {
+        var Search = $('#searchDomain').val();
+        $('#tbodydata').html('<tr><td colspan="6" class="sd-empty">Loading&hellip;</td></tr>');
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SearchDomain",
+            data: { Search: Search },
+            success: function (json) {
+                var rows = json || [];
+                if (!rows.length) {
+                    $('#tbodydata').html('<tr><td colspan="6" class="sd-empty">No domains found.</td></tr>');
+                    return;
+                }
+                var html = '';
+                $(rows).each(function (idx, elm) {
+                    var created = "";
+                    try {
+                        if (elm.CreatedDate) created = $.formattedDate(new Date(parseInt(elm.CreatedDate.substr(6))));
+                    } catch (e) { created = ""; }
+                    html += "<tr>";
+                    html += "<td class='sd-name'>" + SdOrDash(elm.Name) + "</td>";
+                    html += "<td>" + SdOrDash(elm.CountryName) + "</td>";
+                    html += "<td>" + SdOrDash(elm.CompanyName) + "</td>";
+                    html += "<td>" + SdOrDash(elm.CorpEmail) + "</td>";
+                    html += "<td>" + SdOrDash(elm.createdby) + "</td>";
+                    html += "<td>" + SdOrDash(created) + "</td>";
+                    html += "</tr>";
+                });
+                $('#tbodydata').html(html);
+            },
+            error: function (response) {
+                console.log(response);
+                $('#tbodydata').html('<tr><td colspan="6" class="sd-empty">Couldn\'t load. Please try again.</td></tr>');
+            }
+        });
+    }
+</script>

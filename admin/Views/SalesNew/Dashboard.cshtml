@@ -1,0 +1,883 @@
+@{
+    ViewBag.Title = "My Day";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .smd-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .smd-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 18px;
+    }
+
+    .smd-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    @@media (max-width: 1300px) {
+        .smd-kpi-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @@media (max-width: 720px) {
+        .smd-kpi-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .smd-kpi-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 16px 18px;
+    }
+
+    .smd-kpi-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .smd-kpi-icon-blue { background: #eef2fb; color: #3f5fa8; }
+    .smd-kpi-icon-green { background: #eaf7ee; color: #2c8a4b; }
+    .smd-kpi-icon-orange { background: #fdf1e4; color: #c1720f; }
+    .smd-kpi-icon-purple { background: #f1eefb; color: #6c47c9; }
+    .smd-kpi-icon-red { background: #fdecec; color: #b3453f; }
+    .smd-kpi-icon-teal { background: #e7f6f4; color: #1f8a78; }
+
+    .smd-kpi-label {
+        font-size: 12px;
+        color: #7c828a;
+        margin-bottom: 8px;
+    }
+
+    .smd-kpi-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #22262b;
+        line-height: 1.15;
+    }
+
+    .smd-kpi-sub {
+        font-size: 11px;
+        color: #a4aab3;
+        margin-top: 4px;
+    }
+
+    .smd-two-col {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    @@media (max-width: 980px) {
+        .smd-two-col, .smd-chart-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .smd-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 18px 20px;
+    }
+
+    .smd-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .smd-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .smd-card-link {
+        font-size: 12px;
+        color: #3f6fd4;
+        font-weight: 600;
+    }
+
+    .smd-card-note {
+        font-size: 11px;
+        color: #a4aab3;
+        text-transform: uppercase;
+        letter-spacing: .03em;
+    }
+
+    table.smd-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+    }
+
+        table.smd-table thead th {
+            text-align: left;
+            font-size: 10px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 8px 10px;
+            border: none;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+        }
+
+        table.smd-table tbody td {
+            padding: 10px 10px;
+            font-size: 13px;
+            color: #33383f;
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: middle;
+        }
+
+        table.smd-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .smd-lead-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #e7edfb;
+        color: #2f4a8a;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    .smd-stage-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 5px;
+        background: #9096a0;
+        vertical-align: middle;
+    }
+
+    .smd-stage-dot-new { background: #9096a0; }
+    .smd-stage-dot-contacted { background: #3f6fd4; }
+    .smd-stage-dot-demo { background: #e07b1f; }
+    .smd-stage-dot-negotiation { background: #6c47c9; }
+    .smd-stage-dot-won { background: #2c8a4b; }
+    .smd-stage-dot-lost { background: #c0392b; }
+    .smd-stage-dot-open { background: #9096a0; }
+
+    .smd-value-cell {
+        color: #3f6fd4;
+        font-weight: 700;
+    }
+
+    .smd-pill-overdue {
+        background: #fdecec;
+        color: #b3453f;
+        margin-left: 6px;
+    }
+
+    .smd-lead-name-row {
+        display: flex;
+        align-items: center;
+    }
+
+    .smd-lead-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .smd-lead-sub {
+        display: block;
+        font-size: 11px;
+        color: #a4aab3;
+    }
+
+    .smd-pill {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 2px 9px;
+        white-space: nowrap;
+    }
+
+    .smd-pill-gray { background: #f0f1f3; color: #6b7078; }
+    .smd-pill-red { background: #fdecec; color: #b3453f; }
+    .smd-pill-blue { background: #eef2fb; color: #3f5fa8; }
+    .smd-pill-green { background: #eaf7ee; color: #2c8a4b; }
+    .smd-pill-orange { background: #fdf1e4; color: #c1720f; }
+
+    .smd-btn {
+        border: 1px solid #d7dade;
+        background: #fff;
+        color: #33383f;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .smd-btn:hover {
+            background: #f7f8f9;
+        }
+
+    .smd-demo-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 10px 0;
+        border-bottom: 1px solid #f2f3f5;
+    }
+
+        .smd-demo-row:last-child {
+            border-bottom: none;
+        }
+
+    .smd-demo-name {
+        font-weight: 700;
+        color: #22262b;
+        font-size: 13px;
+    }
+
+    .smd-demo-sub {
+        font-size: 11px;
+        color: #a4aab3;
+        margin-top: 2px;
+    }
+
+    .smd-section-label {
+        font-size: 11px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: #a4aab3;
+        font-weight: 700;
+        margin: 4px 0 12px;
+    }
+
+    .smd-chart-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .smd-chart-wrap {
+        position: relative;
+        height: 260px;
+    }
+
+    .smd-empty {
+        text-align: center;
+        padding: 30px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .smd-legend-note {
+        font-size: 11px;
+        color: #c2c6cc;
+    }
+
+    .smd-search-row {
+        margin-bottom: 10px;
+    }
+
+    .smd-search {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #e2e4e8;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 12px;
+        color: #33383f;
+        outline: none;
+    }
+
+        .smd-search:focus {
+            border-color: #1f5a37;
+        }
+
+    .smd-pager {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f2f3f5;
+    }
+
+    .smd-pg-btn {
+        border: 1px solid #e2e4e8;
+        background: #fff;
+        color: #33383f;
+        border-radius: 5px;
+        min-width: 24px;
+        height: 24px;
+        padding: 0 6px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .smd-pg-btn:hover:not(:disabled) {
+            background: #f7f8f9;
+        }
+
+        .smd-pg-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .smd-pg-btn.smd-pg-active {
+            background: #1f5a37;
+            border-color: #1f5a37;
+            color: #fff;
+        }
+
+    .smd-pg-dots {
+        font-size: 11px;
+        color: #a4aab3;
+        padding: 0 2px;
+    }
+</style>
+
+<div class="smd-wrap">
+    <div class="smd-title">My Day</div>
+
+    <div class="smd-kpi-row">
+        <div class="smd-kpi-card">
+            <div class="smd-kpi-icon smd-kpi-icon-blue">&#9679;</div>
+            <div class="smd-kpi-label">Open leads</div>
+            <div class="smd-kpi-value" id="SmdOpenLeads">&mdash;</div>
+            <div class="smd-kpi-sub">in active pipeline</div>
+        </div>
+        <div class="smd-kpi-card">
+            <div class="smd-kpi-icon smd-kpi-icon-green">&#36;</div>
+            <div class="smd-kpi-label">Pipeline value</div>
+            <div class="smd-kpi-value" id="SmdPipelineValue">&mdash;</div>
+            <div class="smd-kpi-sub">all open stages</div>
+        </div>
+        <div class="smd-kpi-card">
+            <div class="smd-kpi-icon smd-kpi-icon-purple">&#8987;</div>
+            <div class="smd-kpi-label">Closing this month</div>
+            <div class="smd-kpi-value" id="SmdClosingThisMonth">&mdash;</div>
+            <div class="smd-kpi-sub" id="SmdClosingThisMonthSub">&nbsp;</div>
+        </div>
+        <div class="smd-kpi-card">
+            <div class="smd-kpi-icon smd-kpi-icon-red">&#9873;</div>
+            <div class="smd-kpi-label">Overdue follow-ups</div>
+            <div class="smd-kpi-value" id="SmdOverdueFollowups">&mdash;</div>
+            <div class="smd-kpi-sub">act today</div>
+        </div>
+        <div class="smd-kpi-card">
+            <div class="smd-kpi-icon smd-kpi-icon-teal">&#8593;</div>
+            <div class="smd-kpi-label">Win rate</div>
+            <div class="smd-kpi-value" id="SmdWinRate">&mdash;</div>
+            <div class="smd-kpi-sub">last 90 days</div>
+        </div>
+    </div>
+
+    <div class="smd-two-col">
+        <div class="smd-card">
+            <div class="smd-card-head">
+                <div class="smd-card-title">Follow-ups due today</div>
+                @*<span class="smd-card-link">View all</span>*@
+            </div>
+            <div class="smd-search-row">
+                <input type="text" id="SmdFollowupSearch" class="smd-search" placeholder="Search name or email...">
+            </div>
+            <table class="smd-table">
+                <thead>
+                    <tr>
+                        <th>Lead</th>
+                        <th>Stage</th>
+                        <th>Value</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="SmdFollowupRows">
+                    <tr><td colspan="4" class="smd-empty">Loading...</td></tr>
+                </tbody>
+            </table>
+            <div class="smd-pager" id="SmdFollowupPager"></div>
+        </div>
+
+        <div class="smd-card">
+            <div class="smd-card-head">
+                <div class="smd-card-title">Demos in progress</div>
+                <span class="smd-card-note" id="SmdDemosCount"></span>
+            </div>
+            <div class="smd-search-row">
+                <input type="text" id="SmdDemoSearch" class="smd-search" placeholder="Search name or email...">
+            </div>
+            <div id="SmdDemoRows">
+                <div class="smd-empty">Loading...</div>
+            </div>
+            <div class="smd-pager" id="SmdDemoPager"></div>
+        </div>
+    </div>
+
+    <div class="smd-section-label">Pipeline &amp; performance</div>
+
+    <div class="smd-chart-row">
+        <div class="smd-card">
+            <div class="smd-card-head">
+                <div class="smd-card-title">Pipeline by stage</div>
+                <span class="smd-card-note">count</span>
+            </div>
+            <div class="smd-chart-wrap"><canvas id="SmdStageChart"></canvas></div>
+        </div>
+        <div class="smd-card">
+            <div class="smd-card-head">
+                <div class="smd-card-title">Pipeline value</div>
+                <span class="smd-card-note">$ / month</span>
+            </div>
+            <div class="smd-chart-wrap"><canvas id="SmdForecastChart"></canvas></div>
+            <div class="smd-legend-note">Committed value only &mdash; weighted forecast line not wired (no source query given).</div>
+        </div>
+    </div>
+
+    <div class="smd-chart-row">
+        <div class="smd-card">
+            <div class="smd-card-head">
+                <div class="smd-card-title">Won vs lost</div>
+                <span class="smd-card-note">monthly</span>
+            </div>
+            <div class="smd-chart-wrap"><canvas id="SmdWonLostChart"></canvas></div>
+        </div>
+        <div class="smd-card">
+            <div class="smd-card-head">
+                <div class="smd-card-title">Leads by source</div>
+            </div>
+            <div class="smd-chart-wrap"><canvas id="SmdSourceChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    var SmdStageChartInstance = null;
+    var SmdForecastChartInstance = null;
+    var SmdWonLostChartInstance = null;
+    var SmdSourceChartInstance = null;
+
+    if (window.Chart) {
+        Chart.defaults.font.family = "'Segoe UI', Arial, sans-serif";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.color = "#7c828a";
+        Chart.defaults.plugins.tooltip.backgroundColor = "#22262b";
+        Chart.defaults.plugins.tooltip.padding = 10;
+        Chart.defaults.plugins.tooltip.cornerRadius = 6;
+        Chart.defaults.plugins.tooltip.titleFont = { weight: "600" };
+        Chart.defaults.plugins.tooltip.displayColors = false;
+    }
+
+    var SmdPalette = ["#1f5a37", "#e07b1f", "#3f6fd4", "#6c9e5f", "#6c47c9", "#c0392b", "#a4aab3"];
+
+    // ---- Compact pagination (shared by Follow-ups + Demos widgets) -------
+    function SmdCompactPageList(current, total) {
+        if (total <= 7) {
+            var arr = [];
+            for (var i = 1; i <= total; i++) arr.push(i);
+            return arr;
+        }
+        if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+        if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+        return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+
+    function SmdRenderPager(containerId, current, total, pageSize, gotoFnName) {
+        var totalPages = Math.max(1, Math.ceil(total / pageSize));
+        if (totalPages <= 1) { $("#" + containerId).html(""); return; }
+        var pages = SmdCompactPageList(current, totalPages);
+        var html = "";
+        html += "<button type='button' class='smd-pg-btn' " + (current <= 1 ? "disabled" : "onclick='" + gotoFnName + "(" + (current - 1) + ")'") + ">&lsaquo;</button>";
+        for (var i = 0; i < pages.length; i++) {
+            var p = pages[i];
+            if (p === "...") html += "<span class='smd-pg-dots'>&hellip;</span>";
+            else html += "<button type='button' class='smd-pg-btn" + (p === current ? " smd-pg-active" : "") + "' onclick='" + gotoFnName + "(" + p + ")'>" + p + "</button>";
+        }
+        html += "<button type='button' class='smd-pg-btn' " + (current >= totalPages ? "disabled" : "onclick='" + gotoFnName + "(" + (current + 1) + ")'") + ">&rsaquo;</button>";
+        $("#" + containerId).html(html);
+    }
+
+    function SmdEscape(val) {
+        return val ? $("<div>").text(val).html() : "";
+    }
+
+    function SmdValueOrDash(val) {
+        return val ? SmdEscape(val) : "<span style='color:#c2c6cc'>&mdash;</span>";
+    }
+
+    function SmdStageDotClass(status) {
+        var s = (status || "").toLowerCase().replace(/\s+/g, "");
+        var known = ["new", "contacted", "demo", "negotiation", "won", "lost", "open"];
+        return "smd-stage-dot " + (known.indexOf(s) !== -1 ? "smd-stage-dot-" + s : "smd-stage-dot-new");
+    }
+
+    function SmdInitials(name) {
+        if (!name) return "?";
+        var parts = $.trim(name).split(/\s+/);
+        var initials = parts[0].charAt(0);
+        if (parts.length > 1) initials += parts[parts.length - 1].charAt(0);
+        return initials.toUpperCase();
+    }
+
+    function SmdFormatMoney(amount, currency) {
+        var n = amount || 0;
+        var symbol = (currency === "EUR") ? "\u20AC" : (currency === "GBP") ? "\u00A3" : "$";
+        return symbol + Math.round(n).toLocaleString("en-IN");
+    }
+
+    function SmdFormatDate(dotNetDate) {
+        if (!dotNetDate) return "";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    // ---- KPI cards ------------------------------------------------------
+    function LoadKpiSummary() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetKpiSummary",
+            dataType: "json"
+        }).done(function (response) {
+            var s = (response && response.DataItem) || {};
+            $("#SmdOpenLeads").text((s.OpenLeadsCount || 0).toLocaleString("en-IN"));
+            $("#SmdPipelineValue").text(SmdFormatMoney(s.PipelineValue));
+            $("#SmdClosingThisMonth").text((s.ClosingThisMonthCount || 0).toLocaleString("en-IN"));
+            $("#SmdClosingThisMonthSub").text(SmdFormatMoney(s.ClosingThisMonthAmount) + " in play");
+            $("#SmdOverdueFollowups").text((s.OverdueFollowupsCount || 0).toLocaleString("en-IN"));
+            $("#SmdWinRate").text(Math.round(s.WinRatePercent || 0) + "%");
+        }).fail(function () {
+            $("#SmdOpenLeads, #SmdPipelineValue, #SmdClosingThisMonth, #SmdOverdueFollowups, #SmdWinRate").text("--");
+        });
+    }
+
+    // ---- Follow-ups due today --------------------------------------------
+    var SmdFollowupPageSize = 5;
+    var SmdFollowupCurrentPage = 1;
+    var SmdFollowupTotalCount = 0;
+
+    function RenderFollowupRows(list, hasSearch) {
+        if (!list || !list.length) {
+            $("#SmdFollowupRows").html("<tr><td colspan='4' class='smd-empty'>" + (hasSearch ? "No matches found." : "Nothing due today.") + "</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr style='cursor:pointer' onclick=\"SmdGoToLead(" + item.ID + ")\">";
+            html += "  <td><div class='smd-lead-name-row'><span class='smd-lead-avatar'>" + SmdInitials(item.Name) + "</span><div><span class='smd-lead-name'>" + SmdValueOrDash(item.Name) + "</span>" + (item.CorpEmail ? "<span class='smd-lead-sub'>" + SmdEscape(item.CorpEmail) + "</span>" : "") + "</div></div></td>";
+            html += "  <td><span class='smd-pill smd-pill-gray'><span class='" + SmdStageDotClass(item.Status) + "'></span>" + SmdValueOrDash(item.Status) + "</span></td>";
+            html += "  <td>" + (item.Amount ? "<span class='smd-value-cell'>" + SmdFormatMoney(item.Amount, item.Currency) + "</span>" : "<span style='color:#c2c6cc'>&mdash;</span>") + "</td>";
+            //html += "  <td><button type='button' class='smd-btn' onclick=\"event.stopPropagation(); SmdComingSoon()\">Log</button></td>";
+            html += "</tr>";
+        }
+        $("#SmdFollowupRows").html(html);
+    }
+
+    function LoadFollowupsDueToday() {
+        var search = $.trim($("#SmdFollowupSearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetFollowupsDueToday",
+            data: { search: search, pageNumber: SmdFollowupCurrentPage, pageSize: SmdFollowupPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            SmdFollowupTotalCount = (response && response.TotalCount) || 0;
+            RenderFollowupRows((response && response.DataList) || [], !!search);
+            SmdRenderPager("SmdFollowupPager", SmdFollowupCurrentPage, SmdFollowupTotalCount, SmdFollowupPageSize, "GoToSmdFollowupPage");
+        }).fail(function () {
+            $("#SmdFollowupRows").html("<tr><td colspan='4' class='smd-empty'>Couldn't load - please refresh.</td></tr>");
+        });
+    }
+
+    function GoToSmdFollowupPage(page) {
+        SmdFollowupCurrentPage = page;
+        LoadFollowupsDueToday();
+    }
+
+    var SmdFollowupSearchTimer = null;
+    $("#SmdFollowupSearch").on("input", function () {
+        clearTimeout(SmdFollowupSearchTimer);
+        SmdFollowupSearchTimer = setTimeout(function () {
+            SmdFollowupCurrentPage = 1;
+            LoadFollowupsDueToday();
+        }, 300);
+    });
+
+    function SmdGoToLead(id) {
+        window.location.href = "@Url.Action("LeadDetail", "SalesNew")" + "?id=" + id;
+    }
+
+    function SmdComingSoon() {
+        if (window.swal) {
+            swal("Coming soon", "Logging activity from here will be wired up next.", "info");
+        }
+    }
+
+    // ---- Demos in progress ----------------------------------------------
+    // Mockup shows Hot/Warm badges on each demo, but no query/column was
+    // given to derive that categorization -- shown as a plain status pill
+    // instead of a guessed Hot/Warm threshold.
+    var SmdDemoPageSize = 5;
+    var SmdDemoCurrentPage = 1;
+    var SmdDemoTotalCount = 0;
+
+    function RenderDemoRows(list, hasSearch) {
+        $("#SmdDemosCount").text(SmdDemoTotalCount || "");
+        if (!list || !list.length) {
+            $("#SmdDemoRows").html("<div class='smd-empty'>" + (hasSearch ? "No matches found." : "No demos in progress.") + "</div>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var heading = item.CompanyName || item.Name;
+            var subParts = [];
+            if (item.CompanyName && item.Name) subParts.push(SmdEscape(item.Name));
+            if (item.CountryName) subParts.push(SmdEscape(item.CountryName));
+            html += "<div class='smd-demo-row' style='cursor:pointer' onclick=\"SmdGoToLead(" + item.ID + ")\">";
+            html += "  <div><div class='smd-demo-name'>" + SmdValueOrDash(heading) + "</div>";
+            html += "  <div class='smd-demo-sub'>" + (subParts.length ? subParts.join(" &middot; ") : SmdValueOrDash(item.CorpEmail)) + "</div></div>";
+            html += "  <span class='smd-pill smd-pill-blue'>" + SmdValueOrDash(item.Status) + "</span>";
+            html += "</div>";
+        }
+        $("#SmdDemoRows").html(html);
+    }
+
+    function LoadDemosInProgress() {
+        var search = $.trim($("#SmdDemoSearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetDemosInProgress",
+            data: { search: search, pageNumber: SmdDemoCurrentPage, pageSize: SmdDemoPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            SmdDemoTotalCount = (response && response.TotalCount) || 0;
+            RenderDemoRows((response && response.DataList) || [], !!search);
+            SmdRenderPager("SmdDemoPager", SmdDemoCurrentPage, SmdDemoTotalCount, SmdDemoPageSize, "GoToSmdDemoPage");
+        }).fail(function () {
+            $("#SmdDemoRows").html("<div class='smd-empty'>Couldn't load - please refresh.</div>");
+        });
+    }
+
+    function GoToSmdDemoPage(page) {
+        SmdDemoCurrentPage = page;
+        LoadDemosInProgress();
+    }
+
+    var SmdDemoSearchTimer = null;
+    $("#SmdDemoSearch").on("input", function () {
+        clearTimeout(SmdDemoSearchTimer);
+        SmdDemoSearchTimer = setTimeout(function () {
+            SmdDemoCurrentPage = 1;
+            LoadDemosInProgress();
+        }, 300);
+    });
+
+    // ---- Pipeline by stage (horizontal bar) ------------------------------
+    function LoadPipelineByStage() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetPipelineByStage",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var labels = list.map(function (r) { return r.Status || "(blank)"; });
+            var counts = list.map(function (r) { return r.Count || 0; });
+
+            if (SmdStageChartInstance) SmdStageChartInstance.destroy();
+            var ctx = document.getElementById("SmdStageChart").getContext("2d");
+            SmdStageChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{ data: counts, backgroundColor: "#1f5a37", hoverBackgroundColor: "#164027", borderRadius: 0, barPercentage: 0.7, categoryPercentage: 0.8 }]
+                },
+                options: {
+                    indexAxis: "y",
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: function (c) { return " " + c.parsed.x + " leads"; } } }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#eceef0" } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    }
+
+    // ---- Pipeline value & forecast (bar only, no forecast line) ---------
+    // Sums across currencies per month for a single trend line -- mixing
+    // currencies into one bar is a simplification since no single-currency
+    // instruction was given.
+    function LoadPipelineValueForecast() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetPipelineValueForecast",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var byKey = {};
+            var order = [];
+            for (var i = 0; i < list.length; i++) {
+                var row = list[i];
+                var key = row.YearNo + "-" + row.MonthName;
+                if (!byKey.hasOwnProperty(key)) {
+                    byKey[key] = 0;
+                    order.push({ key: key, label: (row.MonthName || "").substr(0, 3) + " " + row.YearNo, yearNo: row.YearNo });
+                }
+                byKey[key] += row.TotalAmount || 0;
+            }
+            var labels = order.map(function (o) { return o.label; });
+            var values = order.map(function (o) { return Math.round(byKey[o.key] / 1000); });
+
+            if (SmdForecastChartInstance) SmdForecastChartInstance.destroy();
+            var canvas = document.getElementById("SmdForecastChart");
+            var ctx = canvas.getContext("2d");
+            SmdForecastChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{ label: "Committed ($K)", data: values, backgroundColor: "#1f5a37", hoverBackgroundColor: "#164027", borderRadius: 0, barPercentage: 0.6, categoryPercentage: 0.75 }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } },
+                        tooltip: { callbacks: { label: function (c) { return " $" + c.parsed.y + "K"; } } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: "#eceef0" } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    }
+
+    // ---- Won vs lost ------------------------------------------------------
+    function LoadWonVsLost() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetWonVsLost",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var order = [];
+            var wonByKey = {}, lostByKey = {};
+            for (var i = 0; i < list.length; i++) {
+                var row = list[i];
+                var key = row.YearNo + "-" + row.MonthName;
+                if (order.indexOf(key) === -1) order.push(key);
+                if ((row.Status || "").toLowerCase() === "won") wonByKey[key] = row.Count || 0;
+                else lostByKey[key] = row.Count || 0;
+            }
+            var labels = order.map(function (k) {
+                var parts = k.split("-");
+                return (parts[1] || "").substr(0, 3) + " " + parts[0];
+            });
+            var wonData = order.map(function (k) { return wonByKey[k] || 0; });
+            var lostData = order.map(function (k) { return lostByKey[k] || 0; });
+
+            if (SmdWonLostChartInstance) SmdWonLostChartInstance.destroy();
+            var ctx = document.getElementById("SmdWonLostChart").getContext("2d");
+            SmdWonLostChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Won", data: wonData, backgroundColor: "#1f5a37", hoverBackgroundColor: "#164027", borderRadius: 0, barPercentage: 0.85, categoryPercentage: 0.85 },
+                        { label: "Lost", data: lostData, backgroundColor: "#c0392b", hoverBackgroundColor: "#a33128", borderRadius: 0, barPercentage: 0.85, categoryPercentage: 0.85 }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#eceef0" } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    }
+
+    // ---- Leads by source (donut) ------------------------------------------
+    function LoadLeadsBySource() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetLeadsBySource",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var labels = list.map(function (r) { return r.Source || "(blank)"; });
+            var counts = list.map(function (r) { return r.SourceCount || 0; });
+            var colors = labels.map(function (_, i) { return SmdPalette[i % SmdPalette.length]; });
+
+            if (SmdSourceChartInstance) SmdSourceChartInstance.destroy();
+            var ctx = document.getElementById("SmdSourceChart").getContext("2d");
+            SmdSourceChartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: labels,
+                    datasets: [{ data: counts, backgroundColor: colors, borderWidth: 2, borderColor: "#fff", hoverOffset: 6 }]
+                },
+                options: {
+                    cutout: "62%",
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: "right", labels: { usePointStyle: true, boxWidth: 8, padding: 12 } }
+                    }
+                }
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        LoadKpiSummary();
+        LoadFollowupsDueToday();
+        LoadDemosInProgress();
+        LoadPipelineByStage();
+        LoadPipelineValueForecast();
+        LoadWonVsLost();
+        LoadLeadsBySource();
+    });
+</script>

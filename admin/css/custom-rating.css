@@ -1,0 +1,141 @@
+﻿.d-flex {
+    display: flex;
+}
+.text-white {
+    color:#fff!important;
+}
+.align-items-center {
+    align-items: center;
+}
+.bg-black {
+    background-color: #282b2f;
+}
+.ratingpoint {
+    color: #ffffff;
+    margin: 0px 12px 0px 4px;
+    font-size: 12px;
+    border: solid .5px #707070;
+    font-weight: 600;
+    padding: 1px 7px;
+    background: #ff0000a8;
+    display: flex;
+    border-radius: 4px;
+    align-items: center;
+}
+.data-detail-wrapper .pagination {
+    margin: 15px auto;
+    display: table;
+}
+.ps-5 {
+    padding-left: 5px;
+}
+
+.mt-2 {
+    margin-top:5px;
+
+}
+.pt-0{
+    padding-top:0px!important;
+} 
+.mt-0 {
+    margin-top:0px!important;
+} 
+
+ .ms-2 {
+     margin-left:6px;
+ }
+
+
+.mb-0 {
+    margin: 0px 0px;
+}
+.py-5 {
+    margin:20px 0px;
+}
+.py-2 {
+    padding:6px 0px
+}
+.px-2 {
+   padding:0px 6px
+}
+.pe-1 {
+    padding-right: 4px;
+}
+.table-sm th {
+    font-size: 12px;
+    font-weight:600;
+
+   
+}
+.table-sm {
+    font-size: 12px;
+}
+.bg-dark {
+    background-color: forestgreen;
+}
+.text-nowrap {
+    white-space: nowrap;
+}
+
+.child01 {
+    z-index: 999;
+    background: #000;
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    text-align: center;
+    color: #fff;
+    border: solid #ffffffe6 3px !important;
+    border-radius: 6px !important;
+    border-radius: 2px;
+    box-shadow: 0px 0px 1px 2px #00000075;
+    max-height: 80vh;
+    min-height: 30vh;
+    max-width: 80vw;
+    min-width: 30vw;
+    overflow: auto;
+}
+
+.popup-open1 {
+    position: relative;
+   
+}
+
+.fw-bold {
+    font-weight:600;
+}
+.panel {
+    border: 1px solid #595959c2!important;
+}
+.panel-gray {
+    background-color: #141414f0;
+}
+
+.justify-content-center {
+    justify-content:center;
+}
+.justify-content-between {
+    justify-content:space-between
+}
+.text-danger {
+    color: #a94442!important
+}
+
+.pending-data-list li {
+    padding: 3px 16px;
+    border-bottom: solid 1px #7b7b7b;
+}
+.pending-data-list li:hover {
+    padding: 3px 16px;
+    border-bottom: solid 1px #7b7b7b;
+    background-color: #0a1318;
+}
+
+ .p-0 {
+    padding: 0px;
+}
+
+.m-0 {
+  margin: 0px;
+}

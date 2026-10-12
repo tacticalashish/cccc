@@ -1,0 +1,11 @@
+.side-news-feed::-webkit-scrollbar {
+    width: 10px;
+}
+.side-news-feed::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+}
+.side-news-feed::-webkit-scrollbar-thumb {
+    background: #3368c6;
+    border-radius: 9px;
+}
+

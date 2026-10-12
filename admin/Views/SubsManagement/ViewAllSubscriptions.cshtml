@@ -1,0 +1,444 @@
+﻿@model ChemAnalyst.Models.LeadViewModel
+
+
+@using System.Data;
+@using System.Linq;
+@using EntityLayer;
+
+@{
+
+    ViewBag.Title = "ViewLeadDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("AssignLeadDetails", "SubsManagement", FormMethod.Post))
+{
+    int i = 1;
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <br />
+        <a href="@Url.Action("ShowSubscriptionListForSales", "SubsManagement")" class="btn btn-info"><i class="fa fa-list"></i> Back</a>
+        <input type="hidden" value="" id="hdnSubId" />
+        <br />
+        <br />
+        <div class="data-detail-wrapper table-responsive">
+
+            <table class="table">
+
+                <tbody>
+                    @Html.HiddenFor(x => x.hdId)
+
+
+                    @*<tr><th>Name</th><td>@Model.LeadMaster.Name</td><th>Phone</th><td>@Model.LeadMaster.Phone</td></tr>
+                        <tr><th>Email</th><td>@Model.LeadMaster.CorpEmail</td><th>Company/Organization</th><td>@Model.LeadMaster.Organisation</td></tr>
+                        <tr><th>Designation</th><td>@Model.LeadMaster.Designation</td><th>Country</th><td>@Model.LeadMaster.Country</td></tr>
+                        <tr><th>State</th><td>@Model.LeadMaster.State</td><th>Industry Sector</th><td>Consumer</td></tr>
+                        <tr><th>Assign By</th><td>@Session["User"].ToString()</td><th>Assign To</th><td>@Model.LeadMaster.AssignTo</td></tr>
+                        <tr><th>Assign Date </th><td>@Model.LeadMaster.AssignDate</td><th>Terms and conditions checked </th><td>Yes</td></tr>
+                        <tr><th>Lead Date </th><td>@Model.LeadMaster.CreatedDate</td><th>Status</th><td><span class="label label-success">@Model.LeadMaster.Status</span></td></tr>*@
+                    @foreach (var item in Model.SubscriptionList)
+                    {
+
+                        List<int> distinctChemicalProducts = new List<int>();
+                        List<EntityLayer.CustomEntity.enRange> listOfChemicalProductAndRange = new List<EntityLayer.CustomEntity.enRange>();
+                        if (item.ChemicalPricingRange != null && Utility.Helper.ValIfNullOrEmpty(item.ChemicalPricingRange, true, null) != null)
+                        {
+                            listOfChemicalProductAndRange = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EntityLayer.CustomEntity.enRange>>(item.ChemicalPricingRange);
+                            distinctChemicalProducts = listOfChemicalProductAndRange.Select(itt => itt.PID).Distinct().ToList();
+                        }
+
+
+                        List<int> distinctMarketProducts = new List<int>();
+                        List<EntityLayer.CustomEntity.enRange> listOfMarketProductAndRange = new List<EntityLayer.CustomEntity.enRange>();
+                        if (item.MarketAnalysisRange != null && Utility.Helper.ValIfNullOrEmpty(item.MarketAnalysisRange, true, null) != null)
+                        {
+                            listOfMarketProductAndRange = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EntityLayer.CustomEntity.enRange>>(item.MarketAnalysisRange);
+                            distinctMarketProducts = listOfMarketProductAndRange.Select(itt => itt.PID).Distinct().ToList();
+                        }
+
+
+                        int index = 0;
+                        string[] products = item.ProductId.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] regions = item.RegionsID != null ? item.RegionsID.Split(',') : null;
+                        string[] countries = item.CountriesID != null ? item.CountriesID.Split(',') : null;
+                        //string[] regions = item.RegionsID != null ? item.RegionsID.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries) :  new string[];
+                        //string[] countries = item.CountriesID != null ? item.CountriesID.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries) : new string[];
+
+                        string[] pages = item.MenuId.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        int pp = 1;
+                        int mm = 1;
+                        <tr>
+                            <td style="padding-left: 0;" colspan="4">
+                                <div class="eq-form" style="margin-top: 0;">
+                                    <div class="col-sm-9 col-lg-9 form-group" style="font-weight: bold;">
+
+                                        <div class="col-sm-3 col-xs-12" style="background-color: #f0ad4e;font-weight: bold;height: 30px;border-radius: 5px;padding: 5px;margin: 5px; width: 200px;text-align: center;">Subscription 0<span>@i</span></div>
+                                        <div class="col-sm-3 col-xs-12" style="background-color: #1cc2dc;font-weight: bold;height: 30px;border-radius: 5px;padding: 5px;margin: 5px; width: 200px;text-align: center;">Start Date : @item.FromDate.Value.Date.ToString("dd/MM/yyyy")</div>
+                                        <div class="col-sm-3 col-xs-12" style="background-color: #31708f;font-weight: bold;height: 30px;border-radius: 5px;padding: 5px;margin: 5px; width: 200px;text-align: center;">End Date : @item.ToDate.Value.Date.ToString("dd/MM/yyyy")</div>
+                                    </div>
+                                    <div class="col-sm-3 col-lg-3 form-group">
+                                        @if (item.Status.Trim().Equals("active", StringComparison.CurrentCultureIgnoreCase))
+                                        {
+                                            <a href="javascript:void(0)" elm-status="@item.Status.Trim()" elm-sub-id="@item.Id" class="sub-active-deactive"> <span class="pull-right label label-success" style="text-align: right;">ACTIVE</span></a>
+                                        }
+                                        else
+                                        {
+                                            <a href="javascript:void(0)" elm-status="@item.Status.Trim()" elm-sub-id="@item.Id" class="sub-active-deactive"> <span class="pull-right label label-warning" style="text-align: right;">DEACTIVE</span></a>
+                                        }
+
+
+                                        @if (item.ToDate.Value < DateTime.Now.AddDays(30))
+                                        {
+                                            <a style="margin-left:20px" class="pull-right label label-default" href="javascript:void(0)" title="Send notification" onclick="SendNotification(@item.LeadId,@item.Id)"> <i class="fa fa-envelope" aria-hidden="true"></i></a>
+                                            <span style="margin-left:20px; cursor:pointer" class="pull-right label label-warning" onclick="ShowRenewModalPopUp(@item.Id)">RENEW</span>
+                                            <span class="pull-right label label-danger">EXPIRED</span>
+                                        }
+
+                                        @if (item.SubscriptionType == 1)
+                                        {
+                                            <span class="pull-right label label-success" style="margin-right: 20px;cursor: pointer;">Free Trial </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="pull-right label label-success" style="margin-right: 20px;cursor: pointer;">Package</span>
+                                        }
+                                        @*@Html.DropDownListFor(m => m.LeadMaster.AssignTo, Model.UserList, "Assign To", new { @class = "form-control" })*@
+                                    </div>
+
+                                </div>
+
+                                @*<div class="row" style="margin-right: 3px;margin-left: 3px">
+                                        <div class="col-sm-3" style="background-color:lavender;font-weight: bold">Start Date :</div>
+                                        <div class="col-sm-3" style="background-color:lavenderblush;">@item.FromDate.Value.Date.ToString("dd/MM/yyyy")</div>
+                                        <div class="col-sm-3" style="background-color:lavender;font-weight: bold">End Date :</div>
+                                        <div class="col-sm-3" style="background-color:lavender;">@item.ToDate.Value.Date.ToString("dd/MM/yyyy")</div>
+                                    </div>*@
+
+                                <br />
+                                <div class="row" style="margin-right: 3px;margin-left: 3px">
+                                    <div class="table-responsive col-sm-3">
+                                        <table class="table" style="background-color:transparent !important">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Region</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{int regionNumber = 1;}
+                                                @if (regions != null)
+                                                {
+                                                    foreach (var itemRegion in regions)
+                                                    {
+                                                        var RegionName = ChemAnalyst.DAL.ProductDataStore.GetRegionName(Convert.ToInt32(itemRegion));
+                                                        if (string.IsNullOrEmpty(RegionName))
+                                                        {
+                                                            continue;
+                                                        }
+                                                        <tr>
+                                                            <th scope="row">@regionNumber</th>
+                                                            <td>
+                                                                <p style="color:white !important">@RegionName</p>
+                                                            </td>
+                                                        </tr>
+                                                        regionNumber++;
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive col-sm-3">
+                                        <table class="table" style="background-color:transparent !important">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Country</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{ int countryNumber = 1; }
+                                                @if (countries != null)
+                                                {
+                                                    foreach (var itemCountry in countries)
+                                                    {
+                                                        var countryName = ChemAnalyst.DAL.ProductDataStore.GetCountryName(Convert.ToInt32(itemCountry));
+                                                        if (string.IsNullOrEmpty(countryName))
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        <tr>
+                                                            <th scope="row">@countryNumber</th>
+                                                            <td>
+                                                                <p style="color:white !important">@countryName</p>
+                                                            </td>
+                                                        </tr>
+                                                        countryNumber++;
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive col-sm-3" style="height:180px;overflow:auto">
+                                        <table class="table" style="background-color:transparent !important;">
+                                            <thead style="width:16.2%;">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Products With Range</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @foreach (var product in distinctMarketProducts)
+                                                {
+                                                    int productFID = Convert.ToInt32(product);
+                                                    var productName = ChemAnalyst.DAL.ProductDataStore.GetProductName(productFID);
+                                                    List<EntityLayer.CustomEntity.enRange> listOfRange = listOfMarketProductAndRange.FindAll(itt => itt.PID == productFID);
+                                                    string rangeName = string.Empty;
+                                                    foreach (var range in listOfRange)
+                                                    {
+                                                        rangeName += Utility.Helper.GetEnumDescription(typeof(Utility.MarketRangeType), range.RID) + " ,";
+                                                    }
+
+                                                    <tr>
+                                                        <th scope="row">@pp</th>
+                                                        <td>
+                                                            <p style="color:#fff">@string.Concat(productName, " [", rangeName, "]")</p>
+                                                        </td>
+                                                    </tr>
+                                                    pp++;
+                                                    index++;
+                                                }
+
+
+                                                @foreach (var product in distinctChemicalProducts)
+                                                {
+                                                    int productFID = Convert.ToInt32(product);
+                                                    var productName = ChemAnalyst.DAL.ProductDataStore.GetProductName(productFID);
+                                                    List<EntityLayer.CustomEntity.enRange> listOfRange = listOfChemicalProductAndRange.FindAll(itt => itt.PID == productFID);
+                                                    string rangeName = string.Empty;
+                                                    foreach (var range in listOfRange)
+                                                    {
+                                                        rangeName += Utility.Helper.GetEnumDescription(typeof(Utility.ChemicalRangeType), range.RID) + " ,";
+                                                    }
+
+                                                    <tr>
+                                                        <th scope="row">@pp</th>
+                                                        <td>
+                                                            <p style="color:#fff">@string.Concat(productName, " [", rangeName, "]")</p>
+                                                        </td>
+                                                    </tr>
+                                                    pp++;
+                                                    index++;
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="table-responsive col-sm-3" style="height:180px;overflow:auto">
+                                        <table class="table" style="background-color:transparent !important;">
+                                            <thead style="width:16.2%;">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Modules</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @foreach (var m in pages)
+                                                {
+
+                                                    int pgid = Convert.ToInt32(m);
+                                                    var PageName = @ChemAnalyst.DAL.ProductDataStore.GetModuleName(pgid);
+                                                    <tr>
+                                                        <th scope="row">@mm</th>
+                                                        <td>
+                                                            <p style="color:#fff;">@PageName</p>
+                                                        </td>
+                                                    </tr>
+                                                    mm++;
+                                                    index++;
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                </div>
+
+                            </td>
+                        </tr>
+                                                        i++;
+                                                    }
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+    <!-- The Modal -->
+                                                    <div class="modal" id="Comentery">
+                                                        <div class="modal-dialog modal-dialog-scrollable">
+                                                            <div class="modal-content">
+                                                                <!-- Modal Header -->
+                                                                <div class="modal-header">
+                                                                    <h4 class="modal-title">Renew Subscription </h4>
+                                                                    <button type="button" class="close" data-dismiss="modal" onclick="closeModel()">×</button>
+                                                                </div>
+                                                                <!-- Modal body -->
+                                                                <div id="Commentaries">
+                                                                    <div class="col-md-4 col-lg-6 form-group" style="margin-top: 20px;">
+                                                                        <input type="text" value="" size="40" class="form-control" placeholder="Date From" id="FromDatepicker">
+                                                                    </div>
+                                                                    <div class="col-md-4 col-lg-6 form-group" style="margin-top: 20px;">
+                                                                        <input type="text" value="" size="40" class="form-control" placeholder="Date To" id="ToDatepicker">
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Modal footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-primary" onclick="RenewSubscription()">Save</button>
+
+                                                                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="closeModel()">Close</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    }
+                                                    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css"/ >
+                                                    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+                                                    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+                                                    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+                                                    <script src="jquery.js"></script>
+                                                    <script src="~/js/jquery.datetimepicker.full.min.js"></script>
+
+                                                    <script type="text/javascript">
+
+        $(function () {
+            jQuery('#FromDatepicker').datetimepicker();
+            jQuery('#ToDatepicker').datetimepicker();
+            //getProduct();
+            //var checkboxes = document.getElementById("checkboxes");
+            //if (checkboxes)
+            //    checkboxes.style.display = "none";
+        });
+
+
+
+        function SendNotification(LeadId, subID) {
+
+            $.ajax({
+                //url: "../SubsManagement/SendNotification",
+                //url: "/test/SubsManagement/SendNotification",
+                url: '@Url.Action("SendNotification","SubsManagement")',
+                type: "POST",
+                data: { LeadId: LeadId, subID: subID },
+                cache: false,
+                async: true,
+                success: function (data) {
+                    alert("Notification sent successfully!!!")
+                    // window.location.reload(true);
+                }
+
+            })
+        }
+
+
+
+        function RenewSubscription() {
+
+            var subId = $("#hdnSubId").val();
+            var fromDate = $("#FromDatepicker").val();
+            var toDate = $("#ToDatepicker").val();
+            if (!fromDate) {
+                alert("Please Enter From Date");
+                return false;
+            }
+            if (!toDate) {
+                alert("Please Enter From ToDate");
+                return false;
+            }
+
+            $.ajax({
+                //url: "../SubsManagement/SendNotification",
+                //url: "/test/SubsManagement/RenewSubscription",
+                url: '@Url.Action("RenewSubscription","SubsManagement")',
+                type: "POST",
+                data: { subId: subId, fromDate: fromDate, toDate: toDate },
+                cache: false,
+                async: true,
+                success: function (data) {
+                    alert("Subscription Renewed successfully!!!")
+                    $("#FromDatepicker").val('');
+                    $("#ToDatepicker").val('');
+                    $("#Comentery").hide()
+                     window.location.reload(true);
+                }
+
+            })
+        }
+
+
+        function ShowRenewModalPopUp(hdnSubId) {
+
+            $("#hdnSubId").val(hdnSubId);
+            $("#Comentery").show()
+        }
+
+        function closeModel() {
+            $("#FromDatepicker").val('');
+            $("#ToDatepicker").val('');
+            $("#Comentery").hide()
+        }
+
+
+    $(document).on('click', '.sub-active-deactive', function () {
+        console.log('232132');
+
+        var subscriptionFID = $(this).attr('elm-sub-id');
+        var status = $(this).attr('elm-status');
+
+        $.ajax({
+            url: '@Url.Action("ActiveDeactiveSubscription", "SubsManagement")',
+            type: "POST",
+            data: { subscriptionFID: subscriptionFID, status: status },
+            cache: false,
+            async: true,
+        success: function (data) {
+
+                if (data == 's') {
+                    if (status.toLowerCase() == 'active') {
+                        $("[elm-sub-id='" + subscriptionFID + "']").attr('elm-status', 'Deactive');
+                        $("[elm-sub-id='" + subscriptionFID + "']").html('<span class="pull-right label label-warning" style="text-align: right;">DEACTIVE</span>');
+                    }
+                    else
+                    {
+                        $("[elm-sub-id='" + subscriptionFID + "']").attr('elm-status', 'Active');
+                        $("[elm-sub-id='" + subscriptionFID + "']").html('<span class="pull-right label label-success" style="text-align: right;">ACTIVE</span>');
+                    }
+
+                    //alert("Notification sent successfully!!!");
+                }
+                else
+                {
+                    console.log(data);
+                    alert("something went wrong please try after some time.!");
+                }
+            }
+        })
+    });
+
+            
+                                                    </script>
+
+
+

@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewBag.Title = "ExcelUploadPreSalesLead";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<title>Chem Analyst </title>
+
+
+
+<style type="text/css">
+    label.error {
+        color: #d65d5d;
+    }
+
+    .file-border {
+        border: solid .5px gray;
+        padding: 2px 3px;
+        border-radius: 4px;
+    }
+
+    .ml-2 {
+        margin-left: 4px;
+    }
+</style>
+
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        function ValidateForm() {
+            var r = true;
+
+            if (!$('form').valid()) {
+                r = false;
+            }
+            else {
+                $('#btnSubmit,#btnCancel').hide();
+                $('#btnVirtualSubmit').attr('disabled', 'disabled');
+                $('#btnVirtualSubmit').show();
+            }
+            return r;
+        }
+
+    </script>
+
+}
+
+<div class="update-profile-wrapper">
+    <h3 style="color: #a5a8ad;">Pre Sales Excel Upload</h3>
+    <div class="white-wrapper">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="">
+                <div class="form-group">
+                    @if (ViewBag.Status == "Failed")
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @ViewBag.Messge
+                        </div>
+                    }
+                    else if (ViewBag.Status == "Success")
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @ViewBag.Messge
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="import-form eq-form-box">
+
+                <div class="change-pass-box">
+                    @using (Html.BeginForm("SelesExcelUpload", "LeadManagementSubscription", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "formpresales" }))
+                    {
+                        <div class="col-sm-6 col-lg-12">
+                            <div class="form-group">
+                                <input type="file" name="file" class="custom-file-input file-border" required />
+                            </div>
+                        </div>                        
+                        @*<div class="col-sm-6 col-lg-12">
+                            <div class="form-group">
+                                <span class="ml-2">
+                                    @Html.CheckBox("ReplaceData")
+                                </span>
+                                <label for="inlineCheckbox2">Do you want to Replace / Delete existing file? </label>
+                            </div>
+                        </div>*@
+                        <div class="btn-wrapper">
+                            <a class="btn blue-btn" id="btnCancel" name="btnCancel" href="@Url.Action("ExcelUploadPreSalesLead", "LeadManagementSubscription")">Cancel</a>
+                            <input id="btnSubmit" name="btnSubmit" type="submit" class="btn blue-btn" value="Upload" onclick="return ValidateForm();">
+                            <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+
+</script>
+

@@ -1,0 +1,610 @@
+﻿
+@{
+    ViewBag.Title = "CRMLeadDashBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .pagination-sm > li > a, .pagination-sm > li > span {
+        padding: 0px 10px !important;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #b6ff00;
+        background-color: black;
+    }
+
+    .pagination {
+        display: inline-block;
+        padding-left: 0;
+        margin: 10px 0 !important;
+        border-radius: 4px;
+    }
+
+        .pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
+            color: #777;
+            cursor: not-allowed;
+            background-color: #1b1919;
+            border-color: #ddd;
+        }
+
+    .tableStyle {
+        border: 1px solid #808080;
+        /*margin-top: 10px;*/
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+
+    .mt-2 {
+        margin-top: 8px;
+    }
+
+    .data-detail-wrapper table > thead > tr > th {
+        text-transform: none !important;
+        text-align: center;
+    }
+
+    input[type=file] {
+        color: black !important;
+        /*margin-bottom: 5px;*/
+    }
+
+    .table-cont tr th {
+        padding: 5px;
+        position: sticky;
+        top: -1px;
+        font-size: 12px;
+        background-color: #141414;
+        white-space: nowrap;
+        border-top: 1px solid #485461;
+        border-bottom: 1px solid #485461;
+    }
+
+
+    .table-section {
+        height: 30vh;
+    }
+    .form-control-sm {
+        height: 25px;
+    }
+	
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .small {
+        font-size:12px!important
+    }
+</style>
+
+<div class="white-wrapper">
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+           <div class="row d-flex align-items-center">
+            <div class="col-md-8">
+                <h4 class="text-white">CRM Dashboard</h4>
+            </div>
+               <div class="col-md-4">
+                   <div class=" d-flex">
+                       <div class=" mb-0">
+                           <label class="small text-muted">From Date</label>
+                           <input type="text" class="form-control form-control-sm" id="fromDatess" value="">
+                       </div>
+
+                       <div class=" ms-2">
+                           <label class="small text-muted">To Date</label>
+                           <input type="text" class="form-control form-control-sm" id="ToDatess" value="">
+                       </div>
+                   </div>
+               </div>
+           </div>
+           
+       
+        <div class="panel bg-black mt-2">
+            <div class="panel-body">
+                <div class="row d-flex align-items-center">
+                 
+                    <div class="col-md-5">
+                        <div class="d-flex align-items-center">
+                            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search followup..." id="search" aria-controls="Userlist">
+                            <input type="button" class="btn btn-sm btn-success" value="Search" onclick="GetsearchValues()" style="height:25px; margin-left:8px;padding: 3px 10px;" />
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-7 text-right"><h5 class="text-white">Follow Up</h5></div>
+
+                </div>
+                <div class="data-detail-wrapper  table-responsive table-section scrolladmin01 mt-2" style="overflow:auto">
+                    <table id="Leadlist" class="table tableStyle table-cont">
+                        <thead>
+                            <tr>
+                                <th hidden>ID</th>
+                                <th>Name</th>
+                                <th>CorpEmail</th>
+                                <th>Phone</th>
+                                <th>Company</th>
+                                <th>Country</th>
+                                <th>State</th>
+                                <th>Created Date</th>
+                                <th>Follow Up Date</th>
+                                <th>Edit</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody class="tbodydata" id="tbodydata"></tbody>
+                    </table>
+                </div>
+
+                <div class="box-footer clearfix" id="divPagging"></div>
+            </div>
+        </div>
+
+        <div class="panel bg-black mt-2">
+            <div class="panel-body">
+                <h5 class="text-white text-right">Remaining Payment</h5>
+                <div class="data-detail-wrapper table-section table-responsive scrolladmin01 mt-2" style="overflow:auto" id="tblreamining">
+                    <table id="Remainingdashboard" class="table tableStyle table-cont">
+                        <thead>
+                            <tr>
+                                <th hidden>ID</th>
+                                <th>Name</th>
+                                <th>CorpEmail</th>
+                                <th>Phone</th>
+                                <th>Company</th>
+                                <th>Country</th>
+                                <th>State</th>
+                                <th>Created Date</th>
+                                <th>Remaining Payment Date</th>
+
+                            </tr>
+                        </thead>
+                        <tbody class="remainingtbodydata" id="remainingtbodydata"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel bg-black">
+            <div class="panel-body">
+                <h5 class="text-white text-right">Upcoming Renewal</h5>
+                <div class="data-detail-wrapper table-section table-responsive scrolladmin01 mt-2" style="overflow:auto" id="tblreamining">
+                    <table id="dashboard" class="table tableStyle table-cont">
+                        <thead>
+                            <tr>
+                                <th>CompanyName</th>
+                                <th>Client Name</th>
+                                <th>CorpEmail</th>
+                                <th>Expiry Date </th>
+                            </tr>
+                        </thead>
+                        <tbody class="packagebodydata" id="packagebodydata"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+       
+      
+    </div>
+
+
+
+
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-6"></div>
+        </div>
+       
+    </div>
+
+    @*sales package expiry*@
+    <div class="container-fluid" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-6"></div>
+        </div>
+      
+    </div>
+</div>
+
+
+
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+<script>
+    var Search = "";
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth(); // getMonth() gives 0-based index (0 = January, 11 = December)
+        var year = dateObject.getFullYear();
+
+        // Array of month names
+        var monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        // Get full month name from the array
+        var monthName = monthNames[month];
+
+        var formattedDate = day + "-" + monthName + "-" + year;
+        return formattedDate;
+    };
+
+
+    $(document).ready(function () {
+        $("#ExpectedCloseDate").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#SetFollowUp").datepicker({ dateFormat: "dd/MM/yy" });
+        $("#RemainingPaymentDate").datepicker({ dateFormat: "dd/MM/yy" });
+        CRMTodaysFollowUP_CustomSearch();
+        GetremainingPaymentLeadOnSearchFilter();
+        Getsaleshpackage();
+        $("#fromDatess").datepicker({ dateFormat: "yy-mm-dd" });
+        $("#ToDatess").datepicker({ dateFormat: "yy-mm-dd" });
+
+
+
+    });
+    function GetsearchValues() {
+        Search = $('#search').val();
+        $('#search').html(GetPaginationHTML(Search));
+        CRMTodaysFollowUP_CustomSearch();      
+    }
+
+    $("#fromDatess").on("change", function () {
+        CRMTodaysFollowUP_CustomSearch();
+        GetremainingPaymentLeadOnSearchFilter();
+        Getsaleshpackage();
+    });
+
+    $("#ToDatess").on("change", function () {
+        CRMTodaysFollowUP_CustomSearch();
+        GetremainingPaymentLeadOnSearchFilter();
+        Getsaleshpackage();
+    });
+
+
+    function getFormattedDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+    const today = new Date();
+    const fromDate = new Date();
+    fromDate.setDate(today.getDate())
+    const toDatePlusOne = new Date(today);
+    toDatePlusOne.setDate(toDatePlusOne.getDate() + 1);
+
+    document.getElementById('fromDatess').setAttribute('value', getFormattedDate(fromDate));
+    document.getElementById('ToDatess').setAttribute('value', getFormattedDate(toDatePlusOne));
+
+    function Getsaleshpackage() {
+        var fromDatess = $('#fromDatess').val();
+        var ToDatess = $('#ToDatess').val();
+        var URL = "/LeadManagementSubscription/GetsaleshpackageTodaysExpiry_CustomSearch?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + '';
+        URL += '&DateFrom=' + fromDatess;
+        URL += '&DateTo=' + ToDatess;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+
+                        var date = elm.DateTo;
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + formattedDate + "</td>";
+                        
+                        tbodyHTML += "</tr>"
+                    });
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.packagebodydata').html(tbodyHTML);
+            }
+        });
+    }
+    function GetremainingPaymentLeadOnSearchFilter() {
+        var fromDatess = $('#fromDatess').val();
+        var ToDatess = $('#ToDatess').val();
+
+        var URL = "/LeadManagementSubscription/GetCRMTodaysRemainingDate_CustomSearch?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + '';
+        URL += '&DateFrom=' + fromDatess;
+        URL += '&DateTo=' + ToDatess;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+
+                        var date = elm.CreatedDate;
+                        var dateRemainingPaymentDate = elm.RemainingPaymentDate;
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        var RequestedRemainingPayment = ($.formattedDate(new Date(parseInt(dateRemainingPaymentDate.substr(6)))));
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.Phone + "</td>";
+
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyHTML += "<td>" + elm.StateName + "</td>";
+                        tbodyHTML += "<td>" + formattedDate + "</td>";
+                        tbodyHTML += "<td>" + RequestedRemainingPayment + "</td>";
+
+
+                        tbodyHTML += "</tr>"
+                    });
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.remainingtbodydata').html(tbodyHTML);
+            }
+        });
+    }
+
+    function CRMTodaysFollowUP_CustomSearch() {
+        var path = "/ChemPricingImportfile/LeadDocuments";
+        var pageNumber = $('#PageNumber').val();
+        var Search = $('#search').val();
+        var fromDatess = $('#fromDatess').val();
+        var ToDatess = $('#ToDatess').val();
+        var URL = "/LeadManagementSubscription/GetCRMTodaysFollowUP_CustomSearch?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        URL += '&DateFrom=' + fromDatess;
+        URL += '&DateTo=' + ToDatess;
+
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+
+                        var date = elm.CreatedDate;
+                        var dateSetFollowUp = elm.SetFollowUp;
+                        var formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                        var RequestedSetFollowUp = ($.formattedDate(new Date(parseInt(dateSetFollowUp.substr(6)))));
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.Phone + "</td>";
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyHTML += "<td>" + elm.StateName + "</td>";
+                        tbodyHTML += "<td>" + formattedDate + "</td>";
+                        tbodyHTML += "<td>" + RequestedSetFollowUp + "</td>";
+                        tbodyHTML += "<td>" + "<button class='btn btn-xs btn-info'  onclick=EditPopupSource('" + elm.Id + "')><i class='fa fa-pencil'></i></button>" + "</td>";
+
+
+                        tbodyHTML += "</tr>"
+                    });
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.tbodydata').html(tbodyHTML);
+            }
+        });
+    }
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left small' style='color:#b6ff00'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        CRMTodaysFollowUP_CustomSearch();
+
+    }
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:#dcdcdc5e;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+
+    function EditPopupSource(id) {
+        var LeadId = id;
+        window.open(`/LeadManagementSubscription/CRMRenew_LeadDetails?Id=${LeadId}`, '_blank');
+    }	
+</script>
+

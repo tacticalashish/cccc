@@ -1,0 +1,2382 @@
+@{
+    ViewBag.Title = "Lead detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int leadId = ViewBag.LeadID != null ? (int)ViewBag.LeadID : 0;
+    string leadSource = ViewBag.Source != null ? ViewBag.Source.ToString() : "Open";
+}
+<style>
+    .sld-wrap {
+        background: #f4f5f7;
+        padding: 18px 28px 40px;
+    }
+
+    .sld-crumb {
+        font-size: 13px;
+        color: #7c828a;
+        margin-bottom: 14px;
+    }
+
+        .sld-crumb a {
+            color: #7c828a;
+            text-decoration: none;
+        }
+
+        .sld-crumb span {
+            color: #22262b;
+            font-weight: 600;
+        }
+
+    .sld-back {
+        display: inline-block;
+        font-size: 13px;
+        color: #33383f;
+        text-decoration: none;
+        margin-bottom: 14px;
+    }
+
+        .sld-back:hover {
+            text-decoration: underline;
+        }
+
+    .sld-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 18px 20px;
+        margin-bottom: 16px;
+    }
+
+    .sld-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .sld-header-left {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .sld-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        background: #1f5a37;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 14px;
+        flex-shrink: 0;
+    }
+
+    .sld-company-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 4px;
+    }
+
+    .sld-sub-line {
+        font-size: 12px;
+        color: #7c828a;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .sld-pill {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 2px 9px;
+        white-space: nowrap;
+    }
+
+    .sld-pill-gray { background: #f0f1f3; color: #6b7078; }
+    .sld-pill-blue { background: #eef2fb; color: #3f5fa8; }
+    .sld-pill-purple { background: #f1eefb; color: #6c47c9; text-transform: uppercase; letter-spacing: .03em; font-size: 10px; }
+
+    .sld-pill-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-right: 5px;
+        background: currentColor;
+        opacity: .7;
+    }
+
+    .sld-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .sld-btn {
+        border: 1px solid #d7dade;
+        background: #fff;
+        color: #33383f;
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .sld-btn:hover {
+            background: #f7f8f9;
+        }
+
+    .sld-btn-primary {
+        background: #e07b1f;
+        border-color: #e07b1f;
+        color: #fff;
+    }
+
+        .sld-btn-primary:hover {
+            background: #c96c16;
+        }
+
+    .sld-btn-danger {
+        background: #fff;
+        border-color: #e2453c;
+        color: #e2453c;
+    }
+
+        .sld-btn-danger:hover {
+            background: #fdecec;
+        }
+
+    .sld-btn-success {
+        background: #1f5a37;
+        border-color: #1f5a37;
+        color: #fff;
+    }
+
+        .sld-btn-success:hover {
+            background: #17452a;
+        }
+
+    .sld-info-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        margin-top: 16px;
+        border: 1px solid #eceef0;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    @@media (max-width: 900px) {
+        .sld-info-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .sld-info-cell {
+        padding: 12px 16px;
+        border-right: 1px solid #eceef0;
+    }
+
+        .sld-info-cell:last-child {
+            border-right: none;
+        }
+
+    .sld-info-label {
+        font-size: 10px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        color: #a4aab3;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .sld-info-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sld-tabs {
+        display: flex;
+        gap: 22px;
+        border-bottom: 1px solid #e2e4e8;
+        margin-bottom: 16px;
+    }
+
+    .sld-tab {
+        padding: 10px 2px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #7c828a;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+    }
+
+        .sld-tab.sld-tab-active {
+            color: #22262b;
+            border-bottom-color: #1f5a37;
+        }
+
+    .sld-banner {
+        background: #fdf1e0;
+        border: 1px solid #f3ddb0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 12px;
+        color: #7a5a1e;
+        margin-bottom: 16px;
+    }
+
+        .sld-banner b {
+            color: #5c4416;
+        }
+
+    .sld-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @@media (max-width: 900px) {
+        .sld-two-col {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .sld-panel-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 4px;
+    }
+
+    .sld-panel-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 4px;
+        border-bottom: 1px solid #f2f3f5;
+        font-size: 13px;
+    }
+
+        .sld-panel-row:last-child {
+            border-bottom: none;
+        }
+
+    .sld-panel-label {
+        color: #7c828a;
+    }
+
+    .sld-panel-value {
+        color: #22262b;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    /* inline edit for Lead summary / Company cards */
+    .sld-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+
+    .sld-edit-input {
+        display: none;
+        width: 58%;
+        border: 1px solid #d7dade;
+        border-radius: 6px;
+        padding: 5px 8px;
+        font-size: 13px;
+        color: #33383f;
+        text-align: left;
+    }
+
+    .sld-card.sld-editing .sld-panel-value { display: none; }
+    .sld-card.sld-editing .sld-edit-input { display: inline-block; }
+
+    .sld-tab-content {
+        display: none;
+    }
+
+        .sld-tab-content.sld-tab-content-active {
+            display: block;
+        }
+
+    .sld-empty-tab {
+        text-align: center;
+        padding: 50px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .sld-order-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @@media (max-width: 900px) {
+        .sld-order-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .sld-order-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f1f3;
+        font-size: 13px;
+    }
+
+    .sld-order-label {
+        color: #7c828a;
+    }
+
+    .sld-order-value {
+        color: #22262b;
+        font-weight: 600;
+    }
+
+    .sld-loading {
+        text-align: center;
+        padding: 40px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .sld-activity-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .sld-activity-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 12px 0;
+        border-bottom: 1px solid #f2f3f5;
+    }
+
+        .sld-activity-row:last-child {
+            border-bottom: none;
+        }
+
+    .sld-activity-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: #f0f1f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        margin-right: 12px;
+        flex-shrink: 0;
+    }
+
+    .sld-activity-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sld-activity-sub {
+        font-size: 12px;
+        color: #7c828a;
+        margin-top: 2px;
+    }
+
+    .sld-activity-date {
+        font-size: 12px;
+        color: #a4aab3;
+        white-space: nowrap;
+        margin-left: 10px;
+    }
+
+    .sld-pager {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f2f3f5;
+    }
+
+    .sld-pg-btn {
+        border: 1px solid #e2e4e8;
+        background: #fff;
+        color: #33383f;
+        border-radius: 5px;
+        min-width: 24px;
+        height: 24px;
+        padding: 0 6px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .sld-pg-btn:hover:not(:disabled) {
+            background: #f7f8f9;
+        }
+
+        .sld-pg-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .sld-pg-btn.sld-pg-active {
+            background: #1f5a37;
+            border-color: #1f5a37;
+            color: #fff;
+        }
+
+    .sld-pg-dots {
+        font-size: 11px;
+        color: #a4aab3;
+        padding: 0 2px;
+    }
+
+    .sld-email-toolbar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .sld-email-row {
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        border: 1px solid #eceef0;
+    }
+
+    .sld-email-row-sent {
+        background: #f4f8f5;
+    }
+
+    .sld-email-row-received {
+        background: #f7f8fa;
+    }
+
+    .sld-email-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+    }
+
+    .sld-email-badge-sent {
+        background: #eaf7ee;
+        color: #2c8a4b;
+    }
+
+    .sld-email-badge-received {
+        background: #eef2fb;
+        color: #3f5fa8;
+    }
+
+    .sld-email-field {
+        font-size: 12px;
+        margin-bottom: 4px;
+        color: #33383f;
+    }
+
+        .sld-email-field b {
+            color: #7c828a;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+    table.sld-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+    }
+
+        table.sld-table thead th {
+            text-align: left;
+            font-size: 10px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 8px 10px;
+            border: none;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+        }
+
+        table.sld-table tbody td {
+            padding: 10px 10px;
+            font-size: 13px;
+            color: #33383f;
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: middle;
+        }
+
+        table.sld-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .iti {
+        width: 100%;
+        display: block;
+    }
+
+    .iti__country-list {
+        color: #22262b;
+        max-height: 200px;
+        z-index: 400;
+    }
+
+    .sld-email-body-frame {
+        display: block;
+        width: 100%;
+        height: 220px;
+        border: none;
+        border-top: 1px solid #f0f1f3;
+        margin-top: 6px;
+        background: #fff;
+    }
+
+    .sld-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 300;
+        justify-content: flex-end;
+    }
+
+        .sld-modal-backdrop.sld-modal-open {
+            display: flex;
+        }
+
+    .sld-modal {
+        background: #fff;
+        width: 380px;
+        max-width: 92vw;
+        height: 100%;
+        box-shadow: -4px 0 20px rgba(20, 20, 30, .15);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sld-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 16px 18px;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+    .sld-modal-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sld-modal-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sld-modal-subtitle {
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .sld-info-banner {
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 12.5px;
+        line-height: 1.5;
+    }
+
+    .sld-info-banner-green {
+        background: #eaf7ee;
+        color: #1e7b3a;
+    }
+
+    .sld-info-banner-orange {
+        background: #fdf3e3;
+        color: #8a5a10;
+    }
+
+    .sld-modal-close {
+        cursor: pointer;
+        color: #a4aab3;
+        font-size: 20px;
+        line-height: 1;
+    }
+
+    .sld-modal-body {
+        padding: 16px 18px;
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .sld-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 14px 18px;
+        border-top: 1px solid #f0f1f3;
+    }
+
+    .sld-field-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #33383f;
+        margin: 14px 0 6px;
+    }
+
+        .sld-field-label:first-child {
+            margin-top: 0;
+        }
+
+    .sld-type-toggle {
+        display: flex;
+        border: 1px solid #d7dade;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .sld-type-btn {
+        flex: 1;
+        border: none;
+        background: #fff;
+        padding: 8px 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7078;
+        cursor: pointer;
+        border-right: 1px solid #d7dade;
+    }
+
+        .sld-type-btn:last-child {
+            border-right: none;
+        }
+
+        .sld-type-btn.sld-type-btn-active {
+            background: #f0f1f3;
+            color: #22262b;
+        }
+
+    .sld-textarea, .sld-select, .sld-date-input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d7dade;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 12px;
+        color: #33383f;
+    }
+
+    .sld-textarea {
+        resize: vertical;
+        min-height: 60px;
+        font-family: inherit;
+    }
+
+    .sld-checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #33383f;
+        margin-top: 14px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="sld-wrap">
+    <div class="sld-crumb">
+        <a href="@Url.Action("Pipeline", "SalesNew")">Pipeline</a> / <span id="SldCrumbName">&hellip;</span>
+    </div>
+    <a class="sld-back" href="@Url.Action("Pipeline", "SalesNew")">&larr; Back to pipeline</a>
+
+    <div id="SldLoading" class="sld-loading">Loading lead...</div>
+
+    <div id="SldContent" style="display:none;">
+        <div class="sld-card">
+            <div class="sld-header-row">
+                <div class="sld-header-left">
+                    <div class="sld-avatar" id="SldAvatar">?</div>
+                    <div>
+                        <div class="sld-company-name" id="SldCompanyName">&mdash;</div>
+                        <div class="sld-sub-line" id="SldSubLine"></div>
+                    </div>
+                </div>
+                <div class="sld-actions">
+                    <!-- New-stage (SA_MaskEmail, not yet promoted) actions -->
+                    <button type="button" class="sld-btn sld-btn-primary" id="SldOpenBtn" onclick="SldMarkLeadOpen()">&#128193; Open</button>
+                    <button type="button" class="sld-btn sld-btn-danger" id="SldLostNewBtn" onclick="SldMarkLeadNewStatus('Lost')">&#10007; Lost</button>
+                    <button type="button" class="sld-btn" id="SldJunkBtn" onclick="SldMarkLeadNewStatus('Junk')">&#128465; Junk</button>
+                    <!-- Open/Contacted-stage (SA_MaskEmail_Open) actions -->
+                    <button type="button" class="sld-btn sld-btn-primary" id="SldMarkWonBtn" onclick="SldOpenWonModal()">&#10003; Mark won</button>
+                    <button type="button" class="sld-btn sld-btn-danger" id="SldMarkLostBtn" onclick="SldOpenLostModal()">&#10007; Lost</button>
+                    <button type="button" class="sld-btn" id="SldLogFollowupBtn" onclick="SldOpenFollowupModal()">&#9998; Log follow-up</button>
+                    <button type="button" class="sld-btn" id="SldScheduleDemoBtn" onclick="SldOpenDemoModal()">&#128197; Schedule demo</button>
+                    <!-- Shown only once the deal is Won - converts this won lead
+                         into a subscription, same as the SalesIndex "New
+                         subscription" drawer's Convert action. -->
+                    <button type="button" class="sld-btn sld-btn-primary" id="SldAddSubscriptionBtn" onclick="SldGoToAddSubscription()">&#43; Add subscription</button>
+                </div>
+            </div>
+
+            <div class="sld-info-row">
+                <div class="sld-info-cell">
+                    <div class="sld-info-label">Value</div>
+                    <div class="sld-info-value" id="SldValue">&mdash;</div>
+                </div>
+                <div class="sld-info-cell">
+                    <div class="sld-info-label">Expected close</div>
+                    <div class="sld-info-value" id="SldExpectedClose">&mdash;</div>
+                </div>
+                <div class="sld-info-cell">
+                    <div class="sld-info-label">Source</div>
+                    <div class="sld-info-value" id="SldSource">&mdash;</div>
+                </div>
+                <div class="sld-info-cell">
+                    <div class="sld-info-label">Owner</div>
+                    <div class="sld-info-value" id="SldOwner">&mdash;</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sld-tabs">
+            <div class="sld-tab sld-tab-active" data-tab="overview" onclick="SldSwitchTab('overview')">Overview</div>
+            <div class="sld-tab" data-tab="activity" onclick="SldSwitchTab('activity')">Activity &amp; follow-ups</div>
+            <div class="sld-tab" data-tab="emails" onclick="SldSwitchTab('emails')">Emails</div>
+            <div class="sld-tab" data-tab="contacts" onclick="SldSwitchTab('contacts')">Contacts</div>
+            <div class="sld-tab" data-tab="order" onclick="SldSwitchTab('order')">Order &amp; handover</div>
+            <div class="sld-tab" data-tab="contract" onclick="SldSwitchTab('contract')">Contract</div>
+        </div>
+
+        <div class="sld-tab-content sld-tab-content-active" id="SldTabOverview">
+            <div class="sld-banner">
+                <b>&#128161;</b> This one record replaces the Update-lead, Full-details and Email-history pages. Everything for working this lead &mdash; details, activity, the email thread, contacts and the quote &mdash; lives in these tabs.
+            </div>
+
+            <div class="sld-two-col">
+                <div class="sld-card" id="SldSummaryCard">
+                    <div class="sld-panel-head">
+                        <div class="sld-panel-title" style="margin:0;">Lead summary</div>
+                        <div>
+                            <button type="button" class="sld-btn" id="SldSumEditBtn" style="display:none; padding:3px 10px; font-size:12px;" onclick="SldStartSummaryEdit()">&#9998; Edit</button>
+                            <button type="button" class="sld-btn" id="SldSumCancelBtn" style="display:none; padding:3px 10px; font-size:12px;" onclick="SldCancelEdit()">Cancel</button>
+                            <button type="button" class="sld-btn sld-btn-primary" id="SldSumSaveBtn" style="display:none; padding:3px 10px; font-size:12px;" onclick="SldSaveLeadEdit()">Save</button>
+                        </div>
+                    </div>
+                    <div class="sld-panel-row"><span class="sld-panel-label">Stage</span><span class="sld-panel-value" id="SldSumStage">&mdash;</span></div>
+                    <div class="sld-panel-row"><span class="sld-panel-label">Lead score</span><span class="sld-panel-value" id="SldSumScore">&mdash;</span></div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Type</span>
+                        <span class="sld-panel-value" id="SldSumType">&mdash;</span>
+                        <select class="sld-edit-input" id="SldEditLeadType"><option value="">&mdash;</option><option value="Inbound">Inbound</option><option value="Outbound">Outbound</option></select>
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Source</span>
+                        <span class="sld-panel-value" id="SldSumSource">&mdash;</span>
+                        <input type="text" class="sld-edit-input" id="SldEditSource" placeholder="Source" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Interested in</span>
+                        <span class="sld-panel-value" id="SldSumInterested">&mdash;</span>
+                        <input type="text" class="sld-edit-input" id="SldEditInterested" placeholder="Interested in" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Value</span>
+                        <span class="sld-panel-value" id="SldSumValue">&mdash;</span>
+                        <input type="number" class="sld-edit-input" id="SldEditAmount" placeholder="Amount (USD)" min="0" step="0.01" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Expected close</span>
+                        <span class="sld-panel-value" id="SldSumClose">&mdash;</span>
+                        <input type="date" class="sld-edit-input" id="SldEditClose" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Next follow-up</span>
+                        <span class="sld-panel-value" id="SldSumFollowup">&mdash;</span>
+                    </div>
+                </div>
+
+                <div class="sld-card" id="SldCompanyCard">
+                    <div class="sld-panel-head">
+                        <div class="sld-panel-title" style="margin:0;">Company &amp; contact</div>
+                        <div>
+                            <button type="button" class="sld-btn" id="SldCoEditBtn" style="display:none; padding:3px 10px; font-size:12px;" onclick="SldStartCompanyEdit()">&#9998; Edit</button>
+                            <button type="button" class="sld-btn" id="SldCoCancelBtn" style="display:none; padding:3px 10px; font-size:12px;" onclick="SldCancelEdit()">Cancel</button>
+                            <button type="button" class="sld-btn sld-btn-primary" id="SldCoSaveBtn" style="display:none; padding:3px 10px; font-size:12px;" onclick="SldSaveLeadEdit()">Save</button>
+                        </div>
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Company</span>
+                        <span class="sld-panel-value" id="SldCoCompany">&mdash;</span>
+                        <input type="text" class="sld-edit-input" id="SldEditCompany" placeholder="Company" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Contact</span>
+                        <span class="sld-panel-value" id="SldCoContact">&mdash;</span>
+                        <input type="text" class="sld-edit-input" id="SldEditContact" placeholder="Contact name" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Email</span>
+                        <span class="sld-panel-value" id="SldCoEmail">&mdash;</span>
+                        <input type="text" class="sld-edit-input" id="SldEditEmail" placeholder="name@company.com" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Phone</span>
+                        <span class="sld-panel-value" id="SldCoPhone">&mdash;</span>
+                        <input type="text" class="sld-edit-input" id="SldEditPhone" placeholder="Phone" />
+                    </div>
+                    <div class="sld-panel-row">
+                        <span class="sld-panel-label">Country</span>
+                        <span class="sld-panel-value" id="SldCoCountry">&mdash;</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sld-tab-content" id="SldTabActivity">
+            <div class="sld-card">
+                <div class="sld-activity-head">
+                    <div class="sld-panel-title" style="margin:0;">Activity &amp; follow-ups</div>
+                    <button type="button" class="sld-btn sld-btn-primary" id="SldActivityLogFollowupBtn" onclick="SldOpenFollowupModal()">&#9998; Log follow-up</button>
+                </div>
+                <input type="text" id="SldActivitySearch" class="sld-select" style="margin-bottom:12px;" placeholder="Search follow-up notes, type or stage...">
+                <div id="SldActivityList"><div class="sld-empty-tab">Loading...</div></div>
+                <div class="sld-pager" id="SldActivityPager"></div>
+            </div>
+        </div>
+        <div class="sld-tab-content" id="SldTabEmails">
+            <div class="sld-card">
+                <div class="sld-activity-head">
+                    <div class="sld-panel-title" style="margin:0;">Email history</div>
+                </div>
+                <div class="sld-email-toolbar">
+                    <select id="SldEmailSelect" class="sld-select" style="max-width:320px;"></select>
+                    <button type="button" class="sld-btn sld-btn-primary" onclick="SldEmailCurrentPage=1; SldLoadEmailHistory();">Search</button>
+                </div>
+                <div id="SldEmailList"><div class="sld-empty-tab">Loading...</div></div>
+                <div class="sld-pager" id="SldEmailPager"></div>
+            </div>
+        </div>
+        <div class="sld-tab-content" id="SldTabContacts">
+            <div class="sld-card">
+                <div class="sld-activity-head">
+                    <div class="sld-panel-title" style="margin:0;">Contacts</div>
+                    <button type="button" class="sld-btn sld-btn-primary" id="SldAddContactBtn" onclick="SldOpenAddContactModal()">+ Add contact</button>
+                </div>
+                <table class="sld-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Designation</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="SldContactRows">
+                        <tr><td colspan="5" class="sld-empty-tab">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="sld-tab-content" id="SldTabOrder">
+            <div class="sld-order-grid">
+                <div class="sld-card">
+                    <div class="sld-panel-title">Quote</div>
+                    @*<div class="sld-order-row"><span class="sld-order-label">Products</span><span class="sld-order-value" id="SldOrderProducts">&mdash;</span></div>*@
+                    <div class="sld-order-row"><span class="sld-order-label">Amount</span><span class="sld-order-value" id="SldOrderAmount">&mdash;</span></div>
+                    <div class="sld-order-row"><span class="sld-order-label">Currency</span><span class="sld-order-value" id="SldOrderCurrency">&mdash;</span></div>
+                    <div class="sld-order-row"><span class="sld-order-label">Payment terms</span><span class="sld-order-value" id="SldOrderPaymentTerms">&mdash;</span></div>
+                    <button type="button" class="sld-btn sld-btn-success" id="SldProformaBtn" style="margin-top:14px;" onclick="SldGoToProformaInvoice()">Create proforma invoice</button>
+                </div>
+                <div class="sld-card">
+                    <div class="sld-panel-title">Closing &amp; handover</div>
+                    <div id="SldClosingNotWon">
+                        <div class="sld-empty-tab" style="padding:10px 0 16px;">
+                            Win this deal to begin closing.<br>
+                            Sales Order Form &rarr; PO (Net 30/60) or advance payment &rarr; account created &amp; handed to CSM.
+                        </div>
+                        <button type="button" class="sld-btn sld-btn-primary" id="SldOrderMarkWonBtn" onclick="SldOpenWonModal()">&#10003; Mark won</button>
+                    </div>
+                    <div id="SldClosingWon" style="display:none;">
+                        <div class="sld-empty-tab" style="padding:10px 0 4px;">This deal is won &mdash; closing checklist coming soon.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sld-tab-content" id="SldTabContract">
+            <div class="sld-card">
+                <div class="sld-panel-title">Contract sign</div>
+                <div id="SldContractBody">
+                    <div class="sld-empty-tab" style="padding:20px 0;">Loading&hellip;</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sld-modal-backdrop" id="SldFollowupModalBackdrop">
+    <div class="sld-modal">
+        <div class="sld-modal-header">
+            <div class="sld-modal-header-left">
+                <div class="sld-avatar" id="SldModalAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="sld-modal-title">Log follow-up</div>
+                    <div class="sld-modal-subtitle" id="SldModalSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="sld-modal-close" onclick="SldCloseFollowupModal()">&times;</span>
+        </div>
+        <div class="sld-modal-body">
+            <div class="sld-field-label">Type</div>
+            <div class="sld-type-toggle" id="SldTypeToggle">
+                <button type="button" class="sld-type-btn sld-type-btn-active" data-type="Call" onclick="SldSelectType('Call')">&#128222; Call</button>
+                <button type="button" class="sld-type-btn" data-type="Email" onclick="SldSelectType('Email')">&#9993; Email</button>
+                <button type="button" class="sld-type-btn" data-type="Meeting" onclick="SldSelectType('Meeting')">&#9635; Meeting</button>
+            </div>
+
+            <div class="sld-field-label">What happened?</div>
+            <textarea id="SldDiscussionText" class="sld-textarea" placeholder="e.g. Discussed EU scope and pricing"></textarea>
+
+            <div class="sld-field-label">Move to stage</div>
+            <select id="SldStageSelect" class="sld-select"></select>
+
+            <div class="sld-field-label">Next follow-up date</div>
+            <input type="date" id="SldNextFollowupDate" class="sld-date-input">
+
+            @*<label class="sld-checkbox-row">
+                <input type="checkbox" id="SldAddToMyDay" checked>
+                Add the next follow-up to My Day
+            </label>*@
+        </div>
+        <div class="sld-modal-footer">
+            <button type="button" class="sld-btn" onclick="SldCloseFollowupModal()">Cancel</button>
+            <button type="button" class="sld-btn sld-btn-primary" onclick="SldSaveFollowupModal()">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="sld-modal-backdrop" id="SldLostModalBackdrop">
+    <div class="sld-modal">
+        <div class="sld-modal-header">
+            <div class="sld-modal-header-left">
+                <div class="sld-avatar" id="SldLostModalAvatar" style="width:34px;height:34px;font-size:13px;background:#e2453c;">?</div>
+                <div>
+                    <div class="sld-modal-title">Mark lost</div>
+                    <div class="sld-modal-subtitle" id="SldLostModalSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="sld-modal-close" onclick="SldCloseLostModal()">&times;</span>
+        </div>
+        <div class="sld-modal-body">
+            <div class="sld-field-label" style="margin-top:0;">Reason for loss <span style="color:#e2453c">*</span></div>
+            <div class="sld-type-toggle" id="SldLostReasonChips" style="flex-wrap:wrap; height:auto;">
+                <button type="button" class="sld-type-btn" onclick="SldPickLostReason('Budget')">Budget</button>
+                <button type="button" class="sld-type-btn" onclick="SldPickLostReason('Went with competitor')">Went with competitor</button>
+                <button type="button" class="sld-type-btn" onclick="SldPickLostReason('No response')">No response</button>
+                <button type="button" class="sld-type-btn" onclick="SldPickLostReason('Not a fit')">Not a fit</button>
+                <button type="button" class="sld-type-btn" onclick="SldPickLostReason('Bad timing')">Bad timing</button>
+            </div>
+            <textarea id="SldLostReasonText" class="sld-textarea" placeholder="Why was this lead lost?"></textarea>
+        </div>
+        <div class="sld-modal-footer">
+            <button type="button" class="sld-btn" onclick="SldCloseLostModal()">Cancel</button>
+            <button type="button" class="sld-btn sld-btn-danger" onclick="SldSaveLostModal()">Mark as lost</button>
+        </div>
+    </div>
+</div>
+
+<div class="sld-modal-backdrop" id="SldWonModalBackdrop">
+    <div class="sld-modal">
+        <div class="sld-modal-header">
+            <div class="sld-modal-header-left">
+                <div class="sld-avatar" id="SldWonModalAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="sld-modal-title">Mark won &mdash; start closing</div>
+                    <div class="sld-modal-subtitle" id="SldWonModalSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="sld-modal-close" onclick="SldCloseWonModal()">&times;</span>
+        </div>
+        <div class="sld-modal-body">
+            <div class="sld-info-banner sld-info-banner-green">
+                &#10003; Winning starts the closing process. The account is created and handed to the CSM <b>only after</b> the Sales Order Form is signed and payment is arranged.
+            </div>
+
+            <div class="sld-field-label" style="margin-top:14px;">Final contract value (USD) <span style="color:#e2453c">*</span></div>
+            <input type="number" id="SldWonAmount" class="sld-select" placeholder="e.g. 1200" min="0" step="0.01">
+
+            <div class="sld-field-label">Currency <span style="color:#e2453c">*</span></div>
+            <select id="SldWonCurrency" class="sld-select" onchange="SldWonCurrencyChanged()">
+                <option value="">Select Currency</option>
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+            </select>
+
+            <!-- Only shown when Currency = INR - USD amount above stays the
+                 mandatory figure either way, this is an optional secondary
+                 amount saved separately into SA_MaskEmail_Open.AmountINR. -->
+            <div id="SldWonAmountINRField" style="display:none;">
+                <div class="sld-field-label">Final contract value (INR)</div>
+                <input type="number" id="SldWonAmountINR" class="sld-select" placeholder="e.g. 100000" min="0" step="0.01">
+            </div>
+
+            <div class="sld-field-label">Payment method</div>
+            <div class="sld-type-toggle" id="SldWonPaymentToggle">
+                <button type="button" class="sld-type-btn sld-type-btn-active" data-method="PurchaseOrder" onclick="SldSelectWonPaymentMethod('PurchaseOrder')">Purchase Order</button>
+                <button type="button" class="sld-type-btn" data-method="AdvancePayment" onclick="SldSelectWonPaymentMethod('AdvancePayment')">Advance payment</button>
+            </div>
+
+            <div id="SldWonPaymentTermsField">
+                <div class="sld-field-label">Payment terms</div>
+                <select id="SldWonPaymentTerms" class="sld-select">
+                    <option value="Net 30">Net 30</option>
+                    <option value="Net 60">Net 60</option>
+                    <option value="90 days">90 days</option>
+                </select>
+            </div>
+
+            <div id="SldWonInvoiceField" style="display:none;">
+                <div class="sld-field-label">Invoice Number <span style="color:#e2453c">*</span></div>
+                <input type="text" id="SldWonInvoiceNumber" class="sld-select" placeholder="Invoice number">
+            </div>
+            <div id="sidOrderform">
+
+                <div class="sld-field-label">Upload Sales Order Form<span style="color:#e2453c">*</span></div>
+                <input type="file" placeholder="FileUpload" id="FileUpload" name="FileUpload" size="23" class="sld-select" onchange="SldWonFileSelected()" />
+                <div id="SldWonFileName" style="font-size:11.5px; color:#7c828a; margin-top:4px;">No file chosen</div>
+                <input type="text" class="sld-select" placeholder="Source" id="Source" name="Source" style="display:none;" />
+            </div>
+
+            <div class="sld-field-label">Contract sign start date</div>
+            <input type="date" id="SldWonContractStart" class="sld-select" />
+
+            <div class="sld-field-label">Contract sign end date</div>
+            <input type="date" id="SldWonContractEnd" class="sld-select" />
+
+            <div class="sld-info-banner sld-info-banner-orange" style="margin-top:14px;">
+                &rarr; Next, complete the <b>closing checklist</b> on the lead: sign the Sales Order Form and confirm payment. Then you can create the account, which routes <b>Operations &rarr; Finance &rarr; Department Head</b> before logins go live.
+            </div>
+        </div>
+        <div class="sld-modal-footer">
+            <button type="button" class="sld-btn" onclick="SldCloseWonModal()">Cancel</button>
+            <button type="button" class="sld-btn sld-btn-primary" onclick="SldSaveWonModal()">Mark as won</button>
+        </div>
+    </div>
+</div>
+
+<div class="sld-modal-backdrop" id="SldDemoModalBackdrop">
+    <div class="sld-modal">
+        <div class="sld-modal-header">
+            <div class="sld-modal-header-left">
+                <div class="sld-avatar" id="SldDemoModalAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="sld-modal-title">Schedule demo</div>
+                    <div class="sld-modal-subtitle" id="SldDemoModalSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="sld-modal-close" onclick="SldCloseDemoModal()">&times;</span>
+        </div>
+        <div class="sld-modal-body">
+            <div class="sld-field-label" style="margin-top:0;">Date</div>
+            <input type="date" id="SldDemoDate" class="sld-date-input">
+
+            <div class="sld-field-label">Time</div>
+            <input type="time" id="SldDemoTime" class="sld-date-input">
+
+            <div class="sld-field-label">Products to demo</div>
+            <input type="text" id="SldDemoProducts" class="sld-select" placeholder="e.g. Pricing">
+        </div>
+        <div class="sld-modal-footer">
+            <button type="button" class="sld-btn" onclick="SldCloseDemoModal()">Cancel</button>
+            <button type="button" class="sld-btn sld-btn-primary" onclick="SldSaveDemoModal()">Schedule</button>
+        </div>
+    </div>
+</div>
+
+<div class="sld-modal-backdrop" id="SldValueModalBackdrop">
+    <div class="sld-modal">
+        <div class="sld-modal-header">
+            <div class="sld-modal-header-left">
+                <div class="sld-avatar" id="SldValueModalAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="sld-modal-title">Update value</div>
+                    <div class="sld-modal-subtitle" id="SldValueModalSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="sld-modal-close" onclick="SldCloseValueModal()">&times;</span>
+        </div>
+        <div class="sld-modal-body">
+            <div class="sld-field-label" style="margin-top:0;">Deal value (USD) <span style="color:#e2453c">*</span></div>
+            <input type="number" id="SldValueAmount" class="sld-select" placeholder="e.g. 1200" min="0" step="0.01">
+
+            <div class="sld-field-label">Currency</div>
+            <select id="SldValueCurrency" class="sld-select" onchange="SldValueCurrencyChanged()">
+                <option value="">Select Currency</option>
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+            </select>
+
+            <!-- Same INR/USD concept as the "Mark won" modal - USD above
+                 stays the mandatory figure either way, this is an optional
+                 secondary amount saved into SA_MaskEmail_Open.AmountINR,
+                 only shown when Currency = INR. -->
+            <div id="SldValueAmountINRField" style="display:none;">
+                <div class="sld-field-label">Deal value (INR)</div>
+                <input type="number" id="SldValueAmountINR" class="sld-select" placeholder="e.g. 100000" min="0" step="0.01">
+            </div>
+        </div>
+        <div class="sld-modal-footer">
+            <button type="button" class="sld-btn" onclick="SldCloseValueModal()">Cancel</button>
+            <button type="button" class="sld-btn sld-btn-primary" onclick="SldSaveValueModal()">Save</button>
+        </div>
+    </div>
+</div>
+
+<div class="sld-modal-backdrop" id="SldAddContactModalBackdrop">
+    <div class="sld-modal">
+        <div class="sld-modal-header">
+            <div class="sld-modal-header-left">
+                <div class="sld-avatar" id="SldContactModalAvatar" style="width:34px;height:34px;font-size:13px;">?</div>
+                <div>
+                    <div class="sld-modal-title">Add contact</div>
+                    <div class="sld-modal-subtitle" id="SldContactModalSubtitle">&mdash;</div>
+                </div>
+            </div>
+            <span class="sld-modal-close" onclick="SldCloseAddContactModal()">&times;</span>
+        </div>
+        <div class="sld-modal-body">
+            <div class="sld-field-label" style="margin-top:0;">Name</div>
+            <input type="text" id="SldContactName" class="sld-select" placeholder="Contact name" maxlength="80">
+
+            <div class="sld-field-label">Corporate email</div>
+            <input type="text" id="SldContactEmail" class="sld-select" placeholder="name@company.com" maxlength="80">
+
+            <div class="sld-field-label">Phone</div>
+            <input type="tel" id="SldContactPhone" class="sld-select" maxlength="15">
+
+            <div class="sld-field-label">Designation</div>
+            <input type="text" id="SldContactDesignation" class="sld-select" placeholder="e.g. Procurement Manager" maxlength="80">
+        </div>
+        <div class="sld-modal-footer">
+            <button type="button" class="sld-btn" onclick="SldCloseAddContactModal()">Cancel</button>
+            <button type="button" class="sld-btn sld-btn-primary" onclick="SldSaveAddContact()">Add contact</button>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+
+<script>
+    var SldLeadId = @leadId;
+    var SldSource = "@leadSource";
+    var SldCurrentLead = null;
+
+    function SldEscape(val) {
+        return val ? $("<div>").text(val).html() : "";
+    }
+
+    function SldValueOrDash(val) {
+        return val ? SldEscape(val) : "&mdash;";
+    }
+
+    function SldInitial(name) {
+        if (!name) return "?";
+        return $.trim(name).charAt(0).toUpperCase();
+    }
+
+    function SldFormatMoney(amount, currency) {
+        if (!amount) return "&mdash;";
+        var symbol = (currency === "EUR") ? "\u20AC" : (currency === "GBP") ? "\u00A3" : (currency === "INR") ? "\u20B9" : "$";
+        return symbol + Math.round(amount).toLocaleString("en-IN") + (currency ? " " + SldEscape(currency) : "");
+    }
+
+    function SldFormatDate(dotNetDate, showTodayLabel) {
+        if (!dotNetDate) return "&mdash;";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "&mdash;";
+        if (showTodayLabel) {
+            var today = new Date();
+            if (d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate()) {
+                return "Today";
+            }
+        }
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function SldToDateInputValue(dotNetDate) {
+        if (!dotNetDate) return "";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "";
+        var mm = ("0" + (d.getMonth() + 1)).slice(-2);
+        var dd = ("0" + d.getDate()).slice(-2);
+        return d.getFullYear() + "-" + mm + "-" + dd;
+    }
+
+    function SldSwitchTab(tab) {
+        $(".sld-tab").removeClass("sld-tab-active");
+        $(".sld-tab[data-tab='" + tab + "']").addClass("sld-tab-active");
+        $(".sld-tab-content").removeClass("sld-tab-content-active");
+        $("#SldTab" + tab.charAt(0).toUpperCase() + tab.slice(1)).addClass("sld-tab-content-active");
+        if (tab === "activity") {
+            SldLoadActivity();
+        } else if (tab === "emails") {
+            SldLoadEmailDropdown();
+        } else if (tab === "contacts") {
+            SldLoadContacts();
+        } else if (tab === "contract") {
+            SldLoadContract();
+        }
+    }
+
+    // Contract tab - shows the saved contract-sign dates (SA_ContractSign).
+    function SldLoadContract() {
+        $("#SldContractBody").html('<div class="sld-empty-tab" style="padding:20px 0;">Loading&hellip;</div>');
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetContractSignByLead",
+            data: { id: SldLeadId },
+            dataType: "json"
+        }).done(function (resp) {
+            var rows = (resp && resp.DataList) || [];
+            if (!rows.length) {
+                $("#SldContractBody").html('<div class="sld-empty-tab" style="padding:20px 0;">No contract sign saved yet.</div>');
+                return;
+            }
+            var html = "";
+            for (var i = 0; i < rows.length; i++) {
+                var c = rows[i];
+                html += '<div class="sld-panel-row"><span class="sld-panel-label">Contract sign start date</span><span class="sld-panel-value">' + SldValueOrDash(c.StartDate) + '</span></div>';
+                html += '<div class="sld-panel-row"><span class="sld-panel-label">Contract sign end date</span><span class="sld-panel-value">' + SldValueOrDash(c.EndDate) + '</span></div>';
+                html += '<div class="sld-panel-row"><span class="sld-panel-label">Created by</span><span class="sld-panel-value">' + SldValueOrDash(c.CreatedBy) + '</span></div>';
+                html += '<div class="sld-panel-row"><span class="sld-panel-label">Created on</span><span class="sld-panel-value">' + SldValueOrDash(c.CreatedDate) + '</span></div>';
+                if (i < rows.length - 1) html += '<hr/>';
+            }
+            $("#SldContractBody").html(html);
+        }).fail(function () {
+            $("#SldContractBody").html('<div class="sld-empty-tab" style="padding:20px 0;">Couldn\'t load contract sign.</div>');
+        });
+    }
+
+    function SldComingSoon() {
+        if (window.swal) {
+            swal("Coming soon", "This action isn't wired up yet.", "info");
+        }
+    }
+
+    // ---- Log follow-up modal ---------------------------------------------
+    var SldSelectedType = "Call";
+
+    function SldSelectType(t) {
+        SldSelectedType = t;
+        $(".sld-type-btn").removeClass("sld-type-btn-active");
+        $(".sld-type-btn[data-type='" + t + "']").addClass("sld-type-btn-active");
+    }
+
+    function SldLoadStageOptions(selectedValue) {
+        var options = ["Open", "Won", "Lost", "Junk"];
+        var html = "<option value=''>Select Lead Status</option>";
+        for (var i = 0; i < options.length; i++) {
+            html += "<option value='" + options[i] + "'>" + options[i] + "</option>";
+        }
+        $("#SldStageSelect").html(html);
+        if (selectedValue) $("#SldStageSelect").val(selectedValue);
+    }
+
+    function SldOpenFollowupModal() {
+        if (!SldCurrentLead) return;
+        // Button-level disable can be bypassed via dev tools - re-check here
+        // so the underlying action still can't run on a still-New lead.
+        if (SldSource === "New") {
+            if (window.swal) swal("Not available yet", "Open this lead first before logging a follow-up.", "error");
+            return;
+        }
+        var heading = SldCurrentLead.CompanyName || SldCurrentLead.Name;
+        $("#SldModalAvatar").text(SldInitial(heading));
+        $("#SldModalSubtitle").text(heading || "");
+        SldSelectType("Call");
+        $("#SldDiscussionText").val("");
+        $("#SldNextFollowupDate").val(SldToDateInputValue(SldCurrentLead.SetFollowUp));
+        $("#SldAddToMyDay").prop("checked", true);
+        SldLoadStageOptions(SldCurrentLead.Status);
+        $("#SldFollowupModalBackdrop").addClass("sld-modal-open");
+    }
+
+    function SldCloseFollowupModal() {
+        $("#SldFollowupModalBackdrop").removeClass("sld-modal-open");
+    }
+
+    function SldSaveFollowupModal() {
+        var discussion = $.trim($("#SldDiscussionText").val());
+        var stage = $("#SldStageSelect").val();
+        var nextDate = $("#SldNextFollowupDate").val();
+        var addToMyDay = $("#SldAddToMyDay").is(":checked");
+
+        if (!discussion) {
+            if (window.swal) swal("Add a note", "Describe what happened first.", "warning");
+            return;
+        }
+        if (!stage) {
+            if (window.swal) swal("Pick a stage", "Choose a value for \"Move to stage\" first.", "warning");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/LogFollowupActivity",
+            data: {
+                id: SldLeadId,
+                followupType: SldSelectedType,
+                discussion: discussion,
+                stage: stage,
+                nextFollowUpDate: nextDate,
+                addToMyDay: addToMyDay
+            }
+        }).done(function (response) {
+            if (response && response.Success) {
+                SldCloseFollowupModal();
+                LoadLeadDetail();
+                if ($(".sld-tab[data-tab='activity']").hasClass("sld-tab-active")) {
+                    SldLoadActivity();
+                }
+            } else if (window.swal) {
+                swal("Couldn't save", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            if (window.swal) swal("Couldn't save", "Please try again.", "error");
+        });
+    }
+
+    // ---------- Schedule demo modal ----------
+    function SldOpenDemoModal() {
+        if (!SldCurrentLead) return;
+        // Button-level disable can be bypassed via dev tools - re-check here
+        // so the underlying action still can't run on a still-New lead.
+        if (SldSource === "New") {
+            if (window.swal) swal("Not available yet", "Open this lead first before scheduling a demo.", "error");
+            return;
+        }
+        var heading = SldCurrentLead.CompanyName || SldCurrentLead.Name;
+        $("#SldDemoModalAvatar").text(SldInitial(heading));
+        $("#SldDemoModalSubtitle").text(heading || "");
+        $("#SldDemoDate").val("");
+        $("#SldDemoTime").val("");
+        $("#SldDemoProducts").val("");
+        $("#SldDemoModalBackdrop").addClass("sld-modal-open");
+    }
+
+    function SldCloseDemoModal() {
+        $("#SldDemoModalBackdrop").removeClass("sld-modal-open");
+    }
+
+    function SldSaveDemoModal() {
+        var demoDate = $("#SldDemoDate").val();
+        if (!demoDate) {
+            if (window.swal) swal("Pick a date", "Choose a date for the demo first.", "warning");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/ScheduleDemo",
+            data: {
+                id: SldLeadId,
+                demoDate: demoDate,
+                demoTime: $("#SldDemoTime").val(),
+                productsToDemo: $.trim($("#SldDemoProducts").val())
+            }
+        }).done(function (response) {
+            if (response && response.Success) {
+                SldCloseDemoModal();
+                if (window.swal) swal("Scheduled", "Demo scheduled successfully.", "success");
+            } else if (window.swal) {
+                swal("Couldn't schedule", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            if (window.swal) swal("Couldn't schedule", "Please try again.", "error");
+        });
+    }
+
+    // ---------- Inline edit: Lead summary + Company & contact cards ----------
+    function SldPrefillEditInputs() {
+        if (!SldCurrentLead) return;
+        var l = SldCurrentLead;
+        $("#SldEditLeadType").val(l.LeadType || "");
+        $("#SldEditSource").val(l.Source || "");
+        $("#SldEditInterested").val(l.Message || "");
+        $("#SldEditAmount").val(l.Amount != null ? l.Amount : "");
+        $("#SldEditClose").val(SldToDateInputValue(l.ExpectedCloseDate));
+        $("#SldEditCompany").val(l.CompanyName || "");
+        $("#SldEditContact").val(l.Name || "");
+        $("#SldEditEmail").val(l.CorpEmail || "");
+        $("#SldEditPhone").val(l.ContactNumber || "");
+    }
+
+    function SldStartSummaryEdit() {
+        SldPrefillEditInputs();
+        $("#SldSummaryCard").addClass("sld-editing");
+        $("#SldSumEditBtn").hide();
+        $("#SldSumCancelBtn, #SldSumSaveBtn").show();
+    }
+
+    function SldStartCompanyEdit() {
+        SldPrefillEditInputs();
+        $("#SldCompanyCard").addClass("sld-editing");
+        $("#SldCoEditBtn").hide();
+        $("#SldCoCancelBtn, #SldCoSaveBtn").show();
+    }
+
+    function SldCancelEdit() {
+        $("#SldSummaryCard, #SldCompanyCard").removeClass("sld-editing");
+        $("#SldSumCancelBtn, #SldSumSaveBtn, #SldCoCancelBtn, #SldCoSaveBtn").hide();
+        var st = SldCurrentLead ? (SldCurrentLead.Status || "").toLowerCase() : "";
+        var canEdit = SldCurrentLead && st !== "won" && st !== "new";
+        $("#SldSumEditBtn, #SldCoEditBtn").toggle(!!canEdit);
+    }
+
+    function SldSaveLeadEdit() {
+        if (!SldCurrentLead) return;
+        $("#SldSumSaveBtn, #SldCoSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/UpdateLeadDetails",
+            data: {
+                id: SldLeadId,
+                leadType: $("#SldEditLeadType").val(),
+                source: $.trim($("#SldEditSource").val()),
+                message: $.trim($("#SldEditInterested").val()),
+                amount: $.trim($("#SldEditAmount").val()),
+                expectedCloseDate: $("#SldEditClose").val(),
+                setFollowUp: SldToDateInputValue(SldCurrentLead.SetFollowUp),
+                companyName: $.trim($("#SldEditCompany").val()),
+                name: $.trim($("#SldEditContact").val()),
+                corpEmail: $.trim($("#SldEditEmail").val()),
+                contactNumber: $.trim($("#SldEditPhone").val()),
+                countryName: (SldCurrentLead.CountryName || "")
+            }
+        }).done(function (response) {
+            $("#SldSumSaveBtn, #SldCoSaveBtn").prop("disabled", false).text("Save");
+            if (response && response.Success) {
+                SldCancelEdit();
+                LoadLeadDetail();
+            } else if (window.swal) {
+                swal("Couldn't save", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            $("#SldSumSaveBtn, #SldCoSaveBtn").prop("disabled", false).text("Save");
+            if (window.swal) swal("Couldn't save", "Please try again.", "error");
+        });
+    }
+
+    // ---------- Update value modal (Lead summary card, Open/Contacted-stage
+    // leads only, not yet Won - visibility enforced in
+    // SldUpdateActionButtons) ----------
+    function SldOpenValueModal() {
+        if (!SldCurrentLead) return;
+        var heading = SldCurrentLead.CompanyName || SldCurrentLead.Name;
+        $("#SldValueModalAvatar").text(SldInitial(heading));
+        $("#SldValueModalSubtitle").text(heading || "");
+        $("#SldValueAmount").val(SldCurrentLead.Amount != null ? SldCurrentLead.Amount : "");
+        $("#SldValueCurrency").val(SldCurrentLead.Currency || "");
+        $("#SldValueAmountINR").val(SldCurrentLead.AmountINR != null ? SldCurrentLead.AmountINR : "");
+        SldValueCurrencyChanged();
+        $("#SldValueModalBackdrop").addClass("sld-modal-open");
+    }
+
+    function SldCloseValueModal() {
+        $("#SldValueModalBackdrop").removeClass("sld-modal-open");
+    }
+
+    // USD stays the mandatory figure regardless of which Currency is picked -
+    // same concept as the "Mark won" modal's SldWonCurrencyChanged.
+    function SldValueCurrencyChanged() {
+        var isInr = $("#SldValueCurrency").val() === "INR";
+        $("#SldValueAmountINRField").toggle(isInr);
+        if (!isInr) {
+            $("#SldValueAmountINR").val("");
+        }
+    }
+
+    function SldSaveValueModal() {
+        var amount = $.trim($("#SldValueAmount").val());
+        if (amount === "") {
+            if (window.swal) swal("Warning", "Please enter the deal value (USD).", "error");
+            return;
+        }
+        var currency = $("#SldValueCurrency").val();
+        var amountINR = $.trim($("#SldValueAmountINR").val());
+
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/UpdateLeadValue",
+            data: {
+                id: SldLeadId,
+                amount: amount,
+                currency: currency || "",
+                amountINR: amountINR
+            }
+        }).done(function (response) {
+            if (response && response.Success) {
+                SldCloseValueModal();
+                if (window.swal) swal("Updated", "Value updated successfully.", "success");
+                LoadLeadDetail();
+            } else if (window.swal) {
+                swal("Couldn't update", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            if (window.swal) swal("Couldn't update", "Please try again.", "error");
+        });
+    }
+
+    // ---- Activity & follow-ups tab ----------------------------------------
+    var SldActivityCurrentPage = 1;
+
+    function SldActivityIcon(type) {
+        if (type === "Email") return "&#9993;";
+        if (type === "Meeting") return "&#9635;";
+        return "&#128222;";
+    }
+
+    // Pure display windowing over an ActivePage/NumberOfPages the server
+    // already computed -- this does not calculate a page count itself, it
+    // only decides which of the already-known page numbers to show.
+    function SldCompactPageList(activePage, numberOfPages) {
+        if (numberOfPages <= 7) {
+            var arr = [];
+            for (var i = 1; i <= numberOfPages; i++) arr.push(i);
+            return arr;
+        }
+        if (activePage <= 4) return [1, 2, 3, 4, 5, "...", numberOfPages];
+        if (activePage >= numberOfPages - 3) return [1, "...", numberOfPages - 4, numberOfPages - 3, numberOfPages - 2, numberOfPages - 1, numberOfPages];
+        return [1, "...", activePage - 1, activePage, activePage + 1, "...", numberOfPages];
+    }
+
+    // Shared by every paged list on this page (Activity tab, Emails tab, ...)
+    // -- purely a renderer over ActivePage/NumberOfPages the server already
+    // computed, driven by a caller-supplied "go to page" function name.
+    function SldRenderPager(containerId, activePage, numberOfPages, gotoFnName) {
+        if (!numberOfPages || numberOfPages <= 1) { $("#" + containerId).html(""); return; }
+        var pages = SldCompactPageList(activePage, numberOfPages);
+        var html = "";
+        html += "<button type='button' class='sld-pg-btn' " + (activePage <= 1 ? "disabled" : "onclick='" + gotoFnName + "(" + (activePage - 1) + ")'") + ">&lsaquo;</button>";
+        for (var i = 0; i < pages.length; i++) {
+            var p = pages[i];
+            if (p === "...") html += "<span class='sld-pg-dots'>&hellip;</span>";
+            else html += "<button type='button' class='sld-pg-btn" + (p === activePage ? " sld-pg-active" : "") + "' onclick='" + gotoFnName + "(" + p + ")'>" + p + "</button>";
+        }
+        html += "<button type='button' class='sld-pg-btn' " + (activePage >= numberOfPages ? "disabled" : "onclick='" + gotoFnName + "(" + (activePage + 1) + ")'") + ">&rsaquo;</button>";
+        $("#" + containerId).html(html);
+    }
+
+    function GoToSldActivityPage(page) {
+        SldActivityCurrentPage = page;
+        SldLoadActivity();
+    }
+
+    function SldLoadActivity() {
+        var search = $.trim($("#SldActivitySearch").val());
+        $("#SldActivityList").html("<div class='sld-empty-tab'>Loading...</div>");
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetLeadActivity",
+            data: { id: SldLeadId, search: search, pageNumber: SldActivityCurrentPage },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var activePage = (response && response.ActivePage) || 1;
+            var numberOfPages = (response && response.NumberOfPages) || 0;
+            var isLastPage = numberOfPages === 0 || activePage >= numberOfPages;
+
+            SldActivityCurrentPage = activePage;
+
+            var html = "";
+            for (var i = 0; i < list.length; i++) {
+                var item = list[i];
+                html += "<div class='sld-activity-row'>";
+                html += "  <div class='sld-activity-icon'>" + SldActivityIcon(item.FollowupType) + "</div>";
+                html += "  <div style='flex:1;'><div class='sld-activity-title'>Follow-up logged</div>";
+                html += "  <div class='sld-activity-sub'>" + SldValueOrDash(item.Discussion) + "</div>";
+                if (item.SetFollowUp) {
+                    html += "  <div class='sld-activity-sub'>Next follow-up: " + SldFormatDate(item.SetFollowUp, true) + "</div>";
+                }
+                html += "  </div>";
+                html += "  <div class='sld-activity-date'>" + SldFormatDate(item.CreatedDate) + "</div>";
+                html += "</div>";
+            }
+            if (isLastPage && !search && SldCurrentLead) {
+                html += "<div class='sld-activity-row'>";
+                html += "  <div class='sld-activity-icon'>&#128196;</div>";
+                html += "  <div style='flex:1;'><div class='sld-activity-title'>Lead created</div>";
+                html += "  <div class='sld-activity-sub'>Source: " + SldValueOrDash(SldCurrentLead.Source) + "</div></div>";
+                html += "  <div class='sld-activity-date'>" + SldFormatDate(SldCurrentLead.CreatedDate) + "</div>";
+                html += "</div>";
+            }
+            if (!html) html = "<div class='sld-empty-tab'>" + (search ? "No matches found." : "No activity yet.") + "</div>";
+            $("#SldActivityList").html(html);
+            SldRenderPager("SldActivityPager", activePage, numberOfPages, "GoToSldActivityPage");
+        }).fail(function () {
+            $("#SldActivityList").html("<div class='sld-empty-tab'>Couldn't load activity.</div>");
+        });
+    }
+
+    var SldActivitySearchTimer = null;
+    $(document).on("input", "#SldActivitySearch", function () {
+        clearTimeout(SldActivitySearchTimer);
+        SldActivitySearchTimer = setTimeout(function () {
+            SldActivityCurrentPage = 1;
+            SldLoadActivity();
+        }, 300);
+    });
+
+    // ---- Emails tab --------------------------------------------------------
+    // Reuses the existing /OutLookChatHistory endpoints as-is (no new
+    // controller/DAL/proc here) -- those already return the exact same
+    // ShowingFrom/ShowingTo/RecordsCount/ActivePage/PagerSize/NumberOfPages
+    // contract, just restyled to match this page.
+    var SldEmailCurrentPage = 1;
+
+    function SldLoadEmailDropdown() {
+        if (!SldCurrentLead || !SldCurrentLead.CorpEmail) {
+            $("#SldEmailList").html("<div class='sld-empty-tab'>No email on this lead.</div>");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/OutLookChatHistory/GetEmailDDL",
+            data: { UserType: "NotAdmin", Email: SldCurrentLead.CorpEmail },
+            async: true
+        }).done(function (data) {
+            var html = "<option value=''>Select User Emails</option>";
+            var list = (data && data.DateList) || [];
+            for (var i = 0; i < list.length; i++) {
+                html += "<option value='" + SldEscape(list[i].Email) + "'>" + SldEscape(list[i].Email) + "</option>";
+            }
+            $("#SldEmailSelect").html(html);
+            var emailToBind = SldCurrentLead.CorpEmail;
+            $("#SldEmailSelect option[value='" + emailToBind + "']").remove();
+            $("#SldEmailSelect").append(new Option(emailToBind, emailToBind));
+            $("#SldEmailSelect").val(emailToBind);
+            $("#SldEmailPager").html("");
+            $("#SldEmailList").html("<div class='sld-empty-tab'>Select an email and click Search.</div>");
+        }).fail(function () {
+            $("#SldEmailList").html("<div class='sld-empty-tab'>Couldn't load email list.</div>");
+        });
+    }
+
+    function SldRenderEmailRows(list) {
+        if (!list || !list.length) {
+            $("#SldEmailList").html("<div class='sld-empty-tab'>No emails found.</div>");
+            return;
+        }
+        var html = "";
+        var bodies = [];
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var isReceived = !item.SentDate;
+            bodies.push(item.Body || "");
+            html += "<div class='sld-email-row " + (isReceived ? "sld-email-row-received" : "sld-email-row-sent") + "'>";
+            html += isReceived
+                ? "<span class='sld-email-badge sld-email-badge-received'>Received mail</span>"
+                : "<span class='sld-email-badge sld-email-badge-sent'>Sent mail</span>";
+            html += "<div class='sld-email-field'><b>Sender:</b>" + SldValueOrDash(item.Sender) + "</div>";
+            html += "<div class='sld-email-field'><b>Subject:</b>" + SldValueOrDash(item.Subject) + "</div>";
+            html += "<div class='sld-email-field'><b>Recipient:</b>" + SldValueOrDash(item.Recipient) + "</div>";
+            if (item.CC_EMAil) html += "<div class='sld-email-field'><b>CC:</b>" + SldEscape(item.CC_EMAil) + "</div>";
+            if (item.BCC_EMail) html += "<div class='sld-email-field'><b>BCC:</b>" + SldEscape(item.BCC_EMail) + "</div>";
+            if (item.DateReceived) html += "<div class='sld-email-field'><b>Received date:</b>" + SldEscape(item.DateReceived) + "</div>";
+            if (item.SentDate) html += "<div class='sld-email-field'><b>Send date:</b>" + SldEscape(item.SentDate) + "</div>";
+            html += "<iframe class='sld-email-body-frame' id='SldEmailFrame_" + i + "' sandbox=''></iframe>";
+            if (item.attachmentFilePaths) {
+                var files = item.attachmentFilePaths.split(",");
+                var attHtml = "";
+                for (var f = 0; f < files.length; f++) {
+                    var fp = $.trim(files[f]);
+                    var fileName = fp.split("\\").pop().split("/").pop();
+                    var url = "/OutLookChatHistory/DownloadFile?filePath=E:\\EmailAttachments&fileName=" + encodeURIComponent(fileName);
+                    attHtml += "<a href='" + url + "' target='_blank' style='display:block;'>" + SldEscape(fileName) + "</a>";
+                }
+                html += "<div class='sld-email-field'><b>Attachments:</b></div>" + attHtml;
+            }
+            html += "</div>";
+        }
+        $("#SldEmailList").html(html);
+
+        // Render each body as actual HTML, sandboxed in its own iframe so
+        // Outlook's inline <style>/MSO markup can't leak into this page --
+        // set via the srcdoc property (not a string attribute) so nothing
+        // needs manual escaping.
+        for (var b = 0; b < bodies.length; b++) {
+            var frame = document.getElementById("SldEmailFrame_" + b);
+            if (frame) frame.srcdoc = bodies[b];
+        }
+    }
+
+    function SldLoadEmailHistory() {
+        var selectedEmail = $("#SldEmailSelect").val() || (SldCurrentLead && SldCurrentLead.CorpEmail) || "";
+        $("#SldEmailList").html("<div class='sld-empty-tab'>Loading...</div>");
+        var url = "/OutLookChatHistory/GetUserEmailAllhistoryDetails?searchKeyword='" + encodeURIComponent(selectedEmail) + "'&PageNumber=" + SldEmailCurrentPage + "&Email=" + encodeURIComponent(selectedEmail);
+        $.ajax({
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (json) {
+            var list = (json && json.DateList) || [];
+            SldRenderEmailRows(list);
+            var activePage = (json && json.ActivePage) || 1;
+            var numberOfPages = (json && json.NumberOfPages) || 0;
+            SldEmailCurrentPage = activePage;
+            SldRenderPager("SldEmailPager", activePage, numberOfPages, "GoToSldEmailPage");
+        }).fail(function () {
+            $("#SldEmailList").html("<div class='sld-empty-tab'>Couldn't load email history.</div>");
+        });
+    }
+
+    function GoToSldEmailPage(page) {
+        SldEmailCurrentPage = page;
+        SldLoadEmailHistory();
+    }
+
+    // ---- Contacts tab -------------------------------------------------------
+    var SldContactPhoneIti = null;
+
+    function SldRenderContactRows(list) {
+        if (!list || !list.length) {
+            $("#SldContactRows").html("<tr><td colspan='5' class='sld-empty-tab'>No contacts yet.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var phone = [item.ContactCountryCode, item.ContactNumber].filter(function (v) { return !!v; }).join(" ");
+            html += "<tr>";
+            html += "  <td>" + SldValueOrDash(item.Name) + "</td>";
+            html += "  <td>" + SldValueOrDash(item.CorpEmail) + "</td>";
+            html += "  <td>" + SldValueOrDash(phone) + "</td>";
+            html += "  <td>" + SldValueOrDash(item.Designation) + "</td>";
+            html += "  <td>" + (item.IsPrimary ? "<span class='sld-pill sld-pill-blue'><span class='sld-pill-dot'></span>Primary</span>" : "") + "</td>";
+            html += "</tr>";
+        }
+        $("#SldContactRows").html(html);
+    }
+
+    function SldLoadContacts() {
+        $("#SldContactRows").html("<tr><td colspan='5' class='sld-empty-tab'>Loading...</td></tr>");
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetLeadContacts",
+            data: { id: SldLeadId },
+            dataType: "json"
+        }).done(function (response) {
+            SldRenderContactRows((response && response.DataList) || []);
+        }).fail(function () {
+            $("#SldContactRows").html("<tr><td colspan='5' class='sld-empty-tab'>Couldn't load contacts.</td></tr>");
+        });
+    }
+
+    function SldOpenAddContactModal() {
+        if (!SldCurrentLead) return;
+        var heading = SldCurrentLead.CompanyName || SldCurrentLead.Name;
+        $("#SldContactModalAvatar").text(SldInitial(heading));
+        $("#SldContactModalSubtitle").text(heading || "");
+        $("#SldContactName").val("");
+        $("#SldContactEmail").val("");
+        $("#SldContactDesignation").val("");
+        $("#SldContactPhone").val("");
+
+        if (window.intlTelInput) {
+            if (SldContactPhoneIti) {
+                SldContactPhoneIti.destroy();
+                SldContactPhoneIti = null;
+            }
+            SldContactPhoneIti = window.intlTelInput(document.getElementById("SldContactPhone"), {
+                initialCountry: "in",
+                separateDialCode: true
+            });
+        }
+
+        // Digits only, capped at 15 - stop "kitna bhi number" free entry.
+        $("#SldContactPhone").off("input.sldphone").on("input.sldphone", function () {
+            var digits = $(this).val().replace(/\D/g, "");
+            if (digits.length > 15) digits = digits.substring(0, 15);
+            $(this).val(digits);
+        });
+
+        $("#SldAddContactModalBackdrop").addClass("sld-modal-open");
+    }
+
+    function SldCloseAddContactModal() {
+        $("#SldAddContactModalBackdrop").removeClass("sld-modal-open");
+    }
+
+    function SldSaveAddContact() {
+        var name = $.trim($("#SldContactName").val());
+        var email = $.trim($("#SldContactEmail").val());
+        var designation = $.trim($("#SldContactDesignation").val());
+
+        if (!name) {
+            if (window.swal) swal("Add a name", "Contact name is required.", "warning");
+            return;
+        }
+        if (!email) {
+            if (window.swal) swal("Add an email", "Corporate email is required.", "warning");
+            return;
+        }
+        if (!/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(email)) {
+            if (window.swal) swal("Check the email", "That doesn't look like a valid email address.", "warning");
+            return;
+        }
+        if (name.length > 80 || email.length > 80 || designation.length > 80) {
+            if (window.swal) swal("Too long", "Name, email and designation can be at most 80 characters.", "warning");
+            return;
+        }
+
+        var countryCode = "";
+        var contactNumber = $.trim($("#SldContactPhone").val()).replace(/\D/g, "");
+        if (SldContactPhoneIti) {
+            var countryData = SldContactPhoneIti.getSelectedCountryData();
+            countryCode = countryData && countryData.dialCode ? "+" + countryData.dialCode : "";
+        }
+
+        if (!contactNumber) {
+            if (window.swal) swal("Add a phone", "Phone number is required.", "warning");
+            return;
+        }
+        if (contactNumber.length < 7 || contactNumber.length > 15) {
+            if (window.swal) swal("Check the phone", "Phone number should be 7 to 15 digits.", "warning");
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/AddLeadContact",
+            data: {
+                id: SldLeadId,
+                name: name,
+                corpEmail: email,
+                contactCountryCode: countryCode,
+                contactNumber: contactNumber,
+                designation: designation
+            }
+        }).done(function (response) {
+            if (response && response.Success) {
+                SldCloseAddContactModal();
+                SldLoadContacts();
+            } else if (window.swal) {
+                swal("Couldn't add contact", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            if (window.swal) swal("Couldn't add contact", "Please try again.", "error");
+        });
+    }
+
+    // ---------- Mark won - start closing modal ----------
+    var SldWonPaymentMethod = "PurchaseOrder";
+
+    function SldOpenWonModal() {
+        // Button-level disable can be bypassed via dev tools - re-check here
+        // so the underlying action still can't run on a still-New lead.
+        if (SldSource === "New") {
+            if (window.swal) swal("Not available yet", "Open this lead first before marking it won.", "error");
+            return;
+        }
+        SldWonPaymentMethod = "PurchaseOrder";
+        $("#SldWonAmount").val("");
+        $("#SldWonCurrency").val("");
+        $("#SldWonAmountINR").val("");
+        $("#SldWonAmountINRField").hide();
+        $("#SldWonPaymentTerms").val("Net 30");
+        $("#SldWonInvoiceNumber").val("");
+        $(".sld-type-btn[data-method]").removeClass("sld-type-btn-active");
+        $(".sld-type-btn[data-method='PurchaseOrder']").addClass("sld-type-btn-active");
+        $("#SldWonPaymentTermsField").show();
+        $("#SldWonInvoiceField").hide();
+
+        $("#FileUpload").val("");
+        $("#SldWonFileName").text("No file chosen");
+
+        var heading = (SldCurrentLead && (SldCurrentLead.CompanyName || SldCurrentLead.Name)) || "Lead";
+        $("#SldWonModalAvatar").text(SldInitial(heading));
+        $("#SldWonModalSubtitle").text(heading);
+        $("#SldWonModalBackdrop").addClass("sld-modal-open");
+    }
+
+    function SldCloseWonModal() {
+        $("#SldWonModalBackdrop").removeClass("sld-modal-open");
+    }
+
+    // USD stays the mandatory figure regardless of which Currency is picked -
+    // this INR field is just an optional secondary amount, only relevant
+    // (so only shown) when Currency = INR.
+    function SldWonCurrencyChanged() {
+        var isInr = $("#SldWonCurrency").val() === "INR";
+        $("#SldWonAmountINRField").toggle(isInr);
+        if (!isInr) {
+            $("#SldWonAmountINR").val("");
+        }
+    }
+
+    function SldSelectWonPaymentMethod(method) {
+        SldWonPaymentMethod = method;
+        $(".sld-type-btn[data-method]").removeClass("sld-type-btn-active");
+        $(".sld-type-btn[data-method='" + method + "']").addClass("sld-type-btn-active");
+        $("#SldWonPaymentTermsField").toggle(method === "PurchaseOrder");
+        $("#SldWonInvoiceField").toggle(method === "AdvancePayment");
+     
+    }
+
+
+    function UploadFile() {
+        var LeadId = SldLeadId;
+        var files = $("#FileUpload").get(0).files;
+        var fileData = new FormData();
+        fileData.append("LeadId", LeadId);
+        for (var i = 0; i < files.length; i++) {
+            fileData.append("FileUpload", files[i]);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/UploadLeadFiles",
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (result, status, xhr) {
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+    } 
+
+    function SldWonFileSelected() {
+        var input = $("#FileUpload").get(0);
+        if (input && input.files && input.files.length > 0) {
+            $("#SldWonFileName").text(input.files[0].name);
+        } else {
+            $("#SldWonFileName").text("No file chosen");
+        }
+    }
+
+    function SldSaveWonModal() {
+        var amount = $.trim($("#SldWonAmount").val());
+        if (amount === "") {
+            if (window.swal) swal("Warning", "Please enter the final contract value (USD).", "error");
+            return;
+        }
+        var currency = $("#SldWonCurrency").val();
+        if (!currency) {
+            if (window.swal) swal("Warning", "Please select a currency.", "error");
+            return;
+        }
+        var amountINR = $.trim($("#SldWonAmountINR").val());
+        var invoiceNumber = $.trim($("#SldWonInvoiceNumber").val());
+        if (SldWonPaymentMethod === "AdvancePayment" && !invoiceNumber) {
+            if (window.swal) swal("Warning", "Please enter the invoice number.", "error");
+            return;
+        }
+        var filesval = $("#FileUpload").val();
+
+        var files = "";
+    
+        if (filesval == "") {
+        }
+        else {
+            var fileInput = $("#FileUpload").get(0).files[0];
+            var originalName = fileInput.name;
+            var extension = originalName.substring(originalName.lastIndexOf('.'));
+            var nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.'));
+            var dateStamp = new Date().toISOString().slice(0, 10).replace(/-/g, "")
+            files = nameWithoutExt + "_" + dateStamp + "_" + SldLeadId + extension;
+        }
+        if (files == "") {
+            if (window.swal) swal("Warning", "Please Upload Sales Order Form.", "error");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/MarkLeadWon",
+            data: {
+                id: SldLeadId,
+                amount: amount,
+                currency: currency,
+                amountINR: amountINR,
+                paymentOption: SldWonPaymentMethod,
+                paymentTerms: SldWonPaymentMethod === "PurchaseOrder" ? $("#SldWonPaymentTerms").val() : "",
+                invoiceNumber: invoiceNumber,
+                OrderFrom: files
+
+            }
+        }).done(function (response) {
+            if (response && response.Success) {
+                UploadFile();
+                SaveContractSign();
+                SldCloseWonModal();
+                LoadLeadDetail();
+            } else if (window.swal) {
+                swal("Couldn't update", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            if (window.swal) swal("Couldn't update", "Please try again.", "error");
+        });
+    }
+
+    // Contract-sign dates from the "Mark won" modal -> SA_ContractSign
+    // (SalesNew controller). Fired alongside MarkLeadWon on a successful win.
+    function SaveContractSign() {
+        var startDate = $("#SldWonContractStart").val();
+        var endDate = $("#SldWonContractEnd").val();
+        if (!startDate && !endDate) return;
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/SaveContractSign",
+            data: { id: SldLeadId, startDate: startDate, endDate: endDate }
+        });
+    }
+
+    function RenderLeadDetail(lead) {
+        SldCurrentLead = lead;
+        $("#SldLoading").hide();
+        $("#SldContent").show();
+
+        var heading = lead.CompanyName || lead.Name;
+        $("#SldCrumbName").text(heading || "Lead");
+        $("#SldAvatar").text(SldInitial(heading));
+        $("#SldCompanyName").html(SldValueOrDash(heading));
+
+        var subParts = [];
+        if (lead.Name) subParts.push(SldEscape(lead.Name));
+        if (lead.CorpEmail) subParts.push(SldEscape(lead.CorpEmail));
+        if (lead.CountryName) subParts.push(SldEscape(lead.CountryName));
+        var subHtml = subParts.join(" &middot; ");
+        if (lead.Status) subHtml += " <span class='sld-pill sld-pill-gray'><span class='sld-pill-dot'></span>" + SldEscape(lead.Status) + "</span>";
+        if (lead.LeadStatus) subHtml += " <span class='sld-pill sld-pill-blue'><span class='sld-pill-dot'></span>" + SldEscape(lead.LeadStatus) + "</span>";
+        if (lead.LeadType) subHtml += " <span class='sld-pill sld-pill-purple'>" + SldEscape(lead.LeadType) + "</span>";
+        $("#SldSubLine").html(subHtml);
+
+        // Amount is always the mandatory USD figure now (Currency can be
+        // INR for the secondary AmountINR amount, which isn't shown here) -
+        // display always reads as USD, regardless of the stored Currency.
+        $("#SldValue").html(SldFormatMoney(lead.Amount, "USD"));
+        $("#SldExpectedClose").html(SldFormatDate(lead.ExpectedCloseDate));
+        $("#SldSource").html(SldValueOrDash(lead.Source));
+        $("#SldOwner").html(SldValueOrDash(lead.CreatedBy));
+
+        $("#SldSumStage").html(lead.Status ? "<span class='sld-pill sld-pill-gray'><span class='sld-pill-dot'></span>" + SldEscape(lead.Status) + "</span>" : "&mdash;");
+        $("#SldSumScore").html(lead.LeadStatus ? "<span class='sld-pill sld-pill-blue'><span class='sld-pill-dot'></span>" + SldEscape(lead.LeadStatus) + "</span>" : "&mdash;");
+        $("#SldSumType").html(SldValueOrDash(lead.LeadType));
+        $("#SldSumSource").html(SldValueOrDash(lead.Source));
+        $("#SldSumInterested").html(SldValueOrDash(lead.Message));
+        $("#SldSumValue").html(SldFormatMoney(lead.Amount, "USD"));
+        $("#SldSumClose").html(SldFormatDate(lead.ExpectedCloseDate));
+        $("#SldSumFollowup").html(SldFormatDate(lead.SetFollowUp, true));
+
+        $("#SldCoCompany").html(SldValueOrDash(lead.CompanyName));
+        $("#SldCoContact").html(SldValueOrDash(lead.Name));
+        $("#SldCoEmail").html(SldValueOrDash(lead.CorpEmail));
+        var phone = [lead.ContactCountryCode, lead.ContactNumber].filter(function (v) { return !!v; }).join(" ");
+        $("#SldCoPhone").html(SldValueOrDash(phone));
+        $("#SldCoCountry").html(SldValueOrDash(lead.CountryName));
+
+        SldRenderOrderTab(lead);
+        SldUpdateActionButtons(lead);
+    }
+
+    // "Order & handover" tab - reuses the same lead object RenderLeadDetail
+    // already has (New-stage from SA_MaskEmail, Open-stage from
+    // SA_MaskEmail_Open via the existing source-aware GetLeadDetail), so no
+    // separate fetch is needed here.
+    function SldRenderOrderTab(lead) {
+        $("#SldOrderProducts").html(SldValueOrDash(lead.Message));
+        $("#SldOrderAmount").html(SldFormatMoney(lead.Amount, "USD"));
+        $("#SldOrderCurrency").html("USD");
+        $("#SldOrderPaymentTerms").html(lead.PaymentTerms ? SldEscape(lead.PaymentTerms) : "To be set on win (PO Net 30/60 or advance)");
+
+        var isNewStage = SldSource === "New";
+        var isWon = (lead.Status || "").toLowerCase() === "won";
+        $("#SldClosingNotWon").toggle(!isWon);
+        $("#SldClosingWon").toggle(isWon);
+
+        // Mark won (Order tab) only makes sense once the lead's actually
+        // been Opened - disabled (not hidden, so "Win this deal to begin
+        // closing" above it still reads correctly) on a still-New lead.
+        $("#SldOrderMarkWonBtn").prop("disabled", isNewStage).css({
+            opacity: isNewStage ? .5 : 1,
+            cursor: isNewStage ? "not-allowed" : "pointer"
+        });
+
+        // Create proforma invoice only makes sense once the deal is Won.
+        $("#SldProformaBtn").prop("disabled", !isWon).css({
+            opacity: isWon ? 1 : .5,
+            cursor: isWon ? "pointer" : "not-allowed"
+        });
+    }
+
+    function SldGoToProformaInvoice() {
+        // Button-level disable can be bypassed via dev tools - re-check here
+        // so the underlying action still can't run before the deal is Won.
+        var isWon = SldCurrentLead && (SldCurrentLead.Status || "").toLowerCase() === "won";
+        if (!isWon) {
+            if (window.swal) swal("Not available yet", "Win this deal first before creating a proforma invoice.", "error");
+            return;
+        }
+        window.location.href = "@Url.Action("ChemAnalystProformaInvoiceList", "Invoice")";
+    }
+
+    // "+ Add subscription" - only meaningful once the deal is Won. Hands off
+    // to the same CreateSubscription convert flow the SalesIndex "New
+    // subscription" drawer uses (leadId prefill + salesFlow=1).
+    function SldGoToAddSubscription() {
+        var isWon = SldCurrentLead && (SldCurrentLead.Status || "").toLowerCase() === "won";
+        if (!isWon) {
+            if (window.swal) swal("Not available yet", "Win this deal first before creating a subscription.", "error");
+            return;
+        }
+        window.location.href = "@Url.Action("CreateSubscription", "SalesManagement")" + "?leadId=" + encodeURIComponent(SldLeadId) + "&salesFlow=1";
+    }
+
+    // New-stage (SA_MaskEmail) leads get Open/Lost/Junk; Open/Contacted-stage
+    // (SA_MaskEmail_Open) leads get Mark won/Lost. Whichever set doesn't
+    // apply is hidden outright, and once a lead has reached a terminal
+    // status (Won/Lost/Junk) its own action buttons disable - there's
+    // nothing left to do with a decided lead from this page.
+    function SldDisableBtn($btn, label) {
+        $btn.prop("disabled", true).css({ opacity: .5, cursor: "not-allowed" });
+        if (label) $btn.text(label);
+    }
+
+    function SldUpdateActionButtons(lead) {
+        var status = (lead.Status || "").toLowerCase();
+        var isNewStage = SldSource === "New";
+
+        // "Open" aur "Junk" dono New-stage lead pe dikhte hain; Lost tab tak
+        // hidden jab tak lead actually Open na ho.
+        $("#SldOpenBtn").toggle(isNewStage);
+        $("#SldJunkBtn").toggle(isNewStage);
+        $("#SldLostNewBtn").hide();
+        // Log follow-up / Schedule demo only make sense once the lead has
+        // actually been Opened (SA_MaskEmail_Open) - hidden on a still-New
+        // lead, same as Mark won/Lost.
+        $("#SldMarkWonBtn, #SldMarkLostBtn, #SldLogFollowupBtn, #SldScheduleDemoBtn").toggle(!isNewStage);
+
+        // "+ Add contact" (Contacts tab) - only once the lead has actually
+        // been Opened; hidden on a still-New lead.
+        $("#SldAddContactBtn").toggle(!isNewStage);
+
+        // "+ Add subscription" - only once the deal is Won; converts this
+        // won lead into a subscription (same as the SalesIndex drawer).
+        $("#SldAddSubscriptionBtn").toggle(status === "won");
+
+
+        // Inline "Edit" on the Lead summary / Company cards - only for an
+        // Open/Contacted lead (not New, not Won). Any in-progress edit closes on render.
+        SldCancelEdit();
+        $("#SldSumEditBtn, #SldCoEditBtn").toggle(!isNewStage && status !== "won");
+
+        // Log follow-up button on the Activity & follow-ups tab - hidden
+        // until the lead has actually been Opened (same as "+ Add contact"),
+        // instead of just being shown greyed-out.
+        $("#SldActivityLogFollowupBtn").toggle(!isNewStage);
+
+        if (isNewStage) {
+            if (status === "lost" || status === "junk" || status === "open") {
+                SldDisableBtn($("#SldOpenBtn"), status === "open" ? "\ud83d\udcc1 Open" : "Open");
+                SldDisableBtn($("#SldLostNewBtn"), status === "lost" ? "\u2717 Lost" : "Lost");
+                SldDisableBtn($("#SldJunkBtn"), status === "junk" ? "\ud83d\uddd1 Junk" : "Junk");
+            }
+        } else {
+            // Advance payment isn't treated as fully closed the moment
+            // "Mark won" is clicked - the money's only an advance, so both
+            // buttons stay live in case the deal still falls through or
+            // needs re-confirming. Purchase Order wins disable immediately
+            // like before.
+            var wonViaAdvance = status === "won" && lead.PaymentOption === "AdvancePayment";
+
+            if (status === "won" && !wonViaAdvance) {
+                SldDisableBtn($("#SldMarkWonBtn"), "\u2713 Won");
+                SldDisableBtn($("#SldMarkLostBtn"));
+            } else if (status === "lost") {
+                SldDisableBtn($("#SldMarkWonBtn"));
+                SldDisableBtn($("#SldMarkLostBtn"), "\u2717 Lost");
+            }
+
+            // Once the lead is Won, there's nothing left to log/schedule
+            // from here - disable Log follow-up / Schedule demo outright
+            // (both header buttons and the Activity tab's own Log
+            // follow-up button).
+            if (status === "won") {
+                SldDisableBtn($("#SldLogFollowupBtn"));
+                SldDisableBtn($("#SldScheduleDemoBtn"));
+                SldDisableBtn($("#SldActivityLogFollowupBtn"));
+            }
+        }
+    }
+
+    // New-stage "Open" - reuses LeadManagementSubscription's existing,
+    // already-tested ChangestatusofLead endpoint (not mine to touch) rather
+    // than a new proc: it already does exactly what's needed here - flips
+    // SA_MaskEmail.Status to Open AND inserts the lead's row into
+    // SA_MaskEmail_Open. A reload is enough afterward: the page is still on
+    // source=New, and usp_SalesNew_GetLeadDetailNew will now read the
+    // updated Status straight off SA_MaskEmail.
+    function SldMarkLeadOpen() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/ChangestatusofLead",
+            data: { LeadId: SldLeadId },
+            success: function (response) {
+                if (response == "Success") {
+                    swal({
+                        title: "Thank you!", text: "Opened Successfully.", type: "success"
+                    }).then(function () {
+                        // Once opened the lead moves from New to the Open
+                        // column, so send the user back to the pipeline
+                        // rather than reloading the now-stale source=New URL.
+                        window.location.href = "@Url.Action("Pipeline", "SalesNew")";
+                    });
+                } else if (window.swal) {
+                    swal("Couldn't open", "Please try again.", "error");
+                }
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    // New-stage "Lost"/"Junk" - plain confirm, no extra data captured
+    // (matches the current app: only Open-stage Lost needs a reason).
+    function SldMarkLeadNewStatus(status) {
+        function doUpdate() {
+            $.ajax({
+                type: "POST",
+                url: "/SalesNew/MarkLeadNewStatus",
+                data: { id: SldLeadId, status: status }
+            }).done(function (response) {
+                if (response && response.Success) {
+                    LoadLeadDetail();
+                } else if (window.swal) {
+                    swal("Couldn't update", (response && response.Message) || "Please try again.", "error");
+                }
+            }).fail(function () {
+                if (window.swal) swal("Couldn't update", "Please try again.", "error");
+            });
+        }
+
+        if (window.swal) {
+            swal({
+                title: "Mark this lead as " + status + "?",
+                icon: "warning",
+                buttons: true
+            }).then(function (confirmed) {
+                if (confirmed) doUpdate();
+            });
+        } else {
+            doUpdate();
+        }
+    }
+
+    // ---------- Mark lost (Open-stage) modal ----------
+    function SldPickLostReason(text) {
+        $("#SldLostReasonText").val(text);
+    }
+
+    function SldOpenLostModal() {
+        $("#SldLostReasonText").val("");
+        var heading = (SldCurrentLead && (SldCurrentLead.CompanyName || SldCurrentLead.Name)) || "Lead";
+        $("#SldLostModalAvatar").text(SldInitial(heading));
+        $("#SldLostModalSubtitle").text(heading);
+        $("#SldLostModalBackdrop").addClass("sld-modal-open");
+    }
+
+    function SldCloseLostModal() {
+        $("#SldLostModalBackdrop").removeClass("sld-modal-open");
+    }
+
+    function SldSaveLostModal() {
+        var reason = $.trim($("#SldLostReasonText").val());
+        if (!reason) {
+            if (window.swal) swal("Warning", "Please enter a reason for the loss.", "error");
+            return;
+        }
+        // Persisting the reason itself is pending confirmation of a
+        // LostReason-style column on SA_MaskEmail_Open - for now this just
+        // flips the status, same as MarkLeadWon does for Won.
+        $.ajax({
+            type: "POST",
+            url: "/SalesNew/MarkLeadLost",
+            data: { id: SldLeadId, reason: reason }
+        }).done(function (response) {
+            if (response && response.Success) {
+                SldCloseLostModal();
+                LoadLeadDetail();
+            } else if (window.swal) {
+                swal("Couldn't update", (response && response.Message) || "Please try again.", "error");
+            }
+        }).fail(function () {
+            if (window.swal) swal("Couldn't update", "Please try again.", "error");
+        });
+    }
+
+    function LoadLeadDetail() {
+        $.ajax({
+            type: "GET",
+            url: "/SalesNew/GetLeadDetail",
+            data: { id: SldLeadId, source: SldSource },
+            dataType: "json"
+        }).done(function (response) {
+            var lead = response && response.DataItem;
+            if (!lead) {
+                $("#SldLoading").text("Lead not found.");
+                return;
+            }
+            RenderLeadDetail(lead);
+        }).fail(function () {
+            $("#SldLoading").text("Couldn't load this lead - please refresh.");
+        });
+    }
+
+    $(document).ready(function () {
+        if (SldLeadId > 0) {
+            LoadLeadDetail();
+        } else {
+            $("#SldLoading").text("No lead specified.");
+        }
+    });
+</script>

@@ -1,0 +1,687 @@
+@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .srp-wrap {
+        background: #f4f5f7;
+        padding: 18px 28px 40px;
+    }
+
+    .srp-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #22262b;
+        margin: 0 0 6px;
+    }
+
+    .srp-subtitle {
+        font-size: 13px;
+        color: #8a94a6;
+        margin-bottom: 20px;
+    }
+
+    .srp-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    @@media (max-width: 600px) {
+        .srp-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .srp-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 18px 20px;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+        .srp-card:hover {
+            border-color: #d8e3dc;
+            box-shadow: 0 4px 14px rgba(20, 20, 30, .1);
+        }
+
+    .srp-card-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        margin-bottom: 14px;
+    }
+
+    .srp-icon-green { background: #eaf7ee; color: #1f5a37; }
+    .srp-icon-blue { background: #eef2fb; color: #3f5fa8; }
+    .srp-icon-purple { background: #f2eefb; color: #6a4fa8; }
+    .srp-icon-orange { background: #fdf1e6; color: #b86a1e; }
+    .srp-icon-red { background: #fbeeee; color: #a8433f; }
+    .srp-icon-amber { background: #fdf7e2; color: #9c7f0a; }
+
+    .srp-card-title {
+        font-size: 14.5px;
+        font-weight: 700;
+        color: #22262b;
+        margin-bottom: 3px;
+    }
+
+    .srp-card-sub {
+        font-size: 12.5px;
+        color: #8a94a6;
+    }
+
+    /* ===== Report table view (Lost-reason analysis etc.) ===== */
+    .srp-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #56606e;
+        cursor: pointer;
+        margin-bottom: 14px;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+
+        .srp-back:hover {
+            color: #1f5a37;
+        }
+
+    .srp-report-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .srp-report-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .srp-search-box {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 9px 14px;
+        font-size: 13px;
+        width: 280px;
+        background: #fff;
+    }
+
+    .srp-list-meta {
+        font-size: 12px;
+        color: #7c828a;
+        margin-bottom: 8px;
+    }
+
+    .srp-table-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+
+    table.srp-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+    }
+
+        table.srp-table th, table.srp-table td {
+            border: none;
+            border-bottom: 1px solid #f2f3f5;
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        table.srp-table th {
+            font-size: 11px;
+            font-weight: 700;
+            color: #7c828a;
+            text-transform: uppercase;
+            background: #fafbfc;
+            white-space: nowrap;
+        }
+
+    .srp-list-sub {
+        font-size: 12px;
+        color: #7c828a;
+        margin-top: 2px;
+    }
+
+    .srp-reason-link {
+        color: #1f5a37;
+        cursor: pointer;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .srp-empty-col, .srp-loading-col {
+        font-size: 12px;
+        color: #9aa0a6;
+        padding: 14px 4px;
+        text-align: center;
+    }
+
+    .srp-pager {
+        margin-top: 14px;
+    }
+
+        .srp-pager:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .srp-pager .pagination {
+            margin: 0;
+        }
+
+        .srp-pager .paginate_button > a {
+            cursor: pointer;
+        }
+
+    .srp-chart-card {
+        background: #fff;
+        border: 1px solid #e6e8eb;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 18px;
+    }
+
+    .srp-chart-wrap {
+        position: relative;
+        height: 280px;
+    }
+
+    .srp-date-filter {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .srp-date-input {
+        border: 1px solid #e3e5e8;
+        border-radius: 8px;
+        padding: 7px 10px;
+        font-size: 12.5px;
+        background: #fff;
+        color: #33383f;
+    }
+
+    .srp-date-sep {
+        font-size: 12px;
+        color: #8a94a6;
+    }
+
+    .srp-date-apply, .srp-date-clear {
+        border-radius: 8px;
+        padding: 7px 14px;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid #e3e5e8;
+        background: #fff;
+        color: #33383f;
+    }
+
+    .srp-date-apply {
+        background: #1f5a37;
+        border-color: #1f5a37;
+        color: #fff;
+    }
+
+        .srp-date-apply:hover {
+            background: #17472b;
+        }
+</style>
+
+<div class="srp-wrap">
+    <div id="SrpMenuView">
+        <div class="srp-title">Reports</div>
+        <div class="srp-subtitle">Read-only sales analytics and exports &mdash; out of the daily workflow.</div>
+
+        <div class="srp-grid">
+            <div class="srp-card" onclick="SrpOpenWinRateReport()">
+                <div class="srp-card-icon srp-icon-green">&#8593;</div>
+                <div class="srp-card-title">Win rate &amp; conversion</div>
+                <div class="srp-card-sub">By stage, source and rep</div>
+            </div>
+            <div class="srp-card" onclick="SrpOpenLostReasonReport()">
+                <div class="srp-card-icon srp-icon-red">&#8595;</div>
+                <div class="srp-card-title">Lost-reason analysis</div>
+                <div class="srp-card-sub">Why deals are lost</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="SrpLostReasonView" style="display:none;">
+        <button type="button" class="srp-back" onclick="SrpBackToMenu()">&larr; Back to reports</button>
+        <div class="srp-report-head">
+            <div class="srp-report-title">Lost-reason analysis</div>
+            <input type="text" class="srp-search-box" id="SrpLrSearch" placeholder="Search name, company or email..." />
+        </div>
+        <div class="srp-list-meta" id="SrpLrMeta">&nbsp;</div>
+        <div class="srp-table-card">
+            <table class="srp-table">
+                <thead>
+                    <tr>
+                        <th>Lead</th>
+                        <th>Company</th>
+                        <th>Lost reason</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="SrpLrRows">
+                    <tr><td colspan="4" class="srp-loading-col">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="srp-pager" id="SrpLrPager"></div>
+    </div>
+
+    <div id="SrpWinRateView" style="display:none;">
+        <button type="button" class="srp-back" onclick="SrpBackToMenu()">&larr; Back to reports</button>
+        <div class="srp-report-head">
+            <div class="srp-report-title">Win rate &amp; conversion</div>
+            <div class="srp-date-filter">
+                <input type="date" class="srp-date-input" id="SrpWrFromDate" />
+                <span class="srp-date-sep">to</span>
+                <input type="date" class="srp-date-input" id="SrpWrToDate" />
+                <button type="button" class="srp-date-apply" onclick="SrpLoadWinRateReport()">Apply</button>
+                <button type="button" class="srp-date-clear" onclick="SrpClearWinRateDates()">Clear</button>
+            </div>
+        </div>
+        <div class="srp-chart-card">
+            <div class="srp-chart-wrap"><canvas id="SrpWinRateChart"></canvas></div>
+        </div>
+        <div class="srp-table-card">
+            <table class="srp-table">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Won</th>
+                        <th>Lost</th>
+                        <th>Win rate</th>
+                    </tr>
+                </thead>
+                <tbody id="SrpWrRows">
+                    <tr><td colspan="4" class="srp-loading-col">Loading&hellip;</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script>
+    function SrpComingSoon() {
+        if (window.swal) {
+            swal("Coming soon", "This report isn't wired up yet.", "info");
+        }
+    }
+
+    function SrpEscape(text) {
+        if (text === null || text === undefined) return "";
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    function SrpValueOrDash(text) {
+        return (text === null || text === undefined || text === "") ? "&mdash;" : SrpEscape(text);
+    }
+
+    function SrpFormatDate(value) {
+        if (!value) return "&mdash;";
+        var d = new Date(parseInt(value.substr(6)));
+        if (isNaN(d.getTime())) return "&mdash;";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    // Truncate to 5 words with a "Read more" toggle -- expands in place.
+    function SrpRenderReason(text, rowIdx) {
+        var full = SrpEscape(text);
+        if (!text) return "&mdash;";
+        var words = String(text).trim().split(/\s+/);
+        if (words.length <= 5) {
+            return full;
+        }
+        var shortText = SrpEscape(words.slice(0, 5).join(" ")) + "&hellip;";
+        var shortId = "SrpReasonShort_" + rowIdx;
+        var fullId = "SrpReasonFull_" + rowIdx;
+        var html = "<span id='" + shortId + "'>" + shortText +
+            " <span class='srp-reason-link' onclick=\"SrpToggleReason(" + rowIdx + ")\">Read more</span></span>";
+        html += "<span id='" + fullId + "' style='display:none;'>" + full +
+            " <span class='srp-reason-link' onclick=\"SrpToggleReason(" + rowIdx + ")\">Read less</span></span>";
+        return html;
+    }
+
+    function SrpToggleReason(rowIdx) {
+        $("#SrpReasonShort_" + rowIdx).toggle();
+        $("#SrpReasonFull_" + rowIdx).toggle();
+    }
+
+    function SrpOpenLostReasonReport() {
+        $("#SrpMenuView").hide();
+        $("#SrpLostReasonView").show();
+        SrpLrCurrentPage = 1;
+        SrpLoadLostReasonReport();
+    }
+
+    function SrpBackToMenu() {
+        $("#SrpLostReasonView").hide();
+        $("#SrpWinRateView").hide();
+        $("#SrpMenuView").show();
+    }
+
+    // ===== Win rate & conversion (same data/style as the Dashboard's
+    // "Won vs lost" chart -- reuses the existing /SalesNew/GetWonVsLost
+    // endpoint as-is, just adds a table underneath). =====
+    var SrpWinRateChartInstance = null;
+
+    function SrpOpenWinRateReport() {
+        $("#SrpMenuView").hide();
+        $("#SrpWinRateView").show();
+        SrpLoadWinRateReport();
+    }
+
+    function SrpClearWinRateDates() {
+        $("#SrpWrFromDate").val("");
+        $("#SrpWrToDate").val("");
+        SrpLoadWinRateReport();
+    }
+
+    function SrpLoadWinRateReport() {
+        $("#SrpWrRows").html("<tr><td colspan='4' class='srp-loading-col'>Loading&hellip;</td></tr>");
+        var fromDate = $("#SrpWrFromDate").val();
+        var toDate = $("#SrpWrToDate").val();
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetWonVsLost", "SalesNew")",
+            data: {
+                fromDate: fromDate || null,
+                toDate: toDate || null
+            },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var order = [];
+            var wonByKey = {}, lostByKey = {};
+            for (var i = 0; i < list.length; i++) {
+                var row = list[i];
+                var key = row.YearNo + "-" + row.MonthName;
+                if (order.indexOf(key) === -1) order.push(key);
+                if ((row.Status || "").toLowerCase() === "won") wonByKey[key] = row.Count || 0;
+                else lostByKey[key] = row.Count || 0;
+            }
+            var labels = order.map(function (k) {
+                var parts = k.split("-");
+                return (parts[1] || "").substr(0, 3) + " " + parts[0];
+            });
+            var wonData = order.map(function (k) { return wonByKey[k] || 0; });
+            var lostData = order.map(function (k) { return lostByKey[k] || 0; });
+
+            if (SrpWinRateChartInstance) SrpWinRateChartInstance.destroy();
+            var ctx = document.getElementById("SrpWinRateChart").getContext("2d");
+            SrpWinRateChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: "Won", data: wonData, backgroundColor: "#1f5a37", hoverBackgroundColor: "#164027", borderRadius: 0, barPercentage: 0.85, categoryPercentage: 0.85 },
+                        { label: "Lost", data: lostData, backgroundColor: "#c0392b", hoverBackgroundColor: "#a33128", borderRadius: 0, barPercentage: 0.85, categoryPercentage: 0.85 }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: "#eceef0" } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            var rowsHtml = "";
+            if (order.length === 0) {
+                rowsHtml = "<tr><td colspan='4' class='srp-empty-col'>No won/lost data found.</td></tr>";
+            } else {
+                for (var j = 0; j < order.length; j++) {
+                    var k2 = order[j];
+                    var won = wonByKey[k2] || 0;
+                    var lost = lostByKey[k2] || 0;
+                    var total = won + lost;
+                    var rate = total > 0 ? Math.round((won / total) * 100) : 0;
+                    rowsHtml += "<tr>";
+                    rowsHtml += "  <td>" + SrpEscape(labels[j]) + "</td>";
+                    rowsHtml += "  <td>" + won + "</td>";
+                    rowsHtml += "  <td>" + lost + "</td>";
+                    rowsHtml += "  <td>" + rate + "%</td>";
+                    rowsHtml += "</tr>";
+                }
+            }
+            $("#SrpWrRows").html(rowsHtml);
+        }).fail(function () {
+            $("#SrpWrRows").html("<tr><td colspan='4' class='srp-empty-col'>Couldn't load - please refresh.</td></tr>");
+        });
+    }
+
+    function SrpRenderLostReasonRows(list) {
+        if (!list || list.length === 0) {
+            $("#SrpLrRows").html("<tr><td colspan='4' class='srp-empty-col'>No lost leads found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr>";
+            html += "  <td><div>" + SrpValueOrDash(item.Name) + "</div><div class='srp-list-sub'>" + SrpValueOrDash(item.CorpEmail) + "</div></td>";
+            html += "  <td>" + SrpValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td>" + SrpRenderReason(item.LostReason, i) + "</td>";
+            html += "  <td>" + SrpFormatDate(item.CreatedDate) + "</td>";
+            html += "</tr>";
+        }
+        $("#SrpLrRows").html(html);
+    }
+
+    // Pagination -- exact same GetPaginationHTML/GetPagination/PaggingButton
+    // structure used across the rest of the app, prefixed "SrpLr" and wired
+    // to SrpLrCurrentPage/SrpLoadLostReasonReport().
+    var SrpLrCurrentPage = 1;
+
+    function SrpLrGetPaginationHTML(json) {
+        var pagingInnerHTML = "<span class='pull-left' style='color:#7c828a; font-size:12px;'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = SrpLrGetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+        return pagingInnerHTML;
+    }
+
+    function SrpLrPaggingButton(elm) {
+        var pageNumber = elm.attr('url');
+        SrpLrCurrentPage = pageNumber;
+        SrpLoadLostReasonReport();
+    }
+
+    function SrpLrGetPagination(activePage, pagerSize, numberOfPages, URL) {
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='SrpLrPaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='SrpLrPaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='SrpLrPaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='SrpLrPaggingButton($(this));' href='javascript:void(0);'  url='";
+                innerHTML += URL + i;
+            }
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                innerHTML += URL + (activePage + 1);
+                innerHTML += "' onclick='SrpLrPaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (activePage + 1);
+            innerHTML += "' onclick='SrpLrPaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            innerHTML += URL + (next);
+            innerHTML += "' onclick='SrpLrPaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+        return innerHTML;
+    }
+
+    function SrpLoadLostReasonReport() {
+        $("#SrpLrRows").html("<tr><td colspan='4' class='srp-loading-col'>Loading&hellip;</td></tr>");
+        var search = $.trim($("#SrpLrSearch").val());
+
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetLostReasonReport", "SalesNew")",
+            data: {
+                search: search,
+                pageNumber: SrpLrCurrentPage
+            },
+            dataType: "json"
+        }).done(function (response) {
+            SrpRenderLostReasonRows(response.DataList);
+            $("#SrpLrPager").html(SrpLrGetPaginationHTML(response));
+            var count = response.RecordsCount || 0;
+            $("#SrpLrMeta").text(count + (count === 1 ? " lost lead" : " lost leads") + (search ? " \u00B7 filtered" : ""));
+        }).fail(function () {
+            $("#SrpLrRows").html("<tr><td colspan='4' class='srp-empty-col'>Couldn't load - please refresh.</td></tr>");
+            $("#SrpLrMeta").text("");
+        });
+    }
+
+    var SrpLrSearchTimer = null;
+    $(document).ready(function () {
+        $("#SrpLrSearch").on("input", function () {
+            clearTimeout(SrpLrSearchTimer);
+            SrpLrSearchTimer = setTimeout(function () {
+                SrpLrCurrentPage = 1;
+                SrpLoadLostReasonReport();
+            }, 250);
+        });
+    });
+</script>

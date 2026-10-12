@@ -1,0 +1,453 @@
+@{
+    ViewBag.Title = "Subscriptions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .sm-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .sm-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .sm-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sm-header-right {
+        display: flex;
+        align-items: center;
+    }
+
+    .sm-search-top {
+        position: relative;
+    }
+
+        .sm-search-top i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .sm-search-top input {
+            width: 280px;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fff;
+        }
+
+            .sm-search-top input:focus {
+                outline: none;
+                border-color: #c7cad0;
+            }
+
+    .sm-bell {
+        position: relative;
+        margin-left: 18px;
+        color: #7c828a;
+        font-size: 17px;
+    }
+
+        .sm-bell i.dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e8752f;
+        }
+
+    .sm-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 22px 26px;
+    }
+
+    .sm-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 4px;
+    }
+
+    .sm-card-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .sm-card-sub {
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .sm-new-btn {
+        background: #1f2d24;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .sm-new-btn:hover {
+            background: #16211a;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .sm-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 16px 0 10px;
+    }
+
+    .sm-search-box {
+        position: relative;
+    }
+
+        .sm-search-box input {
+            width: 320px;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .sm-search-box input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .sm-count {
+        font-size: 13px;
+        color: #7c828a;
+    }
+
+    table.sm-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        table.sm-table thead th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 10px 12px;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+        }
+
+        table.sm-table tbody td {
+            padding: 12px;
+            font-size: 13px;
+            color: #33383f;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: top;
+        }
+
+        table.sm-table tbody tr:hover {
+            background: #fafbfc;
+        }
+
+    .sm-request-id {
+        font-weight: 600;
+        color: #22262b;
+    }
+
+    .sm-company {
+        font-weight: 600;
+        color: #22262b;
+    }
+
+    .sm-dash {
+        color: #c2c6cc;
+    }
+
+    .sm-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 3px 10px 3px 8px;
+    }
+
+        .sm-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+    .sm-status-approval { background: #eef2fb; color: #3f5fa8; }
+    .sm-status-approval .dot { background: #3f5fa8; }
+
+    .sm-status-live { background: #eaf7ee; color: #2f9e50; }
+    .sm-status-live .dot { background: #2f9e50; }
+
+    .sm-status-returned { background: #fbecec; color: #c94141; }
+    .sm-status-returned .dot { background: #c94141; }
+
+    .sm-status-unknown { background: #f1f2f4; color: #7c828a; }
+    .sm-status-unknown .dot { background: #a4aab3; }
+
+    .sm-status-remark {
+        display: block;
+        margin-top: 4px;
+        font-size: 12px;
+        font-style: italic;
+        color: #a4aab3;
+        max-width: 260px;
+    }
+
+    .sm-empty {
+        text-align: center;
+        padding: 40px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .sm-pager {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+    }
+
+        .sm-pager button {
+            border: 1px solid #e3e5e9;
+            background: #fff;
+            color: #444;
+            border-radius: 6px;
+            padding: 5px 11px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+            .sm-pager button.active {
+                background: #1f2d24;
+                border-color: #1f2d24;
+                color: #fff;
+            }
+
+            .sm-pager button:disabled {
+                color: #c2c6cc;
+                cursor: default;
+            }
+</style>
+<div class="sm-wrap">
+    <div class="sm-header">
+        <div class="sm-title">Subscriptions</div>
+        <div class="sm-header-right">
+            <div class="sm-search-top">
+                <i class="fa fa-search"></i>
+                <input type="text" placeholder="Search leads, company or email..." />
+            </div>
+            <span class="sm-bell"><i class="fa fa-bell-o"></i><i class="dot"></i></span>
+        </div>
+    </div>
+
+    <div class="sm-card">
+        <div class="sm-card-head">
+            <div>
+                <div class="sm-card-title">Subscriptions</div>
+                <div class="sm-card-sub">accounts you've handed to CSM</div>
+            </div>
+            <a href="@Url.Action("CreateSubscription", "SalesManagement")" class="sm-new-btn">+ New subscription</a>
+        </div>
+
+        <div class="sm-toolbar">
+            <div class="sm-search-box">
+                <input type="text" id="RequestSearch" placeholder="Search company or contact..." />
+            </div>
+            <div class="sm-count" id="RequestCount"></div>
+        </div>
+
+        <table class="sm-table">
+            <thead>
+                <tr>
+                    <th>Request</th>
+                    <th>Company</th>
+                    <th>Primary contact</th>
+                    <th>Package</th>
+                    <th>Coverage</th>
+                    <th>CSM</th>
+                    <th>Created</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="RequestRows"></tbody>
+        </table>
+
+        <div class="sm-pager" id="RequestPager"></div>
+    </div>
+</div>
+<script>
+    var PageSize = 10;
+    var CurrentPage = 1;
+
+    // Text-based status badge for the working GetSalesIndexList data
+    // (SalesIndexStatus is a label like "Pending from Operation" /
+    // "Subscription Created", not the old numeric StepCounter).
+    function StatusBadgeText(status) {
+        var s = (status || "").toLowerCase();
+        var cls = "sm-status-approval";
+        if (s.indexOf("created") !== -1 || s.indexOf("approved") !== -1) cls = "sm-status-live";
+        else if (s.indexOf("return") !== -1 || s.indexOf("disapprov") !== -1) cls = "sm-status-returned";
+        var label = status ? $("<div>").text(status).html() : "Unknown";
+        return "<span class='sm-status " + cls + "'><span class='dot'></span>" + label + "</span>";
+    }
+
+    function StatusBadge(stepCounter, remark) {
+        var label, cls;
+        if (stepCounter === 5) {
+            label = "Approved &middot; live"; cls = "sm-status-live";
+        } else if (stepCounter === 20) {
+            label = "Returned by Operations"; cls = "sm-status-returned";
+        } else if (stepCounter === 30) {
+            label = "Returned by Finance"; cls = "sm-status-returned";
+        } else if (stepCounter === 40) {
+            label = "Returned by Sales Manager"; cls = "sm-status-returned";
+        } else if (stepCounter >= 1 && stepCounter <= 4) {
+            label = "In approval"; cls = "sm-status-approval";
+        } else {
+            label = "Unknown"; cls = "sm-status-unknown";
+        }
+
+        var html = "<span class='sm-status " + cls + "'><span class='dot'></span>" + label + "</span>";
+        if (remark) {
+            html += "<span class='sm-status-remark'>" + $("<div>").text(remark).html() + "</span>";
+        }
+        return html;
+    }
+
+    function FormatCreatedDate(dateString) {
+        if (!dateString) return "";
+        var s = String(dateString);
+        var m = /\/Date\((-?\d+)\)\//.exec(s);
+        var d = m ? new Date(parseInt(m[1], 10)) : new Date(s.indexOf("T") === -1 ? s.replace(" ", "T") : s);
+        if (isNaN(d.getTime())) return "";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function RenderRequestRows(list) {
+        if (!list || list.length === 0) {
+            $("#RequestRows").html("<tr><td colspan='8' class='sm-empty'>No subscription requests yet.</td></tr>");
+            return;
+        }
+
+        var html = '';
+        $.each(list, function (i, r) {
+            var companyText = r.CompanyName ? $("<div>").text(r.CompanyName).html() : "(unnamed)";
+            var contactText = r.PrimaryContactName ? $("<div>").text(r.PrimaryContactName).html() : "<span class='sm-dash'>&mdash;</span>";
+            var packageText = r.PackageSummary ? $("<div>").text(r.PackageSummary).html() : "0 products";
+            var coverageText = r.CoverageSummary ? $("<div>").text(r.CoverageSummary).html() : "<span class='sm-dash'>&mdash;</span>";
+            var csmText = r.CSM ? $("<div>").text(r.CSM).html() : "<span class='sm-dash'>&mdash;</span>";
+
+            var requestIdText = r.RequestNumber ? $("<div>").text(r.RequestNumber).html() : "<span class='sm-dash'>&mdash;</span>";
+            var companyAttr = $("<div>").text(r.CompanyName || "").html();
+            html += "<tr class='sm-row' style='cursor:pointer' data-company=\"" + companyAttr + "\">";
+            html += "<td class='sm-request-id'>" + requestIdText + "</td>";
+            html += "<td class='sm-company'>" + companyText + "</td>";
+            html += "<td>" + contactText + "</td>";
+            html += "<td>" + packageText + "</td>";
+            html += "<td>" + coverageText + "</td>";
+            html += "<td>" + csmText + "</td>";
+            html += "<td>" + FormatCreatedDate(r.RequestCreatedDate) + "</td>";
+            html += "<td>" + StatusBadgeText(r.SalesIndexStatus) + "</td>";
+            html += "</tr>";
+        });
+
+        $("#RequestRows").html(html);
+    }
+
+    function RenderPager(totalCount) {
+        var numberOfPages = Math.max(1, Math.ceil(totalCount / PageSize));
+        var windowSize = 10;
+        // Current page jis window (1-10, 11-20, ...) me hai wahi 10 numbers dikhao
+        var startPage = Math.floor((CurrentPage - 1) / windowSize) * windowSize + 1;
+        var endPage = Math.min(startPage + windowSize - 1, numberOfPages);
+
+        var html = '';
+        html += "<button " + (CurrentPage <= 1 ? "disabled" : "onclick='GoToPage(" + (CurrentPage - 1) + ")'") + ">Prev</button>";
+        for (var i = startPage; i <= endPage; i++) {
+            html += "<button class='" + (i === CurrentPage ? "active" : "") + "' onclick='GoToPage(" + i + ")'>" + i + "</button>";
+        }
+        html += "<button " + (CurrentPage >= numberOfPages ? "disabled" : "onclick='GoToPage(" + (CurrentPage + 1) + ")'") + ">Next</button>";
+
+        $("#RequestPager").html(html);
+    }
+
+    function GoToPage(page) {
+        CurrentPage = page;
+        LoadSubscriptionRequests();
+    }
+
+    function LoadSubscriptionRequests() {
+        var search = $.trim($("#RequestSearch").val());
+
+        $.ajax({
+            type: "GET",
+            url: "/SalesManagement/GetSalesIndexList",
+            data: { search: search, pageNumber: CurrentPage },
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var total = (response && response.RecordsCount) || 0;
+
+            RenderRequestRows(list);
+            RenderPager(total);
+            $("#RequestCount").text(total + (total === 1 ? " request" : " requests"));
+        }).fail(function () {
+            $("#RequestRows").html("<tr><td colspan='8' class='sm-empty'>Couldn't load subscriptions - please refresh.</td></tr>");
+        });
+    }
+
+    var searchTimer = null;
+    $("#RequestSearch").on('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+            CurrentPage = 1;
+            LoadSubscriptionRequests();
+        }, 300);
+    });
+
+    // Row click -> subscription request detail (Sales ke SalesIndex jaisa)
+    $("#RequestRows").on("click", ".sm-row", function () {
+        var company = $(this).attr("data-company") || "";
+        location.href = "@Url.Action("SubscriptionRequestDetail", "SalesManagement")" + "?company=" + encodeURIComponent(company);
+    });
+
+    $(document).ready(function () {
+        LoadSubscriptionRequests();
+    });
+</script>

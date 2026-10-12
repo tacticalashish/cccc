@@ -1,0 +1,425 @@
+﻿
+@{
+    ViewBag.Title = "GetYourLeadList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .Dpopup-open {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 999;
+        overflow: auto;
+    }
+
+
+    .child {
+        width: 90%;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: #141414;
+        text-align: justify;
+        border: solid #d9d9d9eb 3px;
+        margin: 50px auto;
+        box-shadow: 0px 2px 5px 1px #939393;
+    }
+    #CancelBtn {
+        position: absolute;
+        top: -28px;
+        border-radius: 25px;
+        right: -23px;
+    } 
+
+        .child p {
+            font-size: 14px;
+        } 
+    .tableStyle {
+        border: 1px solid #808080;
+        margin-top: 10px;
+    }
+
+        .tableStyle tr td {
+            border: 1px solid #808080 !important;
+            border-bottom: 1px solid #808080 !important;
+            white-space: nowrap;
+            padding: 2px !important
+        }
+
+        .tableStyle tr th {
+            border: 1px solid #808080;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: normal;
+            color: #b6ff00;
+            font-weight: 400 !important;
+            padding: 2px !important;
+            white-space: nowrap;
+        }
+    
+
+</style>
+<div class="position-relative Dpopup-open">
+    <div class="child position-relative">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-2 text-right">
+                    <button class="btn btn-danger btn-sm ms-2" id="CancelBtn"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+                <div class="col-md-12 mt-2">
+                    <p class="text-white" id="Descriptiondata"></p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="update-profile-wrapper">
+    <div class="container-fluid" style="padding-top:10px;margin-top:0px!important" id="dvDefaultCommentary">
+        <div class="row">
+            <div class="col-md-6"><h3 style="color:white;margin-bottom:10px!important;line-height: inherit;">Get Inbound/Outbound LeadList</h3></div>
+            @*<div class="col-md-2 text-right">
+                <a class="btn btn-primary" href="@Url.Action("CreateChemAnalystTaxInvoice", "Invoice")"><i class="fa fa-pencil-square-o"></i> Create Tax Invoice</a>
+            </div>*@
+            <div class="col-md-6 text-right">
+                <input style="float:right" type="button" class="btn btn-success" value="Search" onclick="GetsearchValues()" />
+                <label style="float:right;margin-right:10px"><input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." id="search" aria-controls="Userlist"></label>
+                <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+            </div>
+        </div>
+        <div class="data-detail-wrapper table-responsive scrolladmin01" style="overflow:auto">
+            <table id="Leadlist" class="table tableStyle">
+                <thead>
+                    <tr>
+                        <th hidden>ID</th>
+                        <th>LeadType</th>
+                        <th>Name</th>
+                        <th>CorpEmail</th>
+                        <th>Phone</th>
+                        <th>CompanyName</th>
+                        <th>CountryName</th>
+                        <th>StateName</th>
+                        <th>DiscriptionMessage</th>
+                        <th>RequestedDate</th>
+                        <th>LeadStatus</th>
+                        <th>LeadSource</th>
+                        <th>Product/Type</th>
+                        <th>MailChain</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="tbodydata" id="tbodydata"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="box-footer clearfix" id="divPagging"></div>
+</div> 
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script>
+    var Search = "";
+    $.formattedDate = function (dateToFormat) {
+        var dateObject = new Date(dateToFormat);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1; // Full month name
+        var year = dateObject.getFullYear();
+
+        var formattedDate = day + "-" + month + "-" + year;
+        return formattedDate;
+    };
+    $(document).ready(function () {
+        GetLeadOnSearchFilter();
+
+    });
+    function GetsearchValues() {
+        Search = $('#search').val();
+        $('#search').html(GetPaginationHTML(Search));
+        GetLeadOnSearchFilter();
+    }
+    function GetLeadOnSearchFilter() {
+        var path = "/ChemPricingImportfile/SalesDocument";
+        var pageNumber = $('#PageNumber').val();
+        var Search = $('#search').val();
+        var URL = "/LeadManagementSubscription/GetYourLeadList_CustomSearch?searchKeyword='" + Search + "'";
+        URL += '&PageNumber=' + pageNumber;
+        $.ajax({
+            url: URL,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (json) {
+                var tbodyHTML = '';
+                if (json != null) {
+                    $(json.DateList).each(function (idx, elm) {
+                        debugger
+                        var date = elm.CreatedDate;
+                        var dateRequestedDate = elm.RequestedDate;
+                        var RequestedformattedDate = "";
+                        if (dateRequestedDate != null || dateRequestedDate != null) {
+                            var  formattedDate = ($.formattedDate(new Date(parseInt(date.substr(6)))));
+                             RequestedformattedDate = ($.formattedDate(new Date(parseInt(dateRequestedDate.substr(6)))));
+
+                        } else {
+                            RequestedformattedDate
+                        }
+                        
+
+                        tbodyHTML += "<tr>";
+                        tbodyHTML += "<td hidden>" + elm.Id + "</td>";
+                        tbodyHTML += "<td>" + elm.LeadType + "</td>";
+                        tbodyHTML += "<td>" + elm.Name + "</td>";
+                        tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                        tbodyHTML += "<td>" + elm.Phone + "</td>";
+
+                        tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                        tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                        tbodyHTML += "<td>" + elm.StateName + "</td>";
+                        tbodyHTML += "<td style='text-align:center'>" + "<a  onclick=ShowDescription(`" + encodeURIComponent(elm.DiscriptionMessage) + "`)>" + "Read More.." + "</a>" + "</td>"
+                        tbodyHTML += "<td>" + RequestedformattedDate + "</td>";
+                        tbodyHTML += "<td>" + elm.Status + "</td>";
+                        tbodyHTML += "<td>" + elm.OutboundLeadSource + "</td>";
+                        tbodyHTML += "<td>" + elm.ProductType + "</td>";
+
+                        if (elm.MailChain != '' && elm.MailChain != null) {
+
+                            tbodyHTML += "<td style='text-align:center; cursor: pointer;'>" + "<a  onclick=ShowDescription(`" + encodeURIComponent(elm.MailChain) + "`)>" + "Read " + "</a>" + "</td>"
+                        }
+                        else {
+                            tbodyHTML += "<td></td>";
+                        }
+                        if (elm.Status == "New") {
+                            tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-info' value='OpenLead' onclick=ChangeStatus('" + elm.Id + "')>" + "</td>";
+                        }
+                        else if (elm.Status == "Open") {
+                            tbodyHTML += "<td style='color:Green'>" + elm.Status + "</td>";
+                        }
+                        else {
+                            tbodyHTML += "<td style='color:Red'>" + elm.Status + "</td>";
+                        }
+                        //tbodyHTML += "<td>" + "<input type='button' class='btn btn-xs btn-primary' value='Edit' onclick=EditPopupSource('" + elm.InvoiceID + "')>" + "</td>";
+                        tbodyHTML += "</tr>"
+                    });
+
+                    $('#divPagging').html(GetPaginationHTML(json));
+                    $('#pageSize').val(json.PageSize);
+
+                }
+                else {
+                    tbodyHTML = "<tr><td class='text-center' colspan='20'><span>No records found..!!</span> </td></tr>";
+                }
+                $('.tbodydata').html(tbodyHTML);
+            }
+        });
+    }
+    function ShowDescription(encodedMessage) {
+        var decodedMessage = decodeURIComponent(encodedMessage);  // Decode the message to handle special characters
+
+        $(".Dpopup-open").css("display", "block");  // Open the popup
+        $('#Descriptiondata').text(decodedMessage);  // Set the decoded message into the popup content
+    }
+
+    $("#CancelBtn").click(function () {
+        $(".Dpopup-open").css("display", "none");
+    });
+    function ChangeStatus(MaskMailid) {
+        
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/ChangestatusofLead",
+            data: { LeadId: MaskMailid },
+            success: function (response) {
+                if (response == "Success") {
+                    swal({
+                        title: "Thank you!", text: "Opened Successfully.",type: "success"
+                        }).
+                        then(function () {
+                            window.location.reload();
+                        });
+                }
+               
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+
+    }
+
+    function GetPaginationHTML(json) {
+
+        var pagingInnerHTML = "<span class='pull-left' style='color:#fff'>(Showing " + json.ShowingFrom + " to " + json.ShowingTo + " of " + json.RecordsCount + " records)</span>";
+        var getPaginationButton = GetPagination(json.ActivePage, json.PagerSize, json.NumberOfPages, "");
+        pagingInnerHTML += getPaginationButton;
+
+        return pagingInnerHTML;
+    }
+    function PaggingButton(elm) {
+
+        var pageNumber = elm.attr('url');
+
+        $('#PageNumber').val(pageNumber);
+
+        GetLeadOnSearchFilter();
+
+    }
+    function GetPagination(activePage, pagerSize, numberOfPages, URL) {
+
+        var innerHTML = '';
+        var startLi = pagerSize / pagerSize;
+        var endLi = pagerSize;
+        var multiplier = activePage / pagerSize;
+        var modulo = activePage % pagerSize;
+        var virtualLi = pagerSize - pagerSize;
+        var previous = activePage / pagerSize * pagerSize - pagerSize + 1;
+        var next = activePage / pagerSize * pagerSize + pagerSize + 1;
+
+        if (modulo == 0) {
+            next = next - pagerSize;
+            previous = previous - pagerSize;
+        }
+
+        if (activePage > pagerSize) {
+            for (var i = 1; i <= multiplier; i++) {
+                virtualLi += pagerSize;
+            }
+
+            if (modulo > 0) {
+                startLi = virtualLi + 1;
+            }
+            else {
+                startLi = virtualLi - pagerSize + 1;
+            }
+            endLi = startLi + pagerSize - 1;
+        }
+
+        innerHTML = "<ul class='pagination pagination-sm no-margin pull-right'>";
+        if (activePage > 1 && activePage < pagerSize + 1) {
+            innerHTML += "<li class='paginate_button previous disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);"
+
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+
+            if (activePage == 1) {
+                innerHTML += "<li class='paginate_button previous disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button previous'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage - 1);
+                innerHTML += URL + (activePage - 1);
+                innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+                innerHTML += "</li>";
+            }
+        }
+        else if (activePage == 1) {
+            innerHTML += "<li class='paginate_button previous disabled' disabled style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (previous);
+            innerHTML += URL + (previous);
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-left'></i></a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button previous'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage - 1);
+            innerHTML += URL + (activePage - 1);
+            innerHTML += "' onclick='PaggingButton($(this));'>&laquo;</a>";
+            innerHTML += "</li>";
+        }
+
+
+        for (var i = startLi; i <= endLi && i <= numberOfPages; i++) {
+            if (i == activePage) {
+                innerHTML += "<li>";
+                innerHTML += "<a style='background-color:gainsboro;' href='javascript:void(0);";
+            }
+            else {
+                innerHTML += "<li class='paginate_button'>";
+                innerHTML += "<a onclick='PaggingButton($(this));' href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + i;
+                innerHTML += URL + i;
+            }
+
+            innerHTML += "' >";
+            innerHTML += i;
+            innerHTML += "</a>";
+            innerHTML += "</li>";
+        }
+
+        if (activePage + pagerSize > numberOfPages) {
+            if (activePage == numberOfPages) {
+                innerHTML += "<li class='paginate_button next disabled'>";
+                innerHTML += "<a href='javascript:void(0);";
+                innerHTML += "'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+            else {
+                innerHTML += "<li class='paginate_button next'>";
+                innerHTML += "<a href='javascript:void(0);'  url='";
+                //innerHTML += URL + "&id=" + (activePage + 1);
+                innerHTML += URL + (activePage + 1);
+
+                innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+                innerHTML += "</li>";
+            }
+
+            innerHTML += "<li class='paginate_button next disabled' style='display:none;'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else if (activePage == numberOfPages) {
+            innerHTML += "<li class='paginate_button next disabled'>";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'>&raquo;</a>";
+            innerHTML += "</li>";
+            innerHTML += "<li class='paginate_button next disabled'> style='display:none;'";
+            innerHTML += "<a href='javascript:void(0);";
+            innerHTML += "'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        else {
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (activePage + 1);
+            innerHTML += URL + (activePage + 1);
+
+            innerHTML += "' onclick='PaggingButton($(this));'>&raquo;</a>";
+            innerHTML += "</li>";
+
+            innerHTML += "<li class='paginate_button next'>";
+            innerHTML += "<a href='javascript:void(0);'  url='";
+            //innerHTML += URL + "&id=" + (next);
+            innerHTML += URL + (next);
+
+            innerHTML += "' onclick='PaggingButton($(this));'><i class='fa fa-fw fa-arrow-right'></i></a>";
+            innerHTML += "</li>";
+        }
+        innerHTML += "</ul>";
+
+        return innerHTML;
+    }
+</script>

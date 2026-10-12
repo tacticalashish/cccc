@@ -1,0 +1,1470 @@
+@{
+    ViewBag.Title = "Companies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .pc-wrap {
+        background: #f4f5f7;
+        padding: 22px 28px 40px;
+    }
+
+    .pc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .pc-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pc-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px rgba(20, 20, 30, .06);
+        padding: 26px 28px;
+    }
+
+    .pc-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 16px;
+    }
+
+    .pc-card-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pc-card-note {
+        font-size: 12px;
+        color: #a4aab3;
+    }
+
+    .pc-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .pc-tab {
+        border: 1px solid #e3e5e9;
+        background: #fbfbfc;
+        color: #55595f;
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .pc-tab.active {
+            background: #fff;
+            border-color: #d7dade;
+            color: #22262b;
+        }
+
+    .pc-banner {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .pc-banner-red {
+        background: #fdecec;
+        color: #a13b3b;
+    }
+
+    .pc-banner-green {
+        background: #eaf7ee;
+        color: #2c6b3f;
+    }
+
+    .pc-search {
+        position: relative;
+        max-width: 340px;
+        margin-bottom: 16px;
+    }
+
+        .pc-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .pc-search input {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .pc-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    table.pc-table {
+        width: 100%;
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+        table.pc-table th,
+        table.pc-table td {
+            border: none;
+        }
+
+        table.pc-table thead th {
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            color: #a4aab3;
+            font-weight: 600;
+            padding: 12px 14px;
+            border-bottom: 1px solid #edeef1;
+            white-space: nowrap;
+        }
+
+        table.pc-table tbody td {
+            padding: 15px 14px;
+            font-size: 13px;
+            color: #33383f;
+            border-bottom: 1px solid #f2f3f5;
+            vertical-align: top;
+        }
+
+        table.pc-table tbody tr {
+            cursor: pointer;
+        }
+
+            table.pc-table tbody tr:hover {
+                background: #fafbfc;
+            }
+
+        /* Inactive customers table has no row click-through -- keep the
+           cursor/hover from implying it's clickable. */
+        table.pc-table.pc-table-static tbody tr {
+            cursor: default;
+        }
+
+            table.pc-table.pc-table-static tbody tr:hover {
+                background: transparent;
+            }
+
+    .pc-name {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pc-dash {
+        color: #c2c6cc;
+    }
+
+    .pc-pill {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 20px;
+        padding: 3px 10px;
+        white-space: nowrap;
+    }
+
+    .pc-pill-red {
+        background: #fdecec;
+        color: #b3453f;
+    }
+
+    .pc-pill-blue {
+        background: #eef2fb;
+        color: #3f5fa8;
+        margin: 0 4px 4px 0;
+    }
+
+    .pc-empty {
+        text-align: center;
+        padding: 40px 0;
+        color: #a4aab3;
+        font-size: 13px;
+    }
+
+    .pc-filter-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .pc-filter-search {
+        position: relative;
+        width: 240px;
+    }
+
+        .pc-filter-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a4aab3;
+            font-size: 13px;
+        }
+
+        .pc-filter-search input {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 12px 8px 32px;
+            font-size: 13px;
+            color: #444;
+            background: #fbfbfc;
+        }
+
+            .pc-filter-search input:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .pc-filter-select {
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 13px;
+        color: #444;
+        background: #fbfbfc;
+    }
+
+    .pc-filter-date-label {
+        font-size: 12px;
+        color: #8a8f98;
+    }
+
+    .pc-filter-date {
+        border: 1px solid #e3e5e9;
+        border-radius: 6px;
+        padding: 7px 10px;
+        font-size: 13px;
+        color: #444;
+        background: #fbfbfc;
+    }
+
+    .pc-demo-card {
+        background: #fdecd8;
+        border: 1px solid #f3d9b3;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+
+    .pc-demo-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .pc-demo-title-line {
+        font-size: 14px;
+    }
+
+    .pc-demo-company {
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pc-demo-meta {
+        color: #8a8f98;
+        font-weight: 400;
+        margin-left: 4px;
+    }
+
+    .pc-demo-status {
+        font-weight: 700;
+        font-size: 12px;
+        margin-left: 8px;
+    }
+
+    .pc-demo-status-open { color: #c1810f; }
+    .pc-demo-status-transferred { color: #3f6fd4; }
+    .pc-demo-status-won { color: #2c8a4b; }
+    .pc-demo-status-lost { color: #c0392b; }
+    .pc-demo-status-default { color: #8a8f98; }
+
+    .pc-demo-line {
+        font-size: 13px;
+        color: #3a3f46;
+        margin-top: 6px;
+    }
+
+        .pc-demo-line b {
+            font-weight: 700;
+        }
+
+        .pc-demo-line span.pc-demo-sub {
+            color: #8a8f98;
+        }
+
+    .pc-demo-note {
+        font-size: 13px;
+        color: #5b6068;
+        margin-top: 4px;
+    }
+
+    .pl-pager {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+    }
+
+        .pl-pager button {
+            border: 1px solid #e3e5e9;
+            background: #fff;
+            color: #444;
+            border-radius: 6px;
+            padding: 5px 11px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+            .pl-pager button.active {
+                background: #1f5a37;
+                border-color: #1f5a37;
+                color: #fff;
+            }
+
+            .pl-pager button:disabled {
+                color: #c2c6cc;
+                cursor: default;
+            }
+
+        .pl-pager-ellipsis {
+            color: #a4aab3;
+            font-size: 12px;
+            padding: 0 2px;
+        }
+
+    .pc-modal-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 4000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .pc-modal-backdrop.active {
+            display: flex;
+        }
+
+    .pc-modal {
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px;
+        width: 900px;
+        max-width: 94vw;
+        max-height: 82vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pc-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        flex: 0 0 auto;
+    }
+
+    .pc-modal-body-scroll {
+        overflow-y: auto;
+        flex: 1 1 auto;
+    }
+
+    .pc-modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pc-modal-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        line-height: 1;
+        color: #a4aab3;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .pc-contact-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .pc-contact-block {
+        border: 1px solid #edeef1;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+
+        .pc-contact-row .pc-contact-block {
+            margin-bottom: 0;
+        }
+
+        .pc-contact-row .pc-field-label {
+            margin-top: 8px;
+        }
+
+            .pc-contact-row .pc-field-label:first-of-type {
+                margin-top: 0;
+            }
+
+        .pc-contact-block:last-child {
+            margin-bottom: 0;
+        }
+
+    .pc-contact-label {
+        font-size: 11px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+        color: #a4aab3;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .pc-contact-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px 16px;
+    }
+
+    @@media (max-width: 720px) {
+        .pc-contact-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .pc-field-label {
+        font-size: 11px;
+        color: #a4aab3;
+        margin-bottom: 2px;
+    }
+
+    .pc-field-value {
+        font-size: 13px;
+        color: #33383f;
+        font-weight: 600;
+    }
+
+    .pc-section-gap {
+        margin-top: 6px;
+    }
+
+    .pl-btn {
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .pl-btn-outline {
+        background: #fff;
+        color: #33383f;
+        border-color: #d7dade;
+    }
+
+        .pl-btn-outline:hover {
+            background: #f7f8f9;
+            color: #33383f;
+            text-decoration: none;
+        }
+
+    .pl-btn-primary {
+        background: #1f5a37;
+        color: #fff;
+    }
+
+        .pl-btn-primary:hover {
+            background: #17452b;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .pl-drawer-backdrop {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(20, 20, 30, .35);
+        z-index: 4500;
+    }
+
+        .pl-drawer-backdrop.active {
+            display: block;
+        }
+
+    .pl-drawer {
+        position: fixed;
+        top: 0; right: 0; bottom: 0;
+        width: 420px;
+        max-width: 92vw;
+        background: #fff;
+        box-shadow: -2px 0 12px rgba(20, 20, 30, .12);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pl-drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 20px 22px;
+        border-bottom: 1px solid #edeef1;
+    }
+
+    .pl-drawer-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #22262b;
+    }
+
+    .pl-drawer-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        line-height: 1;
+        color: #a4aab3;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .pl-drawer-body {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 20px 22px;
+    }
+
+    .pl-drawer-field {
+        margin-bottom: 14px;
+    }
+
+        .pl-drawer-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #55595f;
+            margin-bottom: 5px;
+        }
+
+        .pl-drawer-field label .req {
+            color: #d9534f;
+        }
+
+        .pl-drawer-field input[type="text"],
+        .pl-drawer-field input[type="tel"],
+        .pl-drawer-field select,
+        .pl-drawer-field textarea {
+            width: 100%;
+            border: 1px solid #e3e5e9;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 13px;
+            color: #33383f;
+            background: #fbfbfc;
+        }
+
+            .pl-drawer-field input:focus,
+            .pl-drawer-field select:focus,
+            .pl-drawer-field textarea:focus {
+                outline: none;
+                border-color: #c7cad0;
+                background: #fff;
+            }
+
+    .pl-drawer-row {
+        display: flex;
+        gap: 10px;
+    }
+
+        .pl-drawer-row .pl-drawer-field {
+            flex: 1 1 0;
+        }
+
+    .pl-drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 16px 22px;
+        border-top: 1px solid #edeef1;
+    }
+</style>
+<div class="pc-wrap">
+    <div class="pc-header">
+        <div class="pc-title">Companies</div>
+    </div>
+
+    <div class="pc-card">
+        <div class="pc-card-head">
+            <div class="pc-card-title">Companies</div>
+            <div class="pc-card-note">cross-checks before you reach out</div>
+        </div>
+
+        <div class="pc-tabs">
+            <button type="button" class="pc-tab active" id="TabActiveCustomers" onclick="SwitchCompanyTab('active')">&#9873; Active customers &mdash; don't pitch</button>
+            <button type="button" class="pc-tab" id="TabDemoedNotClosed" onclick="SwitchCompanyTab('demoed')">&#8635; Demoed, not closed &mdash; re-target</button>
+            <button type="button" class="pc-tab" id="TabInactiveCustomers" onclick="SwitchCompanyTab('inactive')">&#8635; Inactive customers &mdash; re-engage</button>
+        </div>
+
+        <div id="ActiveCustomersPanel">
+            <div class="pc-banner pc-banner-red">
+                <span>&#9873;</span>
+                <span>These companies are already paying customers (synced from active subscriptions). Don't cold-pitch them &mdash; loop in their Customer Success Manager instead.</span>
+            </div>
+
+            <div class="pc-search">
+                <i class="fa fa-search"></i>
+                <input type="text" id="CompanySearch" placeholder="Search company name..." />
+            </div>
+
+            <table class="pc-table pc-table-static">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Country</th>
+                        <th>Customer since</th>
+                        <th>Plan</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="CompanyRows">
+                    <tr><td colspan="5" class="pc-empty">Loading...</td></tr>
+                </tbody>
+            </table>
+            <div class="pl-pager" id="CompanyPager"></div>
+        </div>
+
+        <div id="DemoedNotClosedPanel" style="display:none">
+            <div class="pc-banner pc-banner-green">
+                <span>&#8635;</span>
+                <span>Sales ran a demo here but it didn't close. The person already demoed is shown &mdash; go after a different contact at the same company.</span>
+            </div>
+
+            <div class="pc-filter-row">
+                <div class="pc-filter-search">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="DemoedSearch" placeholder="Search company..." />
+                </div>
+                <select class="pc-filter-select" id="DemoedCountryFilter">
+                    <option value="">All countries</option>
+                </select>
+                <span class="pc-filter-date-label">Demoed from</span>
+                <input type="date" class="pc-filter-date" id="DemoedDateFrom" />
+                <span class="pc-filter-date-label">to</span>
+                <input type="date" class="pc-filter-date" id="DemoedDateTo" />
+            </div>
+
+            <div id="DemoedNotClosedCards">
+                <div class="pc-empty">Loading...</div>
+            </div>
+
+            <div class="pl-pager" id="DemoedPager"></div>
+        </div>
+
+        <div id="InactiveCustomersPanel" style="display:none">
+            <div class="pc-banner pc-banner-green">
+                <span>&#8635;</span>
+                <span>These companies' subscription has expired &mdash; they're former customers, good candidates to re-engage and win back.</span>
+            </div>
+
+            <div class="pc-search">
+                <i class="fa fa-search"></i>
+                <input type="text" id="InactiveCompanySearch" placeholder="Search company name..." />
+            </div>
+
+            <table class="pc-table pc-table-static">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Customer since</th>
+                        <th>Expired on</th>
+                        <th>Plan</th>
+                    </tr>
+                </thead>
+                <tbody id="InactiveCompanyRows">
+                    <tr><td colspan="4" class="pc-empty">Loading...</td></tr>
+                </tbody>
+            </table>
+            <div class="pl-pager" id="InactiveCompanyPager"></div>
+        </div>
+    </div>
+</div>
+
+<div class="pc-modal-backdrop" id="CompanyDetailBackdrop">
+    <div class="pc-modal">
+        <div class="pc-modal-header">
+            <div class="pc-modal-title" id="CompanyDetailTitle">Company</div>
+            <button type="button" class="pc-modal-close" id="CompanyDetailCloseBtn">&times;</button>
+        </div>
+        <div class="pc-modal-body-scroll">
+            <div id="CompanyDetailBody"></div>
+        </div>
+    </div>
+</div>
+
+<div class="pl-drawer-backdrop" id="CreateLeadBackdrop">
+    <div class="pl-drawer">
+        <div class="pl-drawer-header">
+            <div class="pl-drawer-title">+ Create Pre-Sales lead</div>
+            <button type="button" class="pl-drawer-close" id="CreateLeadCloseBtn">&times;</button>
+        </div>
+        <div class="pl-drawer-body">
+            <div class="pl-drawer-field">
+                <label>Lead source <span class="req">*</span></label>
+                <select id="CreateLeadSource">
+                    <option value="" disabled selected>Select LeadSource</option>
+                    <option value="WebsiteForms">Website Forms</option>
+                    <option value="Chat">Live Chat</option>
+                    <option value="Email">Email</option>
+                    <option value="SocialMedia">Social Media</option>
+                    <option value="Event/Conference">Event/Conference</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="pl-drawer-field">
+                <label>Name <span class="req">*</span></label>
+                <input type="text" id="CreateLeadName" placeholder="Full name" autocomplete="off" />
+            </div>
+            <div class="pl-drawer-field">
+                <label>Corp email <span class="req">*</span></label>
+                <input type="text" id="CreateLeadCorpEmail" placeholder="name@company.com" autocomplete="off" oninput="this.value = this.value.replace(/\s/g, '')" />
+            </div>
+            <div class="pl-drawer-row">
+                <div class="pl-drawer-field">
+                    <label>Mobile number</label>
+                    <input type="tel" id="CreateLeadMobile" maxlength="15" autocomplete="off" />
+                </div>
+                <div class="pl-drawer-field">
+                    <label>Telephone</label>
+                    <input type="tel" id="CreateLeadTelephone" maxlength="15" autocomplete="off" />
+                </div>
+            </div>
+            <div class="pl-drawer-field">
+                <label>Designation</label>
+                <input type="text" id="CreateLeadDesignation" placeholder="Designation" autocomplete="off" />
+            </div>
+            <div class="pl-drawer-field">
+                <label>Company <span class="req">*</span></label>
+                <input type="text" id="CreateLeadCompany" placeholder="Company name" autocomplete="off" />
+            </div>
+            <div class="pl-drawer-field">
+                <label>Country <span class="req">*</span></label>
+                <select id="CreateLeadCountry">
+                    <option value="" disabled selected>Select Country</option>
+                </select>
+            </div>
+            <div class="pl-drawer-field" id="CreateLeadStateField" style="display:none">
+                <label>State</label>
+                <select id="CreateLeadState">
+                    <option value="" disabled selected>Select State</option>
+                </select>
+            </div>
+            <div class="pl-drawer-field">
+                <label>Client query</label>
+                <textarea id="CreateLeadMessage" rows="4" placeholder="What does the client want?"></textarea>
+            </div>
+        </div>
+        <div class="pl-drawer-footer">
+            <button type="button" class="pl-btn pl-btn-outline" id="CreateLeadCancelBtn">Cancel</button>
+            <button type="button" class="pl-btn pl-btn-primary" id="CreateLeadSaveBtn">Save lead</button>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput-jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<style>
+    /* The admin theme's global list/dropdown CSS bleeds white text into
+       intlTelInput's country picker, making the highlighted/selected row
+       unreadable. Force dark text explicitly, same fix pattern as the
+       Activity timeline's white-text bug. */
+    .iti__country-list, .iti__country-list li, .iti__country-name, .iti__dial-code {
+        color: #33383f !important;
+    }
+    .iti__country.iti__highlight {
+        background-color: #f0f1f3 !important;
+    }
+    .iti__country.iti__highlight .iti__country-name,
+    .iti__country.iti__highlight .iti__dial-code {
+        color: #33383f !important;
+    }
+    /* Same theme-CSS bleed also strips intlTelInput's own max-height/
+       overflow rules off the country list, so it renders full-length and
+       spills over the rest of the drawer instead of scrolling. Force it
+       back to a fixed, scrollable height. */
+    .iti__country-list {
+        max-height: 200px !important;
+        overflow-y: auto !important;
+    }
+</style>
+
+<script>
+    function CoEscape(val) {
+        return val ? $("<div>").text(val).html() : "";
+    }
+
+    function CoValueOrDash(val) {
+        return val ? CoEscape(val) : "<span class='pc-dash'>&mdash;</span>";
+    }
+
+    function CoFormatDate(dotNetDate) {
+        if (!dotNetDate) return "";
+        var match = /\/Date\((\d+)\)\//.exec(dotNetDate);
+        var d = match ? new Date(parseInt(match[1], 10)) : new Date(dotNetDate);
+        if (isNaN(d.getTime())) return "";
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function CoModulePills(moduleNames) {
+        if (!moduleNames) return "<span class='pc-dash'>&mdash;</span>";
+        var parts = moduleNames.split(",");
+        var html = "";
+        for (var i = 0; i < parts.length; i++) {
+            var name = $.trim(parts[i]);
+            if (!name) continue;
+            html += "<span class='pc-pill pc-pill-blue'>" + CoEscape(name) + "</span>";
+        }
+        return html || "<span class='pc-dash'>&mdash;</span>";
+    }
+
+    function SwitchCompanyTab(tab) {
+        $("#TabActiveCustomers").removeClass("active");
+        $("#TabDemoedNotClosed").removeClass("active");
+        $("#TabInactiveCustomers").removeClass("active");
+        $("#ActiveCustomersPanel").hide();
+        $("#DemoedNotClosedPanel").hide();
+        $("#InactiveCustomersPanel").hide();
+
+        if (tab === "active") {
+            $("#TabActiveCustomers").addClass("active");
+            $("#ActiveCustomersPanel").show();
+        } else if (tab === "inactive") {
+            $("#TabInactiveCustomers").addClass("active");
+            $("#InactiveCustomersPanel").show();
+            if (!InactiveCustomersLoaded) {
+                LoadInactiveCompanies();
+            }
+        } else {
+            $("#TabDemoedNotClosed").addClass("active");
+            $("#DemoedNotClosedPanel").show();
+            if (!DemoedNotClosedLoaded) {
+                LoadDemoedCountryFilter();
+                LoadDemoedNotClosedList();
+            }
+        }
+    }
+
+    // Real server-side page (10/page) -- this list is company-wide, not
+    // scoped to one rep, so it can legitimately get very large in
+    // production. No row click-through / detail popup on this tab.
+    var CurrentCompanyList = [];
+    var CompanyPageSize = 10;
+    var CompanyCurrentPage = 1;
+    var CompanyTotalCount = 0;
+
+    function LoadCompanies() {
+        var search = $.trim($("#CompanySearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetActiveCustomerListPaged",
+            data: { search: search, pageNumber: CompanyCurrentPage, pageSize: CompanyPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            CurrentCompanyList = (response && response.DataList) || [];
+            CompanyTotalCount = (response && response.TotalCount) || 0;
+            RenderCompanyRows();
+            RenderCompanyPager();
+        }).fail(function () {
+            $("#CompanyRows").html("<tr><td colspan='5' class='pc-empty'>Couldn't load companies - please refresh.</td></tr>");
+        });
+    }
+
+    function RenderCompanyPager() {
+        var numberOfPages = Math.max(1, Math.ceil(CompanyTotalCount / CompanyPageSize));
+        if (numberOfPages <= 1) {
+            $("#CompanyPager").html("");
+            return;
+        }
+        var html = "";
+        html += "<button " + (CompanyCurrentPage <= 1 ? "disabled" : "onclick='GoToCompanyPage(" + (CompanyCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = PcCompactPageList(CompanyCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='pl-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === CompanyCurrentPage ? "active" : "") + "' onclick='GoToCompanyPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (CompanyCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToCompanyPage(" + (CompanyCurrentPage + 1) + ")'") + ">Next</button>";
+        $("#CompanyPager").html(html);
+    }
+
+    function GoToCompanyPage(page) {
+        CompanyCurrentPage = page;
+        LoadCompanies();
+    }
+
+    function RenderCompanyRows() {
+        var list = CurrentCompanyList;
+        if (!list.length) {
+            $("#CompanyRows").html("<tr><td colspan='5' class='pc-empty'>No active customers found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr>";
+            html += "  <td class='pc-name'>" + CoValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td>" + CoValueOrDash(item.CountryName) + "</td>";
+            html += "  <td>" + CoValueOrDash(CoFormatDate(item.CustomerSince)) + "</td>";
+            html += "  <td>" + CoModulePills(item.ModuleNames) + "</td>";
+            html += "  <td><span class='pc-pill pc-pill-red'>Do not pitch</span></td>";
+            html += "</tr>";
+        }
+        $("#CompanyRows").html(html);
+    }
+
+    $("#CompanyDetailCloseBtn").click(function () {
+        $("#CompanyDetailBackdrop").removeClass("active");
+    });
+
+    var CompanySearchTimer = null;
+    $("#CompanySearch").on("input", function () {
+        clearTimeout(CompanySearchTimer);
+        CompanySearchTimer = setTimeout(function () {
+            CompanyCurrentPage = 1;
+            LoadCompanies();
+        }, 300);
+    });
+
+    // ---- "Inactive customers — re-engage" tab ------------------------
+    // Opposite of Active customers: companies whose subscription HAS
+    // expired (no module with ToDate >= today), i.e. former customers with
+    // no currently active coverage. Same true server-side page (10/page),
+    // company-wide. No row click-through / detail popup on this tab --
+    // just a plain list to scan.
+    var InactiveCustomersLoaded = false;
+    var InactiveCompanyPageSize = 10;
+    var InactiveCompanyCurrentPage = 1;
+    var InactiveCompanyTotalCount = 0;
+
+    function LoadInactiveCompanies() {
+        var search = $.trim($("#InactiveCompanySearch").val());
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetInactiveCustomerListPaged",
+            data: { search: search, pageNumber: InactiveCompanyCurrentPage, pageSize: InactiveCompanyPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            InactiveCustomersLoaded = true;
+            InactiveCompanyTotalCount = (response && response.TotalCount) || 0;
+            RenderInactiveCompanyRows((response && response.DataList) || []);
+            RenderInactiveCompanyPager();
+        }).fail(function () {
+            $("#InactiveCompanyRows").html("<tr><td colspan='4' class='pc-empty'>Couldn't load companies - please refresh.</td></tr>");
+        });
+    }
+
+    function RenderInactiveCompanyPager() {
+        var numberOfPages = Math.max(1, Math.ceil(InactiveCompanyTotalCount / InactiveCompanyPageSize));
+        if (numberOfPages <= 1) {
+            $("#InactiveCompanyPager").html("");
+            return;
+        }
+        var html = "";
+        html += "<button " + (InactiveCompanyCurrentPage <= 1 ? "disabled" : "onclick='GoToInactiveCompanyPage(" + (InactiveCompanyCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = PcCompactPageList(InactiveCompanyCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='pl-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === InactiveCompanyCurrentPage ? "active" : "") + "' onclick='GoToInactiveCompanyPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (InactiveCompanyCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToInactiveCompanyPage(" + (InactiveCompanyCurrentPage + 1) + ")'") + ">Next</button>";
+        $("#InactiveCompanyPager").html(html);
+    }
+
+    function GoToInactiveCompanyPage(page) {
+        InactiveCompanyCurrentPage = page;
+        LoadInactiveCompanies();
+    }
+
+    function RenderInactiveCompanyRows(list) {
+        if (!list.length) {
+            $("#InactiveCompanyRows").html("<tr><td colspan='4' class='pc-empty'>No inactive customers found.</td></tr>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<tr>";
+            html += "  <td class='pc-name'>" + CoValueOrDash(item.CompanyName) + "</td>";
+            html += "  <td>" + CoValueOrDash(CoFormatDate(item.CustomerSince)) + "</td>";
+            html += "  <td>" + CoValueOrDash(CoFormatDate(item.ExpiredOn)) + "</td>";
+            html += "  <td>" + CoModulePills(item.ModuleNames) + "</td>";
+            html += "</tr>";
+        }
+        $("#InactiveCompanyRows").html(html);
+    }
+
+    var InactiveCompanySearchTimer = null;
+    $("#InactiveCompanySearch").on("input", function () {
+        clearTimeout(InactiveCompanySearchTimer);
+        InactiveCompanySearchTimer = setTimeout(function () {
+            InactiveCompanyCurrentPage = 1;
+            LoadInactiveCompanies();
+        }, 300);
+    });
+
+    // ---- "Demoed, not closed — re-target" tab -----------------------
+    // select smo.* from SA_MaskEmail_PreSales smps
+    //   inner join SA_MaskEmail_Open smo on smo.CorpEmail = smps.CorpEmail
+    //   where smps.CreatedBy = <session user> and smps.Status = 'Transferred'
+    // extended with search / country / CreatedDate range filters + paging,
+    // same DataList/TotalCount shape as GetLeadList.
+    var CurrentOpenLeadList = [];
+    var DemoedNotClosedLoaded = false;
+    var DemoedCurrentPage = 1;
+    var DemoedPageSize = 10;
+
+    function DemoStatusClass(status) {
+        var key = (status || "").trim().toLowerCase();
+        if (key === "open") return "pc-demo-status-open";
+        if (key === "transferred") return "pc-demo-status-transferred";
+        if (key === "won") return "pc-demo-status-won";
+        if (key === "lost") return "pc-demo-status-lost";
+        return "pc-demo-status-default";
+    }
+
+    function LoadDemoedNotClosedList() {
+        var search = $.trim($("#DemoedSearch").val());
+        var country = $("#DemoedCountryFilter").val();
+        var dateFrom = $("#DemoedDateFrom").val();
+        var dateTo = $("#DemoedDateTo").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDemoedNotClosedList",
+            data: { search: search, country: country, dateFrom: dateFrom, dateTo: dateTo, pageNumber: DemoedCurrentPage, pageSize: DemoedPageSize },
+            dataType: "json"
+        }).done(function (response) {
+            DemoedNotClosedLoaded = true;
+            CurrentOpenLeadList = (response && response.DataList) || [];
+            var total = (response && response.TotalCount) || 0;
+            RenderDemoedNotClosedCards(CurrentOpenLeadList);
+            RenderDemoedPager(total);
+        }).fail(function () {
+            $("#DemoedNotClosedCards").html("<div class='pc-empty'>Couldn't load list - please refresh.</div>");
+        });
+    }
+
+    function LoadDemoedCountryFilter() {
+        $.ajax({
+            type: "GET",
+            url: "/PreSalesNew/GetDemoedNotClosedCountryList",
+            dataType: "json"
+        }).done(function (response) {
+            var list = (response && response.DataList) || [];
+            var html = "<option value=''>All countries</option>";
+            $.each(list, function (i, item) {
+                html += "<option value='" + CoEscape(item.Value) + "'>" + CoEscape(item.Text) + "</option>";
+            });
+            $("#DemoedCountryFilter").html(html);
+        });
+    }
+
+    function RenderDemoedNotClosedCards(list) {
+        if (!list.length) {
+            $("#DemoedNotClosedCards").html("<div class='pc-empty'>No demoed-but-not-closed leads found.</div>");
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            html += "<div class='pc-demo-card' onclick='OpenOpenLeadModal(" + item.ID + ")'>";
+            html += "  <div class='pc-demo-card-head'>";
+            html += "    <div class='pc-demo-title-line'>";
+            html += "      <span class='pc-demo-company'>" + CoValueOrDash(item.CompanyName) + "</span>";
+            if (item.CountryName) { html += "      <span class='pc-demo-meta'>&middot; " + CoEscape(item.CountryName) + "</span>"; }
+            if (item.Status) { html += "      <span class='pc-demo-status " + DemoStatusClass(item.Status) + "'>" + CoEscape(item.Status) + "</span>"; }
+            html += "    </div>";
+            html += "    <button type='button' class='pl-btn pl-btn-primary' onclick='event.stopPropagation(); OpenCreateLeadPanelFor(" + item.ID + ")'>+ New contact</button>";
+            html += "  </div>";
+            html += "  <div class='pc-demo-line'>Already demoed: <b>" + CoValueOrDash(item.Name) + "</b>";
+            if (item.CorpEmail) { html += " <span class='pc-demo-sub'>&lt;" + CoEscape(item.CorpEmail) + "&gt;</span>"; }
+            html += " &middot; " + CoValueOrDash(CoFormatDate(item.CreatedDate));
+            if (item.CreatedBy) { html += " &middot; by " + CoEscape(item.CreatedBy); }
+            html += "  </div>";
+            if (item.Message) { html += "  <div class='pc-demo-note'>" + CoEscape(item.Message) + "</div>"; }
+            html += "</div>";
+        }
+        $("#DemoedNotClosedCards").html(html);
+    }
+
+    // Builds a compact page-number list -- 1,2,3,4,5,...,N near the start;
+    // 1,...,N-4..N near the end; 1,...,cur-1,cur,cur+1,...,N in the middle --
+    // instead of one button per page, so a long list doesn't turn into a
+    // wall of buttons.
+    function PcCompactPageList(current, total) {
+        if (total <= 7) {
+            var all = [];
+            for (var i = 1; i <= total; i++) all.push(i);
+            return all;
+        }
+        if (current <= 4) return [1, 2, 3, 4, 5, "...", total];
+        if (current >= total - 3) return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+        return [1, "...", current - 1, current, current + 1, "...", total];
+    }
+
+    function RenderDemoedPager(totalCount) {
+        var numberOfPages = Math.max(1, Math.ceil(totalCount / DemoedPageSize));
+        var html = '';
+
+        html += "<button " + (DemoedCurrentPage <= 1 ? "disabled" : "onclick='GoToDemoedPage(" + (DemoedCurrentPage - 1) + ")'") + ">Prev</button>";
+        var pages = PcCompactPageList(DemoedCurrentPage, numberOfPages);
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i] === "...") {
+                html += "<span class='pl-pager-ellipsis'>&hellip;</span>";
+            } else {
+                html += "<button class='" + (pages[i] === DemoedCurrentPage ? "active" : "") + "' onclick='GoToDemoedPage(" + pages[i] + ")'>" + pages[i] + "</button>";
+            }
+        }
+        html += "<button " + (DemoedCurrentPage >= numberOfPages ? "disabled" : "onclick='GoToDemoedPage(" + (DemoedCurrentPage + 1) + ")'") + ">Next</button>";
+
+        $("#DemoedPager").html(html);
+    }
+
+    function GoToDemoedPage(page) {
+        DemoedCurrentPage = page;
+        LoadDemoedNotClosedList();
+    }
+
+    var DemoedSearchTimer = null;
+    $("#DemoedSearch").on("input", function () {
+        clearTimeout(DemoedSearchTimer);
+        DemoedSearchTimer = setTimeout(function () {
+            DemoedCurrentPage = 1;
+            LoadDemoedNotClosedList();
+        }, 300);
+    });
+
+    $("#DemoedCountryFilter, #DemoedDateFrom, #DemoedDateTo").change(function () {
+        DemoedCurrentPage = 1;
+        LoadDemoedNotClosedList();
+    });
+
+    function OcField(label, val) {
+        return "<div><div class='pc-field-label'>" + label + "</div><div class='pc-field-value'>" + CoValueOrDash(val) + "</div></div>";
+    }
+
+    function OcDateField(label, val) {
+        return OcField(label, CoFormatDate(val));
+    }
+
+    function OpenOpenLeadModal(id) {
+        var row = null;
+        for (var i = 0; i < CurrentOpenLeadList.length; i++) {
+            if (CurrentOpenLeadList[i].ID === id) { row = CurrentOpenLeadList[i]; break; }
+        }
+        if (!row) return;
+
+        $("#CompanyDetailTitle").text(row.Name || row.CompanyName || "Lead detail");
+
+        var html = "";
+        html += "<div class='pc-contact-block'>";
+        html += "  <div class='pc-contact-label'>Contact</div>";
+        html += "  <div class='pc-contact-grid'>";
+        html += OcField("Name", row.Name);
+        html += OcField("Designation", row.Designation);
+        html += OcField("Corp email", row.CorpEmail);
+        html += OcField("Company", row.CompanyName);
+        html += OcField("Mobile", (row.ContactCountryCode ? "+" + row.ContactCountryCode + " " : "") + (row.ContactNumber || ""));
+        html += OcField("Telephone", (row.TelephoneCountryCode ? "+" + row.TelephoneCountryCode + " " : "") + (row.Telephone || ""));
+        html += OcField("Country", row.CountryName);
+        html += OcField("State", row.StateName);
+        html += OcField("IP address", row.IPAddress);
+        html += "  </div>";
+        html += "</div>";
+
+        html += "<div class='pc-contact-block'>";
+        html += "  <div class='pc-contact-label'>Lead</div>";
+        html += "  <div class='pc-contact-grid'>";
+        html += OcField("Source", row.Source);
+        html += OcField("Outbound lead source", row.OutboundLeadSource);
+        html += OcField("Lead type", row.LeadType);
+        html += OcField("Status", row.Status);
+        html += OcField("CRM lead status", row.CRM_LeadStatus);
+        html += OcField("Lead status", row.Lead_status);
+        html += OcField("Set follow-up", row.Set_Follow_up);
+        html += OcDateField("Requested date", row.RequestedDate);
+        html += OcDateField("Created date", row.CreatedDate);
+        html += OcField("Created by", row.CreatedBy);
+        html += OcDateField("Update date", row.UpdateDate);
+        html += OcField("Is active", row.IsActive);
+        html += OcField("Is email", row.IsEmail);
+        html += OcField("Mask mail id", row.MaskMail_Id);
+        html += "  </div>";
+        html += "  <div class='pc-field-label pc-section-gap'>Message</div><div class='pc-field-value'>" + CoValueOrDash(row.Message) + "</div>";
+        html += "</div>";
+
+        html += "<div class='pc-contact-block'>";
+        html += "  <div class='pc-contact-label'>Deal</div>";
+        html += "  <div class='pc-contact-grid'>";
+        html += OcField("Amount", row.Amount);
+        html += OcField("Currency", row.Currency);
+        html += OcField("Expected close date", row.Expected_Close_Date);
+        html += OcField("Lost reason", row.LostReason);
+        html += OcField("Invoice number", row.InvoiceNumber);
+        html += OcField("Payment terms", row.PaymentTerms);
+        html += OcField("Payment option", row.PaymentOption);
+        html += OcField("Remaining payment date", row.RemainingPaymentDate);
+        html += OcField("Remaining amount", row.RemainingAmount);
+        html += OcField("Attachments", row.Attechments);
+        html += OcField("Open created date", row.OpenCreatedDate);
+        html += OcField("Open updated date", row.OpenUpdateddate);
+        html += "  </div>";
+        html += "</div>";
+
+        $("#CompanyDetailBody").html(html);
+        $("#CompanyDetailBackdrop").addClass("active");
+    }
+
+    // ---- Create Pre-Sales lead drawer -------------------------------
+    // Exact same fields/validation/save contract as
+    // Views/PreSalesNew/Index.cshtml's CreateLeadBackdrop drawer, posting
+    // to LeadManagementSubscription/SavePreSalesLeadDetails so a "+ New
+    // contact" click here saves into SA_MaskEmail_PreSales the same way
+    // the Leads page's "+ Create lead" button does. Prefills Company (and
+    // Country, when the row's CountryName matches one of the loaded
+    // options) from the "Demoed, not closed" row that was clicked.
+    var CreateLeadCountriesLoaded = false;
+    var CreateLeadPrefillCountryName = null;
+
+    function OpenCreateLeadPanelFor(id) {
+        var row = null;
+        for (var i = 0; i < CurrentOpenLeadList.length; i++) {
+            if (CurrentOpenLeadList[i].ID === id) { row = CurrentOpenLeadList[i]; break; }
+        }
+        OpenCreateLeadPanel(row);
+    }
+
+    function OpenCreateLeadPanel(prefillRow) {
+        ResetCreateLeadForm();
+        if (!CreateLeadCountriesLoaded) {
+            LoadCreateLeadCountries(prefillRow);
+        } else if (prefillRow && prefillRow.CountryName) {
+            SelectCreateLeadCountryByName(prefillRow.CountryName);
+        }
+        if (prefillRow) {
+            $("#CreateLeadCompany").val(prefillRow.CompanyName || "");
+            $("#CreateLeadName").val(prefillRow.Name || "");
+            $("#CreateLeadCorpEmail").val(prefillRow.CorpEmail || "");
+            $("#CreateLeadDesignation").val(prefillRow.Designation || "");
+        }
+        $("#CreateLeadBackdrop").addClass("active");
+    }
+
+    function CloseCreateLeadPanel() {
+        $("#CreateLeadBackdrop").removeClass("active");
+    }
+
+    function ResetCreateLeadForm() {
+        $("#CreateLeadSource").val("");
+        $("#CreateLeadName").val("");
+        $("#CreateLeadCorpEmail").val("");
+        $("#CreateLeadMobile").val("");
+        $("#CreateLeadTelephone").val("");
+        $("#CreateLeadDesignation").val("");
+        $("#CreateLeadCompany").val("");
+        $("#CreateLeadCountry").val("");
+        $("#CreateLeadState").html("<option value='' disabled selected>Select State</option>");
+        $("#CreateLeadStateField").hide();
+        $("#CreateLeadMessage").val("");
+    }
+
+    $("#CreateLeadCloseBtn, #CreateLeadCancelBtn").click(function () {
+        CloseCreateLeadPanel();
+    });
+
+    function SelectCreateLeadCountryByName(countryName) {
+        var found = false;
+        $("#CreateLeadCountry option").each(function () {
+            if ($.trim($(this).text()).toLowerCase() === $.trim(countryName).toLowerCase()) {
+                found = true;
+                return false;
+            }
+        });
+        if (found) {
+            $("#CreateLeadCountry option").filter(function () {
+                return $.trim($(this).text()).toLowerCase() === $.trim(countryName).toLowerCase();
+            }).prop("selected", true);
+            $("#CreateLeadCountry").trigger("change");
+        }
+    }
+
+    function LoadCreateLeadCountries(prefillRow) {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCountry",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            CreateLeadCountriesLoaded = true;
+            var html = "<option value='' disabled selected>Select Country</option>";
+            $((data && data.DataList) || []).each(function (index, value) {
+                if (value.CountryName) {
+                    html += "<option value='" + value.CountryID + "'>" + $("<div>").text(value.CountryName).html() + "</option>";
+                }
+            });
+            $("#CreateLeadCountry").html(html);
+            if (prefillRow && prefillRow.CountryName) {
+                SelectCreateLeadCountryByName(prefillRow.CountryName);
+            }
+        }).fail(function () {
+            CreateLeadCountriesLoaded = false;
+        });
+    }
+
+    $("#CreateLeadCountry").change(function () {
+        var countryId = $(this).val();
+        if (countryId == "1") {
+            $("#CreateLeadStateField").show();
+            $.ajax({
+                type: "GET",
+                url: "/PreSalesNew/GetStateList",
+                data: { countryId: countryId },
+                dataType: "json"
+            }).done(function (response) {
+                var list = (response && response.DataList) || [];
+                var html = "<option value='' disabled selected>Select State</option>";
+                $.each(list, function (index, value) {
+                    if (value.Text) {
+                        html += "<option value='" + value.Value + "'>" + $("<div>").text(value.Text).html() + "</option>";
+                    }
+                });
+                $("#CreateLeadState").html(html);
+            });
+        } else {
+            $("#CreateLeadStateField").hide();
+            $("#CreateLeadState").html("<option value='' disabled selected>Select State</option>");
+        }
+    });
+
+    $("#CreateLeadMobile, #CreateLeadTelephone").intlTelInput({
+        initialCountry: "in",
+        separateDialCode: true
+    });
+
+    $("#CreateLeadMobile").on('input', function () {
+        $(this).val($(this).val().replace(/\D/g, ''));
+    });
+
+    $("#CreateLeadSaveBtn").click(function () {
+        var Name = $.trim($("#CreateLeadName").val());
+        var CorpEmail = $.trim($("#CreateLeadCorpEmail").val());
+        var CompanyName = $.trim($("#CreateLeadCompany").val());
+        var OutboundLeadSource = $("#CreateLeadSource").val();
+        var CountryText = $("#CreateLeadCountry option:selected").text().trim();
+        var CountryVal = $("#CreateLeadCountry").val();
+
+        if (Name === "") { swal("Warning", "Please Insert Name", "error"); return; }
+        if (CorpEmail === "") { swal("Warning", "Please Insert CorpEmail", "error"); return; }
+        if (CompanyName === "") { swal("Warning", "Please Insert CompanyName", "error"); return; }
+        if (!CountryVal) { swal("Warning", "Please Insert CountryName", "error"); return; }
+        if (!OutboundLeadSource) { swal("Warning", "Please Insert LeadSource", "error"); return; }
+
+        var Contactcode = $("#CreateLeadMobile").intlTelInput("getSelectedCountryData").dialCode;
+        var Mobile = $("#CreateLeadMobile").val();
+        var Telecode = $("#CreateLeadTelephone").intlTelInput("getSelectedCountryData").dialCode;
+        var Telephone = $("#CreateLeadTelephone").val();
+        var State = (CountryText === "India") ? $("#CreateLeadState option:selected").text().trim() : null;
+
+        var GetDetails = {
+            Name: Name,
+            CorpEmail: CorpEmail,
+            Phone: Telephone,
+            Organisation: CompanyName,
+            Country: CountryText,
+            State: State,
+            OutboundLeadSource: OutboundLeadSource,
+            LeadType: "Outbound",
+            DiscriptionMessage: $.trim($("#CreateLeadMessage").val()),
+            Mobile: Mobile,
+            Designation: $.trim($("#CreateLeadDesignation").val()),
+            ContactCountryCode: Contactcode,
+            TelephoneCountryCode: Telecode
+        };
+
+        $("#CreateLeadSaveBtn").prop("disabled", true).text("Saving...");
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SavePreSalesLeadDetails",
+            data: JSON.stringify(GetDetails),
+            contentType: "application/json; charset=utf-8"
+        }).done(function (response) {
+            $("#CreateLeadSaveBtn").prop("disabled", false).text("Save lead");
+            var success = false, alreadyExists = false;
+            $(response || []).each(function (index, value) {
+                if (value.ValidationMessage === "SUCCESS") { success = true; }
+                else if (value.ValidationMessage === "Already exists") { alreadyExists = true; }
+            });
+            if (success) {
+                swal({ title: "Thank you!", text: "Created Successfully.", type: "success" }).then(function () {
+                    ResetCreateLeadForm();
+                    CloseCreateLeadPanel();
+                });
+            } else if (alreadyExists) {
+                swal("Already exists!", "Already exists.", "error");
+            } else {
+                swal("Error", "Could not save lead - please try again.", "error");
+            }
+        }).fail(function () {
+            $("#CreateLeadSaveBtn").prop("disabled", false).text("Save lead");
+            swal("Error", "Could not save lead - please try again.", "error");
+        });
+    });
+
+    $(document).ready(function () {
+        LoadCompanies();
+    });
+</script>

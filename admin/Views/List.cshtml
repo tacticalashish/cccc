@@ -1,0 +1,81 @@
+﻿@model List<ChemAnalyst.Models.SA_MarketFileList>
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<title>Chem Analyst file list </title>
+<head>
+    <link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    <script src="https//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            
+            $('#FileList').DataTable();
+        });
+
+
+        function DeleteFile(url)
+        {
+            console.log(url);
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this records!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        document.location.href = url;
+                    } else {
+                        document.location.reload(true);
+                    }
+                });
+        }
+
+    </script>
+</head>
+
+<div class="update-profile-wrapper">
+    <h3 style="margin-bottom:10px;"><a href="@Url.Action("import", "DisruptionTracker")" class="btn btn-success"><i class="fa fa-plus"></i> Import File</a></h3>
+    <div class="white-wrapper">
+        <div class="data-detail-wrapper table-responsive">
+
+            <table id="FileList" class="table">
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Product Name</th>
+                        @*<th>Created By</th>*@
+                        <th width="130">Created</th>
+                        @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"]))
+                        {
+                            <th>Action</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        string path = "/MarketAnalysisImportfile/" + item.FileName;
+                        <tr>
+                            <td><a target="_blank" href="/admin/DownloadFile?filePath=@path&fileName=@item.FileName">@item.FileName</a></td>
+                            <td>@item.Product</td>
+                            <td>@item.CreatedDate</td>
+                            @if (ChemAnalyst.Common.Helpers.Global.AdminRole == Convert.ToString(Session["UserRole"]))
+                            {
+                                string fileName = item.FileName != null ? item.FileName.Replace(".", "___") : "";
+                                <td><a href="javascript:void(0)" onclick="DeleteFile('/DisruptionTracker/Delete?fileName=@fileName');" ><i class="fa fa-trash-o fa-lg"></i></a></td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,525 @@
+﻿
+@{
+    ViewBag.Title = "CreatePreSalesLead";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .mt-2 {
+        margin-top: 8px;
+    }
+
+    .iti__country-list {
+        background: #0e1d26 !important;
+        max-height: 292px;
+        overflow-x: hidden;
+        max-width: 250px;
+    }
+
+    .iti__flag {
+        background-color: transparent !important;
+    }
+
+    .iti--separate-dial-code .iti__selected-dial-code {
+        margin-left: 6px;
+        color: red;
+    }
+
+    .iti__arrow {
+        border-top: none !important
+    }
+
+    .iti--allow-dropdown {
+        width: 100%;
+    }
+    /*.iti--separate-dial-code .iti__selected-flag {
+        background-color: #a8a8a8!important;
+    }*/
+    .text-danger {
+        color: red;
+        font-size: 15px
+    }
+
+    label.error {
+        color: #d65d5d;
+    }
+
+    .file-border {
+        border: solid .5px gray;
+        padding: 2px 3px;
+        border-radius: 4px;
+    }
+
+    .ml-2 {
+        margin-left: 4px;
+    }
+
+    .border-bottom {
+        border-bottom: solid #4e4e4f .5px
+    }
+
+    .form-control-sm {
+        line-height: 27px;
+        height: 27px;
+    }
+
+    .btn-sm {
+        line-height: 27px;
+        height: 27px;
+        padding: 0px 18px;
+    }
+
+    p-0 {
+        padding: 0px
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+        table th {
+            padding: 3px 9px !important;
+            border: 0px !important;
+            position: sticky;
+            top: 0px;
+            background: #228b22;
+        }
+
+
+        table td {
+            padding: 3px 9px !important;
+            font-size: 11px !important;
+        }
+</style>
+
+
+
+<script type="text/javascript">
+
+    function ValidateForm() {
+        var r = true;
+
+        if (!$('form').valid()) {
+            r = false;
+        }
+        else {
+            $('#btnSubmit,#btnCancel').hide();
+            $('#btnVirtualSubmit').attr('disabled', 'disabled');
+            $('#btnVirtualSubmit').show();
+        }
+        return r;
+    }
+
+</script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css" rel="stylesheet" />
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+
+            <div class="panel mt-2 bg-black text-white">
+                <div class="panel-heading border-bottom">
+
+                    <div class="row">
+                        <div class="col-md-7">
+                            <h4>Search Domain</h4>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="d-flex justify-content-between">
+                                <input type="text" name="search" class="form-control form-control-sm" onchange="SearchDomain()" placeholder="Search..." id="searchDomain" aria-controls="Userlist">
+                                <button type="button" class="btn btn-info btn-sm ml-2" onclick="SearchDomain()">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body p-0">
+                    <div class="table-responsive" style="max-height: 120px;overflow-y: scroll;">
+                        <table id="Leadlist" class="table table-sm table-borderd">
+                            <thead class="bg-dark border">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>CountryName</th>
+                                    <th>CompanyName</th>
+                                    <th>Domain</th>
+                                    <th>createdby</th>
+                                    <th>CreatedDate</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbodydata" id="tbodydata"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="" style="margin-top:10px">
+            <div class="col-md-12">
+                <div class="padding-0"> <h4 style="color:#fff;text-align:center" class="mb-1">Create Pre Sales Lead</h4></div>
+                <div class="col-md-12 padding-0">
+                    <hr style="margin-top:5px!important" />
+                </div>
+            </div>
+            <div class=" ">
+
+                <div class="col-md-3 box-height">
+                    <label>Lead Source <span class="text-danger">*</span></label>
+                    <select class="form-control mb-1" id="OutboundLeadSource" name="OutboundLeadSource" title="OutboundLeadSource">
+                        <option value="">Select LeadSource</option>
+                        <option value="WebsiteForms">Website Forms</option>
+                        <option value="Chat">Chat</option>
+                        <option value="Email">Email</option>
+                        <option value="SocialMedia">Social Media</option>
+                        <option value="Event/Conference">Event/Conference</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    @*<input type="text" class="form-control mb-1" placeholder="OutboundLeadSource" id="OutboundLeadSource" name="OutboundLeadSource" autocomplete="off" />*@
+                </div>
+                <div class="col-md-3 box-height" style="display:none">
+                    <label>Lead Type <span class="text-danger">*</span></label>
+                    <select class="form-control mb-1" id="LeadType" name="LeadType" title="LeadType">
+                        <option value="">Select LeadType</option>
+                        <option value="Outbound" selected>Outbound</option>
+                    </select>
+                    @*<input type="text" class="form-control mb-1" placeholder="LeadType" id="LeadType" name="LeadType" autocomplete="off" />*@
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control mb-1" placeholder="Name" id="Name" name="Name" autocomplete="off" />
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Corp Email <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control mb-1" placeholder="CorpEmail" id="CorpEmail" oninput="this.value = this.value.replace(/\s/g, '')" name="CorpEmail" autocomplete="off" />
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Mobile Number <span class="text-danger"></span></label>
+                    <input type="tel" maxlength="15" class="form-control mb-1" placeholder="ContactNumber" id="ContactNumber" name="ContactNumber" autocomplete="off" />
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Telephone</label>
+                    <input type="tel" maxlength="15" class="form-control mb-1" placeholder="Telephone" id="Telephone" name="Telephone" autocomplete="off" />
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Designation <span class="text-danger"></span></label>
+                    <input type="text" class="form-control mb-1" placeholder="Designation" id="Designation" name="Designation" autocomplete="off" />
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Company Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control mb-1" placeholder="CompanyName" id="CompanyName" name="CompanyName" autocomplete="off" />
+                </div>
+                <div class="col-md-3 box-height">
+                    <label>Country <span class="text-danger">*</span></label>
+                    <select class="form-control mb-1" id="Country" name="Country" title="Country">
+                        <option value="">Select Country</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 box-height" id="DivState">
+                    <label>State <span class="text-danger"></span></label>
+                    <select id="State" class="form-control mb-1" name="State" title="State">
+                        <option value="">Select State</option>
+                    </select>
+
+                </div>
+
+                @*<div class="col-md-3 box-height">
+                        <label>Requested Date</label>
+                        <input type="datetime" class="form-control mb-1" placeholder="RequestedDate" id="RequestedDate" name="RequestedDate" autocomplete="off" />
+                    </div>*@
+
+                <div class="col-md-12 col-lg-12 ">
+                    <label>Client Query <span class="text-danger"> </span></label>
+                    <textarea id="Message" class="form-control mb-1 " rows="4" name="Message" placeholder="Message"></textarea>
+                </div>
+                <div class="col-md-12 mt-2 text-right">
+                    <input class="btn btn-success" value="Submit" onclick="SaveChemanalystTaxInvoice()" type="button" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="container-fluid">
+    <h4 class="text-white">Pre Sales Excel Upload</h4>
+
+    @using (Html.BeginForm("SelesExcelUpload", "LeadManagementSubscription", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "formpresales" }))
+    {
+        <div class="import-form mt-2">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-4">
+                    <input type="file" name="file" class="custom-file-input file-border" required />
+                </div>
+                <div class="col-12 col-md-3 col-lg-3">
+                    <input id="btnSubmit" name="btnSubmit" type="submit" class="btn btn-sm btn-success px-4" value="Upload" onclick="return ValidateForm();">
+                    <a class="btn btn-sm btn-danger px-4" id="btnCancel" name="btnCancel" href="@Url.Action("CreatePreSalesLead", "LeadManagementSubscription")">Cancel</a>
+                    <a href="javascript:void(0)" id="btnVirtualSubmit" style="display:none;" class="btn blue-btn" name="btnVirtualSubmit"><i class="fa fa-refresh fa-spin"></i>&nbsp;&nbsp;loading....</a>
+                </div>
+
+                <div class="col-12 col-md-5 col-lg-5">
+                    <a class="btn btn-sm btn-info" target="_blank" href="/admin/DownloadFile?filePath=/FreightIndexImport/PreSales/DemoExcelFormat.xlsx&fileName=DemoExcelFormat.xlsx">Download Excel Format</a>
+                    <a class="btn btn-sm btn-primary" target="_blank" href="/admin/DownloadFile?filePath=/FreightIndexImport/PreSales/Download Country and State ID.xlsx&fileName=Download Country and State ID.xlsx">Download Country & State ID</a>
+                </div>
+                @*<div class="col-sm-6 col-lg-12">
+                        <div class="form-group">
+                            <span class="ml-2">
+                                @Html.CheckBox("ReplaceData")
+                            </span>
+                            <label for="inlineCheckbox2">Do you want to Replace / Delete existing file? </label>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    }
+</div>
+<div class="form-group">
+    @if (ViewBag.Status == "Failed")
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Messge
+        </div>
+    }
+    else if (ViewBag.Status == "Success")
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.Messge
+        </div>
+    }
+</div>
+
+
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" />
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput-jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#RequestedDate").datepicker({ dateFormat: "dd/MM/yy" });
+        GetCountry();
+        $('#ContactNumber').on('input', function () {
+            // Replace any non-digit character with an empty string
+            $(this).val($(this).val().replace(/\D/g, ''));
+        });
+
+        $("#Telephone").intlTelInput({
+            initialCountry: "in",
+            separateDialCode: true
+
+
+        });
+        $("#ContactNumber").intlTelInput({
+            initialCountry: "in",
+            separateDialCode: true
+        });
+
+        $('.iti__flag').hide();
+    });
+
+    function GetCountry() {
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetClintCountry",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+
+                var innerHTML = "";
+                innerHTML += "<option  value = ''>" + "Select Country" + "</option>";
+                $(data.DataList).each(function (index, value) {
+                    if (value.CountryName != null || value.CountryName != "" || value.CountryName != undefined) {
+                        innerHTML += "<option class='option01' value = '" + value.CountryID + "'> " + value.CountryName + "</option>"
+                    }
+                });
+
+                $('#Country').html(innerHTML);
+                $('#ClientCountryName').html(innerHTML);
+
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+    $("#Country").change(function () {
+        var CountryName = $("#Country").val();
+        if (CountryName == "1") {
+            $("#DivState").show();
+            GetStateDDL();
+        } else {
+            $("#DivState").hide();
+        }
+
+    });
+
+    function GetStateDDL() {
+        var Country = $("#Country").val();
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/GetStateDDL",
+            data: "{CountryID: '" + Country + "' }",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var StateNameHTML = '';
+
+                $(response).each(function (index, value) {
+                    if (value.StateName != null || value.StateName != "" || value.StateName != undefined) {
+                        StateNameHTML += "<option class='option01' value = '" + value.StateId + "'> " + value.StateName + "</option>"
+                    }
+                });
+                $('#State').html(StateNameHTML);
+            },
+            failure: function (response) { },
+            error: function (response) { }
+        });
+    }
+    function SaveChemanalystTaxInvoice() {
+        debugger;
+        var Name = $("#Name").val();
+        var CorpEmail = $("#CorpEmail").val();
+
+        var Contactcode = $("#ContactNumber").intlTelInput("getSelectedCountryData").dialCode;
+        var Mobile = $("#ContactNumber").val();
+
+        var ContactNumberno = Contactcode + Mobile;
+
+        var Telecode = $("#Telephone").intlTelInput("getSelectedCountryData").dialCode;
+
+        var Telephone = $("#Telephone").val();
+        var TelephoneNO = Telecode + Telephone;
+
+
+        var CompanyName = $("#CompanyName").val();
+        var Designation = $("#Designation").val();
+        var Country = $('#Country option:selected').text().trim();
+        if (Country != "India") {
+            var State = null;
+        } else {
+            var State = $('#State option:selected').text().trim();
+        }
+
+        var OutboundLeadSource = $("#OutboundLeadSource").val();
+        //var LeadType = $("#LeadType").val("Outbound");
+        var RequestedDate = $("#RequestedDate").val();
+        var Message = $("#Message").val();
+        var LeadType = $("#LeadType").val();
+
+
+
+        var GetDetails = {
+            Name: Name,
+            CorpEmail: CorpEmail,
+            Phone: Telephone,
+            Organisation: CompanyName,
+            Country: Country,
+            State: State,
+            OutboundLeadSource: OutboundLeadSource,
+            LeadType: LeadType, //"Outbound",
+            RequestedDate: RequestedDate,
+            DiscriptionMessage: Message,
+            Mobile: Mobile,
+            Designation: Designation,
+            ContactCountryCode: Contactcode,
+            TelephoneCountryCode: Telecode
+        }
+
+        if (Name == "") {
+            swal("Warning", "Please Insert Name", "error");
+        }
+        else if (CorpEmail == "") {
+            swal("Warning", "Please Insert CorpEmail", "error");
+        }
+        else if (CompanyName == "") {
+            swal("Warning", "Please Insert CompanyName", "error");
+        }
+        else if ($('#Country').val() == "") {
+            swal("Warning", "Please Insert CountryName", "error");
+        }
+        else if (OutboundLeadSource == "") {
+            swal("Warning", "Please Insert LeadSource", "error");
+        }
+        else if (LeadType == "") {
+            swal("Warning", "Please Insert LeadType", "error");
+        }
+        else if (RequestedDate == "") {
+            swal("Warning", "Please Insert RequestedDate", "error");
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/LeadManagementSubscription/SavePreSalesLeadDetails",
+                data: JSON.stringify(GetDetails),
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $(response).each(function (index, value) {
+                        if (value.ValidationMessage == "SUCCESS") {
+                            swal(
+                                { title: "Thank you!", text: "Created Successfully.", type: "success" }).then(function () {
+                                    window.location.reload();
+                                });
+                        } else if (value.ValidationMessage == "Already exists") {
+                            swal(
+                                { title: "Already exists!", text: "Already exists.", type: "error" }).then(function () {
+                                    window.location.reload();
+                                });
+                        }
+                    });
+                },
+                failure: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {
+                    console.log(response)
+                }
+            });
+
+        }
+
+    }
+
+    function SearchDomain() {
+
+        var Search = $('#searchDomain').val();
+        $.ajax({
+            type: "POST",
+            url: "/LeadManagementSubscription/SearchDomain",
+            data: { Search: Search },
+            success: function (json) {
+                var tbodyHTML = '';  
+                debugger;
+                $(json).each(function (idx, elm)  {
+                    debugger;
+                    tbodyHTML += "<tr>";
+                    tbodyHTML += "<td>" + elm.Name + "</td>";
+                    tbodyHTML += "<td>" + elm.CountryName + "</td>";
+                    tbodyHTML += "<td>" + elm.CompanyName + "</td>";
+                    tbodyHTML += "<td>" + elm.CorpEmail + "</td>";
+                    tbodyHTML += "<td>" + elm.createdby + "</td>";
+                    tbodyHTML += "<td>" + ($.formattedDate(new Date(parseInt(elm.CreatedDate.substr(6))))) + "</td>";
+                    tbodyHTML += "</tr>";
+                });
+                $('.tbodydata').html(tbodyHTML);
+            },
+            failure: function (response) {
+                console.log(response)
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        });
+    }
+
+
+</script>

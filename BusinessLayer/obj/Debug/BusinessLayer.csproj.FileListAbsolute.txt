@@ -1,0 +1,120 @@
+E:\Project\chemanalyst_app_new\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+E:\Project\chemanalyst_app_new\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\BusinessLayer.dll
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\BusinessLayer.pdb
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\DataLayer.dll
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\EntityLayer.dll
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\Utility.dll
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\DataLayer.pdb
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\EntityLayer.pdb
+E:\Project\chemanalyst_app_new\BusinessLayer\bin\Debug\Utility.pdb
+E:\Project\chemanalyst_app_new\BusinessLayer\obj\Debug\BusinessLayer.dll
+E:\Project\chemanalyst_app_new\BusinessLayer\obj\Debug\BusinessLayer.pdb
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.dll
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.pdb
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.dll
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.dll
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\Utility.dll
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.pdb
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.pdb
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\Utility.pdb
+E:\Project\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+E:\Project\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+E:\Project\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.dll
+E:\Project\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.pdb
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+E:\Project\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\BusinessLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\BusinessLayer.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\DataLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\EntityLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\Utility.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\DataLayer.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\EntityLayer.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\Utility.pdb
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\obj\Debug\BusinessLayer.dll
+C:\Users\anuj.rana\Desktop\ibef\dump\BusinessLayer\obj\Debug\BusinessLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\Utility.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\Utility.pdb
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.dll
+D:\chamanalyst final\Anuj\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.pdb
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.pdb
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Utility.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\PagedList.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.pdb
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.pdb
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Utility.pdb
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.dll
+E:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.pdb
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.pdb
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Utility.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\PagedList.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.pdb
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.pdb
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Utility.pdb
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.dll
+D:\chamanalyst final\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\Utility.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\PagedList.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.pdb
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\Utility.pdb
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\bin\Debug\Newtonsoft.Json.xml
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csprojResolveAssemblyReference.cache
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.dll
+E:\Chemanalystlatest\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.pdb
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.dll
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\BusinessLayer.pdb
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.dll
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.dll
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\Utility.dll
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\Microsoft.ApplicationBlocks.Data.dll
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\DataLayer.pdb
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\EntityLayer.pdb
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\bin\Debug\Utility.pdb
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.AssemblyReference.cache
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.csproj.CoreCompileInputs.cache
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\obj\Debug\Business.EA331CBA.Up2Date
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.dll
+E:\5555555555\crm\ChemAnalyst\BusinessLayer\obj\Debug\BusinessLayer.pdb
